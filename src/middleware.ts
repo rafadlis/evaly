@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { authClient } from "./lib/auth.client";
 
 export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith("/dashboard")) {
@@ -8,17 +7,17 @@ export async function middleware(request: NextRequest) {
 }
 
 async function dashboardMiddleware(request: NextRequest) {
-  const { data: session } = await authClient.getSession({
-    fetchOptions: {
-      headers: request.headers,
-    },
-  });
+  const sessionRes = await fetch(`${process.env.BETTER_AUTH_URL}/api/auth/get-session`,{
+    headers: request.headers,
+  })
 
-  if (!session) {
+  const sessionJSON = await sessionRes.json();
+
+  if (!sessionJSON || sessionRes.status !== 200) {
     const callbackUrl = request.nextUrl.pathname + request.nextUrl.search;
     return NextResponse.redirect(new URL(`/login?callbackURL=${encodeURIComponent(callbackUrl)}`, request.url));
   }
-
+  
   return NextResponse.next();
 }
 
