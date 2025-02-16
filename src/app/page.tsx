@@ -1,15 +1,13 @@
-import { Button } from "@/components/ui/button";
-import { serverClient } from "@/trpc/server.client";
+"use client"
 
-export const revalidate = 10
+import Link from "next/link";
 
-export default async function Home() {
-  const getHello = await serverClient.hello()
+
+export default function Home() {
 
   return (
     <div className="">
-      <Button>Test 123</Button>
-      {JSON.stringify(getHello)}
+      <Link href="/dashboard">Dashboard</Link>
     </div>
   );
 }
