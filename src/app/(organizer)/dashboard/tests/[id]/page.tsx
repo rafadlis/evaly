@@ -36,7 +36,7 @@ const DetailTestPage = () => {
                     key={item}
                     className="py-3 px-4 -mx-4 hover:bg-secondary/70 transition-all relative group/question rounded-md cursor-pointer"
                   >
-                    <span className="absolute -left-8 top-3.5 size-7 flex items-center justify-center border rounded-full text-xs font-medium text-muted-foreground">
+                    <span className="absolute -left-8 top-3.5 size-7 flex items-center justify-center border rounded-full text-xs font-medium text-muted-foreground/80 leading-0">
                       {item}
                     </span>
                     <p>
