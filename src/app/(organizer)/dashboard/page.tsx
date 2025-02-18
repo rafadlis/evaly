@@ -1,43 +1,49 @@
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "./_components/app-sidebar"
-import { Separator } from "@radix-ui/react-separator"
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
+"use client";
+import { Button } from "@/components/ui/button";
+import { Loader2, PlusIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 
 const DashboardPage = () => {
-  return (
-    <SidebarProvider>
-    <AppSidebar />
-    <SidebarInset>
-      <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-        <div className="flex items-center gap-2 px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-2 h-4" />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#">
-                  Building Your Application
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden md:block" />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        </div>
-      </header>
-      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-        <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-          <div className="aspect-video rounded-xl bg-muted/50" />
-          <div className="aspect-video rounded-xl bg-muted/50" />
-          <div className="aspect-video rounded-xl bg-muted/50" />
-        </div>
-        <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
-      </div>
-    </SidebarInset>
-  </SidebarProvider>
-  )
-}
+  const tests = [];
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
-export default DashboardPage
+  const onCreateNewTest = () => {
+    startTransition(() => {
+      router.push("/dashboard/tests/123");
+    });
+  };
+
+  if (tests.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-dvh text-center">
+        <h1 className="text-xl font-semibold">No tests yet</h1>
+        <h2 className="max-w-sm mt-2 text-muted-foreground">
+          Create your first test and make assessment a breeze. Start building
+          engaging questions today!
+        </h2>
+        <Button
+          variant={"default"}
+          className="mt-4"
+          onClick={onCreateNewTest}
+          disabled={isPending}
+        >
+          {isPending ? (
+            <Loader2 size={16} className="animate-spin" />
+          ) : (
+            <PlusIcon size={16} />
+          )}
+          Create test
+        </Button>
+      </div>
+    );
+  }
+  return (
+    <div className="container">
+      <h1 className="text-2xl font-bold">Dashboard</h1>
+    </div>
+  );
+};
+
+export default DashboardPage;
