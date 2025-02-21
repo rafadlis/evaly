@@ -2,13 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { CheckCircle2, PencilLineIcon, SaveIcon } from "lucide-react";
@@ -40,7 +40,7 @@ const DetailTestPage = () => {
                       {item}
                     </span>
                     <p>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consectetur fuga voluptates totam ullam, tempora magni aliquam atque, incidunt cupiditate explicabo sed vero ipsum cum, possimus veniam accusamus! Sed, nam voluptas!
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consectetur fuga voluptates tot am ullam, tempora magni aliquam atque, incidunt cupiditate explicabo sed vero ipsum cum, possimus veniam accusamus! Sed, nam voluptas!
                     </p>
                     <div className="flex flex-row flex-wrap gap-3 mt-6 text-sm text-muted-foreground">
                       <Button

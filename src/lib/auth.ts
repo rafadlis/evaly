@@ -5,11 +5,17 @@ import * as schema from "./db/schema";
  
 export const auth = betterAuth({
     database: drizzleAdapter(db,{
-        provider: "sqlite",
+        provider: "mysql",
         schema: schema
     }),
     emailAndPassword:{ 
         enabled: true,
+    },
+    logger: {
+        level: "debug",
+        log(level, message, ...args) {
+            console.log(level, message, ...args);
+        },
     },
     advanced:{
         cookiePrefix: "evaly",

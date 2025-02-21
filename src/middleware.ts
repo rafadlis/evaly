@@ -7,7 +7,7 @@ export async function middleware(request: NextRequest) {
 }
 
 async function dashboardMiddleware(request: NextRequest) {
-  const sessionRes = await fetch(`${process.env.BETTER_AUTH_URL}/api/auth/get-session`,{
+  const sessionRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/auth/get-session`,{
     headers: request.headers,
   })
 

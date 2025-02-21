@@ -1,50 +1,86 @@
-import { sqliteTable } from "drizzle-orm/sqlite-core";
+import { mysqlTable, varchar, boolean, timestamp, index, foreignKey, text } from "drizzle-orm/mysql-core";
+import { sql, relations } from "drizzle-orm";
 
-import { sql } from "drizzle-orm";
-import { text, integer } from "drizzle-orm/sqlite-core";
+export const user = mysqlTable("user", {
+  id: varchar("id", { length: 255 }).primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  emailVerified: boolean("email_verified").notNull().default(false),
+  image: varchar("image", { length: 255 }),
+  createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: timestamp("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`)
+}, (table) => ({
+  emailIdx: index("email_idx").on(table.email)
+}));
 
-export const user = sqliteTable("user", {
-  id: text("id").primaryKey(),
-  name: text("name").notNull(),
-  email: text("email").notNull(),
-  emailVerified: integer("email_verified", { mode: "boolean" }).notNull().default(false),
-  image: text("image"),
-  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`)
-});
+export const userRelations = relations(user, ({ many }) => ({
+  sessions: many(session),
+  accounts: many(account)
+}));
 
-export const session = sqliteTable("session", {
-  id: text("id").primaryKey(),
-  userId: text("user_id").notNull().references(() => user.id),
-  token: text("token").notNull(),
-  expiresAt: text("expires_at").notNull(),
-  ipAddress: text("ip_address"),
-  userAgent: text("user_agent"),
-  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`)
-});
+export const session = mysqlTable("session", {
+  id: varchar("id", { length: 255 }).primaryKey(),
+  userId: varchar("user_id", { length: 255 }).notNull(),
+  token: varchar("token", { length: 255 }).notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  ipAddress: varchar("ip_address", { length: 255 }),
+  userAgent: varchar("user_agent", { length: 255 }),
+  createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: timestamp("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`)
+}, (table) => ({
+  userIdIdx: index("user_id_idx").on(table.userId),
+  userFk: foreignKey({
+    columns: [table.userId],
+    foreignColumns: [user.id],
+    name: "session_user_fk"
+  }).onDelete("cascade")
+}));
 
-export const account = sqliteTable("account", {
-  id: text("id").primaryKey(),
-  userId: text("user_id").notNull().references(() => user.id),
-  accountId: text("account_id").notNull(),
-  providerId: text("provider_id").notNull(),
-  accessToken: text("access_token"),
-  refreshToken: text("refresh_token"),
-  accessTokenExpiresAt: text("access_token_expires_at"),
-  refreshTokenExpiresAt: text("refresh_token_expires_at"),
-  scope: text("scope"),
+export const sessionRelations = relations(session, ({ one }) => ({
+  user: one(user, {
+    fields: [session.userId],
+    references: [user.id]
+  })
+}));
+
+export const account = mysqlTable("account", {
+  id: varchar("id", { length: 255 }).primaryKey(),
+  userId: varchar("user_id", { length: 255 }).notNull(),
+  accountId: varchar("account_id", { length: 255 }).notNull(),
+  providerId: varchar("provider_id", { length: 255 }).notNull(),
+  accessToken: varchar("access_token", { length: 255 }),
+  refreshToken: varchar("refresh_token", { length: 255 }),
+  accessTokenExpiresAt: timestamp("access_token_expires_at"),
+  refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+  scope: varchar("scope", { length: 255 }),
   idToken: text("id_token"),
-  password: text("password"),
-  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`)
-});
+  password: varchar("password", { length: 255 }),
+  createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: timestamp("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`)
+}, (table) => ({
+  userIdIdx: index("user_id_idx").on(table.userId),
+  providerIdx: index("provider_idx").on(table.providerId),
+  userFk: foreignKey({
+    columns: [table.userId],
+    foreignColumns: [user.id],
+    name: "account_user_fk"
+  }).onDelete("cascade")
+}));
 
-export const verification = sqliteTable("verification", {
-  id: text("id").primaryKey(),
-  identifier: text("identifier").notNull(),
-  value: text("value").notNull(),
-  expiresAt: text("expires_at").notNull(),
-  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`)
-});
+export const accountRelations = relations(account, ({ one }) => ({
+  user: one(user, {
+    fields: [account.userId],
+    references: [user.id]
+  })
+}));
+
+export const verification = mysqlTable("verification", {
+  id: varchar("id", { length: 255 }).primaryKey(),
+  identifier: varchar("identifier", { length: 255 }).notNull(),
+  value: varchar("value", { length: 255 }).notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: timestamp("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`)
+}, (table) => ({
+  identifierIdx: index("identifier_idx").on(table.identifier)
+}));
