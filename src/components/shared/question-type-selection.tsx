@@ -10,7 +10,7 @@ const QuestionTypeSelection = ({
   value?: string;
   onValueChange?: (value: string) => void;
 }) => {
-  const questionType = [
+  const questionTypes = [
     {
       value: "yes-or-no",
       label: "Yes/No",
@@ -20,8 +20,12 @@ const QuestionTypeSelection = ({
       label: "Multiple Choice",
     },
     {
-      value: "multiple-selections",
+      value: "multiple-selection",
       label: "Multiple Selection",
+    },
+    {
+      value: "point-based",
+      label: "Point Based",
     },
     {
       value: "text-field",
@@ -36,13 +40,13 @@ const QuestionTypeSelection = ({
     <Popover>
       <PopoverTrigger asChild>
         <Button size={"xs"} rounded={true} variant={"outline"}>
-        <CircleCheck /> Multiple Choice  <ChevronDownIcon />
+          <CircleCheck /> Multiple Choice <ChevronDownIcon />
         </Button>
       </PopoverTrigger>
       <PopoverContent align="start" className="w-[210px] pt-2">
         <Label>Question Type</Label>
         <div className="flex flex-col gap-2 mt-2 -mx-2.5">
-          {questionType.map((e) => (
+          {questionTypes.map((e) => (
             <Button
               onClick={() => {
                 onValueChange?.(e.value);
@@ -51,7 +55,7 @@ const QuestionTypeSelection = ({
               size={"sm"}
               key={e.value}
               className="w-full justify-start"
-              variant={value === e.value ? "default":"ghost"}
+              variant={value === e.value ? "default" : "ghost"}
             >
               {e.label}
             </Button>

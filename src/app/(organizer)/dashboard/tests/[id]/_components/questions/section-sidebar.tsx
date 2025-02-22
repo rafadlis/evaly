@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ClockIcon, PlusIcon } from "lucide-react";
-import { useSelectedSession } from "./use-selected-session";
+import { useSelectedSession } from "../../_hooks/use-selected-session";
 
 const SectionSidebar = ({ className }: { className?: string }) => {
   const questionGroup = Array.from({ length: 5 }, (_, i) => i + 1);
@@ -9,7 +9,7 @@ const SectionSidebar = ({ className }: { className?: string }) => {
 
   return (
     <div className={cn("w-2xs sticky top-8 h-max", className)}>
-      <div className="flex flex-col rounded-xl overflow-clip">
+      <div className="flex flex-col divide-y">
         {questionGroup.map((e) => (
           <div
             key={e}
@@ -19,7 +19,7 @@ const SectionSidebar = ({ className }: { className?: string }) => {
             className={cn(
               "w-full flex flex-col relative items-start group/session transition-all duration-100 justify-start cursor-pointer pl-4 py-4 border-l",
               selectedSession === e
-                ? "border-l-4 border-foreground bg-secondary"
+                ? "border-l-6"
                 : "hover:bg-secondary/50 active:bg-secondary active:border-l-4"
             )}
           >
