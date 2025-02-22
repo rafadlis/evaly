@@ -11,7 +11,7 @@ const DashboardPage = () => {
 
   const onCreateNewTest = () => {
     startTransition(() => {
-      router.push("/dashboard/tests/123");
+      router.push("/dashboard/tests/123/edit");
     });
   };
 

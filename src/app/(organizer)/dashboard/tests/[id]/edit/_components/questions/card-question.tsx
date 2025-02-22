@@ -25,7 +25,13 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-const CardQuestion = ({ className, hideOptions= false }: { className?: string, hideOptions?: boolean }) => {
+const CardQuestion = ({
+  className,
+  hideOptions = false,
+}: {
+  className?: string;
+  hideOptions?: boolean;
+}) => {
   return (
     <div>
       <Card
@@ -68,24 +74,21 @@ const CardQuestion = ({ className, hideOptions= false }: { className?: string, h
             atque, incidunt cupiditate explicabo sed vero ipsum cum, possimus
             veniam accusamus! Sed, nam voluptas!
           </p>
-          {!hideOptions ? <div className="flex flex-col gap-6 mt-6 text-sm text-muted-foreground">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div
-                key={i}
-                className="flex flex-row flex-wrap items-start gap-3"
-              >
-                <Button rounded={false} size={"icon-xs"} variant={"outline"}>
-                  A
-                </Button>
-                <span className="flex-1">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga,
-                  inventore cumque corrupti atque dicta iste nulla, incidunt
-                  odio quod quasi velit corporis repellat placeat necessitatibus
-                  dolor illo a maiores exercitationem?
-                </span>
-              </div>
-            ))}
-          </div> : null}
+          {!hideOptions ? (
+            <div className="flex flex-col gap-4 mt-6 text-sm text-muted-foreground">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="flex flex-row flex-wrap items-start gap-3"
+                >
+                  <Button rounded={false} size={"icon-xs"} variant={"outline"}>
+                    {i + 1}
+                  </Button>
+                  <span className="flex-1 mt-0.5">Option {i + 1}</span>
+                </div>
+              ))}
+            </div>
+          ) : null}
         </CardContent>
       </Card>
     </div>

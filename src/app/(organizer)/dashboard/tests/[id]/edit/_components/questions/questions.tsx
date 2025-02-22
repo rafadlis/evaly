@@ -42,7 +42,7 @@ const Questions = () => {
   const virtualItems = virtualizer.getVirtualItems();
 
   return (
-    <div className="flex flex-row gap-4">
+    <div className="flex flex-row gap-6">
       <SectionSidebar />
       <Card className="flex-1 border border-dashed overflow-clip">
         <CardHeader className="sticky top-0 bg-background z-10 pb-4">

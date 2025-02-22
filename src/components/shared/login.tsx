@@ -16,6 +16,7 @@ const LogIn = () => {
   // const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
   const callbackURL = searchParams.get("callbackURL");
+
   return (
     <Card className="z-50 max-w-sm w-full">
       <CardHeader>
