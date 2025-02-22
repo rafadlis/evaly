@@ -5,6 +5,7 @@ export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith("/dashboard")) {
     return dashboardMiddleware(request);
   }
+
   return NextResponse.next()
 }
 
