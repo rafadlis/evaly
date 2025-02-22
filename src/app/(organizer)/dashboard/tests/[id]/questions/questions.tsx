@@ -12,7 +12,7 @@ const Questions = () => {
       <SectionSidebar />
       <Card className="flex-1 border border-dashed overflow-clip">
         <CardHeader>
-          <h1 className="font-medium flex flex-row flex-wrap gap-2 items-start">Section 1 <Button size={"icon-xs"} variant={"ghost"}> <PencilLine /></Button></h1>
+          <h1 className="font-medium flex flex-row flex-wrap gap-2 items-start">Untitled Session 1 <Button size={"icon-xs"} variant={"ghost"}> <PencilLine /></Button></h1>
           <h2 className="text-muted-foreground text-sm mt-2">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam
             quas dicta voluptas neque libero velit ullam atque aspernatur! Porro
