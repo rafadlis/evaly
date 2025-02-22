@@ -1,9 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getSession } from "./services/common/get-session";
 
 export async function middleware(request: NextRequest) {
-  const headers = new Headers(request.headers);
-  headers.set("x-current-path", request.nextUrl.pathname);
-  return NextResponse.next({ headers });
+  if (request.nextUrl.pathname.startsWith("/dashboard")) {
+    return dashboardMiddleware(request);
+  }
+  return NextResponse.next()
+}
+
+async function dashboardMiddleware(request: NextRequest) {
+  const sessionRes = await getSession(request.headers)
+
+  if (!sessionRes?.user) {
+    const callbackUrl = request.nextUrl.pathname + request.nextUrl.search;
+    return NextResponse.redirect(new URL(`/login?callbackURL=${encodeURIComponent(callbackUrl)}`, request.url));
+  }
+  
+  return NextResponse.next();
 }
 
 export const config = {
