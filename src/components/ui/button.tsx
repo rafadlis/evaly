@@ -23,9 +23,13 @@ const buttonVariants = cva(
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:pl-3",
         sm: "h-8 px-3 has-[>svg]:pl-2.5",
-        xs: "h-7 px-2 has-[>svg]:pl-2 text-xs",
+        xs: "h-7 px-3 has-[>svg]:pl-2 text-xs",
+        xxs: "h-6 px-2 has-[>svg]:pl-2 text-xs",
         lg: "h-10 px-6 has-[>svg]:pl-5",
         icon: "size-9",
+        "icon-sm": "size-8 text-sm",
+        "icon-xs": "size-7 text-xs",
+        "icon-xxs": "size-6 text-xs"
       },
       rounded: {
         true: "rounded-full",
