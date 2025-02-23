@@ -1,20 +1,15 @@
 import { Organizer } from "@/lib/db/schema/organization";
+import { getSession } from "@/services/common/get-session";
 import { getOrganizerByUserId } from "@/services/organizer/get-organizer-byuserid";
 import { initTRPC, TRPCError } from "@trpc/server";
 import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import { Session, User } from "better-auth/types";
 
 export const createContext = async ({ req }: FetchCreateContextFnOptions) => {
-  const sessionRes = await fetch(
-    `${process.env.NEXT_PUBLIC_URL}/api/auth/get-session`,
-    {
-      headers: req.headers,
-    }
-  );
+  const sessionRes = await getSession(req.headers)
 
-  const sessionResJson = await sessionRes.json();
-  const session: Session | undefined = sessionResJson?.session;
-  const user: User | undefined = sessionResJson?.user;
+  const session: Session | undefined = sessionRes?.session;
+  const user: User | undefined = sessionRes?.user;
 
   let organizer: Organizer | undefined
 
