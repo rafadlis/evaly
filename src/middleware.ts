@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "./services/common/get-session";
-import { getOrganizerByUserId } from "./services/organizer/get-organizer-byuserid";
-import { createOrganizer } from "./services/organizer/create-organizer";
+import { getSelectedOrganizerByUserId } from "./services/organization/organizer/get-selected-organizer-byuserid";
+import { createOrganizer } from "./services/organization/organizer/create-organizer";
 
 export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith("/dashboard")) {
@@ -24,8 +24,8 @@ async function dashboardMiddleware(request: NextRequest) {
     );
   }
 
-  const data = await getOrganizerByUserId(sessionRes.user.id);
-
+  const data = await getSelectedOrganizerByUserId(sessionRes.user.id);
+  
   if (!data) {
     await createOrganizer(sessionRes.user.id);
   }

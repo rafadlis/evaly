@@ -1,11 +1,14 @@
 import React from "react";
 import TanstackQueryProvider from "./tanstack-query.provider";
 import NuqsProvider from "./nuqs.provider";
+import { ProgressBar } from "../shared/progress-bar";
 
 const Provider = ({ children }: { children: React.ReactNode }) => {
   return (
     <TanstackQueryProvider>
-      <NuqsProvider>{children}</NuqsProvider>
+      <NuqsProvider>
+        <ProgressBar className="bg-foreground fixed bottom-0 z-[100] h-1">{children}</ProgressBar>
+      </NuqsProvider>
     </TanstackQueryProvider>
   );
 };

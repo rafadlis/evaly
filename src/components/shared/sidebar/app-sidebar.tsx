@@ -20,7 +20,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from "@/components/ui/sidebar";
-import Link from "next/link";
+import { Link } from "@/components/shared/progress-bar";
 
 // This is sample data.
 const data = {

@@ -18,6 +18,7 @@ export const user = pgTable(
     email: varchar("email", { length: 255 }).notNull(),
     emailVerified: boolean("email_verified").notNull().default(false),
     image: varchar("image", { length: 255 }),
+    selectedOrganizerId: varchar("selected_organizer_id", {length: 255}),
     createdAt: timestamp("created_at", {
       mode:"string",
       withTimezone: true
@@ -37,10 +38,14 @@ export const user = pgTable(
   })
 );
 
-export const userRelations = relations(user, ({ many }) => ({
+export const userRelations = relations(user, ({ many,one }) => ({
   sessions: many(session),
   accounts: many(account),
-  organizer: many(organizer)
+  organizer: many(organizer),
+  selectedOrganizer: one(organizer, {
+    fields: [user.selectedOrganizerId],
+    references: [organizer.id]
+  })
 }));
 
 export const session = pgTable(

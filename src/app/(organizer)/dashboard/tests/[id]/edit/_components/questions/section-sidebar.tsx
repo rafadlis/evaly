@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ClockIcon, MoveRight, PlusIcon } from "lucide-react";
+import { CircleCheck, ClockIcon, PlusIcon } from "lucide-react";
 import { useSelectedSession } from "../../_hooks/use-selected-session";
 import { Card } from "@/components/ui/card";
 
@@ -9,7 +9,7 @@ const SectionSidebar = ({ className }: { className?: string }) => {
   const [selectedSession, setSelectedSession] = useSelectedSession();
 
   return (
-    <div className={cn("w-2xs sticky top-4 h-max", className)}>
+    <div className={cn("w-[240px] sticky top-4 h-max", className)}>
       <div className="flex flex-col gap-2">
         {questionGroup.map((e) => (
           <Card
@@ -23,8 +23,8 @@ const SectionSidebar = ({ className }: { className?: string }) => {
             )}
           >
             {selectedSession === e ? (
-              <div className="absolute bottom-2 right-4">
-                <MoveRight size={20} />
+              <div className="absolute top-2 right-2 text-muted-foreground">
+                <CircleCheck size={16} strokeWidth={2.5} />
               </div>
             ) : null}
             <span className="text-sm font-medium">1. Untitled Session</span>

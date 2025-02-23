@@ -35,6 +35,10 @@ export const organization = pgTable(
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`)
       .$onUpdate(() => new Date().toISOString()),
+    deletedAt: timestamp("deleted_at", {
+      mode: "string",
+      withTimezone: true,
+    }),
   },
   (table) => ({
     organizationId: index("organization_id_idx").on(table.id),
@@ -68,6 +72,10 @@ export const organizer = pgTable(
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`)
       .$onUpdate(() => new Date().toISOString()),
+    deletedAt: timestamp("deleted_at", {
+      mode: "string",
+      withTimezone: true,
+    }),
   },
   (table) => ({
     organizerIdIdx: index("organizer_id_idx").on(table.id),

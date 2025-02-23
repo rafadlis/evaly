@@ -1,5 +1,5 @@
+import { Link } from "@/components/shared/progress-bar";
 
-import Link from "next/link";
 
 
 export default async function Home() {

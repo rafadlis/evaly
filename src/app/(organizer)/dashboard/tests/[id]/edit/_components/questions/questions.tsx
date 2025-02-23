@@ -76,12 +76,11 @@ const Questions = () => {
               </Button>
             </div>
           </div>
-          <CardDescription className="max-w-lg flex flex-row items-end gap-2">
+          <CardDescription className="max-w-md flex flex-row items-end gap-2">
             <span className="flex-1">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam
               quas dicta voluptas neque libero velit ullam atque aspernatur!
             </span>
-            <DialogChangeSessionDetail />
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-0 overflow-auto">
