@@ -14,5 +14,5 @@ export async function getSession(headers: Headers) {
   const session: Session = sessionJson.session
   const user: User = sessionJson.user
 
-  return {session, user}
+  return { session, user }
 }

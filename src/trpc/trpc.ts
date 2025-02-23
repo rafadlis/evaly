@@ -6,26 +6,26 @@ import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import { Session, User } from "better-auth/types";
 
 export const createContext = async ({ req }: FetchCreateContextFnOptions) => {
-  const sessionRes = await getSession(req.headers)
+  const sessionRes = await getSession(req.headers);
 
   const session: Session | undefined = sessionRes?.session;
   const user: User | undefined = sessionRes?.user;
 
-  let organizer: Organizer | undefined
+  let organizer: Organizer | undefined;
 
-  if (user?.id){
-    const organizerData = await getOrganizerByUserId(user.id)
+  if (user?.id) {
+    const organizerData = await getOrganizerByUserId(user.id);
 
-    organizer = organizerData
+    organizer = organizerData;
   }
 
   return { session, user, organizer };
 };
 
 export type Context = Awaited<ReturnType<typeof createContext>>;
-const t = initTRPC.context<Context>().create();
+const t = initTRPC.context<Partial<Context>>().create();
 
-export const {createCallerFactory,} = t
+export const createCallerFactory = t.createCallerFactory;
 export const router = t.router;
 export const publicProcedure = t.procedure;
 
@@ -38,7 +38,7 @@ export const organizerProcedure = publicProcedure.use(async (opts) => {
     ctx: {
       organizer: ctx.organizer,
       user: ctx.user,
-      session: ctx.session
+      session: ctx.session,
     },
   });
 });

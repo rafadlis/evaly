@@ -1,26 +1,33 @@
 "use client"
 
-import { trpc } from '@/trpc/client'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { getQueryClient, getUrl, trpc } from '@/trpc/trpc.client'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { httpBatchLink } from '@trpc/client'
 import React, { useState } from 'react'
 
 const TanstackQueryProvider = ({ children }: { children: React.ReactNode }) => {
-    const [queryClient] = useState(() => new QueryClient())
-    const [trpcClient] = useState(() =>
-        trpc.createClient({
-            links: [
-                httpBatchLink({ url: `${process.env.NEXT_PUBLIC_URL}/api/trpc` }),
-            ],
-        })
-    )
+   // NOTE: Avoid useState when initializing the query client if you don't
+  //       have a suspense boundary between this and the code that may
+  //       suspend because React will throw away the client on the initial
+  //       render if it suspends and there is no boundary
+  const queryClient = getQueryClient();
+  const [trpcClient] = useState(() =>
+    trpc.createClient({
+      links: [
+        httpBatchLink({
+          // transformer: superjson,// <-- if you use a data transformer
+          url: getUrl(),
+        }),
+      ],
+    }),
+  );
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
-        <QueryClientProvider client={queryClient}>
-            {children}
-        </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        {children}
+      </QueryClientProvider>
     </trpc.Provider>
-  )
+  );
 }
 
 export default TanstackQueryProvider
