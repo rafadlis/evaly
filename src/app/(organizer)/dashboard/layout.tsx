@@ -2,11 +2,10 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import React from "react";
 import { AppSidebar } from "../../../components/shared/sidebar/app-sidebar";
 import { headers } from "next/headers";
-import { getSession } from "@/services/common/get-session";
 
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   const getHeaders = await headers();
-  const session = await getSession(getHeaders);
+  // const session = await getSession(getHeaders);
   
   // if (!session) notFound()
 
@@ -16,7 +15,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   //   await createOrganizer(session.user.id);
   // }
 
-  console.log(session)
+  console.log(getHeaders.get("cookie"))
 
   return (
     <SidebarProvider>
