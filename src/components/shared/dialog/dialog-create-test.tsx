@@ -33,7 +33,15 @@ const DialogCreateTest = () => {
         });
       },
       onError(error) {
-        toast.error(error.message);
+        // Handle Field Error
+        const fieldErrors = error.data?.zodError?.fieldErrors
+        if (fieldErrors){
+          return Object.values(fieldErrors).map((e)=>{
+            toast.error(e)
+          })
+        }
+
+        toast.error(error.message)
       },
     });
 

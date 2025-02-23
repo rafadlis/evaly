@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { organizerProcedure, router } from "../../trpc";
-import { createNewTest } from "@/services/organization/tests/create-new-test";
-import { getAllTestsByOrganizationId } from "@/services/organization/tests/get-all-tests-by-organization-id";
+import { createNewTest } from "@/services/organization/test/create-new-test";
+import { getAllTestsByOrganizationId } from "@/services/organization/test/get-all-tests-by-organization-id";
 
 export const testRouter = router({
   // Find all test

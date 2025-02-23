@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { question } from "@/lib/db/schema";
 import { cn } from "@/lib/utils";
 import {
   ArrowDown,
@@ -27,11 +28,14 @@ import { useState } from "react";
 
 const CardQuestion = ({
   className,
-  hideOptions = false,
+  // hideOptions = false,
+  data
 }: {
   className?: string;
   hideOptions?: boolean;
+  data?: typeof question.$inferSelect
 }) => {
+  if (!data) return null
   return (
     <div>
       <Card
@@ -44,7 +48,7 @@ const CardQuestion = ({
           <div className="flex flex-row gap-3">
             <Button variant={"secondary"} size={"xs"} rounded={true}>
               <CircleHelpIcon />
-              Question 1
+              Question {data.order}
             </Button>
             <QuestionTypeSelection value="multiple-choice" />
           </div>
@@ -68,13 +72,8 @@ const CardQuestion = ({
           </div>
         </CardHeader>
         <CardContent>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-            Consectetur fuga voluptates tot am ullam, tempora magni aliquam
-            atque, incidunt cupiditate explicabo sed vero ipsum cum, possimus
-            veniam accusamus! Sed, nam voluptas!
-          </p>
-          {!hideOptions ? (
+          <div dangerouslySetInnerHTML={{__html: data.question ||"No questions"}}/>
+          {/* {!hideOptions ? (
             <div className="flex flex-col gap-4 mt-6 text-sm text-muted-foreground">
               {Array.from({ length: 5 }).map((_, i) => (
                 <div
@@ -88,7 +87,7 @@ const CardQuestion = ({
                 </div>
               ))}
             </div>
-          ) : null}
+          ) : null} */}
         </CardContent>
       </Card>
     </div>

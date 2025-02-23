@@ -14,6 +14,7 @@ import {
     PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Separator } from "@/components/ui/separator";
+import LoadingTest from "@/components/shared/loading/loading-test";
 
 const DashboardPageClient = () => {
   const [queryStates, setQueryStates] = useQueryStates({
@@ -29,7 +30,15 @@ const DashboardPageClient = () => {
   const pagination = data?.pagination;
 
   if (isPending) {
-    return <div>Loading...</div>;
+    return (
+      <div className="container">
+        <div className="flex flex-row items-start justify-between mb-10">
+          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <DialogCreateTest />
+        </div>
+        <LoadingTest />
+      </div>
+    );
   }
 
   if (!tests || tests?.length === 0) {
@@ -141,4 +150,4 @@ const DashboardPageClient = () => {
   );
 };
 
-export default DashboardPageClient
+export default DashboardPageClient;

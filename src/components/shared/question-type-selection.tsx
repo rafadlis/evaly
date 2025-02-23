@@ -45,7 +45,7 @@ const QuestionTypeSelection = ({
       </PopoverTrigger>
       <PopoverContent align="start" className="w-[210px] pt-2">
         <Label>Question Type</Label>
-        <div className="flex flex-col gap-2 mt-2 -mx-2.5">
+        <div className="flex flex-col mt-2 gap-1 -mx-2.5">
           {questionTypes.map((e) => (
             <Button
               onClick={() => {

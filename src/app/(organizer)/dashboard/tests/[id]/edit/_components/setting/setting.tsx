@@ -17,22 +17,24 @@ const Setting = () => {
             </Label>
           </div>
           <div className="flex-1 flex flex-row flex-wrap gap-4">
-            <Card className="w-2xs p-4 ring-1 ring-offset-4 cursor-pointer relative">
+            <Card className="w-2xs p-3 ring-1 ring-offset-4 cursor-pointer relative">
               <CheckCircle2 size={18} className="absolute top-2 right-2" />
-              <h1 className="font-medium">Self-paced Test</h1>
+              <h1 className="font-medium text-sm">Self-paced Test</h1>
               <Label>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.{" "}
+              Allow candidates to take the test at their own pace. Ideal for
+              screening and pre-assessment purposes.
               </Label>
             </Card>
 
-            <Card className="w-2xs p-4 opacity-70 ring-offset-4 ring-foreground/50 transition-all relative">
+            <Card className="w-2xs p-3 opacity-70 ring-offset-4 ring-foreground/50 transition-all relative">
               <LockIcon
                 size={18}
                 className="absolute top-2 right-2 opacity-50"
               />
               <h1 className="font-medium">Live Test</h1>
               <Label>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.{" "}
+              Schedule a synchronized test for all candidates. Ideal for
+              final assessments and examinations.
               </Label>
             </Card>
           </div>

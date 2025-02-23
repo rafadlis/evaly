@@ -1,9 +1,5 @@
-import { useQueryState, parseAsInteger } from "nuqs";
+import { useQueryState } from "nuqs";
 
-export function useSelectedSession(){
-    return useQueryState(
-        "selected-session",
-        parseAsInteger.withDefault(1)
-      );
-    
+export function useSelectedSession() {
+  return useQueryState("selected-session");
 }

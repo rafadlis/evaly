@@ -4,6 +4,7 @@ import { getSelectedOrganizerByUserId } from "@/services/organization/organizer/
 import { initTRPC, TRPCError } from "@trpc/server";
 import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import { Session, User } from "better-auth/types";
+import { ZodError } from "zod";
 
 export const createContext = async ({ req }: FetchCreateContextFnOptions) => {
   const sessionRes = await getSession(req.headers);
@@ -23,7 +24,21 @@ export const createContext = async ({ req }: FetchCreateContextFnOptions) => {
 };
 
 export type Context = Awaited<ReturnType<typeof createContext>>;
-const t = initTRPC.context<Context>().create();
+const t = initTRPC.context<Context>().create({
+  errorFormatter(opts){
+    const { shape, error } = opts;
+    return {
+      ...shape,
+      data: {
+        ...shape.data,
+        zodError:
+          error.code === 'BAD_REQUEST' && error.cause instanceof ZodError
+            ? error.cause?.flatten()
+            : null,
+      },
+    };
+  }
+});
 
 export const createCallerFactory = t.createCallerFactory;
 export const router = t.router;

@@ -1,4 +1,6 @@
 import { organizerProcedure, router } from "../../trpc";
+import { questionRouter } from "./question";
+import { sessionRouter } from "./session";
 import { testRouter } from "./test";
 
 export const organizationRouter = router({
@@ -7,5 +9,7 @@ export const organizationRouter = router({
     return ctx;
   }),
   
-  tests: testRouter
+  tests: testRouter,
+  session: sessionRouter,
+  question: questionRouter
 });
