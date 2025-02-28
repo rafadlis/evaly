@@ -64,7 +64,7 @@ const CardSession = ({
           <Button
             size={"icon-xxs"}
             variant={"outline"}
-            className="absolute bottom-2 right-2 opacity-0 group-hover/session:opacity-100 transition-opacity duration-300"
+            className="absolute bottom-2 right-2 opacity-0 group-hover/session:opacity-100 transition-opacity"
             onClick={(e) => {
               e.stopPropagation();
             }}

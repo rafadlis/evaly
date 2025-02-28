@@ -7,62 +7,63 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { trpc } from "@/trpc/trpc.client";
 import { ClockIcon, Loader2 } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 
 const DialogEditSessionDuration = ({
   className,
   disabled = false,
-  value = 0,
-  onValueChange,
   onSuccess,
+  sessionId,
 }: {
   className?: string;
   disabled?: boolean;
-  sessionId: string;
+  sessionId?: string; // Made optional since it's not used in the component
   onSuccess?: () => void;
-  value?: number; // in minutes
-  onValueChange?: (value: number) => Promise<void>; // in minutes
 }) => {
   const [open, setOpen] = useState(false);
-  
-  // Use a ref to track if this is the first render
-  const isFirstRender = useRef(true);
-  
-  // Use a ref to store the most recently saved value
-  const savedValueRef = useRef(value);
-  
-  // State for the displayed value (what's shown in the button)
-  const [displayValue, setDisplayValue] = useState(value);
-  
-  // States for the form inputs
-  const [hours, setHours] = useState(Math.floor(displayValue / 60));
-  const [minutes, setMinutes] = useState(displayValue % 60);
+  const {
+    data: dataSession,
+    isRefetching: isRefetchingSession,
+    refetch: refetchSession,
+  } = trpc.organization.session.byId.useQuery({
+    id: sessionId as string,
+  });
 
-  // Update the display value when the external value changes
-  // But only on first render or if it's different from our saved value
+  const { mutateAsync: updateSession, isPending: isPendingUpdateSession } =
+    trpc.organization.session.update.useMutation();
+
+  // States for the form inputs - initialize directly from value prop
+  const [hours, setHours] = useState(0);
+  const [minutes, setMinutes] = useState(0);
+
   useEffect(() => {
-    if (isFirstRender.current || value !== savedValueRef.current) {
-      setDisplayValue(value);
-      setHours(Math.floor(value / 60));
-      setMinutes(value % 60);
-      savedValueRef.current = value;
-      isFirstRender.current = false;
+    let hours = 0;
+    let minutes = 0;
+
+    if (dataSession) {
+      hours = Math.floor((dataSession.duration || 0) / 60);
+      minutes = (dataSession.duration || 0) % 60;
     }
-  }, [value]);
+  
+    setHours(hours);
+    setMinutes(minutes);
+  }, [dataSession]);
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const newTotalMinutes = hours * 60 + minutes;
-    
-    // Update our display value and saved reference immediately
-    setDisplayValue(newTotalMinutes);
-    savedValueRef.current = newTotalMinutes;
-    
-    // Call the parent's handlers
-    await onValueChange?.(newTotalMinutes);
+
+    await updateSession({
+      sessionId: sessionId as string,
+      data: {
+        duration: newTotalMinutes,
+      },
+    });
+
+    await refetchSession();
     onSuccess?.();
-    
     setOpen(false);
   };
 
@@ -74,9 +75,7 @@ const DialogEditSessionDuration = ({
           size={"xs"}
           variant={"outline"}
           className={cn(className)}
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
+          onClick={(e) => e.stopPropagation()}
         >
           <ClockIcon /> {hours > 0 ? `${hours}h ` : ""}
           {minutes}m
@@ -107,11 +106,15 @@ const DialogEditSessionDuration = ({
             />
           </div>
           <Button
-            disabled={disabled}
+            disabled={isPendingUpdateSession || isRefetchingSession}
             type="submit"
             className="w-full col-span-2"
           >
-            {disabled ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save"}
+            {isPendingUpdateSession ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              "Save"
+            )}
           </Button>
         </form>
       </PopoverContent>

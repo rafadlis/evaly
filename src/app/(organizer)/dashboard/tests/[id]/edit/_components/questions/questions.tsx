@@ -72,13 +72,6 @@ const Questions = () => {
     }
   );
 
-  const { mutate: updateSession, isPending: isPendingUpdateSession } =
-    trpc.organization.session.update.useMutation({
-      onSuccess() {
-        refetchSessions();
-      },
-    });
-
   const [hideOptions, setHideOptions] = useState(false);
 
   const virtualizer = useWindowVirtualizer({
@@ -142,22 +135,10 @@ const Questions = () => {
                     refetchSessions();
                     refetchSession();
                   }}
-                  onValueChange={async (value) => {
-                    await updateSession({
-                      sessionId: selectedSession as string,
-                      data: {
-                        duration: value,
-                      },
-                    });
-                    // Manually refetch the session data after updating
-                    refetchSession();
-                  }}
                   disabled={
-                    isPendingUpdateSession ||
                     isPendingSession ||
                     isRefetchingSession
                   }
-                  value={dataSession?.duration || 0}
                 />
                 <DialogDeleteSession
                   disabled={
