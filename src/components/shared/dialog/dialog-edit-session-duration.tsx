@@ -51,8 +51,7 @@ const DialogEditSessionDuration = ({
     setMinutes(minutes);
   }, [dataSession]);
 
-  const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSave = async () => {
     const newTotalMinutes = hours * 60 + minutes;
 
     await updateSession({
@@ -82,7 +81,7 @@ const DialogEditSessionDuration = ({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-max">
-        <form onSubmit={handleSave} className="grid grid-cols-2 gap-4">
+        <form className="grid grid-cols-2 gap-4">
           <div>
             <Label>Hours</Label>
             <Input
@@ -107,7 +106,8 @@ const DialogEditSessionDuration = ({
           </div>
           <Button
             disabled={isPendingUpdateSession || isRefetchingSession}
-            type="submit"
+            onClick={handleSave}
+            type="button"
             className="w-full col-span-2"
           >
             {isPendingUpdateSession ? (

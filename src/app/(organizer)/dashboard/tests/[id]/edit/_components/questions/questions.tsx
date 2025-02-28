@@ -2,9 +2,7 @@ import { Button } from "@/components/ui/button";
 import {
   ListTreeIcon,
   ListXIcon,
-  Loader2,
-  PencilLine,
-  PlusIcon,
+  Loader2, PlusIcon
 } from "lucide-react";
 import CardQuestion from "./card-question";
 import {
@@ -16,24 +14,13 @@ import {
 } from "@/components/ui/card";
 import SectionSidebar from "./section-sidebar";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { useSelectedSession } from "../../_hooks/use-selected-session";
 import { trpc } from "@/trpc/trpc.client";
 import DialogDeleteSession from "@/components/shared/dialog/dialog-delete-session";
 import { Skeleton } from "@/components/ui/skeleton";
 import DialogEditSessionDuration from "@/components/shared/dialog/dialog-edit-session-duration";
+import DialogEditSession from "@/components/shared/dialog/dialog-edit-session";
 
 const Questions = () => {
   const [selectedSession, setSelectedSession] = useSelectedSession();
@@ -106,7 +93,7 @@ const Questions = () => {
             <div className="flex flex-row items-start">
               <CardTitle className="flex-1 flex flex-row flex-wrap items-center gap-2">
                 {dataSession?.order}. {dataSession?.title || "Untitled session"}
-                <DialogChangeSessionDetail />
+                <DialogEditSession sessionId={selectedSession as string} />
               </CardTitle>
               <div className="flex flex-row gap-2">
                 <Button
@@ -155,10 +142,7 @@ const Questions = () => {
               </div>
             </div>
             <CardDescription className="max-w-md flex flex-row items-end gap-2">
-              <span className="flex-1">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam
-                quas dicta voluptas neque libero velit ullam atque aspernatur!
-              </span>
+                {dataSession?.description || "No description"}
             </CardDescription>
           </CardHeader>
           {dataQuestions?.length ? (
@@ -245,63 +229,6 @@ const SeparatorAdd = ({
   );
 };
 
-const DialogChangeSessionDetail = () => {
-  const [open, setOpen] = useState(false);
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button size={"icon-xs"} variant={"ghost"} rounded={false}>
-          <PencilLine />
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="space-y-2">
-        <DialogHeader>
-          <DialogTitle>Edit Session&apos;s</DialogTitle>
-          <DialogDescription className="hidden"></DialogDescription>
-        </DialogHeader>
-        <div className="flex flex-col gap-2">
-          <Label>Title</Label>
-          <Input placeholder="Type session's title here..." />
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label>Duration</Label>
-          <div className="flex flex-row flex-wrap gap-2">
-            <Button rounded={false} size={"xs"} variant={"outline"}>
-              5m
-            </Button>
-            <Button rounded={false} size={"xs"}>
-              10m
-            </Button>
-            <Button rounded={false} size={"xs"} variant={"outline"}>
-              25m
-            </Button>
-            <Button rounded={false} size={"xs"} variant={"outline"}>
-              30m
-            </Button>
-            <Button rounded={false} size={"xs"} variant={"outline"}>
-              Custom
-            </Button>
-          </div>
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label>Description (Optional)</Label>
-          <Textarea placeholder="Type session's description here..." />
-        </div>
-        <DialogFooter className="mt-0">
-          <Button
-            onClick={() => {
-              setOpen(false);
-            }}
-            variant={"secondary"}
-          >
-            Back
-          </Button>
-          <Button>Save</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-};
 
 const EmptyQuestion = ({
   refetch,
