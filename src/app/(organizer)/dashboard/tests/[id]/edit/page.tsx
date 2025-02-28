@@ -7,7 +7,7 @@ import Setting from "./_components/setting/setting";
 import { useTabsState } from "./_hooks/use-tabs-state";
 
 const DetailTestPage = () => {
-  const [tabs, setTabs] = useTabsState()
+  const [tabs, setTabs] = useTabsState();
 
   return (
     <div className="container min-h-dvh">
