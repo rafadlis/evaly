@@ -1,20 +1,29 @@
 "use client";
 import DialogCreateTest from "@/components/shared/dialog/dialog-create-test";
-import { Label } from "@/components/ui/label";
 import { trpc } from "@/trpc/trpc.client";
 import { Link } from "@/components/shared/progress-bar";
 import { parseAsInteger, useQueryStates } from "nuqs";
-import dayjs from "dayjs";
 import {
-    Pagination,
-    PaginationContent,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Separator } from "@/components/ui/separator";
 import LoadingTest from "@/components/shared/loading/loading-test";
+import {
+  Calendar,
+  Clock,
+  MoreHorizontal,
+  PencilLine,
+  Trash2Icon,
+  Users,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import dayjs from "dayjs";
 
 const DashboardPageClient = () => {
   const [queryStates, setQueryStates] = useQueryStates({
@@ -59,19 +68,56 @@ const DashboardPageClient = () => {
         <h1 className="text-2xl font-bold">Dashboard</h1>
         <DialogCreateTest />
       </div>
-      <div className="flex flex-col mt-10 min-h-dvh">
+      <div className="flex flex-col mt-10 min-h-dvh gap-4">
         {tests.map((e) => (
-          <Link
-            href={`/dashboard/tests/${e.id}/edit`}
-            key={e.id}
-            className="flex flex-row px-3 py-2 hover:bg-secondary -mx-3 rounded-md transition-colors"
-          >
-            <div className="flex flex-col">
-              <h1>{e.title || "Untitled test"}</h1>
-              <div>
-                <Label className="text-sm">
-                  Edited {dayjs(e.updatedAt).format("MMM DD")}
-                </Label>
+          <Link href={`/dashboard/tests/${e.id}/edit`} key={e.id}>
+            <div
+              key={e.id}
+              className="p-4 border rounded-xl transition-all bg-background w-full hover:border-foreground/50 active:border-foreground"
+            >
+              <div className="flex justify-between items-start mb-3">
+                <div>
+                  <h3 className="font-medium text-lg">
+                    {e.title || "Untitled Test"}
+                  </h3>
+                  <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                    <Badge variant={"secondary"}>{e.type}</Badge>
+                    <Badge variant={"ghost"}>
+                      <Clock size={14} />
+                      <span>10m</span>
+                    </Badge>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <span className={`px-3 py-1 text-xs rounded-full`}>
+                    Active
+                  </span>
+                  <button className="text-muted-foreground hover:text-foreground">
+                    <MoreHorizontal size={20} />
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-4 text-sm pt-2 border-t mt-2 text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <Users size={16} />
+                  <span>10 participants</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Calendar size={16}  />
+                  <span>Created on {dayjs(e.createdAt).format("DD MMM YYYY")}</span>
+                </div>
+
+                <div className="ml-auto flex gap-1">
+                  <Button variant={"ghost"} size={"icon-xs"} rounded={false}>
+                    <PencilLine />
+                  </Button>
+                  <Separator orientation="vertical" />
+                  <Button variant={"ghost"} size={"icon-xs"} rounded={false}>
+                    <Trash2Icon />
+                  </Button>
+                </div>
               </div>
             </div>
           </Link>
