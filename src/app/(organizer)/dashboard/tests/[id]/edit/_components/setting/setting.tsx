@@ -17,7 +17,7 @@ const Setting = () => {
             </Label>
           </div>
           <div className="flex-1 flex flex-row flex-wrap gap-4">
-            <Card className="w-2xs p-3 ring-1 ring-offset-4 cursor-pointer relative">
+            <Card className="w-2xs p-3 border-foreground cursor-pointer relative">
               <CheckCircle2 size={18} className="absolute top-2 right-2" />
               <h1 className="font-medium text-sm">Self-paced Test</h1>
               <Label>

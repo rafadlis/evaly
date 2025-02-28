@@ -1,29 +1,57 @@
 import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { trpc } from "@/trpc/trpc.client";
 import { Trash2Icon } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 const DialogDeleteSession = ({
   className,
+  disabled = false,
   dialogTrigger = (
-    <Button size={"icon-xs"} variant={"outline"} className={cn(className)}>
+    <Button
+      disabled={disabled}
+      size={"icon-xs"}
+      variant={"outline"}
+      className={cn(className)}
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
+    >
       <Trash2Icon />
     </Button>
   ),
+  sessionId,
+  onSuccess,
 }: {
   className?: string;
+  disabled?: boolean;
   dialogTrigger?: React.ReactNode;
+  sessionId: string;
+  onSuccess: () => void;
 }) => {
+  const [open, setOpen] = useState(false);
+  const { mutate: deleteSession, isPending } =
+    trpc.organization.session.delete.useMutation({
+      onSuccess: () => {
+        onSuccess();
+        setOpen(false);
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{dialogTrigger}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -33,10 +61,21 @@ const DialogDeleteSession = ({
             be removed
           </DialogDescription>
         </DialogHeader>
-        {/* <CardSession data={} /> */}
         <DialogFooter>
-          <Button variant={"secondary"}>Back</Button>
-          <Button variant={"destructive"}>Delete</Button>
+          <Button variant={"secondary"} onClick={() => setOpen(false)}>
+            Back
+          </Button>
+          <Button
+            variant={"destructive"}
+            disabled={isPending}
+            onClick={() => {
+              deleteSession({
+                sessionId,
+              });
+            }}
+          >
+            {isPending ? "Deleting..." : "Delete"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

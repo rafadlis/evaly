@@ -16,14 +16,13 @@ import LoadingTest from "@/components/shared/loading/loading-test";
 import {
   Calendar,
   Clock,
-  MoreHorizontal,
   PencilLine,
-  Trash2Icon,
-  Users,
+  Trash2Icon, Users
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import dayjs from "dayjs";
+import DialogDeleteTest from "@/components/shared/dialog/dialog-delete-test";
 
 const DashboardPageClient = () => {
   const [queryStates, setQueryStates] = useQueryStates({
@@ -90,12 +89,12 @@ const DashboardPageClient = () => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <Badge variant={"default"}>
+                  <Badge
+                    variant={"default"}
+                    className="bg-emerald-600/10 text-emerald-600 border border-emerald-600/10"
+                  >
                     Active
                   </Badge>
-                  <button className="text-muted-foreground hover:text-foreground">
-                    <MoreHorizontal size={20} />
-                  </button>
                 </div>
               </div>
 
@@ -105,18 +104,40 @@ const DashboardPageClient = () => {
                   <span>10 participants</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Calendar size={16}  />
-                  <span>Created on {dayjs(e.createdAt).format("DD MMM YYYY")}</span>
+                  <Calendar size={16} />
+                  <span>
+                    Created on {dayjs(e.createdAt).format("DD MMM YYYY")}
+                  </span>
                 </div>
 
                 <div className="ml-auto flex gap-1">
-                  <Button variant={"ghost"} size={"icon-xs"} rounded={false}>
+                  <Button
+                    variant={"ghost"}
+                    size={"icon-xs"}
+                    rounded={false}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                  >
                     <PencilLine />
                   </Button>
                   <Separator orientation="vertical" />
-                  <Button variant={"ghost"} size={"icon-xs"} rounded={false}>
-                    <Trash2Icon />
-                  </Button>
+                  <DialogDeleteTest
+                    dialogTrigger={
+                      <Button
+                        variant={"ghost"}
+                        size={"icon-xs"}
+                        onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                        }}
+                        rounded={false}
+                      >
+                        <Trash2Icon />
+                      </Button>
+                    }
+                  />
                 </div>
               </div>
             </div>

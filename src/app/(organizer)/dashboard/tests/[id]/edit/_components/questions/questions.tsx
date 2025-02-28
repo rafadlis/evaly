@@ -1,11 +1,10 @@
 import { Button } from "@/components/ui/button";
 import {
-  ClockIcon,
   ListTreeIcon,
   ListXIcon,
   Loader2,
   PencilLine,
-  PlusIcon
+  PlusIcon,
 } from "lucide-react";
 import CardQuestion from "./card-question";
 import {
@@ -33,20 +32,37 @@ import { useState } from "react";
 import { useSelectedSession } from "../../_hooks/use-selected-session";
 import { trpc } from "@/trpc/trpc.client";
 import DialogDeleteSession from "@/components/shared/dialog/dialog-delete-session";
+import { Skeleton } from "@/components/ui/skeleton";
+import DialogEditSessionDuration from "@/components/shared/dialog/dialog-edit-session-duration";
 
 const Questions = () => {
-  const [selectedSession] = useSelectedSession();
+  const [selectedSession, setSelectedSession] = useSelectedSession();
 
-  const { data: dataSession } =
-    trpc.organization.session.byId.useQuery(
-      { id: selectedSession as string },
-      { enabled: !!selectedSession }
-    );
+  const {
+    data: dataSession,
+    isRefetching: isRefetchingSession,
+    isPending: isPendingSession,
+    refetch: refetchSession,
+  } = trpc.organization.session.byId.useQuery(
+    { id: selectedSession as string },
+    { enabled: !!selectedSession }
+  );
+
+  const {
+    refetch: refetchSessions,
+    data: dataSessions,
+    isRefetching: isRefetchingSessions,
+    isPending: isPendingSessions,
+  } = trpc.organization.session.sessionByTestId.useQuery(
+    { testId: dataSession?.testId as string },
+    { enabled: !!dataSession?.testId }
+  );
 
   const {
     data: dataQuestions,
     isRefetching: isRefetchingQuestions,
     refetch: refetchQuestions,
+    isPending: isPendingQuestions,
   } = trpc.organization.question.allByReferenceId.useQuery(
     {
       referenceId: selectedSession as string,
@@ -56,100 +72,157 @@ const Questions = () => {
     }
   );
 
+  const { mutate: updateSession, isPending: isPendingUpdateSession } =
+    trpc.organization.session.update.useMutation({
+      onSuccess() {
+        refetchSessions();
+      },
+    });
+
   const [hideOptions, setHideOptions] = useState(false);
 
   const virtualizer = useWindowVirtualizer({
     count: dataQuestions?.length || 0,
-    estimateSize: () => 500,
+    estimateSize: () => 200,
   });
 
   const virtualItems = virtualizer.getVirtualItems();
 
+  const onSuccessDeleteSession = async () => {
+    await refetchQuestions();
+    await refetchSessions();
+
+    // Find the next available session to select after deletion
+    if (dataSessions && dataSessions.length > 0) {
+      // Set the first available session as selected
+      setSelectedSession(dataSessions[0].id);
+    } else {
+      // If no sessions left, clear the selection
+      setSelectedSession(null);
+    }
+  };
+
   return (
     <div className="flex flex-row gap-6">
       <SectionSidebar />
-      <Card className="flex-1 min-h-[70vh] border border-dashed overflow-clip">
-        <CardHeader className="sticky top-0 bg-background z-10 pb-4">
-          <div className="flex flex-row items-start">
-            <CardTitle className="flex-1 flex flex-row flex-wrap items-center gap-2">
-              {dataSession?.order}. {dataSession?.title || "Untitled session"}
-              <DialogChangeSessionDetail />
-            </CardTitle>
-            <div className="flex flex-row gap-2">
-              <Button
-                size={"xs"}
-                variant={hideOptions ? "default" : "outline"}
-                onClick={() => {
-                  setHideOptions((prev) => !prev);
-                }}
-              >
-                {hideOptions ? (
-                  <>
-                    <ListTreeIcon />
-                    Show Options
-                  </>
-                ) : (
-                  <>
-                    <ListXIcon />
-                    Hide Options
-                  </>
-                )}
-              </Button>
-              <Button size={"xs"} variant={"outline"}>
-                <ClockIcon /> 40min
-              </Button>
-              <DialogDeleteSession />
-            </div>
-          </div>
-          <CardDescription className="max-w-md flex flex-row items-end gap-2">
-            <span className="flex-1">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam
-              quas dicta voluptas neque libero velit ullam atque aspernatur!
-            </span>
-          </CardDescription>
-        </CardHeader>
-        {dataQuestions?.length ? (
-          <CardContent className="pt-0 overflow-auto">
-            <div
-              className="relative"
-              style={{ height: `${virtualizer.getTotalSize()}px` }}
-            >
-              <div
-                className="absolute top-0 left-0 w-full"
-                style={{
-                  transform: `translateY(${virtualItems[0]?.start ?? 0}px)`,
-                }}
-              >
-                {virtualItems.map(({ index }) => {
-                  const data = dataQuestions?.[index];
-                  return (
-                    <div
-                      key={data.id}
-                      ref={virtualizer.measureElement}
-                      data-index={index}
-                    >
-                      <CardQuestion hideOptions={hideOptions} data={data} />
-                      <SeparatorAdd
-                        referenceId={dataSession?.id}
-                        refetch={refetchQuestions}
-                        order={(data.order || 0) + 1}
-                      />
-                    </div>
-                  );
-                })}
+      {isPendingQuestions ? (
+        <Skeleton className="flex-1 h-[60vh]" />
+      ) : dataSession ? (
+        <Card className="border border-dashed overflow-clip flex-1">
+          <CardHeader className="sticky top-14 bg-background z-10 pb-4">
+            <div className="flex flex-row items-start">
+              <CardTitle className="flex-1 flex flex-row flex-wrap items-center gap-2">
+                {dataSession?.order}. {dataSession?.title || "Untitled session"}
+                <DialogChangeSessionDetail />
+              </CardTitle>
+              <div className="flex flex-row gap-2">
+                <Button
+                  size={"xs"}
+                  variant={hideOptions ? "default" : "outline"}
+                  onClick={() => {
+                    setHideOptions((prev) => !prev);
+                  }}
+                >
+                  {hideOptions ? (
+                    <>
+                      <ListTreeIcon />
+                      Show Options
+                    </>
+                  ) : (
+                    <>
+                      <ListXIcon />
+                      Hide Options
+                    </>
+                  )}
+                </Button>
+
+                <DialogEditSessionDuration
+                  sessionId={selectedSession as string}
+                  onSuccess={() => {
+                    refetchSessions();
+                    refetchSession();
+                  }}
+                  onValueChange={async (value) => {
+                    await updateSession({
+                      sessionId: selectedSession as string,
+                      data: {
+                        duration: value,
+                      },
+                    });
+                    // Manually refetch the session data after updating
+                    refetchSession();
+                  }}
+                  disabled={
+                    isPendingUpdateSession ||
+                    isPendingSession ||
+                    isRefetchingSession
+                  }
+                  value={dataSession?.duration || 0}
+                />
+                <DialogDeleteSession
+                  disabled={
+                    isRefetchingQuestions ||
+                    isRefetchingSessions ||
+                    isPendingQuestions ||
+                    isPendingSessions
+                  }
+                  sessionId={selectedSession as string}
+                  onSuccess={() => {
+                    onSuccessDeleteSession();
+                  }}
+                />
               </div>
             </div>
-          </CardContent>
-        ) : (
-          <CardContent>
-            <EmptyQuestion
-              referenceId={dataSession?.id}
-              refetch={refetchQuestions}
-              isRefetching={isRefetchingQuestions}
-            />
-          </CardContent>
-        )}
-      </Card>
+            <CardDescription className="max-w-md flex flex-row items-end gap-2">
+              <span className="flex-1">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam
+                quas dicta voluptas neque libero velit ullam atque aspernatur!
+              </span>
+            </CardDescription>
+          </CardHeader>
+          {dataQuestions?.length ? (
+            <CardContent className="pt-0">
+              <div
+                className="relative"
+                style={{ height: `${virtualizer.getTotalSize()}px` }}
+              >
+                <div
+                  className="absolute top-0 left-0 w-full"
+                  style={{
+                    transform: `translateY(${virtualItems[0]?.start ?? 0}px)`,
+                  }}
+                >
+                  {virtualItems.map(({ index }) => {
+                    const data = dataQuestions?.[index];
+                    return (
+                      <div
+                        key={data.id}
+                        ref={virtualizer.measureElement}
+                        data-index={index}
+                      >
+                        <CardQuestion hideOptions={hideOptions} data={data} />
+                        <SeparatorAdd
+                          referenceId={dataSession?.id}
+                          refetch={refetchQuestions}
+                          order={(data.order || 0) + 1}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </CardContent>
+          ) : (
+            <CardContent className="pt-0">
+              <EmptyQuestion
+                referenceId={dataSession?.id}
+                refetch={refetchQuestions}
+                isRefetching={isRefetchingQuestions}
+              />
+            </CardContent>
+          )}
+        </Card>
+      ) : null}
     </div>
   );
 };
@@ -170,7 +243,7 @@ const SeparatorAdd = ({
       },
     });
 
-  const isPending = isPendingCreateQuestion
+  const isPending = isPendingCreateQuestion;
 
   return (
     <div className="h-8 flex items-center justify-center group/separator relative">

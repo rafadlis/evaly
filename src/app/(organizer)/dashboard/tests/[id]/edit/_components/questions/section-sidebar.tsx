@@ -5,13 +5,14 @@ import { useSelectedSession } from "../../_hooks/use-selected-session";
 import { useParams } from "next/navigation";
 import { trpc } from "@/trpc/trpc.client";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import CardSession from "@/components/shared/card/card-session";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Reorder } from "motion/react";
 
 const SectionSidebar = ({ className }: { className?: string }) => {
   return (
-    <div className={cn("w-[240px] sticky top-4 h-max pb-20", className)}>
+    <div className={cn("w-[240px]  h-max pb-20", className)}>
       <ListSession />
       <AddSession />
     </div>
@@ -22,16 +23,44 @@ const ListSession = () => {
   const { id } = useParams();
   const [selectedSession, setSelectedSession] = useSelectedSession();
 
-  const { data, isPending, isRefetching } =
+  const { data, isPending, isRefetching, refetch } =
     trpc.organization.session.sessionByTestId.useQuery({
       testId: id as string,
     });
+
+  const { refetch: refetchSessionById } =
+    trpc.organization.session.byId.useQuery(
+      {
+        id: selectedSession as string,
+      },
+      {
+        enabled: !!selectedSession,
+      }
+    );
+
+  const [orderedData, setOrderedData] = useState<typeof data>([]);
+
+  useEffect(() => {
+    if (data) {
+      setOrderedData(data);
+    }
+  }, [data]);
 
   useEffect(() => {
     if (data?.length && !selectedSession) {
       setSelectedSession(data[0].id);
     }
   }, [data, selectedSession, setSelectedSession]);
+
+  const { mutateAsync: updateOrder, isPending: isPendingUpdateOrder } =
+    trpc.organization.session.updateOrder.useMutation();
+
+  const onChangeOrder = async () => {
+    const sessionIds = orderedData?.map((e) => e.id) || [];
+    await updateOrder({ sessionIds });
+    await refetch();
+    await refetchSessionById();
+  };
 
   if (isPending) {
     return (
@@ -44,27 +73,48 @@ const ListSession = () => {
     );
   }
 
-  if (!data || !data.length) {
+  if (!data || !data.length || !orderedData) {
     return <div>No session found</div>;
   }
 
   return (
     <ScrollArea>
-      <div
+      <Reorder.Group
         className={cn(
           "flex flex-col gap-2 max-h-[60vh]",
-          isRefetching ? "animate-pulse opacity-80" : ""
+          isRefetching || isPendingUpdateOrder ? "animate-pulse opacity-80" : ""
         )}
+        axis="y"
+        values={orderedData}
+        onReorder={setOrderedData}
       >
-        {data?.map((e) => (
-          <CardSession
-            data={e}
+        {orderedData?.map((e) => (
+          <Reorder.Item
             key={e.id}
-            isSelected={e.id === selectedSession}
-            onClick={() => setSelectedSession(e.id)}
-          />
+            value={e}
+            onDragEnd={onChangeOrder}
+            dragListener={isPendingUpdateOrder ? false : true}
+          >
+            <CardSession
+              data={e}
+              key={e.id}
+              isSelected={e.id === selectedSession}
+              onClick={() => setSelectedSession(e.id)}
+              onDeleteSuccess={async () => {
+                await refetch();
+                if (e.id === selectedSession) {
+                  const nearestSession = data.find(
+                    (session) => session.id !== e.id
+                  );
+                  if (nearestSession) {
+                    setSelectedSession(nearestSession.id);
+                  }
+                }
+              }}
+            />
+          </Reorder.Item>
         ))}
-      </div>
+      </Reorder.Group>
       <ScrollBar />
     </ScrollArea>
   );

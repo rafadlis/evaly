@@ -16,7 +16,7 @@ export function makeQueryClient() {
          * If set to `Infinity`, the data will never be considered stale.
          * If set to a function, the function will be executed with the query to compute a `staleTime`.
          * Don't set it to 0, unless you want to disable the cache entirely. and it will accidently make the request doubled */
-        staleTime: 100, // 0.1 seconds, will help to reduce the number of requests, its good for SSR
+        staleTime: 0, // 0 seconds, will help to reduce the number of requests, its good for SSR
         /**
          * The time in milliseconds that unused/inactive cache data remains in memory.
          * When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration.

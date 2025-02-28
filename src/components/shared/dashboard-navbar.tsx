@@ -6,28 +6,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 import { usePathname } from "next/navigation";
 import { Link } from "./progress-bar";
+import { useTheme } from "next-themes";
 
-interface NavbarProps {
-  isDarkMode?: boolean;
-  toggleDarkMode?: () => void;
-}
-
-export function DashboardNavbar({ isDarkMode, toggleDarkMode }: NavbarProps) {
+export function DashboardNavbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const [activeItem, setActiveItem] = useState("/dashboard");
+  const { setTheme,theme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -73,11 +70,11 @@ export function DashboardNavbar({ isDarkMode, toggleDarkMode }: NavbarProps) {
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center">
+            <div className="hidden md:flex items-center gap-0.5">
               {navItems.map((item) => (
                 <Link key={item.href} href={item.href}>
                   <Button
-                  size={"sm"}
+                    size={"sm"}
                     variant={activeItem === item.href ? "default" : "ghost"}
                     className=""
                   >
@@ -95,18 +92,18 @@ export function DashboardNavbar({ isDarkMode, toggleDarkMode }: NavbarProps) {
               <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500"></span>
             </Button>
 
-            {/* <Button
+            <Button
               variant="ghost"
               size="icon"
-              onClick={toggleDarkMode}
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className="hidden sm:flex"
             >
-              {isDarkMode ? (
+              {theme === "light" ? (
                 <Sun className="h-5 w-5" />
               ) : (
                 <Moon className="h-5 w-5" />
               )}
-            </Button> */}
+            </Button>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -185,15 +182,15 @@ export function DashboardNavbar({ isDarkMode, toggleDarkMode }: NavbarProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={toggleDarkMode}
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                 className="flex items-center"
               >
-                {isDarkMode ? (
+                {theme === "light" ? (
                   <Sun className="h-4 w-4 mr-2" />
                 ) : (
                   <Moon className="h-4 w-4 mr-2" />
                 )}
-                {isDarkMode ? "Light Mode" : "Dark Mode"}
+                {theme === "light" ? "Light Mode" : "Dark Mode"}
               </Button>
             </div>
           </div>
