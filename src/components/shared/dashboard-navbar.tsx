@@ -75,15 +75,14 @@ export function DashboardNavbar({ isDarkMode, toggleDarkMode }: NavbarProps) {
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center">
               {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                >
-                    <Button variant={
-                        activeItem === item.href ? "secondary" : "link"
-                    } className="" rounded={false}>
-                        {item.name}
-                    </Button>
+                <Link key={item.href} href={item.href}>
+                  <Button
+                  size={"sm"}
+                    variant={activeItem === item.href ? "default" : "ghost"}
+                    className=""
+                  >
+                    {item.name}
+                  </Button>
                 </Link>
               ))}
             </div>
