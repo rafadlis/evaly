@@ -90,9 +90,9 @@ const DashboardPageClient = () => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <span className={`px-3 py-1 text-xs rounded-full`}>
+                  <Badge variant={"default"}>
                     Active
-                  </span>
+                  </Badge>
                   <button className="text-muted-foreground hover:text-foreground">
                     <MoreHorizontal size={20} />
                   </button>
