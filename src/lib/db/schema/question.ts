@@ -19,6 +19,31 @@ export const question = pgTable(
     question: text("question"),
     referenceId: varchar("reference_id", { length: 255 }).notNull(),
     order: smallint("order"),
+    type: varchar("type", {
+      length: 20,
+      enum: [
+        "single-choice", // Participant selects 1 correct answer (radio buttons)
+        "multiple-choice", // Participant can select more than 1 correct answer (checkboxes)
+        "yes-or-no", // Simple binary choice (Yes/No)
+        "point-based", // Answer earns points based on correctness
+        "text-field", // Open-ended text response
+        "file-upload", // Participant uploads a file as an answer
+        "fill-the-blank", // Participant fills in missing words in a sentence
+        "audio-response", // Participant records and submits an audio response
+        "video-response", // Participant records and submits a video response
+        "dropdown", // Single-choice selection from a dropdown menu
+        "ranking", // Participants reorder options based on priority/preference
+        "slider-scale", // Select a value on a sliding scale (e.g., 1-10)
+        "date-picker", // Select a date from a calendar input
+        "time-picker", // Select a specific time
+        "image-choice", // Choose an answer by selecting an image
+        "matching-pairs", // Drag & drop or dropdown-based matching of related terms
+        "matrix", // Grid-based response format for rating multiple items at once
+        "hotspot", // Click on a specific area in an image as the answer
+        "formula-input", // Input mathematical expressions or equations
+        "code-editor" // Answer by writing and submitting code (for programming assessments)
+      ]
+    }).default("multiple-choice"),
     createdAt: timestamp("created_at", {
       mode: "string",
       withTimezone: true,

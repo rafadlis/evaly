@@ -7,7 +7,7 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
   return (
     <TanstackQueryProvider>
       <NuqsProvider>
-        <ProgressBar className="bg-foreground fixed bottom-0 z-[100] h-1">{children}</ProgressBar>
+        <ProgressBar className="bg-foreground fixed top-0  z-[100] h-1">{children}</ProgressBar>
       </NuqsProvider>
     </TanstackQueryProvider>
   );

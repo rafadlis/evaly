@@ -7,6 +7,7 @@ import { trpc } from "@/trpc/trpc.client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect } from "react";
 import CardSession from "@/components/shared/card/card-session";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 const SectionSidebar = ({ className }: { className?: string }) => {
   return (
@@ -48,24 +49,26 @@ const ListSession = () => {
   }
 
   return (
-    <div
-      className={cn(
-        "flex flex-col gap-2 max-h-[60vh] overflow-y-auto hide-scrollbar",
-        isRefetching ? "animate-pulse opacity-80" : ""
-      )}
-    >
-      {data?.map((e) => (
-        <CardSession
-          data={e}
-          key={e.id}
-          isSelected={e.id === selectedSession}
-          onClick={() => setSelectedSession(e.id)}
-        />
-      ))}
-    </div>
+    <ScrollArea>
+      <div
+        className={cn(
+          "flex flex-col gap-2 max-h-[60vh]",
+          isRefetching ? "animate-pulse opacity-80" : ""
+        )}
+      >
+        {data?.map((e) => (
+          <CardSession
+            data={e}
+            key={e.id}
+            isSelected={e.id === selectedSession}
+            onClick={() => setSelectedSession(e.id)}
+          />
+        ))}
+      </div>
+      <ScrollBar />
+    </ScrollArea>
   );
 };
-
 
 const AddSession = () => {
   const { id } = useParams();

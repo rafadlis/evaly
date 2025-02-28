@@ -5,8 +5,7 @@ import {
   ListXIcon,
   Loader2,
   PencilLine,
-  PlusIcon,
-  Trash2Icon,
+  PlusIcon
 } from "lucide-react";
 import CardQuestion from "./card-question";
 import {
@@ -33,6 +32,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { useSelectedSession } from "../../_hooks/use-selected-session";
 import { trpc } from "@/trpc/trpc.client";
+import DialogDeleteSession from "@/components/shared/dialog/dialog-delete-session";
 
 const Questions = () => {
   const [selectedSession] = useSelectedSession();
@@ -98,29 +98,7 @@ const Questions = () => {
               <Button size={"xs"} variant={"outline"}>
                 <ClockIcon /> 40min
               </Button>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button size={"icon-xs"} variant={"outline"}>
-                    <Trash2Icon />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>
-                      Are you sure want to delete this session?
-                    </DialogTitle>
-                    <DialogDescription>
-                      All information related to this session including all
-                      question will be removed
-                    </DialogDescription>
-                  </DialogHeader>
-                  {/* <CardSession data={} /> */}
-                  <DialogFooter>
-                    <Button variant={"secondary"}>Back</Button>
-                    <Button variant={"destructive"}>Delete</Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
+              <DialogDeleteSession />
             </div>
           </div>
           <CardDescription className="max-w-md flex flex-row items-end gap-2">
@@ -154,7 +132,6 @@ const Questions = () => {
                       <SeparatorAdd
                         referenceId={dataSession?.id}
                         refetch={refetchQuestions}
-                        isRefetching={isRefetchingQuestions}
                         order={(data.order || 0) + 1}
                       />
                     </div>
@@ -180,12 +157,10 @@ const Questions = () => {
 const SeparatorAdd = ({
   refetch,
   referenceId,
-  isRefetching,
   order,
 }: {
   refetch?: () => void;
   referenceId?: string;
-  isRefetching?: boolean;
   order: number;
 }) => {
   const { mutate: createQuestion, isPending: isPendingCreateQuestion } =
@@ -195,7 +170,7 @@ const SeparatorAdd = ({
       },
     });
 
-  const isPending = isPendingCreateQuestion || isRefetching;
+  const isPending = isPendingCreateQuestion
 
   return (
     <div className="h-8 flex items-center justify-center group/separator relative">
