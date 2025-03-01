@@ -7,12 +7,12 @@ import TiptapImage from "@tiptap/extension-image";
 import { UploadImagesPlugin } from "../plugins/upload-images";
 import { cx } from "class-variance-authority";
 import UpdatedImage from "./updated-image";
-import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 import CodeBlock from "./code-block";
 import { createLowlight, all } from "lowlight";
 
-const lowlight = createLowlight(all)
+const lowlight = createLowlight(all);
 
 export const extensions = (params: { limit?: number }) => [
   TextStyle.configure(),
@@ -56,11 +56,12 @@ export const extensions = (params: { limit?: number }) => [
       class: cx("rounded-lg border border-muted"),
     },
   }),
-  CodeBlockLowlight
-        .extend({
-          addNodeView() {
-            return ReactNodeViewRenderer(CodeBlock)
-          },
-        })
-        .configure({ lowlight }),
+  CodeBlockLowlight.extend({
+    addNodeView() {
+      return ReactNodeViewRenderer(CodeBlock);
+    },
+  }).configure({
+    lowlight,
+    HTMLAttributes: { class: cx("rounded-lg border border-muted font-mono") },
+  }),
 ];

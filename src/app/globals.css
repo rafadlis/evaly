@@ -156,8 +156,21 @@
   .custom-prose {
     @apply prose prose-sm sm:prose-base dark:prose-invert prose-p:leading-normal prose-li:leading-normal prose-li:m-0 prose-neutral
        prose-headings:mb-3 prose-headings:mt-0 prose-h1:text-3xl prose-h1:mt-8 prose-h2:text-2xl prose-h2:mt-6 prose-h3:text-xl prose-h3:mt-4 prose-p:my-2 prose-a:text-blue-500
-       prose-img:my-2;
+       prose-img:my-2; 
   }
+  
+  .custom-prose > h1:first-child {
+    margin-top: 0;
+  }
+
+  .custom-prose > h2:first-child {
+    margin-top: 0;
+  }
+
+  .custom-prose > h3:first-child {
+    margin-top: 0;
+  }
+
   .tiptap {
     /* :first-child {
       margin-top: 0;
@@ -167,7 +180,7 @@
       background: var(--code-background);
       border-radius: 0.5rem;
       color: var(--code-foreground);
-      font-family: 'JetBrainsMono', monospace;
+      font-family: 'Geist_Mono', monospace;
       margin: 1.5rem 0;
       padding: 0.75rem 1rem;
   

@@ -51,6 +51,7 @@
     "dayjs": "^1.11.13",
     "drizzle-orm": "^0.39.3",
     "drizzle-zod": "^0.7.0",
+    "highlight.js": "^11.11.1",
     "lowlight": "^3.3.0",
     "lucide-react": "^0.475.0",
     "motion": "^12.4.7",
@@ -69,6 +70,7 @@
     "tailwindcss": "^4.0.6",
     "tailwindcss-animate": "^1.0.7",
     "ulidx": "^2.4.1",
+    "vaul": "^1.1.2",
     "zod": "^3.24.2"
   },
   "devDependencies": {

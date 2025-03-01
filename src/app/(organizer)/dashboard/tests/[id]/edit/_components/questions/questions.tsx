@@ -196,6 +196,17 @@ const Questions = () => {
                           className={cn(
                             isRefetchingQuestions ? "cursor-progress" : ""
                           )}
+                          onDeleteSuccess={() => {
+                            const findIndex = localQuestions.findIndex(
+                              (q) => q.id === data.id
+                            );
+                            if (findIndex >= 0) { 
+                              setLocalQuestions((prev) => [
+                                ...prev.slice(0, findIndex),
+                                ...prev.slice(findIndex + 1),
+                              ]);
+                            }
+                          }}
                         />
                         <SeparatorAdd
                           referenceId={dataSession?.id}

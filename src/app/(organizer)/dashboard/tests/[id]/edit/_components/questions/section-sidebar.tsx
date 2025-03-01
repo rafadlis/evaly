@@ -12,7 +12,7 @@ import { Reorder } from "motion/react";
 
 const SectionSidebar = ({ className }: { className?: string }) => {
   return (
-    <div className={cn("w-[240px]  h-max pb-20", className)}>
+    <div className={cn("w-[240px]  h-max pb-20 sticky top-20", className)}>
       <ListSession />
       <AddSession />
     </div>

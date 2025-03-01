@@ -1,22 +1,22 @@
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogTitle,
-} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { DialogHeader, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { GripVertical, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import QuestionTypeSelection from "../question-type-selection";
-import { Separator } from "@/components/ui/separator";
-import { Editor } from "../editor/editor";
 import { trpc } from "@/trpc/trpc.client";
 import { Controller, useForm } from "react-hook-form";
-import { Question, UpdateQuestion } from "@/lib/db/schema";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Question, UpdateQuestion } from "@/lib/db/schema/question";
+import {
+    Drawer,
+    DrawerDescription,
+    DrawerHeader,
+    DrawerTitle,
+} from "../../ui/drawer";
+import { DrawerContent } from "../../ui/drawer";
+import { DrawerClose } from "../../ui/drawer";
+import { DrawerFooter } from "../../ui/drawer";
+import QuestionTypeSelection from "../question-type-selection";
+import { Editor } from "../editor/editor";
+import { Separator } from "@/components/ui/separator";
 
 const DialogEditQuestion = ({
   defaultValue,
@@ -83,7 +83,7 @@ const DialogEditQuestion = ({
   };
 
   return (
-    <Dialog
+    <Drawer
       open={open}
       onOpenChange={(e) => {
         if (!e) {
@@ -92,46 +92,65 @@ const DialogEditQuestion = ({
           setOpen(true);
         }
       }}
+      handleOnly
     >
-      <DialogContent className="lg:min-w-3xl">
-        <ScrollArea className="max-h-[calc(100vh-200px)]">
-        <DialogHeader>
-          <DialogTitle className="flex justify-between items-start">
-            <span>Edit Question</span>
+      <DrawerContent className="h-[80vh]">
+        <div className="flex flex-col container max-w-3xl pb-10 overflow-y-auto hide-scrollbar">
+          <DrawerHeader>
+            <DrawerTitle className="flex justify-between items-start">
+              <span>Edit Question</span>
+              <Controller
+                control={control}
+                name="type"
+                render={({ field }) => (
+                  <QuestionTypeSelection
+                    size={"default"}
+                    variant={"outline-solid"}
+                    value={field.value || undefined}
+                    onValueChange={field.onChange}
+                  />
+                )}
+              />
+            </DrawerTitle>
+            <DrawerDescription className="hidden"></DrawerDescription>
+          </DrawerHeader>
+
+          <div className="mt-2 px-1">
             <Controller
               control={control}
-              name="type"
+              name="question"
               render={({ field }) => (
-                <QuestionTypeSelection
-                  value={field.value || undefined}
-                  onValueChange={field.onChange}
-                />
+                <Editor value={field.value || ""} onChange={field.onChange} />
               )}
             />
-          </DialogTitle>
-          <DialogDescription className="hidden"></DialogDescription>
-        </DialogHeader>
-        <div className="mt-2">
-          <Controller
-            control={control}
-            name="question"
-            render={({ field }) => (
-              <Editor value={field.value || ""} onChange={field.onChange} />
-            )}
-          />
 
-          <Separator className="my-6" />
-          {type === "multiple-choice" ? <MultipleChoiceAnswer /> : null}
+            <Separator className="my-6" />
+            {type === "multiple-choice" ? <MultipleChoiceAnswer /> : null}
+          </div>
         </div>
 
-        <DialogFooter className="sticky bottom-0">
-          <div className="flex flex-row justify-between w-full">
-            <DialogClose asChild>
-              <Button variant={"secondary"}>Back</Button>
-            </DialogClose>
+        <DrawerFooter className="border-t px-0">
+          <div className="flex flex-row justify-between w-full z-50 container max-w-3xl">
+            <div className="flex flex-row gap-2">
+              <DrawerClose asChild>
+                <Button variant={"secondary"}>Back</Button>
+              </DrawerClose>
+              {isDirty ? (
+                <Button
+                  variant={"ghost"}
+                  onClick={() => {
+                    if (defaultValue) {
+                      reset(defaultValue);
+                    }
+                  }}
+                >
+                  Reset
+                </Button>
+              ) : null}
+            </div>
             <div className="flex flex-row gap-2">
               <Button
-                variant={"outline"}
+                variant={"ghost"}
                 onClick={handleSubmit((data) => onSubmit(data, true))}
                 disabled={isPendingUpdateQuestion || !isDirty}
               >
@@ -151,39 +170,37 @@ const DialogEditQuestion = ({
               </Button>
             </div>
           </div>
-        </DialogFooter>
-        </ScrollArea>
-      </DialogContent>
-    </Dialog>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   );
 };
-
 
 const MultipleChoiceAnswer = () => {
   return (
     <div className="flex flex-col gap-4 mt-2 text-sm">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="flex flex-row items-center gap-1">
-                <Button rounded={false} variant={"ghost"} size={"icon-sm"}>
-                  <GripVertical className="text-muted-foreground" />
-                </Button>
-                <div className="flex-1 relative flex flex-row items-center">
-                  <Button
-                    size={"icon-xs"}
-                    className="absolute left-2 select-none"
-                    variant={i == 2 ? "default" : "secondary"}
-                    rounded={false}
-                  >
-                    A
-                  </Button>
-                  <Input
-                    placeholder={`Type options ${i + 1}`}
-                    className="pl-12 h-10"
-                  />
-                </div>
-              </div>
-            ))}
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div key={i} className="flex flex-row items-center gap-1">
+          <div className="flex-1 relative flex flex-row items-center">
+            <Button
+              size={"icon-xs"}
+              className="absolute left-2 select-none"
+              variant={i == 2 ? "default" : "secondary"}
+              rounded={false}
+            >
+              A
+            </Button>
+            <Input
+              placeholder={`Type options ${i + 1}`}
+              className="pl-12 h-10"
+            />
           </div>
+          <Button rounded={false} variant={"ghost"} size={"icon-sm"}>
+            <GripVertical className="text-muted-foreground" />
+          </Button>
+        </div>
+      ))}
+    </div>
   );
 };
 

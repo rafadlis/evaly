@@ -1,6 +1,5 @@
 import {
-    CheckSquare, // Multiple choice
-    Circle, // Single choice
+    CheckSquare, // Single choice
     ToggleLeft, // Yes or No
     BarChart2, // Point based
     AlignLeft, // Text field
@@ -18,7 +17,8 @@ import {
     Grid, // Matrix
     MousePointer, // Hotspot
     SquarePi, // Formula input
-    Code // Code editor
+    Code, // Code editor
+    CircleSlash
 } from "lucide-react";
 
 export type QuestionType = 
@@ -47,7 +47,7 @@ export const questionTypes = {
   "single-choice": {
     value: "single-choice",
     label: "Single Choice",
-    icon: Circle,
+    icon: CircleSlash,
     isHidden: false
   },
   "multiple-choice": {

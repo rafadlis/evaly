@@ -1,9 +1,10 @@
+import DialogDeleteQuestion from "@/components/shared/dialog/dialog-delete-question";
 import QuestionTypeSelection from "@/components/shared/question-type-selection";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { question } from "@/lib/db/schema";
 import { cn } from "@/lib/utils";
-import { ArrowDown, ArrowUp, CircleHelpIcon, Trash2Icon } from "lucide-react";
+import { ArrowDown, ArrowUp, CircleHelpIcon } from "lucide-react";
 
 const CardQuestion = ({
   className,
@@ -12,6 +13,7 @@ const CardQuestion = ({
   onClickEdit,
   onMoveUp,
   onMoveDown,
+  onDeleteSuccess,
 }: {
   className?: string;
   hideOptions?: boolean;
@@ -19,6 +21,7 @@ const CardQuestion = ({
   onClickEdit?: () => void;
   onMoveUp?: () => void;
   onMoveDown?: () => void;
+  onDeleteSuccess?: () => void;
 }) => {
   if (!data) return null;
   return (
@@ -35,7 +38,7 @@ const CardQuestion = ({
             <CircleHelpIcon />
             Question {data.order}
           </Button>
-          <QuestionTypeSelection value="multiple-choice" />
+          <QuestionTypeSelection value={data.type} />
         </div>
         <div className="flex flex-row h-5 justify-end items-center">
           <Button
@@ -60,17 +63,13 @@ const CardQuestion = ({
           >
             <ArrowDown className="text-muted-foreground" />
           </Button>
-          <Button
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-            size={"icon-xs"}
-            variant={"ghost"}
-            rounded={false}
+          <DialogDeleteQuestion
             className="ml-2"
-          >
-            <Trash2Icon className="text-muted-foreground" />
-          </Button>
+            questionId={data.id}
+            onSuccess={() => {
+              onDeleteSuccess?.();
+            }}
+          />
         </div>
       </CardHeader>
       <CardContent>
@@ -78,8 +77,9 @@ const CardQuestion = ({
           className="custom-prose"
           dangerouslySetInnerHTML={{
             __html:
-              data.question ||
-              "<p class='text-muted-foreground italic'>No question content. Click to edit.</p>",
+              !data.question || data.question === "<p></p>"
+                ? "<p class='text-muted-foreground italic'>No question content. Click to edit.</p>"
+                : data.question,
           }}
         />
         {/* {!hideOptions ? (
