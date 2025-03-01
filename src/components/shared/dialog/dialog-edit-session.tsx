@@ -63,7 +63,10 @@ const DialogEditSession = ({ sessionId }: { sessionId: string }) => {
   const onSubmit = (data: UpdateTestSession) => {
     updateSession({
       sessionId,
-      data,
+      data: {
+        ...data,
+        duration: data.duration || 0, // Ensure duration is a number, not null or undefined
+      },
     });
   };
 
