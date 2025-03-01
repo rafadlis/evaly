@@ -149,16 +149,18 @@ const DialogEditQuestion = ({
               ) : null}
             </div>
             <div className="flex flex-row gap-2">
-              <Button
-                variant={"ghost"}
-                onClick={handleSubmit((data) => onSubmit(data, true))}
-                disabled={isPendingUpdateQuestion || !isDirty}
-              >
-                {isPendingUpdateQuestion ? (
-                  <Loader2 className="animate-spin" />
-                ) : null}
-                Save & Close
-              </Button>
+              {isDirty ? (
+                <Button
+                  variant={"ghost"}
+                  onClick={handleSubmit((data) => onSubmit(data, true))}
+                  disabled={isPendingUpdateQuestion || !isDirty}
+                >
+                  {isPendingUpdateQuestion ? (
+                    <Loader2 className="animate-spin" />
+                  ) : null}
+                  Save & Close
+                </Button>
+              ) : null}
               <Button
                 onClick={handleSubmit((data) => onSubmit(data, false))}
                 disabled={isPendingUpdateQuestion || !isDirty}

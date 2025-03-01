@@ -6,6 +6,7 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
 import { ulid } from "ulidx";
 
 export const test = pgTable("test", {
@@ -47,3 +48,13 @@ export const test = pgTable("test", {
     withTimezone: true,
   }),
 });
+
+
+// Types
+export type Test = typeof test.$inferSelect;
+export type InsertTest = typeof test.$inferInsert;
+export type UpdateTest = Partial<InsertTest>;
+
+// Zod
+export const zodInsertTest = createInsertSchema(test);
+export const zodUpdateTest = createInsertSchema(test).partial();

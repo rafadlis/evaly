@@ -52,7 +52,7 @@ export function DashboardNavbar() {
   return (
     <nav
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all bg-background py-3 border-b",
+        "sticky top-0 left-0 flex-1 w-full z-50 transition-all bg-background py-3 border-b",
         isScrolled ? "border-border" : "border-transparent"
       )}
     >
@@ -61,7 +61,7 @@ export function DashboardNavbar() {
           <div className="flex flex-row gap-12 items-center">
             {/* Logo */}
             <Link href="/dashboard" className="flex items-center">
-              <div className="h-6 w-6 rounded-sm bg-primary text-primary-foreground shadow-xl flex items-center justify-center font-bold mr-2">
+              <div className="h-7 w-7 rounded-md bg-gradient-to-tr from-primary to-primary/70 text-primary-foreground shadow-xl flex items-center justify-center font-bold mr-2">
                 E
               </div>
               <span className="text-lg font-semibold hidden sm:block">

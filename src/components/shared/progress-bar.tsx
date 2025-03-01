@@ -33,6 +33,56 @@ export function useProgressBar() {
   return progress;
 }
 
+export function useProgressRouter() {
+  const progress = useProgressBar();
+  const router = useRouter();
+
+  return {
+    ...router,
+    push: (href: string, options?: Parameters<typeof router.push>[1]) => {
+      progress.start();
+      
+      startTransition(() => {
+        router.push(href, options);
+        progress.done();
+      });
+    },
+    replace: (href: string, options?: Parameters<typeof router.replace>[1]) => {
+      progress.start();
+      
+      startTransition(() => {
+        router.replace(href, options);
+        progress.done();
+      });
+    },
+    back: () => {
+      progress.start();
+      
+      startTransition(() => {
+        router.back();
+        progress.done();
+      });
+    },
+    forward: () => {
+      progress.start();
+      
+      startTransition(() => {
+        router.forward();
+        progress.done();
+      });
+    },
+    refresh: () => {
+      progress.start();
+      
+      startTransition(() => {
+        router.refresh();
+        progress.done();
+      });
+    },
+    prefetch: router.prefetch
+  };
+}
+
 export function ProgressBar({
   className,
   children,
