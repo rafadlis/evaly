@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button/button";
-import { Input } from "@/components/ui/input/input";
-import { Label } from "@/components/ui/label/label";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover/popover";
+} from "@/components/ui/popover";
 import { Link } from "lucide-react";
 import { Editor } from "@tiptap/core";
 
@@ -120,7 +120,7 @@ const EditorMenuInsertLink = ({ editor }: { editor: Editor }) => {
       <PopoverTrigger asChild>
         <Button
           size={"icon-sm"}
-          isRounded={false}
+          rounded={false}
           variant={editor.isActive("link") ? "secondary" : "ghost"}
         >
           <Link size={16} />
@@ -153,8 +153,8 @@ const EditorMenuInsertLink = ({ editor }: { editor: Editor }) => {
             <Button
               type="submit"
               className="flex-1"
-              isRounded={false}
-              variant={"contrast"}
+              rounded={false}
+              variant={"default"}
             >
               {editor.isActive("link") ? "Update Link" : "Insert Link"}
             </Button>
@@ -162,7 +162,7 @@ const EditorMenuInsertLink = ({ editor }: { editor: Editor }) => {
             {editor.isActive("link") && (
               <Button
                 type="button"
-                isRounded={false}
+                rounded={false}
                 variant={"destructive"}
                 onClick={handleRemoveLink}
               >
