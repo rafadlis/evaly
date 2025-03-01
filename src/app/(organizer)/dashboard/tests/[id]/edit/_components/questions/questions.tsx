@@ -1,9 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-  ListTreeIcon,
-  ListXIcon,
-  Loader2, PlusIcon
-} from "lucide-react";
+import { ListTreeIcon, ListXIcon, Loader2, PlusIcon } from "lucide-react";
 import CardQuestion from "./card-question";
 import {
   Card,
@@ -14,17 +10,23 @@ import {
 } from "@/components/ui/card";
 import SectionSidebar from "./section-sidebar";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelectedSession } from "../../_hooks/use-selected-session";
 import { trpc } from "@/trpc/trpc.client";
 import DialogDeleteSession from "@/components/shared/dialog/dialog-delete-session";
 import { Skeleton } from "@/components/ui/skeleton";
 import DialogEditSessionDuration from "@/components/shared/dialog/dialog-edit-session-duration";
 import DialogEditSession from "@/components/shared/dialog/dialog-edit-session";
+import { Question } from "@/lib/db/schema/question";
+import DialogEditQuestion from "@/components/shared/dialog/dialog-edit-question";
+import { cn } from "@/lib/utils";
+import { Reorder } from "motion/react";
 
 const Questions = () => {
   const [selectedSession, setSelectedSession] = useSelectedSession();
-
+  const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(
+    null
+  );
   const {
     data: dataSession,
     isRefetching: isRefetchingSession,
@@ -59,10 +61,18 @@ const Questions = () => {
     }
   );
 
+  const [localQuestions, setLocalQuestions] = useState<Question[]>([]);
+
+  useEffect(() => {
+    if (dataQuestions) {
+      setLocalQuestions(dataQuestions);
+    }
+  }, [dataQuestions]);
+
   const [hideOptions, setHideOptions] = useState(false);
 
   const virtualizer = useWindowVirtualizer({
-    count: dataQuestions?.length || 0,
+    count: localQuestions?.length || 0,
     estimateSize: () => 200,
   });
 
@@ -122,10 +132,7 @@ const Questions = () => {
                     refetchSessions();
                     refetchSession();
                   }}
-                  disabled={
-                    isPendingSession ||
-                    isRefetchingSession
-                  }
+                  disabled={isPendingSession || isRefetchingSession}
                 />
                 <DialogDeleteSession
                   disabled={
@@ -142,39 +149,63 @@ const Questions = () => {
               </div>
             </div>
             <CardDescription className="max-w-md flex flex-row items-end gap-2">
-                {dataSession?.description || "No description"}
+              {dataSession?.description || "No description"}
             </CardDescription>
           </CardHeader>
-          {dataQuestions?.length ? (
+          {localQuestions?.length ? (
             <CardContent className="pt-0">
               <div
                 className="relative"
                 style={{ height: `${virtualizer.getTotalSize()}px` }}
               >
-                <div
-                  className="absolute top-0 left-0 w-full"
+                <Reorder.Group
+                  onReorder={(newOrderedQuestions) => {
+                    console.log(newOrderedQuestions);
+                  }}
+                  values={localQuestions}
+                  as="div"
+                  className={cn(
+                    "absolute top-0 left-0 w-full",
+                    isRefetchingQuestions ? "animate-pulse" : ""
+                  )}
                   style={{
                     transform: `translateY(${virtualItems[0]?.start ?? 0}px)`,
                   }}
                 >
                   {virtualItems.map(({ index }) => {
-                    const data = dataQuestions?.[index];
+                    const data = localQuestions?.[index];
                     return (
-                      <div
+                      <Reorder.Item
+                        value={data}
+                        as="div"
                         key={data.id}
                         ref={virtualizer.measureElement}
                         data-index={index}
+                        dragListener={false}
                       >
-                        <CardQuestion hideOptions={hideOptions} data={data} />
+                        <CardQuestion
+                          onMoveUp={() => {
+                            console.log("move up");
+                          }}
+                          onMoveDown={() => {
+                            console.log("move down");
+                          }}
+                          hideOptions={hideOptions}
+                          data={data}
+                          onClickEdit={() => setSelectedQuestion(data)}
+                          className={cn(
+                            isRefetchingQuestions ? "cursor-progress" : ""
+                          )}
+                        />
                         <SeparatorAdd
                           referenceId={dataSession?.id}
                           refetch={refetchQuestions}
                           order={(data.order || 0) + 1}
                         />
-                      </div>
+                      </Reorder.Item>
                     );
                   })}
-                </div>
+                </Reorder.Group>
               </div>
             </CardContent>
           ) : (
@@ -188,6 +219,27 @@ const Questions = () => {
           )}
         </Card>
       ) : null}
+      <DialogEditQuestion
+        defaultValue={selectedQuestion}
+        onSuccess={(question) => {
+          const findIndex = localQuestions.findIndex(
+            (q) => q.id === question.id
+          );
+
+          // if the question is found, update it
+          if (findIndex >= 0) {
+            setSelectedQuestion(question);
+            setLocalQuestions((prev) => [
+              ...prev.slice(0, findIndex),
+              question,
+              ...prev.slice(findIndex + 1),
+            ]);
+          }
+        }}
+        onClose={() => {
+          setSelectedQuestion(null);
+        }}
+      />
     </div>
   );
 };
@@ -228,7 +280,6 @@ const SeparatorAdd = ({
     </div>
   );
 };
-
 
 const EmptyQuestion = ({
   refetch,

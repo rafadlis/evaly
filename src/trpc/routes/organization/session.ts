@@ -50,7 +50,9 @@ export const sessionRouter = router({
     .input(
       z.object({
         sessionId: z.string(),
-        data: zodUpdateTestSession,
+        data: zodUpdateTestSession.extend({
+          duration: z.number().min(0).max(1440, { message: "Duration must be between 0 and 1440 minutes" }),
+        }),
       })
     )
     .mutation(

@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { trpc } from "@/trpc/trpc.client";
 import { ClockIcon, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const DialogEditSessionDuration = ({
   className,
@@ -31,8 +32,22 @@ const DialogEditSessionDuration = ({
     id: sessionId as string,
   });
 
-  const { mutateAsync: updateSession, isPending: isPendingUpdateSession } =
-    trpc.organization.session.update.useMutation();
+  const { mutate: updateSession, isPending: isPendingUpdateSession } =
+    trpc.organization.session.update.useMutation({
+      onSuccess: async () => {
+        await refetchSession();
+        onSuccess?.();
+        setOpen(false);
+      },
+      onError: (error) => {
+        const fieldErrors = error.data?.zodError?.fieldErrors;
+        if (fieldErrors) {
+          fieldErrors.data?.map((error) => {
+            toast.error(error);
+          });
+        }
+      },
+    });
 
   // States for the form inputs - initialize directly from value prop
   const [hours, setHours] = useState(0);
@@ -46,7 +61,7 @@ const DialogEditSessionDuration = ({
       hours = Math.floor((dataSession.duration || 0) / 60);
       minutes = (dataSession.duration || 0) % 60;
     }
-  
+
     setHours(hours);
     setMinutes(minutes);
   }, [dataSession]);
@@ -54,20 +69,24 @@ const DialogEditSessionDuration = ({
   const handleSave = async () => {
     const newTotalMinutes = hours * 60 + minutes;
 
-    await updateSession({
+    updateSession({
       sessionId: sessionId as string,
       data: {
         duration: newTotalMinutes,
       },
     });
-
-    await refetchSession();
-    onSuccess?.();
-    setOpen(false);
   };
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={(open) => {
+      if (!open) {
+        // set the value to the original value
+        setHours(Math.floor((dataSession?.duration || 0) / 60));
+        setMinutes((dataSession?.duration || 0) % 60);
+      }
+      setOpen(open);
+    }}
+    >
       <PopoverTrigger asChild>
         <Button
           disabled={disabled}

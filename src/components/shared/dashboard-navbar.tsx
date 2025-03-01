@@ -61,7 +61,7 @@ export function DashboardNavbar() {
           <div className="flex flex-row gap-12 items-center">
             {/* Logo */}
             <Link href="/dashboard" className="flex items-center">
-              <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center text-primary-foreground font-bold text-lg mr-2">
+              <div className="h-6 w-6 rounded-sm bg-primary text-primary-foreground shadow-xl flex items-center justify-center font-bold mr-2">
                 E
               </div>
               <span className="text-lg font-semibold hidden sm:block">

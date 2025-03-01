@@ -9,6 +9,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { ulid } from "ulidx";
 import { testSession } from "./test.session";
+import { createUpdateSchema } from "drizzle-zod";
 
 export const question = pgTable(
   "question",
@@ -75,3 +76,12 @@ export const questionRelation = relations(question, ({ one }) => ({
     relationName: "testSession.question",
   }),
 }));
+
+
+// Types
+export type Question = typeof question.$inferSelect;
+export type UpdateQuestion = Partial<typeof question.$inferInsert>
+
+
+// Zod
+export const zodUpdateQuestion = createUpdateSchema(question)

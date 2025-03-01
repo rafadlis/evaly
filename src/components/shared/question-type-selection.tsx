@@ -1,66 +1,53 @@
-import { ChevronDownIcon, CircleCheck } from "lucide-react";
+import { ChevronDownIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Label } from "../ui/label";
+import { QuestionType, questionTypes } from "@/constants/question-type";
 
 const QuestionTypeSelection = ({
   value,
   onValueChange,
 }: {
-  value?: string;
-  onValueChange?: (value: string) => void;
+  value?: QuestionType;
+  onValueChange?: (value: QuestionType) => void;
 }) => {
-  const questionTypes = [
-    {
-      value: "yes-or-no",
-      label: "Yes/No",
-    },
-    {
-      value: "multiple-choice",
-      label: "Multiple Choice",
-    },
-    {
-      value: "multiple-selection",
-      label: "Multiple Selection",
-    },
-    {
-      value: "point-based",
-      label: "Point Based",
-    },
-    {
-      value: "text-field",
-      label: "Text Field",
-    },
-    {
-      value: "file-upload",
-      label: "File Upload",
-    },
-  ];
+  // Get the current selected question type or default to "multiple-choice"
+  const selectedType = value ? questionTypes[value] : questionTypes["multiple-choice"];
+  const SelectedIcon = selectedType.icon;
+
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button size={"xs"} rounded={true} variant={"outline"}>
-          <CircleCheck /> Multiple Choice <ChevronDownIcon />
+          <SelectedIcon size={16} className="mr-1" /> 
+          {selectedType.label} 
+          <ChevronDownIcon className="ml-1" size={14} />
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-[210px] pt-2">
-        <Label>Question Type</Label>
-        <div className="flex flex-col mt-2 gap-1 -mx-2.5">
-          {questionTypes.map((e) => (
-            <Button
-              onClick={() => {
-                onValueChange?.(e.value);
-              }}
-              rounded={false}
-              size={"sm"}
-              key={e.value}
-              className="w-full justify-start"
-              variant={value === e.value ? "default" : "ghost"}
-            >
-              {e.label}
-            </Button>
-          ))}
-        </div>
+      <PopoverContent align="start" className="w-[240px] p-2">
+        <Label className="px-2 mb-2 block">Question Type</Label>
+          <div className="flex flex-col gap-1">
+            {Object.values(questionTypes).map((type) => {
+              const TypeIcon = type.icon;
+              if (type.isHidden) return null;
+              return (
+                <Button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onValueChange?.(type.value as QuestionType);
+                  }}
+                  rounded={false}
+                  size={"sm"}
+                  key={type.value}
+                  className="w-full justify-start gap-2"
+                  variant={value === type.value ? "default" : "ghost"}
+                >
+                  <TypeIcon size={16} />
+                  {type.label}
+                </Button>
+              );
+            })}
+          </div>
       </PopoverContent>
     </Popover>
   );
