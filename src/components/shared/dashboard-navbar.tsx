@@ -19,7 +19,7 @@ import { usePathname } from "next/navigation";
 import { Link } from "./progress-bar";
 import { useTheme } from "next-themes";
 
-export function DashboardNavbar() {
+export function DashboardNavbar({className}: {className?: string}) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -52,7 +52,8 @@ export function DashboardNavbar() {
   return (
     <nav
       className={cn(
-        "sticky top-0 left-0 flex-1 w-full z-50 transition-all bg-background py-3 border-b",
+        "sticky top-0 left-0 w-full z-50 transition-all bg-background py-3 border-b",
+        className,
         isScrolled ? "border-border" : "border-transparent"
       )}
     >

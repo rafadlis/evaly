@@ -51,7 +51,7 @@ const DashboardPageClient = () => {
 
   if (!tests || tests?.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-dvh text-center">
+      <div className="flex flex-col items-center justify-center flex-1 text-center">
         <h1 className="text-xl font-semibold">No tests yet</h1>
         <h2 className="max-w-sm mt-2 text-muted-foreground mb-4">
           Create your first test and make assessment a breeze. Start building

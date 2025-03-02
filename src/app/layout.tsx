@@ -29,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`antialiased ${geistSans.variable} ${geistMono.variable}`}>
+      <body className={`antialiased min-h-svh flex flex-col ${geistSans.variable} ${geistMono.variable}`}>
         <Provider>{children}</Provider>
         <Toaster />
       </body>
