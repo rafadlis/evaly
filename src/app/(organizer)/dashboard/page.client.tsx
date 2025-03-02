@@ -16,8 +16,10 @@ import LoadingTest from "@/components/shared/loading/loading-test";
 import {
   Calendar,
   Clock,
+  FileSpreadsheet,
   PencilLine,
-  Trash2Icon, Users
+  Trash2Icon,
+  Users,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -52,8 +54,9 @@ const DashboardPageClient = () => {
   if (!tests || tests?.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center flex-1 text-center">
-        <h1 className="text-xl font-semibold">No tests yet</h1>
-        <h2 className="max-w-sm mt-2 text-muted-foreground mb-4">
+        <FileSpreadsheet className="size-16 text-muted-foreground mb-6" />
+        <h1 className="text-2xl font-bold">No tests yet</h1>
+        <h2 className="max-w-md mt-2 text-muted-foreground mb-4">
           Create your first test and make assessment a breeze. Start building
           engaging questions today!
         </h2>
@@ -129,8 +132,8 @@ const DashboardPageClient = () => {
                         variant={"ghost"}
                         size={"icon-xs"}
                         onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
+                          e.preventDefault();
+                          e.stopPropagation();
                         }}
                         rounded={false}
                       >

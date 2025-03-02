@@ -55,8 +55,8 @@ const DialogCreateTest = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant={"default"}>
-          <PlusIcon size={16} />
+        <Button variant={"secondary-outline"} size={"lg"}>
+          <PlusIcon />
           Create Test
         </Button>
       </DialogTrigger>
