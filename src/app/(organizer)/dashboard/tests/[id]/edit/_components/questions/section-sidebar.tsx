@@ -125,10 +125,13 @@ const AddSession = () => {
   const { id } = useParams();
   const [, setSelectedSession] = useSelectedSession();
 
-  const { refetch, isPending: isPendingSession } =
-    trpc.organization.session.sessionByTestId.useQuery({
-      testId: id as string,
-    });
+  const {
+    refetch,
+    isPending: isPendingSession,
+    isRefetching: isRefetchingSession,
+  } = trpc.organization.session.sessionByTestId.useQuery({
+    testId: id as string,
+  });
 
   const { mutate, isPending } = trpc.organization.session.create.useMutation({
     onSuccess(data) {
@@ -147,13 +150,17 @@ const AddSession = () => {
       <Button
         variant={"outline"}
         className="w-max"
-        disabled={isPending}
+        disabled={isPending || isRefetchingSession}
         onClick={() => {
           mutate({ testId: id as string });
         }}
       >
-        {isPending ? <Loader2 className="animate-spin" /> : <PlusIcon />} Add
-        Session
+        {isPending || isRefetchingSession ? (
+          <Loader2 className="animate-spin" />
+        ) : (
+          <PlusIcon />
+        )}{" "}
+        Add Session
       </Button>
     </div>
   );

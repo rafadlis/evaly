@@ -96,9 +96,9 @@ const DialogEditQuestion = ({
     >
       <DrawerContent className="h-[80vh]">
         <div className="flex flex-col container max-w-3xl pb-10 overflow-y-auto hide-scrollbar">
-          <DrawerHeader>
-            <DrawerTitle className="flex justify-between items-start">
-              <span>Edit Question</span>
+          <DrawerHeader className="px-0">
+            <DrawerTitle className="flex justify-between items-center">
+              <span className="text-lg font-bold">Edit Question</span>
               <Controller
                 control={control}
                 name="type"
@@ -115,7 +115,7 @@ const DialogEditQuestion = ({
             <DrawerDescription className="hidden"></DrawerDescription>
           </DrawerHeader>
 
-          <div className="mt-2 px-1">
+          <div className="mt-2">
             <Controller
               control={control}
               name="question"

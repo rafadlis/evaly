@@ -64,7 +64,7 @@ export function DashboardNavbar() {
               <div className="h-7 w-7 rounded-md bg-gradient-to-tr from-primary to-primary/70 text-primary-foreground shadow-xl flex items-center justify-center font-bold mr-2">
                 E
               </div>
-              <span className="text-lg font-semibold hidden sm:block">
+              <span className="text-2xl font-bold hidden sm:block">
                 Evaly
               </span>
             </Link>

@@ -21,12 +21,13 @@ import { Question } from "@/lib/db/schema/question";
 import DialogEditQuestion from "@/components/shared/dialog/dialog-edit-question";
 import { cn } from "@/lib/utils";
 import { Reorder } from "motion/react";
+import DialogAddQuestion from "@/components/shared/dialog/dialog-add-question";
 
 const Questions = () => {
   const [selectedSession, setSelectedSession] = useSelectedSession();
-  const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(
-    null
-  );
+  const [selectedQuestion, setSelectedQuestion] = useState<Question>();
+  const [addQuestionOnOrder, setAddQuestionOnOrder] = useState<number>();
+
   const {
     data: dataSession,
     isRefetching: isRefetchingSession,
@@ -201,7 +202,7 @@ const Questions = () => {
                             const findIndex = localQuestions.findIndex(
                               (q) => q.id === data.id
                             );
-                            if (findIndex >= 0) { 
+                            if (findIndex >= 0) {
                               setLocalQuestions((prev) => [
                                 ...prev.slice(0, findIndex),
                                 ...prev.slice(findIndex + 1),
@@ -210,9 +211,13 @@ const Questions = () => {
                           }}
                         />
                         <SeparatorAdd
-                          referenceId={dataSession?.id}
-                          refetch={refetchQuestions}
-                          order={(data.order || 0) + 1}
+                          onClick={() => {
+                            if (data.order) {
+                              setAddQuestionOnOrder(data.order + 1);
+                            } else {
+                              setAddQuestionOnOrder(localQuestions.length + 1);
+                            }
+                          }}
                         />
                       </Reorder.Item>
                     );
@@ -249,44 +254,32 @@ const Questions = () => {
           }
         }}
         onClose={() => {
-          setSelectedQuestion(null);
+          setSelectedQuestion(undefined);
+        }}
+      />
+
+      <DialogAddQuestion
+        order={addQuestionOnOrder}
+        referenceId={dataSession?.id}
+        refetch={refetchQuestions}
+        onClose={() => {
+          setAddQuestionOnOrder(undefined);
         }}
       />
     </div>
   );
 };
 
-const SeparatorAdd = ({
-  refetch,
-  referenceId,
-  order,
-}: {
-  refetch?: () => void;
-  referenceId?: string;
-  order: number;
-}) => {
-  const { mutate: createQuestion, isPending: isPendingCreateQuestion } =
-    trpc.organization.question.create.useMutation({
-      onSuccess() {
-        refetch?.();
-      },
-    });
-
-  const isPending = isPendingCreateQuestion;
-
+const SeparatorAdd = ({ onClick }: { onClick: () => void }) => {
   return (
     <div className="h-8 flex items-center justify-center group/separator relative">
       <Button
-        disabled={isPending}
         size={"xxs"}
         variant={"default"}
-        onClick={() => {
-          if (referenceId) createQuestion({ referenceId, order });
-        }}
+        onClick={onClick}
         className="absolute opacity-30 lg:opacity-0 group-hover/separator:opacity-100"
       >
-        {isPending ? <Loader2 className="animate-spin" /> : <PlusIcon />} Add
-        Question
+        <PlusIcon /> Add Question
       </Button>
       <div className="h-auto border-b border-border/50 border-dashed w-full group-hover/separator:border-solid group-hover/separator:border-border" />
     </div>
