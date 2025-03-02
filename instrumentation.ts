@@ -10,8 +10,8 @@ export function register() {
         new OTLPTraceExporter({
           url: 'https://api.axiom.co/v1/traces',
           headers: {
-            Authorization: `Bearer ${process.env.API_TOKEN}`,
-            'X-Axiom-Dataset': `${process.env.DATASET_NAME}`,
+            Authorization: `Bearer ${process.env.AXIOM_API_TOKEN}`,
+            'X-Axiom-Dataset': `${process.env.AXIOM_DATASET_NAME}`,
           },
         })
       ),
