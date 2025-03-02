@@ -42,14 +42,15 @@ function HoverCardContent({
 const HoverText = ({
   children,
   text,
+  ...props
 }: {
   children: React.ReactNode;
   text?: string | React.ReactNode;
-}) => {
+}& React.ComponentProps<typeof HoverCardPrimitive.Root>) => {
   return (
-    <HoverCard>
+    <HoverCard {...props}>
       <HoverCardTrigger asChild>{children}</HoverCardTrigger>
-      <HoverCardContent>{text}</HoverCardContent>
+      <HoverCardContent side="top" className="w-max">{text}</HoverCardContent>
     </HoverCard>
   );
 };

@@ -1,13 +1,15 @@
 import db from "@/lib/db";
 import { question } from "@/lib/db/schema";
 import { and, eq, gte, ne, sql } from "drizzle-orm";
+import { QuestionType } from "@/lib/db/schema/question";
 
-export async function createNewQuestion(referenceId: string, order: number) {
+export async function createQuestion(referenceId: string, order: number, type: QuestionType) {
   const insertNewQuestion = await db
     .insert(question)
     .values({
       referenceId,
       order: order,
+      type: type,
     })
     .returning();
   const newQuestionId = insertNewQuestion.at(0)?.id || "";

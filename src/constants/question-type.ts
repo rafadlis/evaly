@@ -1,47 +1,25 @@
 import {
-    CheckSquare, // Single choice
-    ToggleLeft, // Yes or No
-    BarChart2, // Point based
-    AlignLeft, // Text field
-    Upload, // File upload
-    TextCursor, // Fill the blank
-    Mic, // Audio response
-    Video, // Video response
-    ChevronsDown, // Dropdown
-    ListOrdered, // Ranking
-    Sliders, // Slider scale
-    Calendar, // Date picker
-    Clock, // Time picker
-    Image, // Image choice
-    Combine, // Matching pairs
-    Grid, // Matrix
-    MousePointer, // Hotspot
-    SquarePi, // Formula input
-    Code, // Code editor
-    CircleSlash
+  CheckSquare, // Single choice
+  ToggleLeft, // Yes or No
+  BarChart2, // Point based
+  AlignLeft, // Text field
+  Upload, // File upload
+  TextCursor, // Fill the blank
+  Mic, // Audio response
+  Video, // Video response
+  ChevronsDown, // Dropdown
+  ListOrdered, // Ranking
+  Sliders, // Slider scale
+  Calendar, // Date picker
+  Clock, // Time picker
+  Image, // Image choice
+  Combine, // Matching pairs
+  Grid, // Matrix
+  MousePointer, // Hotspot
+  SquarePi, // Formula input
+  Code, // Code editor
+  CircleSlash
 } from "lucide-react";
-
-export type QuestionType = 
-  | "single-choice"
-  | "multiple-choice"
-  | "yes-or-no"
-  | "point-based"
-  | "text-field"
-  | "file-upload"
-  | "fill-the-blank"
-  | "audio-response"
-  | "video-response"
-  | "dropdown"
-  | "ranking"
-  | "slider-scale"
-  | "date-picker"
-  | "time-picker"
-  | "image-choice"
-  | "matching-pairs"
-  | "matrix"
-  | "hotspot"
-  | "formula-input"
-  | "code-editor";
 
 export const questionTypes = {
   "single-choice": {

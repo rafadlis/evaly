@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -24,6 +25,9 @@ import {
 } from "@/components/ui/drawer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { questionTypes } from "@/constants/question-type";
+import { Question, QuestionType } from "@/lib/db/schema/question";
+import { trpc } from "@/trpc/trpc.client";
 import {
   BrainCircuit,
   ChevronLeft,
@@ -33,6 +37,8 @@ import {
   FileTextIcon,
   HelpCircle,
   Layers,
+  Loader2,
+  LockIcon,
   PenTool,
   Search,
   Sparkles,
@@ -42,34 +48,28 @@ import {
   ZapIcon,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const DialogAddQuestion = ({
   referenceId,
   onClose,
   order,
+  onSuccessCreateQuestion,
 }: {
   order?: number;
   referenceId?: string;
   refetch?: () => void;
   onClose?: () => void;
+  onSuccessCreateQuestion?: (question: Question[]) => void;
 }) => {
-  const [open, setOpen] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState<
     "import" | "generate" | "create"
   >();
 
-  useEffect(() => {
-    if (order !== undefined) {
-      setOpen(true);
-    } else {
-      setOpen(false);
-    }
-  }, [order]);
 
   const closeDialog = () => {
-    setOpen(false);
     onClose?.();
+    setSelectedMethod(undefined);
   };
 
   const onBack = () => {
@@ -84,20 +84,7 @@ const DialogAddQuestion = ({
 
   return (
     <Drawer
-      open={open}
-      onOpenChange={(open) => {
-        if (!open && selectedMethod !== undefined) {
-          const confirm = window.confirm(
-            "Are you sure you want to close this dialog?"
-          );
-          if (!confirm) {
-            setSelectedMethod(undefined);
-            return;
-          }
-        }
-        setOpen(open);
-        onClose?.();
-      }}
+      open={order !== undefined}
       dismissible={false}
     >
       <DrawerContent className="h-dvh">
@@ -125,10 +112,10 @@ const DialogAddQuestion = ({
               key="select-method"
               initial={{
                 opacity: 0,
-                filter: "blur(10px)",
+                filter: "blur(5px)",
               }}
               animate={{ opacity: 1, filter: "blur(0px)", x: 0 }}
-              exit={{ opacity: 0, filter: "blur(10px)" }}
+              exit={{ opacity: 0, filter: "blur(5px)" }}
               transition={{ duration: 0.15 }}
               className="flex-1"
             >
@@ -143,11 +130,11 @@ const DialogAddQuestion = ({
               key="import-questions"
               initial={{
                 opacity: 0,
-                filter: "blur(10px)",
+                filter: "blur(5px)",
                 x: 100,
               }}
               animate={{ opacity: 1, filter: "blur(0px)", x: 0 }}
-              exit={{ opacity: 0, filter: "blur(10px)", x: 100 }}
+              exit={{ opacity: 0, filter: "blur(5px)", x: 100 }}
               transition={{ duration: 0.2 }}
               className="flex-1"
             >
@@ -159,13 +146,34 @@ const DialogAddQuestion = ({
           {selectedMethod === "generate" ? (
             <motion.div
               key="generate-questions"
-              initial={{ opacity: 0, filter: "blur(10px)" }}
+              initial={{ opacity: 0, filter: "blur(5px)" }}
               animate={{ opacity: 1, filter: "blur(0px)" }}
-              exit={{ opacity: 0, filter: "blur(10px)" }}
+              exit={{ opacity: 0, filter: "blur(5px)" }}
               transition={{ duration: 0.2 }}
               className="flex-1"
             >
               <SectionGenerateWithAI />
+            </motion.div>
+          ) : null}
+
+          {/* Create from scratch */}
+          {selectedMethod === "create" ? (
+            <motion.div
+              key="create-question"
+              initial={{ opacity: 0, filter: "blur(5px)", x: 100 }}
+              animate={{ opacity: 1, filter: "blur(0px)", x: 0 }}
+              exit={{ opacity: 0, filter: "blur(5px)", x: 100 }}
+              transition={{ duration: 0.2 }}
+              className="flex-1"
+            >
+              <SectionCreateQuestion
+                referenceId={referenceId}
+                order={order}
+                onSuccessCreateQuestion={(questions) => {
+                  onSuccessCreateQuestion?.(questions);
+                  closeDialog();
+                }}
+              />
             </motion.div>
           ) : null}
         </AnimatePresence>
@@ -174,6 +182,68 @@ const DialogAddQuestion = ({
   );
 };
 
+const SectionCreateQuestion = ({
+  referenceId,
+  order,
+  onSuccessCreateQuestion,
+}: {
+  referenceId: string;
+  order?: number;
+  onSuccessCreateQuestion?: (question: Question[]) => void;
+}) => {
+  const [typeSelected, setTypeSelected] = useState<QuestionType>();
+
+  const { mutate: mutateCreateQuestion, isPending: isPendingCreateQuestion } =
+    trpc.organization.question.create.useMutation({
+      onSuccess(data) {
+        if (data.length > 0) {
+          onSuccessCreateQuestion?.(data);
+        }
+      },
+      onSettled() {
+        setTypeSelected(undefined);
+      },
+    });
+
+  const handleCreateQuestion = (type: QuestionType) => {
+    if (!order) return;
+    setTypeSelected(type);
+    mutateCreateQuestion({ referenceId, order, type });
+  };
+  return (
+    <div className="container max-w-4xl h-full flex flex-col items-center justify-center">
+      <h2 className="text-4xl font-bold">Craft Your Custom Question</h2>
+      <p className="text-muted-foreground mt-2">
+        Select the type of question you want to create
+      </p>
+      <div className="flex flex-row flex-wrap gap-y-3 gap-x-2 mt-16">
+        {Object.values(questionTypes).map((type) => (
+          <Button
+            key={type.value}
+            size={"lg"}
+            variant={"secondary-outline"}
+            className="group"
+            disabled={
+              type.isHidden ||
+              (isPendingCreateQuestion && typeSelected === type.value)
+            }
+            onClick={() => handleCreateQuestion(type.value as QuestionType)}
+          >
+            {type.isHidden ? (
+              <LockIcon />
+            ) : isPendingCreateQuestion && typeSelected === type.value ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <type.icon className="size-5" />
+            )}
+            {type.label}
+            {/* <ArrowRight className="size-4 ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 scale-0 group-hover:scale-100" /> */}
+          </Button>
+        ))}
+      </div>
+    </div>
+  );
+};
 const SectionImportQuestions = () => {
   return (
     <div className="h-full bg-background text-foreground flex flex-col overflow-y-auto">
@@ -326,154 +396,7 @@ const SectionSelectMethod = ({
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Import worksheets/questions card */}
-            <div
-              className="relative"
-              onMouseEnter={() => setHoveredCard(0)}
-              onMouseLeave={() => setHoveredCard(null)}
-            >
-              <div
-                className={`absolute inset-0 bg-gradient-to-b from-emerald-500/20 to-transparent rounded-3xl transition-opacity duration-300 ${
-                  hoveredCard === 0 ? "opacity-100" : "opacity-0"
-                }`}
-              ></div>
-              <div className="relative z-10 border border-border rounded-3xl overflow-hidden h-full transition-all duration-300 hover:border-emerald-500/50 group">
-                <div className="absolute top-0 left-0 w-full h-1 bg-emerald-500 transform origin-left transition-transform duration-300 scale-x-0 group-hover:scale-x-100"></div>
-
-                <div className="p-8 flex flex-col h-full">
-                  <div className="mb-6">
-                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center mb-4">
-                      <Layers className="text-emerald-400" size={24} />
-                    </div>
-                    <h3 className="text-2xl font-bold text-foreground mb-2">
-                      Import questions
-                    </h3>
-                    <p className="text-muted-foreground">
-                      Upload files with questions from documents or spreadsheets
-                    </p>
-                  </div>
-
-                  <div className="flex-grow flex items-center justify-center">
-                    <div className="relative">
-                      <div className="absolute -top-4 -left-4 w-20 h-28 bg-card rounded-lg border border-border transform rotate-[-12deg] transition-all duration-200 group-hover:rotate-[-8deg] group-hover:-translate-y-1">
-                        <div className="h-3 w-12 bg-emerald-500/30 rounded-sm m-2 mb-4"></div>
-                        <div className="h-2 w-14 bg-muted rounded-sm mx-2 mb-2"></div>
-                        <div className="h-2 w-10 bg-muted rounded-sm mx-2 mb-2"></div>
-                        <div className="h-2 w-12 bg-muted rounded-sm mx-2"></div>
-                      </div>
-
-                      <div className="absolute -top-2 left-2 w-20 h-28 bg-card rounded-lg border border-border transform rotate-[-4deg] transition-all duration-200 group-hover:rotate-[2deg] z-10">
-                        <div className="grid grid-cols-4 gap-1 p-2">
-                          {[...Array(12)].map((_, i) => (
-                            <div
-                              key={i}
-                              className="h-2 w-full bg-emerald-500/20 rounded-sm"
-                            ></div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="relative w-20 h-28 bg-card rounded-lg border border-border transform rotate-[6deg] transition-all duration-200 group-hover:rotate-[10deg] group-hover:translate-y-1 left-8">
-                        <div className="h-3 w-12 bg-emerald-500/30 rounded-sm m-2 mb-3"></div>
-                        <div className="h-10 w-14 bg-muted/50 rounded-sm mx-2 mb-2"></div>
-                        <div className="h-2 w-10 bg-muted rounded-sm mx-2 mb-2"></div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-6">
-                    <button
-                      onClick={() => setSelectedMethod("import")}
-                      type="button"
-                      className="w-full py-3 rounded-xl bg-card hover:bg-emerald-500/20 border border-foreground/10 hover:border-emerald-500/50 transition-all duration-200 text-muted-foreground hover:text-emerald-400 font-medium cursor-pointer"
-                    >
-                      Import questions
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Generate with AI card */}
-            <div
-              className="relative"
-              onMouseEnter={() => setHoveredCard(1)}
-              onMouseLeave={() => setHoveredCard(null)}
-            >
-              <div
-                className={`absolute inset-0 bg-gradient-to-b from-purple-500/20 to-transparent rounded-3xl transition-opacity duration-300 ${
-                  hoveredCard === 1 ? "opacity-100" : "opacity-0"
-                }`}
-              ></div>
-              <div className="relative z-10 border border-border rounded-3xl overflow-hidden h-full transition-all duration-300 hover:border-purple-500/50 group">
-                <div className="absolute top-0 left-0 w-full h-1 bg-purple-500 transform origin-left transition-transform duration-300 scale-x-0 group-hover:scale-x-100"></div>
-
-                <div className="p-8 flex flex-col h-full">
-                  <div className="mb-6">
-                    <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center mb-4">
-                      <BrainCircuit className="text-purple-400" size={24} />
-                    </div>
-                    <h3 className="text-2xl font-bold text-foreground mb-2">
-                      Generate with AI
-                    </h3>
-                    <p className="text-muted-foreground">
-                      Create questions automatically from your content or topics
-                    </p>
-                  </div>
-
-                  <div className="flex-grow flex items-center justify-center">
-                    <div className="relative w-40 h-32">
-                      <div className="absolute inset-0 bg-card rounded-lg border border-border overflow-hidden">
-                        <div className="h-1 w-full bg-purple-500/30"></div>
-                        <div className="p-3">
-                          <div className="flex items-center space-x-2 mb-4">
-                            <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
-                              <Zap className="text-purple-400" size={14} />
-                            </div>
-                            <div className="h-2 w-20 bg-muted rounded-sm"></div>
-                          </div>
-
-                          <div className="space-y-2">
-                            <div className="h-2 w-full bg-muted rounded-sm"></div>
-                            <div className="h-2 w-3/4 bg-muted rounded-sm"></div>
-                            <div className="h-2 w-5/6 bg-muted rounded-sm"></div>
-                            <div className="h-2 w-2/3 bg-muted rounded-sm"></div>
-                          </div>
-
-                          <div className="mt-4 flex space-x-2">
-                            <div className="h-6 w-6 rounded-md bg-purple-500/20 flex items-center justify-center">
-                              <div className="w-3 h-3 rounded-full bg-purple-400"></div>
-                            </div>
-                            <div className="h-6 w-6 rounded-md bg-muted flex items-center justify-center">
-                              <div className="w-3 h-3 rounded-full bg-muted-foreground"></div>
-                            </div>
-                            <div className="h-6 w-6 rounded-md bg-muted flex items-center justify-center">
-                              <div className="w-3 h-3 rounded-full bg-muted-foreground"></div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="absolute -bottom-2 -right-2 w-12 h-12 rounded-full bg-card border border-border flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
-                        <Sparkles className="text-purple-400" size={20} />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-6">
-                    <button
-                      onClick={() => setSelectedMethod("generate")}
-                      type="button"
-                      className="w-full py-3 rounded-xl bg-card hover:bg-purple-500/20 border border-foreground/10 hover:border-purple-500/50 transition-all duration-200 text-muted-foreground hover:text-purple-400 font-medium cursor-pointer"
-                    >
-                      Generate questions
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Create from scratch card */}
             <div
               className="relative"
@@ -547,6 +470,163 @@ const SectionSelectMethod = ({
                       className="w-full py-3 rounded-xl bg-card hover:bg-blue-500/20 border border-foreground/10 hover:border-blue-500/50 transition-all duration-200 text-muted-foreground hover:text-blue-400 font-medium cursor-pointer"
                     >
                       Create question
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Import worksheets/questions card */}
+            <div
+              className="relative opacity-70"
+              // onMouseEnter={() => setHoveredCard(0)}
+              // onMouseLeave={() => setHoveredCard(null)}
+            >
+              <Badge className="absolute top-4 right-4" variant={"outline"}>
+                <LockIcon size={16} /> Coming soon
+              </Badge>
+
+              <div
+                className={`absolute inset-0 bg-gradient-to-b from-emerald-500/20 to-transparent rounded-3xl transition-opacity duration-300 ${
+                  hoveredCard === 0 ? "opacity-100" : "opacity-0"
+                }`}
+              ></div>
+              <div className="relative z-10 border border-border rounded-3xl overflow-hidden h-full transition-all duration-300 hover:border-emerald-500/50 group">
+                <div className="absolute top-0 left-0 w-full h-1 bg-emerald-500 transform origin-left transition-transform duration-300 scale-x-0 group-hover:scale-x-100"></div>
+
+                <div className="p-8 flex flex-col h-full">
+                  <div className="mb-6">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center mb-4">
+                      <Layers className="text-emerald-400" size={24} />
+                    </div>
+                    <h3 className="text-2xl font-bold text-foreground mb-2">
+                      Import questions
+                    </h3>
+                    <p className="text-muted-foreground">
+                      Upload files with questions from documents or spreadsheets
+                    </p>
+                  </div>
+
+                  <div className="flex-grow flex items-center justify-center">
+                    <div className="relative">
+                      <div className="absolute -top-4 -left-4 w-20 h-28 bg-card rounded-lg border border-border transform rotate-[-12deg] transition-all duration-200 group-hover:rotate-[-8deg] group-hover:-translate-y-1">
+                        <div className="h-3 w-12 bg-emerald-500/30 rounded-sm m-2 mb-4"></div>
+                        <div className="h-2 w-14 bg-muted rounded-sm mx-2 mb-2"></div>
+                        <div className="h-2 w-10 bg-muted rounded-sm mx-2 mb-2"></div>
+                        <div className="h-2 w-12 bg-muted rounded-sm mx-2"></div>
+                      </div>
+
+                      <div className="absolute -top-2 left-2 w-20 h-28 bg-card rounded-lg border border-border transform rotate-[-4deg] transition-all duration-200 group-hover:rotate-[2deg] z-10">
+                        <div className="grid grid-cols-4 gap-1 p-2">
+                          {[...Array(12)].map((_, i) => (
+                            <div
+                              key={i}
+                              className="h-2 w-full bg-emerald-500/20 rounded-sm"
+                            ></div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="relative w-20 h-28 bg-card rounded-lg border border-border transform rotate-[6deg] transition-all duration-200 group-hover:rotate-[10deg] group-hover:translate-y-1 left-8">
+                        <div className="h-3 w-12 bg-emerald-500/30 rounded-sm m-2 mb-3"></div>
+                        <div className="h-10 w-14 bg-muted/50 rounded-sm mx-2 mb-2"></div>
+                        <div className="h-2 w-10 bg-muted rounded-sm mx-2 mb-2"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-6">
+                    <button
+                      onClick={() => setSelectedMethod("import")}
+                      type="button"
+                      disabled={true}
+                      className="w-full flex flex-row items-center justify-center gap-2 disabled:cursor-not-allowed py-3 rounded-xl bg-card hover:bg-emerald-500/20 border border-foreground/10 hover:border-emerald-500/50 transition-all duration-200 text-muted-foreground hover:text-emerald-400 font-medium cursor-pointer"
+                    >
+                      <LockIcon size={16} /> Import questions
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Generate with AI card */}
+            <div
+              className="relative opacity-70"
+              // onMouseEnter={() => setHoveredCard(1)}
+              // onMouseLeave={() => setHoveredCard(null)}
+            >
+              <Badge className="absolute top-4 right-4" variant={"outline"}>
+                <LockIcon size={16} /> Coming soon
+              </Badge>
+
+              <div
+                className={`absolute inset-0 bg-gradient-to-b from-purple-500/20 to-transparent rounded-3xl transition-opacity duration-300 ${
+                  hoveredCard === 1 ? "opacity-100" : "opacity-0"
+                }`}
+              ></div>
+              <div className="relative z-10 border border-border rounded-3xl overflow-hidden h-full transition-all duration-300 hover:border-purple-500/50 group">
+                <div className="absolute top-0 left-0 w-full h-1 bg-purple-500 transform origin-left transition-transform duration-300 scale-x-0 group-hover:scale-x-100"></div>
+
+                <div className="p-8 flex flex-col h-full">
+                  <div className="mb-6">
+                    <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center mb-4">
+                      <BrainCircuit className="text-purple-400" size={24} />
+                    </div>
+                    <h3 className="text-2xl font-bold text-foreground mb-2">
+                      Generate with AI
+                    </h3>
+                    <p className="text-muted-foreground">
+                      Create questions automatically from your content or topics
+                    </p>
+                  </div>
+
+                  <div className="flex-grow flex items-center justify-center">
+                    <div className="relative w-40 h-32">
+                      <div className="absolute inset-0 bg-card rounded-lg border border-border overflow-hidden">
+                        <div className="h-1 w-full bg-purple-500/30"></div>
+                        <div className="p-3">
+                          <div className="flex items-center space-x-2 mb-4">
+                            <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
+                              <Zap className="text-purple-400" size={14} />
+                            </div>
+                            <div className="h-2 w-20 bg-muted rounded-sm"></div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <div className="h-2 w-full bg-muted rounded-sm"></div>
+                            <div className="h-2 w-3/4 bg-muted rounded-sm"></div>
+                            <div className="h-2 w-5/6 bg-muted rounded-sm"></div>
+                            <div className="h-2 w-2/3 bg-muted rounded-sm"></div>
+                          </div>
+
+                          <div className="mt-4 flex space-x-2">
+                            <div className="h-6 w-6 rounded-md bg-purple-500/20 flex items-center justify-center">
+                              <div className="w-3 h-3 rounded-full bg-purple-400"></div>
+                            </div>
+                            <div className="h-6 w-6 rounded-md bg-muted flex items-center justify-center">
+                              <div className="w-3 h-3 rounded-full bg-muted-foreground"></div>
+                            </div>
+                            <div className="h-6 w-6 rounded-md bg-muted flex items-center justify-center">
+                              <div className="w-3 h-3 rounded-full bg-muted-foreground"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="absolute -bottom-2 -right-2 w-12 h-12 rounded-full bg-card border border-border flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                        <Sparkles className="text-purple-400" size={20} />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-6">
+                    <button
+                      onClick={() => setSelectedMethod("generate")}
+                      type="button"
+                      disabled
+                      className="w-full disabled:cursor-not-allowed flex flex-row items-center justify-center gap-2 py-3 rounded-xl bg-card hover:bg-purple-500/20 border border-foreground/10 hover:border-purple-500/50 transition-all duration-200 text-muted-foreground hover:text-purple-400 font-medium cursor-pointer"
+                    >
+                      <LockIcon size={16} /> Generate questions
                     </button>
                   </div>
                 </div>

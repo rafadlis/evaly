@@ -1,5 +1,6 @@
 import { zodUpdateQuestion } from "@/lib/db/schema";
-import { createNewQuestion } from "@/services/organization/question/create-new-question";
+import { zodQuestionType } from "@/lib/db/schema/question";
+import { createQuestion } from "@/services/organization/question/create-question";
 import { deleteQuestion } from "@/services/organization/question/delete-question";
 import { getAllQuestionByReferenceId } from "@/services/organization/question/get-all-question-by-reference-id";
 import { updateQuestion } from "@/services/organization/question/update-question";
@@ -9,13 +10,14 @@ import { z } from "zod";
 export const questionRouter = router({
   create: organizerProcedure
     .input(
-      z.object({
+      zodUpdateQuestion.extend({
         referenceId: z.string({ message: "ReferenceId is required" }),
-        order: z.number(),
+        order: z.number({ message: "Order is required" }),
+        type: zodQuestionType,
       })
     )
     .mutation(async ({ input }) => {
-      return await createNewQuestion(input.referenceId, input.order);
+      return await createQuestion(input.referenceId, input.order, input.type);
     }),
 
   allByReferenceId: organizerProcedure

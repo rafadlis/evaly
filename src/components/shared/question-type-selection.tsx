@@ -2,7 +2,8 @@ import { ChevronDownIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Label } from "../ui/label";
-import { QuestionType, questionTypes } from "@/constants/question-type";
+import { questionTypes } from "@/constants/question-type";
+import { QuestionType } from "@/lib/db/schema/question";
 
 const QuestionTypeSelection = ({
   value,
