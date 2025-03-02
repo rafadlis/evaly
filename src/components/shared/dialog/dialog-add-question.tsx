@@ -1,17 +1,45 @@
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   Drawer,
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 import {
   BrainCircuit,
   ChevronLeft,
+  ClipboardIcon,
+  CloudUpload,
+  FileSpreadsheetIcon,
+  FileTextIcon,
+  HelpCircle,
   Layers,
   PenTool,
   Search,
   Sparkles,
+  TableIcon,
+  UploadIcon,
   Zap,
+  ZapIcon,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
@@ -57,11 +85,20 @@ const DialogAddQuestion = ({
   return (
     <Drawer
       open={open}
-      onOpenChange={(open)=>{
-        setOpen(open)
-        onClose?.()
+      onOpenChange={(open) => {
+        if (!open && selectedMethod !== undefined) {
+          const confirm = window.confirm(
+            "Are you sure you want to close this dialog?"
+          );
+          if (!confirm) {
+            setSelectedMethod(undefined);
+            return;
+          }
+        }
+        setOpen(open);
+        onClose?.();
       }}
-      handleOnly
+      dismissible={false}
     >
       <DrawerContent className="h-dvh">
         <DrawerTitle className="hidden"></DrawerTitle>
@@ -81,22 +118,191 @@ const DialogAddQuestion = ({
           </div>
         </header>
 
-        <AnimatePresence>
+        <AnimatePresence mode="popLayout">
+          {/* Step 1: Select method */}
           {selectedMethod === undefined ? (
             <motion.div
-              initial={{ opacity: 0, }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0, scale: 0.95, filter: "blur(10px)", x: -100 }}
-              transition={{ duration: 0.2 }}
+              key="select-method"
+              initial={{
+                opacity: 0,
+                filter: "blur(10px)",
+              }}
+              animate={{ opacity: 1, filter: "blur(0px)", x: 0 }}
+              exit={{ opacity: 0, filter: "blur(10px)" }}
+              transition={{ duration: 0.15 }}
               className="flex-1"
             >
               <SectionSelectMethod setSelectedMethod={setSelectedMethod} />
+            </motion.div>
+          ) : null}
+
+          {/* Step 2 */}
+          {/* Import Questions */}
+          {selectedMethod === "import" ? (
+            <motion.div
+              key="import-questions"
+              initial={{
+                opacity: 0,
+                filter: "blur(10px)",
+                x: 100,
+              }}
+              animate={{ opacity: 1, filter: "blur(0px)", x: 0 }}
+              exit={{ opacity: 0, filter: "blur(10px)", x: 100 }}
+              transition={{ duration: 0.2 }}
+              className="flex-1"
+            >
+              <SectionImportQuestions />
+            </motion.div>
+          ) : null}
+
+          {/* Import with AI */}
+          {selectedMethod === "generate" ? (
+            <motion.div
+              key="generate-questions"
+              initial={{ opacity: 0, filter: "blur(10px)" }}
+              animate={{ opacity: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, filter: "blur(10px)" }}
+              transition={{ duration: 0.2 }}
+              className="flex-1"
+            >
+              <SectionGenerateWithAI />
             </motion.div>
           ) : null}
         </AnimatePresence>
       </DrawerContent>
     </Drawer>
   );
+};
+
+const SectionImportQuestions = () => {
+  return (
+    <div className="h-full bg-background text-foreground flex flex-col overflow-y-auto">
+      <main className="flex-1 flex justify-center w-full container max-w-6x">
+        <Tabs className="mt-20 w-full" defaultValue="documents">
+          <TabsList className="h-10 grid grid-cols-3">
+            <TabsTrigger className="md:px-6 md:text-base" value="documents">
+              <FileTextIcon className="mr-1" />
+              Documents
+            </TabsTrigger>
+            <TabsTrigger className="md:px-6 md:text-base" value="paste">
+              <ClipboardIcon className="mr-1" />
+              Paste text
+            </TabsTrigger>
+            <TabsTrigger className="md:px-6 md:text-base" value="spreadsheet">
+              <TableIcon className="mr-1" />
+              Spreadsheet
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="documents" className="w-full">
+            <Card className="flex flex-col items-center justify-center py-10">
+              <CardHeader className="items-center">
+                <CloudUpload className="text-muted-foreground" size={64} />
+                <CardTitle className="text-2xl">
+                  Import questions from existing documents
+                </CardTitle>
+                <CardDescription>
+                  Upload files with questions from documents or spreadsheets
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <Button
+                  variant="secondary-outline"
+                  className="w-full"
+                  size={"lg"}
+                >
+                  <UploadIcon />
+                  Upload file
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="paste" className="w-full">
+            <Card className="flex flex-col items-center justify-center p-6">
+              <div className="w-full min-h-[400px]">
+                <Textarea
+                  placeholder={`Paste your content here and we'll generate questions from it.
+
+Example format (you can paste content in any form):
+
+Question 1: What is the capital of France?
+a) London
+b) Berlin
+c) Paris (Correct)
+d) Madrid
+
+Question 2: Which planet is closest to the sun?
+a) Earth
+b) Mercury (Correct)
+c) Venus
+d) Mars`}
+                  className="w-full md:text-base resize-none h-full min-h-[300px] [&::placeholder]:whitespace-pre-wrap"
+                  maxLength={10000}
+                  style={{ minHeight: "400px", height: "400px" }}
+                />
+              </div>
+              <Button className="w-max text-base h-11 self-end mt-4" size="lg">
+                <ZapIcon /> Generate Questions
+              </Button>
+            </Card>
+          </TabsContent>
+          <TabsContent value="spreadsheet" className="w-full">
+            <Card className="flex flex-col items-center justify-center py-10">
+              <CardHeader className="items-center">
+                <FileSpreadsheetIcon
+                  className="text-muted-foreground"
+                  size={64}
+                />
+                <CardTitle className="text-2xl">
+                  Import questions from spreadsheets
+                </CardTitle>
+                <CardDescription>
+                  Upload Excel or CSV files with questions in our template
+                  format
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <Button
+                  variant="secondary-outline"
+                  className="w-full"
+                  size={"lg"}
+                >
+                  <UploadIcon />
+                  Upload spreadsheet
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="mt-4 border-dashed border-muted-foreground/30">
+              <CardHeader>
+                <CardTitle className="text-base">Template required</CardTitle>
+                <CardDescription>
+                  Please use our spreadsheet template to ensure your questions
+                  are imported correctly. Our system needs specific columns to
+                  process your questions properly.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <Button variant="outline" size="sm" className="mr-2">
+                  <FileSpreadsheetIcon className="mr-2 h-4 w-4" />
+                  Download template
+                </Button>
+                <DialogFormattingGuide />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </main>
+    </div>
+  );
+};
+
+const SectionGenerateWithAI = () => {
+  const isIdle = true;
+
+  if (isIdle) {
+    return <div></div>;
+  }
+  return null;
 };
 
 const SectionSelectMethod = ({
@@ -350,6 +556,143 @@ const SectionSelectMethod = ({
         </div>
       </main>
     </div>
+  );
+};
+
+const DialogFormattingGuide = () => {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="link" size="sm" className="text-muted-foreground">
+          <HelpCircle className="mr-1 h-4 w-4" />
+          View formatting guide
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="lg:max-w-5xl max-h-[60vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-xl flex items-center">
+            <FileSpreadsheetIcon className="mr-2" />
+            Spreadsheet Formatting Guide
+          </DialogTitle>
+          <DialogDescription>
+            Follow these guidelines to ensure your spreadsheet imports correctly
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-6 py-4">
+          <div>
+            <h3 className="text-lg font-medium mb-2">Spreadsheet Columns</h3>
+            <div className="rounded-md border overflow-hidden">
+              <table className="w-full text-sm">
+                <thead className="bg-muted">
+                  <tr>
+                    <th className="px-4 py-2 text-left">Column Name</th>
+                    <th className="px-4 py-2 text-left">Description</th>
+                    <th className="px-4 py-2 text-left">Example</th>
+                    <th className="px-4 py-2 text-center">Required</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  <tr>
+                    <td className="px-4 py-3 font-medium">Question</td>
+                    <td className="px-4 py-3">The text of your question</td>
+                    <td className="px-4 py-3">
+                      What is the capital of France?
+                    </td>
+                    <td className="px-4 py-3 text-center">✓</td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-3 font-medium">Option A</td>
+                    <td className="px-4 py-3">First answer choice</td>
+                    <td className="px-4 py-3">London</td>
+                    <td className="px-4 py-3 text-center"></td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-3 font-medium">Option B</td>
+                    <td className="px-4 py-3">Second answer choice</td>
+                    <td className="px-4 py-3">Berlin</td>
+                    <td className="px-4 py-3 text-center"></td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-3 font-medium">Option C</td>
+                    <td className="px-4 py-3">Third answer choice</td>
+                    <td className="px-4 py-3">Paris</td>
+                    <td className="px-4 py-3 text-center"></td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-3 font-medium">Option D</td>
+                    <td className="px-4 py-3">Fourth answer choice</td>
+                    <td className="px-4 py-3">Madrid</td>
+                    <td className="px-4 py-3 text-center"></td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-3 font-medium">Correct Answer</td>
+                    <td className="px-4 py-3">
+                      Letter of correct option (A, B, C, or D)
+                    </td>
+                    <td className="px-4 py-3">C</td>
+                    <td className="px-4 py-3 text-center"></td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-3 font-medium">Explanation</td>
+                    <td className="px-4 py-3">
+                      Explanation for the correct answer
+                    </td>
+                    <td className="px-4 py-3">
+                      Paris is the capital city of France.
+                    </td>
+                    <td className="px-4 py-3 text-center"></td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-3 font-medium">Difficulty</td>
+                    <td className="px-4 py-3">
+                      Question difficulty (Easy, Medium, Hard)
+                    </td>
+                    <td className="px-4 py-3">Easy</td>
+                    <td className="px-4 py-3 text-center"></td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-3 font-medium">Category</td>
+                    <td className="px-4 py-3">Subject category</td>
+                    <td className="px-4 py-3">Geography</td>
+                    <td className="px-4 py-3 text-center"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="rounded-md bg-muted p-4">
+            <h3 className="text-lg font-medium mb-2">Tips for Success</h3>
+            <ul className="list-disc pl-5 space-y-2">
+              <li>
+                Make sure your spreadsheet has a header row with the exact
+                column names listed above
+              </li>
+              <li>Each row should contain one complete question</li>
+              <li>
+                For the &quot;Correct Answer&quot; column, only use A, B, C, or
+                D (not the full text of the answer)
+              </li>
+              <li>
+                You can include up to 500 questions in a single spreadsheet
+              </li>
+              <li>Save your file as .xlsx or .csv format</li>
+            </ul>
+          </div>
+        </div>
+
+        <DialogFooter className="flex justify-between sticky -bottom-8 bg-background w-full py-6 border-t">
+          <DialogClose asChild>
+            <Button variant="outline">Close guide</Button>
+          </DialogClose>
+          <Button>
+            <FileSpreadsheetIcon className="mr-2 h-4 w-4" />
+            Download template
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 
