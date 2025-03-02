@@ -52,9 +52,9 @@ export function DashboardNavbar({className}: {className?: string}) {
   return (
     <nav
       className={cn(
-        "sticky top-0 left-0 w-full z-50 transition-all bg-background py-3 border-b",
+        "sticky top-0 left-0 w-full z-50 transition-all  py-3 border-b",
         className,
-        isScrolled ? "border-border" : "border-transparent"
+        isScrolled ? "border-border bg-background" : "border-transparent"
       )}
     >
       <div className="mx-auto px-6 max-w-[1500px] container">
@@ -76,7 +76,7 @@ export function DashboardNavbar({className}: {className?: string}) {
                 <Link key={item.href} href={item.href}>
                   <Button
                     size={"sm"}
-                    variant={activeItem === item.href ? "default" : "ghost"}
+                    variant={activeItem === item.href ? "secondary-outline" : "ghost"}
                     className=""
                   >
                     {item.name}
