@@ -98,7 +98,7 @@ const Questions = () => {
       {isPendingQuestions ? (
         <Skeleton className="flex-1 h-[60vh]" />
       ) : dataSession ? (
-        <Card className="border border-dashed overflow-clip flex-1">
+        <Card className="border border-dashed overflow-clip flex-1 h-max">
           <CardHeader className="sticky top-14 bg-background z-10 pb-4">
             <div className="flex flex-row items-start">
               <CardTitle className="flex-1 flex flex-row flex-wrap items-center gap-2">
@@ -135,6 +135,7 @@ const Questions = () => {
                   disabled={isPendingSession || isRefetchingSession}
                 />
                 <DialogDeleteSession
+                  isLastSession={dataSessions?.length === 1}
                   disabled={
                     isRefetchingQuestions ||
                     isRefetchingSessions ||

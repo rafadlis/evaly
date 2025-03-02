@@ -111,6 +111,7 @@ const ListSession = () => {
                   }
                 }
               }}
+              isLastSession={data.length === 1}
             />
           </Reorder.Item>
         ))}

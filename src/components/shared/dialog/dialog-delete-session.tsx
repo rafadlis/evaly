@@ -32,12 +32,14 @@ const DialogDeleteSession = ({
   ),
   sessionId,
   onSuccess,
+  isLastSession = false,
 }: {
   className?: string;
   disabled?: boolean;
   dialogTrigger?: React.ReactNode;
   sessionId: string;
   onSuccess: () => void;
+  isLastSession?: boolean;
 }) => {
   const [open, setOpen] = useState(false);
   const { mutate: deleteSession, isPending } =
@@ -61,13 +63,19 @@ const DialogDeleteSession = ({
             be removed
           </DialogDescription>
         </DialogHeader>
+        {isLastSession && (
+          <span className="text-sm text-muted-foreground bg-secondary p-2 rounded-md">
+            You can&apos;t delete the last session. Please add at least one
+            session before deleting.
+          </span>
+        )}
         <DialogFooter>
           <Button variant={"secondary"} onClick={() => setOpen(false)}>
             Back
           </Button>
           <Button
             variant={"destructive"}
-            disabled={isPending}
+            disabled={isPending || isLastSession}
             onClick={() => {
               deleteSession({
                 sessionId,
@@ -77,6 +85,7 @@ const DialogDeleteSession = ({
             {isPending ? "Deleting..." : "Delete"}
           </Button>
         </DialogFooter>
+        
       </DialogContent>
     </Dialog>
   );

@@ -10,11 +10,13 @@ const CardSession = ({
   isSelected,
   onClick,
   onDeleteSuccess,
+  isLastSession,
 }: {
   data?: typeof testSession.$inferSelect;
   onClick?: () => void;
   isSelected?: boolean;
   onDeleteSuccess?: () => void;
+  isLastSession?: boolean;
 }) => {
   if (!data) return null;
   return (
@@ -60,6 +62,7 @@ const CardSession = ({
         onSuccess={() => {
           onDeleteSuccess?.();
         }}
+        isLastSession={isLastSession}
         dialogTrigger={
           <Button
             size={"icon-xxs"}
