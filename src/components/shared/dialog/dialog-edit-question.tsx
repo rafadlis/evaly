@@ -1,15 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { GripVertical, Loader2 } from "lucide-react";
+import { ChevronLeft, GripVertical, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { trpc } from "@/trpc/trpc.client";
 import { Controller, useForm } from "react-hook-form";
 import { Question, UpdateQuestion } from "@/lib/db/schema/question";
 import {
-    Drawer,
-    DrawerDescription,
-    DrawerHeader,
-    DrawerTitle,
+  Drawer,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
 } from "../../ui/drawer";
 import { DrawerContent } from "../../ui/drawer";
 import { DrawerClose } from "../../ui/drawer";
@@ -94,11 +94,27 @@ const DialogEditQuestion = ({
       }}
       handleOnly
     >
-      <DrawerContent className="h-[80vh]">
-        <div className="flex flex-col container max-w-3xl pb-10 overflow-y-auto hide-scrollbar">
-          <DrawerHeader className="px-0">
+      <DrawerContent className="h-dvh">
+        <header className="px-6 py-3 border-b border-border">
+          <div className="mx-auto flex items-center">
+            <button
+              className="p-2 rounded-full hover:bg-muted transition-all duration-200 cursor-pointer"
+              onClick={() => {
+                closeDialog(isDirty);
+              }}
+            >
+              <ChevronLeft className="text-muted-foreground" size={20} />
+            </button>
+            <h1 className="ml-3 font-medium">
+              Edit Question
+            </h1>
+          </div>
+        </header>
+
+        <div className="flex flex-col overflow-y-auto">
+          <DrawerHeader className="pt-20 container max-w-4xl px-6">
             <DrawerTitle className="flex justify-between items-center">
-              <span className="text-lg font-bold">Edit Question</span>
+              <span className="text-lg font-bold">Edit Question #{defaultValue?.order}</span>
               <Controller
                 control={control}
                 name="type"
@@ -115,7 +131,7 @@ const DialogEditQuestion = ({
             <DrawerDescription className="hidden"></DrawerDescription>
           </DrawerHeader>
 
-          <div className="mt-2">
+          <div className="mt-2 container max-w-4xl pb-10">
             <Controller
               control={control}
               name="question"
@@ -130,7 +146,7 @@ const DialogEditQuestion = ({
         </div>
 
         <DrawerFooter className="border-t px-0">
-          <div className="flex flex-row justify-between w-full z-50 container max-w-3xl">
+          <div className="flex flex-row justify-between w-full z-50 container max-w-4xl">
             <div className="flex flex-row gap-2">
               <DrawerClose asChild>
                 <Button variant={"secondary"}>Back</Button>

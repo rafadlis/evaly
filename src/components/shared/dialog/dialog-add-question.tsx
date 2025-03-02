@@ -66,7 +66,6 @@ const DialogAddQuestion = ({
     "import" | "generate" | "create"
   >();
 
-
   const closeDialog = () => {
     onClose?.();
     setSelectedMethod(undefined);
@@ -83,10 +82,7 @@ const DialogAddQuestion = ({
   if (!referenceId) return null;
 
   return (
-    <Drawer
-      open={order !== undefined}
-      dismissible={false}
-    >
+    <Drawer open={order !== undefined} dismissible={false}>
       <DrawerContent className="h-dvh">
         <DrawerTitle className="hidden"></DrawerTitle>
         <DrawerHeader className="hidden"></DrawerHeader>
@@ -99,7 +95,7 @@ const DialogAddQuestion = ({
             >
               <ChevronLeft className="text-muted-foreground" size={20} />
             </button>
-            <h1 className="ml-3 text-lg font-medium text-foreground">
+            <h1 className="ml-3 font-medium text-foreground">
               Add new question
             </h1>
           </div>
