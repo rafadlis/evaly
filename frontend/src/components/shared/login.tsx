@@ -7,15 +7,14 @@ import {
   CardDescription, CardHeader,
   CardTitle
 } from "@/components/ui/card";
+import { useGetCallbackUrl } from "@/hooks/use-get-callback-url";
 import { authClient } from "@/lib/auth.client";
-import { useSearchParams } from "next/navigation";
 
 const LogIn = () => {
   // const [email, setEmail] = useState("");
   // const [password, setPassword] = useState("");
   // const [loading, setLoading] = useState(false);
-  const searchParams = useSearchParams();
-  const callbackURL = searchParams.get("callbackURL");
+  const callbackURL = useGetCallbackUrl()
 
   return (
     <Card className="z-50 max-w-sm w-full">

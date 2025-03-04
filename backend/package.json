@@ -1,0 +1,24 @@
+{
+  "name": "@evaly/backend",
+  "version": "1.0.50",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "bun run --watch src/index.ts",
+    "db:studio": "drizzle-kit studio",
+    "db:migrate": "bun run src/lib/db/migrate.ts",
+    "db:generate": "bunx drizzle-kit generate --dialect postgresql --schema ./src/lib/db/schema --out ./drizzle",
+    "db:push": "drizzle-kit push"
+  },
+  "dependencies": {
+    "@elysiajs/cors": "^1.2.0",
+    "better-auth": "^1.2.2",
+    "drizzle-kit": "^0.30.5",
+    "drizzle-orm": "^0.40.0",
+    "drizzle-zod": "^0.7.0",
+    "elysia": "latest"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "module": "src/index.js"
+}
