@@ -1,11 +1,5 @@
-import { Suspense } from 'react'
-import DashboardPageClient from './page.client'
 
 const Page = () => {
-  return (
-    <Suspense>
-      <DashboardPageClient />
-    </Suspense>
-  )
+  return null
 }
 export default Page

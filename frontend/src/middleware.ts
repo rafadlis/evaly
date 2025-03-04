@@ -1,34 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "./services/common/get-session";
-import { getSelectedOrganizerByUserId } from "./services/organization/organizer/get-selected-organizer-byuserid";
-import { createOrganizer } from "./services/organization/organizer/create-organizer";
+import { NextResponse } from "next/server";
 
-export async function middleware(request: NextRequest) {
-  if (request.nextUrl.pathname.startsWith("/dashboard")) {
-    return dashboardMiddleware(request);
-  }
-
-  return NextResponse.next();
-}
-
-async function dashboardMiddleware(request: NextRequest) {
-  const sessionRes = await getSession(request.headers);
-
-  if (!sessionRes?.user) {
-    const callbackUrl = request.nextUrl.pathname + request.nextUrl.search;
-    return NextResponse.redirect(
-      new URL(
-        `/login?callbackURL=${encodeURIComponent(callbackUrl)}`,
-        request.url
-      )
-    );
-  }
-
-  const data = await getSelectedOrganizerByUserId(sessionRes.user.id);
-  
-  if (!data) {
-    await createOrganizer(sessionRes.user.id);
-  }
+export async function middleware() {
 
   return NextResponse.next();
 }

@@ -7,6 +7,8 @@
     "db:studio": "bun --filter @evaly/backend db:studio",
     "dev:fe": "bun --filter @evaly/frontend dev",
     "dev:be": "bun --filter @evaly/backend dev",
+    "build:fe": "bun --filter @evaly/frontend build",
+    "build:be": "bun --filter @evaly/backend build",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "deploy:staging": "bunx sst deploy --stage stagings --verbose",
     "deploy:production": "bunx sst deploy --stage production --verbose"
