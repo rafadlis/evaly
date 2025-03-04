@@ -42,12 +42,14 @@ const DialogDeleteQuestion = ({
   onSuccess: () => void;
 }) => {
   const [open, setOpen] = useState(false);
+
   const { mutate: deleteQuestion, isPending } = useMutation({
     mutationKey: ["delete-question"],
     mutationFn: async () => {
-      const response = await $api.organization.question
-        .delete({ id: questionId })
-        .delete();
+      if (!questionId) return;
+
+      const response = await $api.organization.question({id: questionId as string}).delete()
+
       if (response.status !== 200) {
         throw new Error(response.error?.value as unknown as string);
       }

@@ -49,17 +49,25 @@ const insertQuestionsAtCorrectPosition = (
   // Order starts from 1, but array index starts from 0
   const insertIndex = prevQuestions.findIndex(q => q.order && q.order >= firstNewQuestionOrder);
   
+  // Create a new array with updated questions
+  let result;
   if (insertIndex === -1) {
     // If no matching order found, append to the end
-    return [...prevQuestions, ...newQuestions];
+    result = [...prevQuestions, ...newQuestions];
   } else {
     // Insert the new questions at the correct position
-    return [
+    result = [
       ...prevQuestions.slice(0, insertIndex),
       ...newQuestions,
       ...prevQuestions.slice(insertIndex)
     ];
   }
+  
+  // Update the order field to ensure it starts from 1 and is sequential
+  return result.map((question, index) => ({
+    ...question,
+    order: index + 1
+  }));
 };
 
 /**
@@ -272,10 +280,16 @@ const Questions = () => {
                               (q) => q.id === data.id
                             );
                             if (findIndex >= 0) {
-                              setLocalQuestions((prev) => [
-                                ...prev.slice(0, findIndex),
-                                ...prev.slice(findIndex + 1),
-                              ]);
+                              // Update the order of questions after deletion
+                              setLocalQuestions((prev) => {
+                                const filtered = prev.filter(q => q.id !== data.id);
+                                return filtered.map((q, index) => ({
+                                  ...q,
+                                  order: q.order && data.order && q.order > data.order 
+                                    ? q.order - 1 
+                                    : index + 1
+                                }));
+                              });
                             }
                           }}
                         />

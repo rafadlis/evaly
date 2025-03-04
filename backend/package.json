@@ -10,7 +10,7 @@
     "db:generate": "bunx drizzle-kit generate --dialect postgresql --schema ./src/lib/db/schema --out ./drizzle",
     "db:push": "drizzle-kit push",
     "check-types": "tsc --noEmit",
-    "build": "tsup"
+    "build": "bun tsup"
   },
   "dependencies": {
     "@elysiajs/cors": "^1.2.0",

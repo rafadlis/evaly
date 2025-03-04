@@ -50,9 +50,10 @@ export const questionRouter = new Elysia().group("/question", (app) => {
 
       // Delete Question
       .delete(
-        "/delete/:id",
+        "/:id",
         async ({ params }) => {
-          return await deleteQuestion(params.id);
+          await deleteQuestion(params.id);
+          return { message: "Question deleted successfully" };
         },
         {
           params: t.Object({ id: t.String() }),

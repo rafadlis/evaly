@@ -205,7 +205,7 @@ const SectionCreateQuestion = ({
           throw new Error(response.error?.value as unknown as string);
         }
 
-        return response.data;
+        return response.data?.questions;
       },
       onSuccess(data) {
         if (data?.length) {

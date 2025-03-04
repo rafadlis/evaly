@@ -28,5 +28,5 @@ export async function createQuestion(referenceId: string, order: number, type: I
       )
     );
 
-  return insertNewQuestion;
+  return { questions: insertNewQuestion };
 }
