@@ -1,15 +1,16 @@
 import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
+import { $api } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import { trpc } from "@/trpc/trpc.client";
+import { useMutation } from "@tanstack/react-query";
 import { Trash2Icon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -41,16 +42,24 @@ const DialogDeleteQuestion = ({
   onSuccess: () => void;
 }) => {
   const [open, setOpen] = useState(false);
-  const { mutate: deleteQuestion, isPending } =
-    trpc.organization.question.delete.useMutation({
-      onSuccess: () => {
-        onSuccess();
-        setOpen(false);
-      },
-      onError: (error) => {
-        toast.error(error.message);
-      },
-    });
+  const { mutate: deleteQuestion, isPending } = useMutation({
+    mutationKey: ["delete-question"],
+    mutationFn: async () => {
+      const response = await $api.organization.question
+        .delete({ id: questionId })
+        .delete();
+      if (response.status !== 200) {
+        throw new Error(response.error?.value as unknown as string);
+      }
+    },
+    onSuccess: () => {
+      onSuccess();
+      setOpen(false);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{dialogTrigger}</DialogTrigger>
@@ -76,9 +85,7 @@ const DialogDeleteQuestion = ({
             disabled={isPending}
             onClick={(e) => {
               e.stopPropagation();
-              deleteQuestion({
-                questionId,
-              });
+              deleteQuestion();
             }}
           >
             {isPending ? "Deleting..." : "Delete"}

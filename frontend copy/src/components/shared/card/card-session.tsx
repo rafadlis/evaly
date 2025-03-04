@@ -1,9 +1,9 @@
 import { Card } from "@/components/ui/card";
-import { testSession } from "@/lib/db/schema/test.session";
 import { cn } from "@/lib/utils";
 import { CircleCheck, CircleHelp, ClockIcon, Trash2Icon } from "lucide-react";
-import DialogDeleteSession from "../dialog/dialog-delete-session";
+import DialogDeleteSession from "../../../../../frontend/src/components/shared/dialog/dialog-delete-session";
 import { Button } from "@/components/ui/button";
+import { TestSession } from "@evaly/backend/types";
 
 const CardSession = ({
   data,
@@ -12,7 +12,7 @@ const CardSession = ({
   onDeleteSuccess,
   isLastSession,
 }: {
-  data?: typeof testSession.$inferSelect;
+  data?: TestSession
   onClick?: () => void;
   isSelected?: boolean;
   onDeleteSuccess?: () => void;

@@ -36,16 +36,16 @@ export const organizationMiddleware = async ({ request, error }: Context) => {
       return error("Unauthorized", "Unauthorized Access: Token is missing");
     }
 
-    let organization = await getSelectedOrganizerByUserId(session.user.id);
+    let organizer = await getSelectedOrganizerByUserId(session.user.id);
 
-    if (!organization) {
-      organization = await createOrganizer(session.user.id);
+    if (!organizer) {
+      organizer = await createOrganizer(session.user.id);
     }
 
     return {
       user: session.user,
       session: session.session,
-      organization: organization,
+      organizer: organizer,
     };
   } catch (errorBody:any) {
     return error("Internal Server Error", errorBody.message);

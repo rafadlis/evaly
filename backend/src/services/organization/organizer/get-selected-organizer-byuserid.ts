@@ -1,4 +1,4 @@
-import db from "@/lib/db";
+import db from "../../../lib/db";
 import { setSelectedOrganizer } from "./set-selected-organizer";
 
 export async function getSelectedOrganizerByUserId(userId: string) {

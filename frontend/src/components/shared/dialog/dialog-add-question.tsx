@@ -26,8 +26,9 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { questionTypes } from "@/constants/question-type";
-import { Question, QuestionType } from "@/lib/db/schema/question";
-import { trpc } from "@/trpc/trpc.client";
+import { $api } from "@/lib/api";
+import { Question, QuestionType } from "@evaly/backend/types";
+import { useMutation } from "@tanstack/react-query";
 import {
   BrainCircuit,
   ChevronLeft,
@@ -190,9 +191,24 @@ const SectionCreateQuestion = ({
   const [typeSelected, setTypeSelected] = useState<QuestionType>();
 
   const { mutate: mutateCreateQuestion, isPending: isPendingCreateQuestion } =
-    trpc.organization.question.create.useMutation({
+    useMutation({
+      mutationKey: ["create-question"],
+      mutationFn: async () => {
+        if (!order || !typeSelected) return;
+        const response = await $api.organization.question.create.post({
+          referenceId,
+          order,
+          type: typeSelected,
+        });
+
+        if (response.status !== 200) {
+          throw new Error(response.error?.value as unknown as string);
+        }
+
+        return response.data;
+      },
       onSuccess(data) {
-        if (data.length > 0) {
+        if (data?.length) {
           onSuccessCreateQuestion?.(data);
         }
       },
@@ -204,7 +220,7 @@ const SectionCreateQuestion = ({
   const handleCreateQuestion = (type: QuestionType) => {
     if (!order) return;
     setTypeSelected(type);
-    mutateCreateQuestion({ referenceId, order, type });
+    mutateCreateQuestion();
   };
   return (
     <div className="container max-w-4xl h-full flex flex-col items-center justify-center">

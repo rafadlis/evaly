@@ -1,5 +1,5 @@
-import db from "@/lib/db";
-import { testSession, UpdateTestSession } from "@/lib/db/schema";
+import db from "../../../lib/db";
+import { testSession, UpdateTestSession } from "../../../lib/db/schema";
 import { eq } from "drizzle-orm";
 
 export async function updateSession(

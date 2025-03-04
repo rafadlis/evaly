@@ -6,8 +6,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { $api } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import { trpc } from "@/trpc/trpc.client";
+import { useSessionByIdQuery } from "@/query/organization/session/use-session-by-id";
+import { useSessionByTestIdQuery } from "@/query/organization/session/use-session-by-test-id";
+import { UpdateTestSession } from "@evaly/backend/types";
+import { useMutation } from "@tanstack/react-query";
 import { ClockIcon, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -24,28 +28,35 @@ const DialogEditSessionDuration = ({
   onSuccess?: () => void;
 }) => {
   const [open, setOpen] = useState(false);
+ 
   const {
     data: dataSession,
     isRefetching: isRefetchingSession,
     refetch: refetchSession,
-  } = trpc.organization.session.byId.useQuery({
-    id: sessionId as string,
-  });
+  } = useSessionByIdQuery({id: sessionId as string})
+
+  const { refetch: refetchSessions } = useSessionByTestIdQuery({testId: dataSession?.testId as string})
 
   const { mutate: updateSession, isPending: isPendingUpdateSession } =
-    trpc.organization.session.update.useMutation({
+    useMutation({
+      mutationKey: ["update-session"],
+      mutationFn: async (data: UpdateTestSession) => {
+        const response = await $api.organization.test
+          .session({ id: sessionId as string })
+          .put(data);
+        if (response.status !== 200) {
+          throw new Error(response.error?.value as unknown as string);
+        }
+        return response.data;
+      },
       onSuccess: async () => {
         await refetchSession();
+        await refetchSessions();
         onSuccess?.();
         setOpen(false);
       },
       onError: (error) => {
-        const fieldErrors = error.data?.zodError?.fieldErrors;
-        if (fieldErrors) {
-          fieldErrors.data?.map((error) => {
-            toast.error(error);
-          });
-        }
+        toast.error(error.message);
       },
     });
 
@@ -70,22 +81,21 @@ const DialogEditSessionDuration = ({
     const newTotalMinutes = hours * 60 + minutes;
 
     updateSession({
-      sessionId: sessionId as string,
-      data: {
-        duration: newTotalMinutes,
-      },
+      duration: newTotalMinutes,
     });
   };
 
   return (
-    <Popover open={open} onOpenChange={(open) => {
-      if (!open) {
-        // set the value to the original value
-        setHours(Math.floor((dataSession?.duration || 0) / 60));
-        setMinutes((dataSession?.duration || 0) % 60);
-      }
-      setOpen(open);
-    }}
+    <Popover
+      open={open}
+      onOpenChange={(open) => {
+        if (!open) {
+          // set the value to the original value
+          setHours(Math.floor((dataSession?.duration || 0) / 60));
+          setMinutes((dataSession?.duration || 0) % 60);
+        }
+        setOpen(open);
+      }}
     >
       <PopoverTrigger asChild>
         <Button

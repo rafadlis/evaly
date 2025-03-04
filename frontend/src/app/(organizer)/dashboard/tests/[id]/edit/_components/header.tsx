@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { UpdateTest } from "@/lib/db/schema";
-import { trpc } from "@/trpc/trpc.client";
 import { ClockIcon, Loader2, Rocket, Save } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
+import { UpdateTest } from "@evaly/backend/types";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { $api } from "@/lib/api";
 
 const Header = () => {
   const { id } = useParams();
@@ -15,19 +16,34 @@ const Header = () => {
     data: dataTest,
     isPending: isPendingTest,
     refetch: refetchTest,
-  } = trpc.organization.tests.byId.useQuery(
-    { id: id as string },
-    {
-      enabled: !!id,
-    }
-  );
-  const { mutate: updateTest, isPending: isPendingUpdateTest } =
-    trpc.organization.tests.update.useMutation({
-      onSuccess: (data) => {
-        refetchTest();
-        reset(data);
-      },
-    });
+  } = useQuery({
+    queryKey: ["tests", id],
+    queryFn: async () => {
+      const response = await $api.organization
+        .test({ id: id?.toString() || "" })
+        .get();
+      return response.data;
+    },
+    enabled: !!id,
+  });
+
+  const { mutate: updateTest, isPending: isPendingUpdateTest } = useMutation({
+    mutationKey: ["update-test"],
+    mutationFn: async (data: UpdateTest) => {
+      const response = await $api.organization
+        .test({ id: id?.toString() || "" })
+        .put(data);
+      return response.data;
+    },
+    onSuccess(data) {
+      if (!data) {
+        throw new Error("Failed to update test. Please try again later.");
+      }
+
+      refetchTest();
+      reset(data);
+    },
+  });
 
   const {
     register,
@@ -42,16 +58,19 @@ const Header = () => {
     }
   }, [dataTest, reset]);
 
-  const { data: dataSessions } =
-    trpc.organization.session.sessionByTestId.useQuery(
-      { testId: id as string },
-      {
-        enabled: !!id,
-      }
-    );
+  const { data: dataSessions } = useQuery({
+    queryKey: ["sessions-by-test-id", id],
+    queryFn: async () => {
+      const response = await $api.organization.test.session.all.get({
+        query: { testId: id as string },
+      });
+      return response.data?.sessions
+    },
+    enabled: !!id,
+  });
 
   const { hours, minutes } = useMemo(() => {
-    if (!dataSessions) return { hours: 0, minutes: 0 };
+    if (!dataSessions?.length) return { hours: 0, minutes: 0 };
 
     const totalDuration = dataSessions.reduce((acc, session) => {
       return acc + (session.duration || 0);
@@ -87,8 +106,7 @@ const Header = () => {
               size={"sm"}
               onClick={() =>
                 updateTest({
-                  id: id as string,
-                  data: { title: getValues("title") },
+                  title: getValues("title"),
                 })
               }
             >

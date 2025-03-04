@@ -2,8 +2,8 @@ import DialogDeleteQuestion from "@/components/shared/dialog/dialog-delete-quest
 import QuestionTypeSelection from "@/components/shared/question-type-selection";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { question } from "@/lib/db/schema";
 import { cn } from "@/lib/utils";
+import { Question } from "@evaly/backend/types";
 import { ArrowDown, ArrowUp, CircleHelpIcon } from "lucide-react";
 
 const CardQuestion = ({
@@ -17,7 +17,7 @@ const CardQuestion = ({
 }: {
   className?: string;
   hideOptions?: boolean;
-  data?: typeof question.$inferSelect;
+  data?: Question
   onClickEdit?: () => void;
   onMoveUp?: () => void;
   onMoveDown?: () => void;

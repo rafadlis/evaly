@@ -1,5 +1,5 @@
 import { ArrowRight, CheckCircle, Loader2, LockIcon, PlusIcon } from "lucide-react";
-import { Button } from "../../ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,42 +8,40 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../../ui/dialog";
+} from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { trpc } from "@/trpc/trpc.client";
-import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { useMutation } from "@tanstack/react-query";
+import { $api } from "@/lib/api";
 
 const DialogCreateTest = () => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const [isPendingRoute, startTransition] = useTransition();
 
-  const { mutate, isPending: isPendingCreate } =
-    trpc.organization.tests.create.useMutation({
-      onSuccess(data) {
-        if (!data) {
-          throw new Error("Failed to create test. Please try again later.");
-        }
-        startTransition(() => {
-          router.push(`/dashboard/tests/${data?.id}/edit`);
-        });
-      },
-      onError(error) {
-        // Handle Field Error
-        const fieldErrors = error.data?.zodError?.fieldErrors
-        if (fieldErrors){
-          return Object.values(fieldErrors).map((e)=>{
-            toast.error(e)
-          })
-        }
+  const { mutate, isPending: isPendingCreate } = useMutation({
+    mutationKey: ["create-test"],
+    mutationFn: async ({ type }: { type: "self-paced" | "live" }) => {
+      const res = await $api.organization.test.create.post({type})
+      if (res.error?.value){
+        throw new Error(res.error.value as unknown as string)
+      }
 
-        toast.error(error.message)
-      },
-    });
+      return res.data
+    },
+    onSuccess(data) {
+      if (!data) {
+        throw new Error("Failed to create test. Please try again later.");
+      }
+
+      startTransition(() => {
+        router.push(`/dashboard/tests/${data?.id}/edit`);
+      });
+    },
+  })
 
   const onCreateNewTest = () => {
     mutate({ type: "self-paced" });

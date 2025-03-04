@@ -1,5 +1,5 @@
-import db from "@/lib/db";
-import { test } from "@/lib/db/schema";
+import db from "../../../lib/db";
+import { test } from "../../../lib/db/schema";
 import { and, eq, isNull } from "drizzle-orm";
 
 export async function getTestById({

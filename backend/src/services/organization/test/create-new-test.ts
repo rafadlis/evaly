@@ -1,5 +1,5 @@
-import db from "@/lib/db";
-import { test, testSession } from "@/lib/db/schema";
+import db from "../../../lib/db";
+import { test, testSession } from "../../../lib/db/schema";
 
 export async function createNewTest(data: typeof test.$inferInsert) {
   const insertTest = await db.insert(test).values(data).returning();

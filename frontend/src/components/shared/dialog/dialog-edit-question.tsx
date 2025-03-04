@@ -2,21 +2,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChevronLeft, GripVertical, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { trpc } from "@/trpc/trpc.client";
 import { Controller, useForm } from "react-hook-form";
-import { Question, UpdateQuestion } from "@/lib/db/schema/question";
 import {
   Drawer,
   DrawerDescription,
   DrawerHeader,
   DrawerTitle,
-} from "../../ui/drawer";
-import { DrawerContent } from "../../ui/drawer";
-import { DrawerClose } from "../../ui/drawer";
-import { DrawerFooter } from "../../ui/drawer";
-import QuestionTypeSelection from "../question-type-selection";
-import { Editor } from "../editor/editor";
+} from "@/components/ui/drawer";
+import { DrawerContent } from "@/components/ui/drawer";
+import { DrawerClose } from "@/components/ui/drawer";
+import { DrawerFooter } from "@/components/ui/drawer";
+import QuestionTypeSelection from "@/components/shared/question-type-selection";
+import { Editor } from "@/components/shared/editor/editor";
 import { Separator } from "@/components/ui/separator";
+import { Question, UpdateQuestion } from "@evaly/backend/types";
+import { useUpdateQuestionMutation } from "@/query/organization/question/use-update-question.mutation";
 
 const DialogEditQuestion = ({
   defaultValue,
@@ -28,8 +28,9 @@ const DialogEditQuestion = ({
   onClose?: () => void;
 }) => {
   const [open, setOpen] = useState(false);
+
   const { mutateAsync: updateQuestion, isPending: isPendingUpdateQuestion } =
-    trpc.organization.question.update.useMutation({});
+  useUpdateQuestionMutation()
 
   const {
     control,
@@ -54,17 +55,14 @@ const DialogEditQuestion = ({
   const onSubmit = async (data: UpdateQuestion, saveAndClose?: boolean) => {
     if (!defaultValue?.id) return;
 
-    const updatedQuestion = await updateQuestion({
-      questionId: defaultValue?.id,
-      data: data,
-    });
+    const updatedQuestion = await updateQuestion(data);
 
-    if (updatedQuestion.length > 0) {
-      onSuccess?.(updatedQuestion[0]);
+    if (updatedQuestion) {
+      onSuccess?.(updatedQuestion);
     }
 
     if (saveAndClose) {
-      closeDialog(updatedQuestion.length === 0); // if the question is not updated, then the dialog is not dirty
+      closeDialog(!updatedQuestion); // if the question is not updated, then the dialog is not dirty
     }
   };
 
@@ -105,16 +103,16 @@ const DialogEditQuestion = ({
             >
               <ChevronLeft className="text-muted-foreground" size={20} />
             </button>
-            <h1 className="ml-3 font-medium">
-              Edit Question
-            </h1>
+            <h1 className="ml-3 font-medium">Edit Question</h1>
           </div>
         </header>
 
         <div className="flex flex-col overflow-y-auto">
           <DrawerHeader className="pt-20 container max-w-4xl px-6">
             <DrawerTitle className="flex justify-between items-center">
-              <span className="text-lg font-bold">Edit Question #{defaultValue?.order}</span>
+              <span className="text-lg font-bold">
+                Edit Question #{defaultValue?.order}
+              </span>
               <Controller
                 control={control}
                 name="type"

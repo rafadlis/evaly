@@ -3,7 +3,7 @@ import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Label } from "../ui/label";
 import { questionTypes } from "@/constants/question-type";
-import { QuestionType } from "@/lib/db/schema/question";
+import { QuestionType } from "@evaly/backend/types/question";
 
 const QuestionTypeSelection = ({
   value,

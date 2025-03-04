@@ -1,9 +1,9 @@
-import db from "@/lib/db";
-import { question } from "@/lib/db/schema";
+import db from "../../../lib/db";
+import { question } from "../../../lib/db/schema";
 import { and, eq, gte, ne, sql } from "drizzle-orm";
-import { QuestionType } from "@/lib/db/schema/question";
+import { InsertQuestion } from "../../../types";
 
-export async function createQuestion(referenceId: string, order: number, type: QuestionType) {
+export async function createQuestion(referenceId: string, order: number, type: InsertQuestion["type"]) {
   const insertNewQuestion = await db
     .insert(question)
     .values({

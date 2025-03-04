@@ -1,14 +1,16 @@
 import { Elysia } from "elysia";
 import { cors } from "@elysiajs/cors";
 import betterAuthView from "./lib/auth/auth-view";
-import { organizationRouter } from "./router/organization";
+import { organizationRouter } from "./router/organization/organization.router";
+import { swagger } from "@elysiajs/swagger";
 
 const app = new Elysia()
   .use(cors())
-  .all("/api/auth/*", betterAuthView) // Handle auth routes
+  .use(swagger())
   .get("/", async () => {
     return "Hello World";
   })
+  .all("/api/auth/*", betterAuthView) // Handle auth routes
   .use(organizationRouter)
   .listen({
     port: 4000,

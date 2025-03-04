@@ -11,12 +11,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { UpdateTestSession } from "@/lib/db/schema";
-import { trpc } from "@/trpc/trpc.client";
 import { Loader2, PencilLine } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import DialogEditSessionDuration from "./dialog-edit-session-duration";
+import { UpdateTestSession } from "@evaly/backend/types";
+import { useMutation } from "@tanstack/react-query";
+import { $api } from "@/lib/api";
+import { useSessionByIdQuery } from "@/query/organization/session/use-session-by-id";
+import { useSessionByTestIdQuery } from "@/query/organization/session/use-session-by-test-id";
 
 const DialogEditSession = ({ sessionId }: { sessionId: string }) => {
   const [open, setOpen] = useState(false);
@@ -31,19 +34,9 @@ const DialogEditSession = ({ sessionId }: { sessionId: string }) => {
     data: dataSession,
     refetch: refetchSession,
     isRefetching: isRefetchingSession,
-  } = trpc.organization.session.byId.useQuery({
-    id: sessionId,
-  });
+  } = useSessionByIdQuery({id: sessionId})
 
-  const { refetch: refetchSessions } =
-    trpc.organization.session.sessionByTestId.useQuery(
-      {
-        testId: dataSession?.testId as string,
-      },
-      {
-        enabled: !!dataSession?.testId,
-      }
-    );
+  const { refetch: refetchSessions } = useSessionByTestIdQuery({testId: dataSession?.testId as string})
 
   useEffect(() => {
     if (dataSession) {
@@ -52,7 +45,14 @@ const DialogEditSession = ({ sessionId }: { sessionId: string }) => {
   }, [dataSession, reset]);
 
   const { mutate: updateSession, isPending: isPendingUpdateSession } =
-    trpc.organization.session.update.useMutation({
+    useMutation({
+      mutationKey: ["update-session"],
+      mutationFn: async (data: UpdateTestSession) => {
+        const response = await $api.organization.test
+          .session({ id: sessionId })
+          .put(data);
+        return response.data;
+      },
       onSuccess: async () => {
         await refetchSession();
         refetchSessions();
@@ -62,11 +62,8 @@ const DialogEditSession = ({ sessionId }: { sessionId: string }) => {
 
   const onSubmit = (data: UpdateTestSession) => {
     updateSession({
-      sessionId,
-      data: {
-        ...data,
-        duration: data.duration || 0, // Ensure duration is a number, not null or undefined
-      },
+      ...data,
+      duration: data.duration || 0, // Ensure duration is a number, not null or undefined
     });
   };
 

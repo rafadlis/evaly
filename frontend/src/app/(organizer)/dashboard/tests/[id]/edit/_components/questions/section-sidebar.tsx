@@ -3,12 +3,15 @@ import { cn } from "@/lib/utils";
 import { Loader2, PlusIcon } from "lucide-react";
 import { useSelectedSession } from "../../_hooks/use-selected-session";
 import { useParams } from "next/navigation";
-import { trpc } from "@/trpc/trpc.client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useState } from "react";
 import CardSession from "@/components/shared/card/card-session";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Reorder } from "motion/react";
+import { useMutation } from "@tanstack/react-query";
+import { $api } from "@/lib/api";
+import { useSessionByTestIdQuery } from "@/query/organization/session/use-session-by-test-id";
+import { useSessionByIdQuery } from "@/query/organization/session/use-session-by-id";
 
 const SectionSidebar = ({ className }: { className?: string }) => {
   return (
@@ -23,20 +26,13 @@ const ListSession = () => {
   const { id } = useParams();
   const [selectedSession, setSelectedSession] = useSelectedSession();
 
-  const { data, isPending, isRefetching, refetch } =
-    trpc.organization.session.sessionByTestId.useQuery({
-      testId: id as string,
-    });
+  const { data, isPending, isRefetching, refetch } = useSessionByTestIdQuery({
+    testId: id as string,
+  });
 
-  const { refetch: refetchSessionById } =
-    trpc.organization.session.byId.useQuery(
-      {
-        id: selectedSession as string,
-      },
-      {
-        enabled: !!selectedSession,
-      }
-    );
+  const { refetch: refetchSessionById } = useSessionByIdQuery({
+    id: selectedSession as string,
+  });
 
   const [orderedData, setOrderedData] = useState<typeof data>([]);
 
@@ -53,11 +49,20 @@ const ListSession = () => {
   }, [data, selectedSession, setSelectedSession]);
 
   const { mutateAsync: updateOrder, isPending: isPendingUpdateOrder } =
-    trpc.organization.session.updateOrder.useMutation();
+    useMutation({
+      mutationKey: ["update-session-order"],
+      mutationFn: async (sessionIds: string[]) => {
+        const response = await $api.organization.test.session.order.put({
+          testId: id as string,
+          order: sessionIds,
+        });
+        return response.data;
+      },
+    });
 
   const onChangeOrder = async () => {
     const sessionIds = orderedData?.map((e) => e.id) || [];
-    await updateOrder({ sessionIds });
+    await updateOrder(sessionIds);
     await refetch();
     await refetchSessionById();
   };
@@ -129,13 +134,18 @@ const AddSession = () => {
     refetch,
     isPending: isPendingSession,
     isRefetching: isRefetchingSession,
-  } = trpc.organization.session.sessionByTestId.useQuery({
-    testId: id as string,
-  });
+  } = useSessionByTestIdQuery({ testId: id as string });
 
-  const { mutate, isPending } = trpc.organization.session.create.useMutation({
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["create-session"],
+    mutationFn: async () => {
+      const response = await $api.organization.test.session.create.post({
+        testId: id as string,
+      });
+      return response.data?.sessions;
+    },
     onSuccess(data) {
-      const sessionId = data.at(0)?.id;
+      const sessionId = data?.at(0)?.id;
       if (sessionId) {
         setSelectedSession(sessionId);
         refetch();
@@ -152,7 +162,7 @@ const AddSession = () => {
         className="w-max"
         disabled={isPending || isRefetchingSession}
         onClick={() => {
-          mutate({ testId: id as string });
+          mutate();
         }}
       >
         {isPending || isRefetchingSession ? (

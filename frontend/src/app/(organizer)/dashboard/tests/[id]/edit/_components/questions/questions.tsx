@@ -12,16 +12,18 @@ import SectionSidebar from "./section-sidebar";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import { useEffect, useState } from "react";
 import { useSelectedSession } from "../../_hooks/use-selected-session";
-import { trpc } from "@/trpc/trpc.client";
 import DialogDeleteSession from "@/components/shared/dialog/dialog-delete-session";
 import { Skeleton } from "@/components/ui/skeleton";
 import DialogEditSessionDuration from "@/components/shared/dialog/dialog-edit-session-duration";
 import DialogEditSession from "@/components/shared/dialog/dialog-edit-session";
-import { Question } from "@/lib/db/schema/question";
 import DialogEditQuestion from "@/components/shared/dialog/dialog-edit-question";
 import { cn } from "@/lib/utils";
 import { Reorder } from "motion/react";
 import DialogAddQuestion from "@/components/shared/dialog/dialog-add-question";
+import { Question } from "@evaly/backend/types";
+import { useQuery } from "@tanstack/react-query";
+import { $api } from "@/lib/api";
+import { useAllQuestionByReferenceIdQuery } from "@/query/organization/question/use-all-question-by-reference-id.query";
 
 /**
  * Insert questions at the correct position based on their order
@@ -95,35 +97,40 @@ const Questions = () => {
     isRefetching: isRefetchingSession,
     isPending: isPendingSession,
     refetch: refetchSession,
-  } = trpc.organization.session.byId.useQuery(
-    { id: selectedSession as string },
-    { enabled: !!selectedSession }
-  );
+  } = useQuery({
+    queryKey: ["session", selectedSession],
+    queryFn: async () => {
+      const response = await $api.organization.test
+        .session({ id: selectedSession as string })
+        .get();
+      return response.data;
+    },
+    enabled: !!selectedSession,
+  });
 
   const {
     refetch: refetchSessions,
     data: dataSessions,
     isRefetching: isRefetchingSessions,
     isPending: isPendingSessions,
-  } = trpc.organization.session.sessionByTestId.useQuery(
-    { testId: dataSession?.testId as string },
-    { enabled: !!dataSession?.testId }
-  );
+  } =  useQuery({
+    queryKey: ["sessions-by-test-id", dataSession?.testId],
+    queryFn: async () => {
+      const response = await $api.organization.test.session.all.get({
+        query: { testId: dataSession?.testId as string },
+      });
+      return response.data?.sessions
+    },
+    enabled: !!dataSession?.testId,
+  });
 
   const {
     data: dataQuestions,
     isRefetching: isRefetchingQuestions,
     refetch: refetchQuestions,
     isPending: isPendingQuestions,
-  } = trpc.organization.question.allByReferenceId.useQuery(
-    {
-      referenceId: selectedSession as string,
-    },
-    {
-      enabled: !!selectedSession,
-    }
-  );
-
+  } = useAllQuestionByReferenceIdQuery({referenceId: selectedSession as string})
+  
   const [localQuestions, setLocalQuestions] = useState<Question[]>([]);
 
   useEffect(() => {

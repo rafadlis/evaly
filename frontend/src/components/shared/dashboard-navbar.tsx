@@ -111,7 +111,7 @@ export function DashboardNavbar({className}: {className?: string}) {
                 <Button variant="ghost" className="rounded-full h-8 w-8 p-0">
                   <Avatar className="h-8 w-8">
                     <AvatarImage
-                      src="/placeholder.svg?height=32&width=32"
+                      // src="/placeholder.svg?height=32&width=32"
                       alt="User"
                     />
                     <AvatarFallback>JD</AvatarFallback>

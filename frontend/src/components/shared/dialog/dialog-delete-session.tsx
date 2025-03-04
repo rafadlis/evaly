@@ -8,8 +8,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { $api } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import { trpc } from "@/trpc/trpc.client";
+import { useMutation } from "@tanstack/react-query";
 import { Trash2Icon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -42,16 +43,26 @@ const DialogDeleteSession = ({
   isLastSession?: boolean;
 }) => {
   const [open, setOpen] = useState(false);
-  const { mutate: deleteSession, isPending } =
-    trpc.organization.session.delete.useMutation({
-      onSuccess: () => {
-        onSuccess();
-        setOpen(false);
-      },
-      onError: (error) => {
-        toast.error(error.message);
-      },
-    });
+  const { mutate: deleteSession, isPending } = useMutation({
+    mutationKey: ["delete-session"],
+    mutationFn: async () => {
+      const response = await $api.organization.test
+        .session({ id: sessionId })
+        .delete.delete();
+
+      if (response.status !== 200) {
+        throw new Error(response.error?.value as unknown as string);
+      }
+      return response.data;
+    },
+    onSuccess: () => {
+      onSuccess();
+      setOpen(false);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{dialogTrigger}</DialogTrigger>
@@ -76,16 +87,11 @@ const DialogDeleteSession = ({
           <Button
             variant={"destructive"}
             disabled={isPending || isLastSession}
-            onClick={() => {
-              deleteSession({
-                sessionId,
-              });
-            }}
+            onClick={() => deleteSession()}
           >
             {isPending ? "Deleting..." : "Delete"}
           </Button>
         </DialogFooter>
-        
       </DialogContent>
     </Dialog>
   );

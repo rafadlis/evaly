@@ -1,8 +1,8 @@
-import db from "@/lib/db";
-import { testSession } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import db from "../../../lib/db";
+import { testSession } from "../../../lib/db/schema";
+import { and, eq } from "drizzle-orm";
 
-export async function updateOrderSession(sessionIds: string[]) {
+export async function updateOrderSession(testId: string, sessionIds: string[]) {
   await Promise.all(
     sessionIds.map(async (id, index) => {
       await db
@@ -10,7 +10,7 @@ export async function updateOrderSession(sessionIds: string[]) {
         .set({
           order: index + 1, // +1 because order is 1-based
         })
-        .where(eq(testSession.id, id));
+        .where(and(eq(testSession.id, id), eq(testSession.testId, testId)));
     })
   );
 }

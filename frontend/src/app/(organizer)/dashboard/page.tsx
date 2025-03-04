@@ -1,5 +1,11 @@
+import { Suspense } from "react";
+import DashboardPageClient from "./page.client";
 
 const Page = () => {
-  return null
-}
-export default Page
+  return (
+    <Suspense>
+      <DashboardPageClient />
+    </Suspense>
+  );
+};
+export default Page;

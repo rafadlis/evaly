@@ -1,5 +1,5 @@
-import db from "@/lib/db";
-import { question, testSession } from "@/lib/db/schema";
+import db from "../../../lib/db";
+import { question, testSession } from "../../../lib/db/schema";
 import { and, eq, gte, ne, sql } from "drizzle-orm";
 
 export async function deleteSessionById(sessionId: string) {
