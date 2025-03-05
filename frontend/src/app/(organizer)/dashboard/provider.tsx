@@ -19,14 +19,14 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
   });
 
   useEffect(() => {
-    if (data?.status === 401 && pathName) {
+    if (!isPending && data?.status === 401 && pathName) {
       startRedirecting(() => {
         router.replace(
           `/login?callbackURL=${encodeURIComponent(`${pathName}`)}`
         );
       });
     }
-  }, [data?.status, pathName, router]);
+  }, [data?.status, pathName, router, isPending]);
 
   if (isPending || !pathName)
     return (
