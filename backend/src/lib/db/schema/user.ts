@@ -89,8 +89,8 @@ export const account = pgTable(
     userId: varchar("user_id", { length: 255 }).notNull(),
     accountId: varchar("account_id", { length: 255 }).notNull(),
     providerId: varchar("provider_id", { length: 255 }).notNull(),
-    accessToken: varchar("access_token", { length: 255 }),
-    refreshToken: varchar("refresh_token", { length: 255 }),
+    accessToken: text("access_token"),
+    refreshToken: text("refresh_token"),
     accessTokenExpiresAt: timestamp("access_token_expires_at"),
     refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
     scope: varchar("scope", { length: 255 }),
@@ -128,7 +128,7 @@ export const verification = pgTable(
   {
     id: varchar("id", { length: 255 }).primaryKey(),
     identifier: varchar("identifier", { length: 255 }).notNull(),
-    value: varchar("value", { length: 255 }).notNull(),
+    value: text("value").notNull(),
     expiresAt: timestamp("expires_at").notNull(),
     createdAt: timestamp("created_at", {
       mode:"string",

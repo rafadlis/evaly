@@ -6,7 +6,7 @@ export const frontend = new sst.aws.Nextjs("Frontend", {
     name:
       $app.stage === "production"
         ? "evaly.io"
-        : $app.stage === "stagings"
+        : $app.stage === "staging"
         ? "staging.evaly.io"
         : undefined,
     redirects: $app.stage === "production" ? ["www.evaly.io"] : undefined,

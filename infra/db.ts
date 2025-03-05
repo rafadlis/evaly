@@ -1,10 +1,10 @@
 
-// export const dbMigrate = new sst.x.DevCommand("Migrate", {
-//   dev: {
-//     command: "bun --filter backend db:push",
-//   },
-//   environment: backendSecrets
-// });
+export const dbMigrate = new sst.x.DevCommand("Migrate", {
+  dev: {
+    command: "bun --filter @evaly/backend db:migrate",
+  },
+  environment: backendSecrets
+});
 
 import { backendSecrets } from "./secrets";
 

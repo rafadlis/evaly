@@ -11,14 +11,14 @@ export const cluster = new sst.aws.Cluster("EvalyBackendCluster", {
 cluster.addService("EvalyBackendService", {
   public: {
     ports: [
-      { listen: "3000/http" },
-      { listen: "443/https", forward: "3000/http" },
+      { listen: "4000/http" },
+      { listen: "443/https", forward: "4000/http" },
     ],
     domain: {
       name:
         $app.stage === "production"
           ? "api.evaly.io"
-          : $app.stage === "stagings"
+          : $app.stage === "staging"
             ? "api-staging.evaly.io"
             : "localhost",
       dns: sst.aws.dns(),

@@ -32,7 +32,7 @@ export default $config({
             event.action === "pushed"
           ) {
             return {
-              stage: "stagings",
+              stage: "staging",
               runner: { engine: "codebuild", compute: "large" },
             };
           }

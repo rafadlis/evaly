@@ -30,7 +30,27 @@ export const auth = betterAuth({
     google: {
       clientId: env.GOOGLE_CLIENT_ID!,
       clientSecret: env.GOOGLE_CLIENT_SECRET!,
+      redirectURI:
+        env.ENVIRONMENT === "development"
+          ? "http://localhost:4000/api/auth/callback/google"
+          : env.ENVIRONMENT === "staging"
+          ? "https://api-staging.evaly.io/api/auth/callback/google"
+          : "https://evaly.io/api/auth/callback/google",
     },
   },
-  trustedOrigins: [env.NEXT_PUBLIC_URL!],
+  trustedOrigins: [env.WEB_PUBLIC_URL!],
+
+  advanced: {
+    useSecureCookies: env.ENVIRONMENT !== "development",
+    crossSubDomainCookies: {
+      enabled: true,
+      domain: env.ENVIRONMENT === "development" ? "localhost" : ".evaly.io",
+    },
+    defaultCookieAttributes: {
+      secure: env.ENVIRONMENT !== "development",
+      httpOnly: true,
+      sameSite: "none",
+      partitioned: true,
+    },
+  },
 });

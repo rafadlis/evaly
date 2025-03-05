@@ -2,7 +2,6 @@ import { relations, sql } from "drizzle-orm";
 import { smallint, pgTable, varchar, timestamp } from "drizzle-orm/pg-core";
 import { ulid } from "ulidx";
 import { question } from "./question";
-import { createUpdateSchema } from 'drizzle-zod';
 
 export const testSession = pgTable("test-session", {
   id: varchar("id", { length: 255 })
@@ -42,6 +41,3 @@ export const testSessionRelation = relations(testSession, ({ many }) => ({
 export type TestSession = typeof testSession.$inferSelect;
 export type NewTestSession = typeof testSession.$inferInsert;
 export type UpdateTestSession = Partial<NewTestSession>;
-
-// Zod
-export const zodUpdateTestSession = createUpdateSchema(testSession);
