@@ -1,13 +1,14 @@
 import Elysia, { t } from "elysia";
 import { organizationMiddleware } from "../../middlewares/auth.middleware";
-import { createInsertSchema, createUpdateSchema } from "drizzle-typebox";
-import { question } from "../../lib/db/schema";
+import { createUpdateSchema } from "drizzle-typebox";
 import { createQuestion } from "../../services/organization/question/create-question";
 import { getAllQuestionByReferenceId } from "../../services/organization/question/get-all-question-by-reference-id";
 import { updateQuestion } from "../../services/organization/question/update-question";
 import { deleteQuestion } from "../../services/organization/question/delete-question";
 import { checkQuestionOwner } from "../../services/organization/question/check-question-owner";
 import { updateOrderBetweenQuestions } from "../../services/organization/question/update-order-between-questions";
+import { question } from "../../lib/db/schema/question";
+import { ValidatedInsertQuestion } from "../../types/question";
 
 export const questionRouter = new Elysia().group("/question", (app) => {
   return (
@@ -32,21 +33,7 @@ export const questionRouter = new Elysia().group("/question", (app) => {
           return { questions };
         },
         {
-          body: t.Array(
-            createInsertSchema(question, {
-              options: t.Optional(
-                t.Array(
-                  t.Object({
-                    text: t.String(),
-                    isCorrect: t.Boolean(),
-                    mediaUrl: t.Optional(t.String()),
-                    mediaType: t.Optional(t.Any()),
-                    pointValue: t.Optional(t.Number()),
-                  })
-                )
-              ),
-            })
-          ),
+          body: t.Array(ValidatedInsertQuestion),
         }
       )
 

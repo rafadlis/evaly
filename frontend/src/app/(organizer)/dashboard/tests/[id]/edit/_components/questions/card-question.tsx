@@ -4,14 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useUpdateBetweenQuestionMutation } from "@/query/organization/question/use-update-between-question.mutation";
-import { Question } from "@evaly/backend/types";
+import { Question } from "@evaly/backend/types/question";
 import { ArrowDown, ArrowUp, CircleHelpIcon, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 const CardQuestion = ({
   className,
-  // hideOptions = false,
+  hideOptions = false,
   data,
   onClickEdit,
   onChangeOrder,
@@ -154,7 +154,7 @@ const CardQuestion = ({
       </CardHeader>
       <CardContent>
         <div
-          className="custom-prose max-w-full max-h-[220px] overflow-y-auto"
+          className="custom-prose max-w-full max-h-[220px] h-max overflow-y-auto"
           dangerouslySetInnerHTML={{
             __html:
               !data.question || data.question === "<p></p>"
@@ -162,21 +162,32 @@ const CardQuestion = ({
                 : data.question,
           }}
         />
-        {/* {!hideOptions ? (
-            <div className="flex flex-col gap-4 mt-6 text-sm text-muted-foreground">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="flex flex-row flex-wrap items-start gap-3"
+        {!hideOptions ? (
+          <div className="flex flex-col gap-4 text-sm text-muted-foreground">
+            {data.options?.map((option, i) => (
+              <div
+                key={option.id}
+                className="flex flex-row flex-wrap items-start gap-3"
+              >
+                <Button
+                  rounded={false}
+                  size={"icon-xs"}
+                  variant={option.isCorrect ? "default" : "outline"}
                 >
-                  <Button rounded={false} size={"icon-xs"} variant={"outline"}>
-                    {i + 1}
-                  </Button>
-                  <span className="flex-1 mt-0.5">Option {i + 1}</span>
-                </div>
-              ))}
-            </div>
-          ) : null} */}
+                  {String.fromCharCode(65 + i)}
+                </Button>
+                <span
+                  className={cn(
+                    "flex-1 mt-0.5",
+                    option.isCorrect ? "text-foreground" : ""
+                  )}
+                >
+                  {option.text || "Option " + (i + 1)}
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : null}
       </CardContent>
     </Card>
   );

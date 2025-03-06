@@ -1,7 +1,7 @@
 import db from "../../../lib/db";
 import { question } from "../../../lib/db/schema/question";
 import { eq } from "drizzle-orm";
-import { UpdateQuestion } from "../../../types";
+import { UpdateQuestion } from "../../../types/question";
 
 export async function updateQuestion(questionId: string, data: UpdateQuestion) {
   const updatedQuestion = await db

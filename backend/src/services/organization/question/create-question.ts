@@ -1,7 +1,7 @@
 import db from "../../../lib/db";
 import { question } from "../../../lib/db/schema";
 import { and, eq, gte, ne, sql } from "drizzle-orm";
-import { InsertQuestion, Question } from "../../../types";
+import { InsertQuestion, Question } from "../../../types/question";
 
 export async function createQuestion(
   listQuestion: InsertQuestion[]

@@ -16,6 +16,7 @@
     "@elysiajs/cors": "^1.2.0",
     "@elysiajs/eden": "^1.2.0",
     "@elysiajs/swagger": "^1.2.2",
+    "@sinclair/typebox": "^0.34.28",
     "better-auth": "^1.2.2",
     "dotenv": "^16.4.7",
     "drizzle-kit": "0.30.5",
@@ -40,9 +41,9 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./types": {
-      "types": "./dist/types.d.ts",
-      "import": "./dist/types.js"
+    "./types/*": {
+      "types": "./dist/types/*.d.ts",
+      "import": "./dist/types/*.js"
     }
   },
   "type": "module"

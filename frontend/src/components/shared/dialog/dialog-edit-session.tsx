@@ -15,7 +15,7 @@ import { Loader2, PencilLine } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import DialogEditSessionDuration from "./dialog-edit-session-duration";
-import { UpdateTestSession } from "@evaly/backend/types";
+import { UpdateTestSession } from "@evaly/backend/types/test";
 import { useMutation } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
 import { useSessionByIdQuery } from "@/query/organization/session/use-session-by-id";

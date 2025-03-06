@@ -22,7 +22,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { questionTypes } from "@/constants/question-type";
 import { $api } from "@/lib/api";
-import { InsertQuestion, Question, QuestionType } from "@evaly/backend/types";
+import {
+  InsertQuestion,
+  Question,
+  QuestionType,
+} from "@evaly/backend/types/question";
 import { useMutation } from "@tanstack/react-query";
 import {
   BrainCircuit,
@@ -44,6 +48,7 @@ import {
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+import { getDefaultOptions } from "@/lib/get-default-options";
 
 const DialogAddQuestion = ({
   referenceId,
@@ -187,15 +192,14 @@ const SectionCreateQuestion = ({
           type: typeSelected,
           referenceType: referenceType,
         };
-
+        
         if (
           typeSelected === "single-choice" ||
-          typeSelected === "point-based"
+          typeSelected === "point-based" ||
+          typeSelected === "multiple-choice" ||
+          typeSelected === "yes-or-no"
         ) {
-          question.options = Array.from({ length: 4 }, (_, index) => ({
-            text: ``,
-            isCorrect: index === 0,
-          }));
+          question.options = getDefaultOptions(typeSelected);
         }
 
         // Currently we only support single question creation, but its ready for bulk creation

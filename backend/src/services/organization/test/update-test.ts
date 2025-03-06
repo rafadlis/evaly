@@ -1,7 +1,7 @@
 import db from "../../../lib/db";
 import { test } from "../../../lib/db/schema";
 import { and, eq } from "drizzle-orm";
-import { UpdateTest } from "../../../types";
+import { UpdateTest } from "../../../types/test";
 
 export async function updateTest({
   id,

@@ -13,7 +13,8 @@ import {
 } from "drizzle-orm/pg-core";
 import { ulid } from "ulidx";
 import { testSession } from "./test.session";
-import { MEDIA_TYPES, MediaType, QUESTION_TYPES } from "../../../types";
+import { QUESTION_TYPES } from "../../../types/question-types";
+import { MEDIA_TYPES, MediaType } from "../../../types/media";
 
 // Main question table
 export const question = pgTable(
@@ -39,13 +40,14 @@ export const question = pgTable(
     pointValue: smallint("point_value"),
     options: jsonb("options").$type<
       {
+        id: string;
         text: string;
         isCorrect: boolean;
         mediaUrl?: string;
         mediaType?: MediaType;
         pointValue?: number;
       }[]
-    >(),
+    >().default([]),
     createdAt: timestamp("created_at", {
       mode: "string",
       withTimezone: true,

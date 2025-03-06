@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { GripVertical, Loader2, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -17,14 +16,15 @@ import { Editor } from "@/components/shared/editor/editor";
 import { Separator } from "@/components/ui/separator";
 import {
   Question,
+  QuestionType,
   UpdateQuestion,
-  UpdateQuestionOption,
-  UpdateQuestionWithOptions,
-} from "@evaly/backend/types";
+} from "@evaly/backend/types/question";
 import { useUpdateQuestionMutation } from "@/query/organization/question/use-update-question.mutation";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { Reorder } from "motion/react";
+import { Reorder, useDragControls } from "motion/react";
+import { Input } from "@/components/ui/input";
+import { getDefaultOptions } from "@/lib/get-default-options";
 
 dayjs.extend(relativeTime);
 
@@ -47,11 +47,17 @@ const DialogEditQuestion = ({
     handleSubmit,
     reset,
     watch,
+    setValue,
     formState: { isDirty },
-  } = useForm<UpdateQuestion | UpdateQuestionWithOptions>();
+  } = useForm<UpdateQuestion>();
 
   const type = watch("type");
   const updatedAt = watch("updatedAt");
+  const isOptionsType =
+    type === "multiple-choice" ||
+    type === "yes-or-no" ||
+    type === "single-choice" ||
+    type === "point-based";
 
   useEffect(() => {
     if (defaultValue) {
@@ -63,7 +69,7 @@ const DialogEditQuestion = ({
     }
   }, [defaultValue, reset, onClose]);
 
-  const onSubmit = async (data: UpdateQuestion | UpdateQuestionWithOptions, saveAndClose?: boolean) => {
+  const onSubmit = async (data: UpdateQuestion, saveAndClose?: boolean) => {
     if (!defaultValue?.id) return;
 
     const updatedQuestion = await updateQuestion(data);
@@ -120,11 +126,19 @@ const DialogEditQuestion = ({
                     size={"default"}
                     variant={"outline-solid"}
                     value={field.value || undefined}
-                    onValueChange={field.onChange}
+                    onValueChange={(value) => {
+                      field.onChange(value);
+
+                      // if the question type is changed, then reset the options with the default options of the new question type
+                      const defaultOptions = getDefaultOptions(value);
+                      if (defaultOptions) {
+                        setValue("options", defaultOptions);
+                      }
+                    }}
                   />
                 )}
               />
-              <div className="flex flex-row gap-2 text-muted-foreground font-normal">
+              <div className="flex flex-row gap-2 text-muted-foreground font-normal text-sm">
                 Last updated: {dayjs(updatedAt).fromNow()}
               </div>
             </DrawerTitle>
@@ -143,17 +157,29 @@ const DialogEditQuestion = ({
               )}
             />
 
-            <Separator className="my-6" />
-            {type === "multiple-choice" ? (
+            {isOptionsType ? (
+              <div className="mt-8 mb-6 flex flex-row items-center gap-2">
+                <Separator className="max-w-4" />
+                <span className="text-sm text-muted-foreground">
+                  {type === "multiple-choice"
+                    ? "You can select multiple correct answers"
+                    : "Select the correct answer"}
+                </span>
+                <Separator className="flex-1" />
+              </div>
+            ) : null}
+
+            {isOptionsType ? (
               <Controller
                 control={control}
                 name="options"
                 render={({ field }) => (
-                  <MultipleChoiceAnswer
+                  <Options
                     value={field.value || []}
                     onChange={(value) => {
                       field.onChange(value);
                     }}
+                    type={type}
                   />
                 )}
               />
@@ -210,13 +236,24 @@ const DialogEditQuestion = ({
   );
 };
 
-const MultipleChoiceAnswer = ({
+const Options = ({
   value,
   onChange,
+  type,
 }: {
-  value: UpdateQuestionOption[];
-  onChange: (options: UpdateQuestionOption[]) => void;
+  value: UpdateQuestion["options"];
+  onChange: (options: UpdateQuestion["options"]) => void;
+  type: QuestionType;
 }) => {
+
+  const onChangeOption = (
+    option: NonNullable<UpdateQuestion["options"]>[number]
+  ) => {
+    if (!value) return;
+    onChange(value.map((item) => (item.id === option.id ? option : item)));
+  };
+
+  if (!value) return null;
   return (
     <Reorder.Group
       className="flex flex-col gap-4 mt-2 text-sm"
@@ -226,58 +263,100 @@ const MultipleChoiceAnswer = ({
       values={value}
     >
       {value.map((option, i) => (
-        <Reorder.Item
+        <OptionItem
+          option={option}
+          index={i}
+          onChange={(option) => {
+            onChangeOption(option);
+          }}
+          onClickCorrect={() => {
+            // if the question type is single-choice or point-based, then only one option can be correct, other options will be incorrect
+            if (type === "single-choice" || type === "point-based" || type === "yes-or-no") {
+              onChange(
+                value.map((item) => ({
+                  ...item,
+                  isCorrect: item.id === option.id ? !option.isCorrect : false
+                }))
+              );
+            } else {
+              // For multiple-choice, toggle the current option's correctness without affecting others
+              onChange(
+                value.map((item) =>
+                  item.id === option.id ? { ...item, isCorrect: !item.isCorrect } : item
+                )
+              );
+            }
+          }}
           key={option.id}
-          value={option}
-          className="flex flex-row items-center gap-1"
-          dragListener={false}
-        >
-          <div className="flex-1 relative flex flex-row items-center">
-            <Button
-              size={"icon-xs"}
-              className="absolute left-2 select-none"
-              variant={option.isCorrect ? "default" : "secondary"}
-              rounded={false}
-              onClick={() => {
-                onChange(
-                  value.map((item) => {
-                    if (item.id === option.id) {
-                      return { ...item, isCorrect: !item.isCorrect };
-                    }
-                    return item;
-                  })
-                );
-              }}
-            >
-              {String.fromCharCode(65 + i)}
-            </Button>
-            <Input
-              placeholder={`Type options ${i + 1}`}
-              className="pl-12 h-10"
-              value={option.text}
-              onChange={(e) => {
-                onChange(
-                  value.map((item) => {
-                    if (item.id === option.id) {
-                      return { ...item, text: e.target.value };
-                    }
-                    return item;
-                  })
-                );
-              }}
-            />
-          </div>
-          <div>
-            <Button rounded={false} variant={"ghost"} size={"icon-sm"}>
-              <GripVertical className="text-muted-foreground" />
-            </Button>
-            <Button rounded={false} variant={"ghost"} size={"icon-sm"}>
-              <Trash2 className="text-muted-foreground" />
-            </Button>
-          </div>
-        </Reorder.Item>
+          onDelete={() => {
+            onChange(value.filter((item) => item.id !== option.id));
+          }}
+        />
       ))}
     </Reorder.Group>
+  );
+};
+
+const OptionItem = ({
+  option,
+  index,
+  onChange,
+  onClickCorrect,
+  onDelete,
+}: {
+  option: NonNullable<UpdateQuestion["options"]>[number];
+  index: number;
+  onChange: (options: NonNullable<UpdateQuestion["options"]>[number]) => void;
+  onClickCorrect?: () => void;
+  onDelete: () => void;
+}) => {
+  const control = useDragControls();
+
+  return (
+    <Reorder.Item
+      value={option}
+      className="flex flex-row items-center gap-1"
+      dragListener={false}
+      dragControls={control}
+    >
+      <div className="flex-1 relative flex flex-row items-center">
+        <Button
+          size={"icon-xs"}
+          className="absolute left-2 select-none"
+          variant={option.isCorrect ? "default" : "secondary"}
+          rounded={false}
+          onClick={onClickCorrect}
+        >
+          {String.fromCharCode(65 + index)}
+        </Button>
+        <Input
+          placeholder={`Type options ${index + 1}`}
+          className="pl-12 h-10"
+          value={option.text}
+          onChange={(e) => {
+            onChange({ ...option, text: e.target.value });
+          }}
+        />
+      </div>
+      <div>
+        <Button
+          onPointerDown={(e) => control.start(e)}
+          rounded={false}
+          variant={"ghost"}
+          size={"icon-sm"}
+        >
+          <GripVertical className="text-muted-foreground" />
+        </Button>
+        <Button
+          rounded={false}
+          variant={"ghost"}
+          size={"icon-sm"}
+          onClick={onDelete}
+        >
+          <Trash2 className="text-muted-foreground" />
+        </Button>
+      </div>
+    </Reorder.Item>
   );
 };
 

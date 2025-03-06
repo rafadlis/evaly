@@ -50,6 +50,13 @@
       "when": 1741213886774,
       "tag": "0006_woozy_wallow",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1741282146395,
+      "tag": "0007_gigantic_nightshade",
+      "breakpoints": true
     }
   ]
 }

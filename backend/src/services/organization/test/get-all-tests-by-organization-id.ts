@@ -1,6 +1,6 @@
 import db from "../../../lib/db";
 import { test } from "../../../lib/db/schema";
-import { Pagination } from "../../../types";
+import { Pagination } from "../../../types/pagination";
 import { SQL, sql } from "drizzle-orm";
 import { and, eq, isNull, like, between, or } from "drizzle-orm";
 

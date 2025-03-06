@@ -9,6 +9,6 @@ export async function getAllQuestionByReferenceId(referenceId: string) {
       return and(eq(fields.referenceId, referenceId), isNull(fields.deletedAt));
     },
   });
-
+  
   return { questions };
 }

@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@elysiajs/eden": "^1.2.0",
+    "@evaly/backend": "workspace:*",
     "@libsql/client": "^0.14.0",
     "@radix-ui/react-avatar": "^1.1.3",
     "@radix-ui/react-checkbox": "^1.1.4",
@@ -54,6 +55,7 @@
     "lowlight": "^3.3.0",
     "lucide-react": "^0.475.0",
     "motion": "^12.4.7",
+    "nanoid": "^5.1.2",
     "next": "15.2.0",
     "next-themes": "^0.4.4",
     "nuqs": "^2.4.0",
@@ -70,8 +72,7 @@
     "tailwindcss-animate": "^1.0.7",
     "ulidx": "^2.4.1",
     "vaul": "^1.1.2",
-    "zod": "^3.24.2",
-    "@evaly/backend": "workspace:*"
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
