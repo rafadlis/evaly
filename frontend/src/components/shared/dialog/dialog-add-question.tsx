@@ -1,3 +1,5 @@
+"use client"
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -60,7 +62,6 @@ const DialogAddQuestion = ({
   order?: number;
   referenceId?: string;
   referenceType?: Question["referenceType"];
-  refetch?: () => void;
   onClose?: () => void;
   onSuccessCreateQuestion?: (question: Question[]) => void;
 }) => {

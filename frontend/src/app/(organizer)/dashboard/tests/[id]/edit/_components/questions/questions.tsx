@@ -9,7 +9,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import SectionSidebar from "./section-sidebar";
-import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import { useEffect, useState, useRef } from "react";
 import { useSelectedSession } from "../../_hooks/use-selected-session";
 import DialogDeleteSession from "@/components/shared/dialog/dialog-delete-session";
@@ -149,13 +148,6 @@ const Questions = () => {
 
   const [hideOptions, setHideOptions] = useState(false);
 
-  const virtualizer = useWindowVirtualizer({
-    count: localQuestions?.length || 0,
-    estimateSize: () => 200,
-  });
-
-  const virtualItems = virtualizer.getVirtualItems();
-
   const onSuccessDeleteSession = async () => {
     await refetchQuestions();
     await refetchSessions();
@@ -294,30 +286,21 @@ const Questions = () => {
         </CardHeader>
         {localQuestions?.length ? (
           <CardContent className="pt-0">
-            <div
-              className="relative"
-              style={{ height: `${virtualizer.getTotalSize()}px` }}
-            >
-              <Reorder.Group
+           <Reorder.Group
                 onReorder={() => {}}
                 values={localQuestions}
                 as="div"
                 className={cn(
-                  "absolute top-0 left-0 w-full",
+                  "w-full",
                   isRefetchingQuestions ? "animate-pulse" : ""
                 )}
-                style={{
-                  transform: `translateY(${virtualItems[0]?.start ?? 0}px)`,
-                }}
               >
-                {virtualItems.map(({ index }) => {
-                  const data = localQuestions?.[index];
+                {localQuestions.map((data, index) => {
                   return (
                     <Reorder.Item
                       value={data}
                       as="div"
                       key={data.id}
-                      ref={virtualizer.measureElement}
                       data-index={index}
                       dragListener={false}
                     >
@@ -365,7 +348,6 @@ const Questions = () => {
                   );
                 })}
               </Reorder.Group>
-            </div>
           </CardContent>
         ) : (
           <CardContent className="pt-0">
@@ -392,7 +374,6 @@ const Questions = () => {
         order={addQuestionOnOrder}
         referenceId={dataSession?.id}
         referenceType="test-session"
-        refetch={refetchQuestions}
         onClose={() => {
           setAddQuestionOnOrder(undefined);
         }}

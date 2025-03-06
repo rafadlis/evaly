@@ -44,8 +44,8 @@ export function DashboardNavbar({className}: {className?: string}) {
 
   const navItems = [
     { name: "Dashboard", href: "/dashboard" },
-    { name: "Questions", href: "/dashboard/questions" },
-    { name: "Participants", href: "/dashboard/participants" },
+    { name: "Question", href: "/dashboard/question" },
+    { name: "Participant", href: "/dashboard/participant" },
     { name: "Settings", href: "/dashboard/settings" },
   ];
 
