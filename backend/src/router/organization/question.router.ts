@@ -1,14 +1,12 @@
 import Elysia, { t } from "elysia";
 import { organizationMiddleware } from "../../middlewares/auth.middleware";
-import { createUpdateSchema } from "drizzle-typebox";
 import { createQuestion } from "../../services/organization/question/create-question";
 import { getAllQuestionByReferenceId } from "../../services/organization/question/get-all-question-by-reference-id";
 import { updateQuestion } from "../../services/organization/question/update-question";
 import { deleteQuestion } from "../../services/organization/question/delete-question";
 import { checkQuestionOwner } from "../../services/organization/question/check-question-owner";
 import { updateOrderBetweenQuestions } from "../../services/organization/question/update-order-between-questions";
-import { question } from "../../lib/db/schema/question";
-import { ValidatedInsertQuestion } from "../../types/question";
+import { ValidatedInsertQuestion, ValidatedUpdateQuestion } from "../../types/question";
 
 export const questionRouter = new Elysia().group("/question", (app) => {
   return (
@@ -55,7 +53,7 @@ export const questionRouter = new Elysia().group("/question", (app) => {
           return await updateQuestion(params.id, body);
         },
         {
-          body: createUpdateSchema(question, {}),
+          body: ValidatedUpdateQuestion,
           params: t.Object({ id: t.String() }),
         }
       )

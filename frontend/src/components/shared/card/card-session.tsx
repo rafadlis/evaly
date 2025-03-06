@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { CircleCheck, CircleHelp, ClockIcon, Trash2Icon } from "lucide-react";
 import DialogDeleteSession from "../dialog/dialog-delete-session";
 import { Button } from "@/components/ui/button";
-import { TestSession } from "@evaly/backend/types";
+import { TestSession } from "@evaly/backend/types/test";
 
 const CardSession = ({
   data,

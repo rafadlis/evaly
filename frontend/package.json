@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "check-types": "tsc --noEmit",
     "trigger:dev": "npx trigger.dev@latest dev",
     "trigger:build": "npx trigger.dev@latest deploy --self-hosted --push",
     "trigger:login": "npx trigger.dev@latest login --profile default -a https://trigger.x86.fahrezi.fyi",

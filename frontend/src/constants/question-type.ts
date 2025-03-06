@@ -18,7 +18,12 @@ import {
   MousePointer, // Hotspot
   SquarePi, // Formula input
   Code, // Code editor
-  CircleSlash
+  CircleSlash,
+  ThumbsUp, // Likert scale
+  FileText, // Open-ended
+  Braces, // Code snippet
+  PenTool,
+  HandIcon, // Drawing
 } from "lucide-react";
 
 export const questionTypes = {
@@ -134,6 +139,42 @@ export const questionTypes = {
     value: "formula-input",
     label: "Formula Input",
     icon: SquarePi,
+    isHidden: true
+  },
+  "drag-and-drop": {
+    value: "drag-and-drop",
+    label: "Drag and Drop",
+    icon: HandIcon,
+    isHidden: true
+  },
+  "likert-scale": {
+    value: "likert-scale",
+    label: "Likert Scale",
+    icon: ThumbsUp,
+    isHidden: true
+  },
+  "open-ended": {
+    value: "open-ended",
+    label: "Open Ended",
+    icon: FileText,
+    isHidden: true
+  },
+  "code-snippet": {
+    value: "code-snippet",
+    label: "Code Snippet",
+    icon: Braces,
+    isHidden: true
+  },
+  "math-formula": {
+    value: "math-formula",
+    label: "Math Formula",
+    icon: SquarePi,
+    isHidden: true
+  },
+  "drawing": {
+    value: "drawing",
+    label: "Drawing",
+    icon: PenTool,
     isHidden: true
   },
   "code-editor": {

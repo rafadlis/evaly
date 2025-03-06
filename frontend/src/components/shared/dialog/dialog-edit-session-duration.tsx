@@ -10,7 +10,7 @@ import { $api } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { useSessionByIdQuery } from "@/query/organization/session/use-session-by-id";
 import { useSessionByTestIdQuery } from "@/query/organization/session/use-session-by-test-id";
-import { UpdateTestSession } from "@evaly/backend/types";
+import { UpdateTestSession } from "@evaly/backend/types/test";
 import { useMutation } from "@tanstack/react-query";
 import { ClockIcon, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";

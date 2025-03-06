@@ -163,7 +163,7 @@ const CardQuestion = ({
           }}
         />
         {!hideOptions ? (
-          <div className="flex flex-col gap-4 text-sm text-muted-foreground">
+          <div className="flex flex-col gap-4 text-sm">
             {data.options?.map((option, i) => (
               <div
                 key={option.id}

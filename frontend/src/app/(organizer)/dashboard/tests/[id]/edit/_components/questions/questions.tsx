@@ -19,7 +19,7 @@ import DialogEditQuestion from "@/components/shared/dialog/dialog-edit-question"
 import { cn } from "@/lib/utils";
 import { Reorder } from "motion/react";
 import DialogAddQuestion from "@/components/shared/dialog/dialog-add-question";
-import { Question } from "@evaly/backend/types";
+import { Question } from "@evaly/backend/types/question";
 import { useQuery } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
 import { useAllQuestionByReferenceIdQuery } from "@/query/organization/question/use-all-question-by-reference-id.query";

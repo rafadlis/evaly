@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { notFound, useParams } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import { UpdateTest } from "@evaly/backend/types";
+import { UpdateTest } from "@evaly/backend/types/test";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
 import DialogPreviewTest from "@/components/shared/dialog/dialog-preview-test";

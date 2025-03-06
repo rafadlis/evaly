@@ -1,5 +1,5 @@
 import { $api } from "@/lib/api";
-import { UpdateQuestion } from "@evaly/backend/types";
+import { UpdateQuestion } from "@evaly/backend/types/question";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
