@@ -1,6 +1,6 @@
 {
-  "id": "c81e0718-5057-4e6f-8141-a237ed44ca29",
-  "prevId": "cb44a702-7001-4f5d-a279-75b6a326d2b2",
+  "id": "9c62aecc-8790-4bb1-93c3-036279ba1b38",
+  "prevId": "05c0f407-72f4-4249-ad1c-99ffe2e4bf29",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -1531,11 +1531,25 @@
           "primaryKey": false,
           "notNull": true
         },
+        "reference_type": {
+          "name": "reference_type",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'test-session'"
+        },
+        "organization_id": {
+          "name": "organization_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "order": {
           "name": "order",
           "type": "smallint",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": 1
         },
         "type": {
           "name": "type",
@@ -1543,6 +1557,12 @@
           "primaryKey": false,
           "notNull": false,
           "default": "'multiple-choice'"
+        },
+        "point_value": {
+          "name": "point_value",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -1605,8 +1625,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "option_text": {
-          "name": "option_text",
+        "text": {
+          "name": "text",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -1623,15 +1643,21 @@
           "primaryKey": false,
           "notNull": false
         },
-        "order": {
-          "name": "order",
-          "type": "smallint",
+        "media_url": {
+          "name": "media_url",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "image_url": {
-          "name": "image_url",
-          "type": "text",
+        "media_type": {
+          "name": "media_type",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "order": {
+          "name": "order",
+          "type": "smallint",
           "primaryKey": false,
           "notNull": false
         },

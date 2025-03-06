@@ -17,21 +17,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-} from "@/components/ui/drawer";
+import { Drawer, DrawerContent, DrawerNavbar } from "@/components/ui/drawer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { questionTypes } from "@/constants/question-type";
 import { $api } from "@/lib/api";
-import { Question, QuestionType } from "@evaly/backend/types";
+import { InsertQuestion, Question, QuestionType } from "@evaly/backend/types";
 import { useMutation } from "@tanstack/react-query";
 import {
   BrainCircuit,
-  ChevronLeft,
   ClipboardIcon,
   CloudUpload,
   FileSpreadsheetIcon,
@@ -53,12 +47,14 @@ import { useState } from "react";
 
 const DialogAddQuestion = ({
   referenceId,
+  referenceType,
   onClose,
   order,
   onSuccessCreateQuestion,
 }: {
   order?: number;
   referenceId?: string;
+  referenceType?: Question["referenceType"];
   refetch?: () => void;
   onClose?: () => void;
   onSuccessCreateQuestion?: (question: Question[]) => void;
@@ -80,27 +76,13 @@ const DialogAddQuestion = ({
     }
   };
 
-  if (!referenceId) return null;
+  if (!referenceId || !referenceType) return null;
 
   return (
     <Drawer open={order !== undefined} dismissible={false}>
       <DrawerContent className="h-dvh">
-        <DrawerTitle className="hidden"></DrawerTitle>
-        <DrawerHeader className="hidden"></DrawerHeader>
         {/* Header */}
-        <header className="px-6 py-4 border-b border-border">
-          <div className="mx-auto flex items-center">
-            <button
-              onClick={onBack}
-              className="p-2 rounded-full hover:bg-muted transition-all duration-200 cursor-pointer"
-            >
-              <ChevronLeft className="text-muted-foreground" size={20} />
-            </button>
-            <h1 className="ml-3 font-medium text-foreground">
-              Add new question
-            </h1>
-          </div>
-        </header>
+        <DrawerNavbar onBack={onBack} title="Add new question" />
 
         <AnimatePresence mode="popLayout">
           {/* Step 1: Select method */}
@@ -165,6 +147,7 @@ const DialogAddQuestion = ({
             >
               <SectionCreateQuestion
                 referenceId={referenceId}
+                referenceType={referenceType}
                 order={order}
                 onSuccessCreateQuestion={(questions) => {
                   onSuccessCreateQuestion?.(questions);
@@ -182,9 +165,11 @@ const DialogAddQuestion = ({
 const SectionCreateQuestion = ({
   referenceId,
   order,
+  referenceType,
   onSuccessCreateQuestion,
 }: {
   referenceId: string;
+  referenceType: Question["referenceType"];
   order?: number;
   onSuccessCreateQuestion?: (question: Question[]) => void;
 }) => {
@@ -195,11 +180,28 @@ const SectionCreateQuestion = ({
       mutationKey: ["create-question"],
       mutationFn: async () => {
         if (!order || !typeSelected) return;
-        const response = await $api.organization.question.create.post({
+
+        const question: InsertQuestion = {
           referenceId,
           order,
           type: typeSelected,
-        });
+          referenceType: referenceType,
+        };
+
+        if (
+          typeSelected === "single-choice" ||
+          typeSelected === "point-based"
+        ) {
+          question.options = Array.from({ length: 4 }, (_, index) => ({
+            text: ``,
+            isCorrect: index === 0,
+          }));
+        }
+
+        // Currently we only support single question creation, but its ready for bulk creation
+        const response = await $api.organization.question.create.post([
+          question,
+        ]);
 
         if (response.status !== 200) {
           throw new Error(response.error?.value as unknown as string);
@@ -228,7 +230,7 @@ const SectionCreateQuestion = ({
       <p className="text-muted-foreground mt-2">
         Select the type of question you want to create
       </p>
-      <div className="flex flex-row flex-wrap gap-y-3 gap-x-2 mt-16">
+      <div className="flex flex-row flex-wrap gap-y-3 gap-x-2 mt-10">
         {Object.values(questionTypes).map((type) => (
           <Button
             key={type.value}

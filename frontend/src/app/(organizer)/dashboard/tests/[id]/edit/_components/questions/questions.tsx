@@ -10,10 +10,9 @@ import {
 } from "@/components/ui/card";
 import SectionSidebar from "./section-sidebar";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSelectedSession } from "../../_hooks/use-selected-session";
 import DialogDeleteSession from "@/components/shared/dialog/dialog-delete-session";
-import { Skeleton } from "@/components/ui/skeleton";
 import DialogEditSessionDuration from "@/components/shared/dialog/dialog-edit-session-duration";
 import DialogEditSession from "@/components/shared/dialog/dialog-edit-session";
 import DialogEditQuestion from "@/components/shared/dialog/dialog-edit-question";
@@ -24,6 +23,8 @@ import { Question } from "@evaly/backend/types";
 import { useQuery } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
 import { useAllQuestionByReferenceIdQuery } from "@/query/organization/question/use-all-question-by-reference-id.query";
+import { useSessionByTestIdQuery } from "@/query/organization/session/use-session-by-test-id";
+import { Skeleton } from "@/components/ui/skeleton";
 
 /**
  * Insert questions at the correct position based on their order
@@ -36,19 +37,21 @@ const insertQuestionsAtCorrectPosition = (
   newQuestions: Question[]
 ): Question[] => {
   if (newQuestions.length === 0) return prevQuestions;
-  
+
   // Find the first question's order (which is the insertion point)
   const firstNewQuestionOrder = newQuestions[0].order;
-  
+
   if (!firstNewQuestionOrder) {
     // If no order is defined, just append to the end (fallback)
     return [...prevQuestions, ...newQuestions];
   }
-  
+
   // Find the index where we should insert the new questions
   // Order starts from 1, but array index starts from 0
-  const insertIndex = prevQuestions.findIndex(q => q.order && q.order >= firstNewQuestionOrder);
-  
+  const insertIndex = prevQuestions.findIndex(
+    (q) => q.order && q.order >= firstNewQuestionOrder
+  );
+
   // Create a new array with updated questions
   let result;
   if (insertIndex === -1) {
@@ -59,14 +62,14 @@ const insertQuestionsAtCorrectPosition = (
     result = [
       ...prevQuestions.slice(0, insertIndex),
       ...newQuestions,
-      ...prevQuestions.slice(insertIndex)
+      ...prevQuestions.slice(insertIndex),
     ];
   }
-  
+
   // Update the order field to ensure it starts from 1 and is sequential
   return result.map((question, index) => ({
     ...question,
-    order: index + 1
+    order: index + 1,
   }));
 };
 
@@ -80,8 +83,8 @@ const updateQuestionInArray = (
   prevQuestions: Question[],
   updatedQuestion: Question
 ): Question[] => {
-  const findIndex = prevQuestions.findIndex(q => q.id === updatedQuestion.id);
-  
+  const findIndex = prevQuestions.findIndex((q) => q.id === updatedQuestion.id);
+
   // If the question is found, update it
   if (findIndex >= 0) {
     return [
@@ -90,7 +93,7 @@ const updateQuestionInArray = (
       ...prevQuestions.slice(findIndex + 1),
     ];
   }
-  
+
   // If the question is not found, return the original array
   return prevQuestions;
 };
@@ -99,6 +102,8 @@ const Questions = () => {
   const [selectedSession, setSelectedSession] = useSelectedSession();
   const [selectedQuestion, setSelectedQuestion] = useState<Question>();
   const [addQuestionOnOrder, setAddQuestionOnOrder] = useState<number>();
+  const [isSticky, setIsSticky] = useState(false);
+  const headerRef = useRef<HTMLDivElement>(null);
 
   const {
     data: dataSession,
@@ -121,15 +126,8 @@ const Questions = () => {
     data: dataSessions,
     isRefetching: isRefetchingSessions,
     isPending: isPendingSessions,
-  } =  useQuery({
-    queryKey: ["sessions-by-test-id", dataSession?.testId],
-    queryFn: async () => {
-      const response = await $api.organization.test.session.all.get({
-        query: { testId: dataSession?.testId as string },
-      });
-      return response.data?.sessions
-    },
-    enabled: !!dataSession?.testId,
+  } = useSessionByTestIdQuery({
+    testId: dataSession?.testId as string,
   });
 
   const {
@@ -137,8 +135,10 @@ const Questions = () => {
     isRefetching: isRefetchingQuestions,
     refetch: refetchQuestions,
     isPending: isPendingQuestions,
-  } = useAllQuestionByReferenceIdQuery({referenceId: selectedSession as string})
-  
+  } = useAllQuestionByReferenceIdQuery({
+    referenceId: selectedSession as string,
+  });
+
   const [localQuestions, setLocalQuestions] = useState<Question[]>([]);
 
   useEffect(() => {
@@ -170,155 +170,213 @@ const Questions = () => {
     }
   };
 
+  const onHandleChangeOrder = (
+    changedQuestionOrders: {
+      questionId: string;
+      order: number;
+    }[]
+  ) => {
+    // Update the local questions state to reflect the order changes immediately
+    setLocalQuestions((prevQuestions) => {
+      // Create a copy of the previous questions
+      const updatedQuestions = [...prevQuestions];
+
+      // Update the order of each changed question
+      changedQuestionOrders.forEach(({ questionId, order }) => {
+        const questionIndex = updatedQuestions.findIndex(
+          (q) => q.id === questionId
+        );
+        if (questionIndex !== -1) {
+          updatedQuestions[questionIndex] = {
+            ...updatedQuestions[questionIndex],
+            order,
+          };
+        }
+      });
+
+      // Sort the questions by their new order
+      return updatedQuestions.sort((a, b) => a.order - b.order);
+    });
+  };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (headerRef.current) {
+        // Get the header's position relative to the viewport
+        const headerRect = headerRef.current.getBoundingClientRect();
+        // Check if the header is at or past its sticky position (70px from top)
+        setIsSticky(headerRect.top <= 70);
+      }
+    };
+
+    // Add scroll event listener
+    window.addEventListener("scroll", handleScroll);
+    // Initial check
+    handleScroll();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <div className="flex flex-row gap-6">
       <SectionSidebar />
-      {isPendingQuestions ? (
-        <Skeleton className="flex-1 h-[60vh]" />
-      ) : dataSession ? (
-        <Card className="border border-dashed overflow-clip flex-1 h-max">
-          <CardHeader className="sticky top-14 bg-background z-10 pb-4">
-            <div className="flex flex-row items-start">
-              <CardTitle className="flex-1 flex flex-row flex-wrap items-center gap-2">
-                {dataSession?.order}. {dataSession?.title || "Untitled session"}
-                <DialogEditSession sessionId={selectedSession as string} />
-              </CardTitle>
-              <div className="flex flex-row gap-2">
-                <Button
-                  size={"xs"}
-                  variant={hideOptions ? "default" : "outline"}
-                  onClick={() => {
-                    setHideOptions((prev) => !prev);
-                  }}
-                >
-                  {hideOptions ? (
-                    <>
-                      <ListTreeIcon />
-                      Show Options
-                    </>
-                  ) : (
-                    <>
-                      <ListXIcon />
-                      Hide Options
-                    </>
-                  )}
-                </Button>
-
-                <DialogEditSessionDuration
-                  sessionId={selectedSession as string}
-                  onSuccess={() => {
-                    refetchSessions();
-                    refetchSession();
-                  }}
-                  disabled={isPendingSession || isRefetchingSession}
-                />
-                <DialogDeleteSession
-                  isLastSession={dataSessions?.length === 1}
-                  disabled={
-                    isRefetchingQuestions ||
-                    isRefetchingSessions ||
-                    isPendingQuestions ||
-                    isPendingSessions
-                  }
-                  sessionId={selectedSession as string}
-                  onSuccess={() => {
-                    onSuccessDeleteSession();
-                  }}
-                />
-              </div>
-            </div>
-            <CardDescription className="max-w-md flex flex-row items-end gap-2">
-              {dataSession?.description || "No description"}
-            </CardDescription>
-          </CardHeader>
-          {localQuestions?.length ? (
-            <CardContent className="pt-0">
-              <div
-                className="relative"
-                style={{ height: `${virtualizer.getTotalSize()}px` }}
+      <Card className="border overflow-clip flex-1 h-max">
+        <CardHeader
+          ref={headerRef}
+          className={cn(
+            `sticky top-[70px] bg-background z-10 pb-4 mb-4 transition-all duration-300 border-b`,
+            isSticky
+              ? "border-border shadow-md shadow-black/5"
+              : "border-transparent"
+          )}
+        >
+          <div className="flex flex-row items-start">
+            <CardTitle className="flex-1 flex flex-row flex-wrap items-center gap-2">
+              {dataSession ? (
+                <>
+                  {dataSession?.order}.{" "}
+                  {dataSession?.title || "Untitled session"}
+                  <DialogEditSession sessionId={selectedSession as string} />
+                </>
+              ) : (
+                <Skeleton className="w-1/2 h-5" />
+              )}
+            </CardTitle>
+            <div className="flex flex-row gap-2">
+              <Button
+                size={"xs"}
+                variant={hideOptions ? "default" : "outline"}
+                onClick={() => {
+                  setHideOptions((prev) => !prev);
+                }}
               >
-                <Reorder.Group
-                  onReorder={(newOrderedQuestions) => {
-                    console.log(newOrderedQuestions);
-                  }}
-                  values={localQuestions}
-                  as="div"
-                  className={cn(
-                    "absolute top-0 left-0 w-full",
-                    isRefetchingQuestions ? "animate-pulse" : ""
-                  )}
-                  style={{
-                    transform: `translateY(${virtualItems[0]?.start ?? 0}px)`,
-                  }}
-                >
-                  {virtualItems.map(({ index }) => {
-                    const data = localQuestions?.[index];
-                    return (
-                      <Reorder.Item
-                        value={data}
-                        as="div"
-                        key={data.id}
-                        ref={virtualizer.measureElement}
-                        data-index={index}
-                        dragListener={false}
-                      >
-                        <CardQuestion
-                          onMoveUp={() => {
-                            console.log("move up");
-                          }}
-                          onMoveDown={() => {
-                            console.log("move down");
-                          }}
-                          hideOptions={hideOptions}
-                          data={data}
-                          onClickEdit={() => setSelectedQuestion(data)}
-                          className={cn(
-                            isRefetchingQuestions ? "cursor-progress" : ""
-                          )}
-                          onDeleteSuccess={() => {
-                            const findIndex = localQuestions.findIndex(
-                              (q) => q.id === data.id
-                            );
-                            if (findIndex >= 0) {
-                              // Update the order of questions after deletion
-                              setLocalQuestions((prev) => {
-                                const filtered = prev.filter(q => q.id !== data.id);
-                                return filtered.map((q, index) => ({
-                                  ...q,
-                                  order: q.order && data.order && q.order > data.order 
-                                    ? q.order - 1 
-                                    : index + 1
-                                }));
-                              });
-                            }
-                          }}
-                        />
-                        <SeparatorAdd
-                          onClick={() => {
-                            if (data.order) {
-                              setAddQuestionOnOrder(data.order + 1);
-                            } else {
-                              setAddQuestionOnOrder(localQuestions.length + 1);
-                            }
-                          }}
-                        />
-                      </Reorder.Item>
-                    );
-                  })}
-                </Reorder.Group>
-              </div>
-            </CardContent>
-          ) : (
-            <CardContent className="pt-0">
-              <EmptyQuestion
-                onClickAddQuestion={() => {
-                  setAddQuestionOnOrder(localQuestions.length + 1);
+                {hideOptions ? (
+                  <>
+                    <ListTreeIcon />
+                    Show Options
+                  </>
+                ) : (
+                  <>
+                    <ListXIcon />
+                    Hide Options
+                  </>
+                )}
+              </Button>
+
+              <DialogEditSessionDuration
+                sessionId={selectedSession as string}
+                onSuccess={() => {
+                  refetchSessions();
+                  refetchSession();
+                }}
+                disabled={isPendingSession || isRefetchingSession}
+              />
+              <DialogDeleteSession
+                isLastSession={dataSessions?.length === 1}
+                disabled={
+                  isRefetchingQuestions ||
+                  isRefetchingSessions ||
+                  isPendingQuestions ||
+                  isPendingSessions
+                }
+                sessionId={selectedSession as string}
+                onSuccess={() => {
+                  onSuccessDeleteSession();
                 }}
               />
-            </CardContent>
-          )}
-        </Card>
-      ) : null}
+            </div>
+          </div>
+          <CardDescription className="max-w-md flex flex-row items-end gap-2">
+            {dataSession?.description || "No description"}
+          </CardDescription>
+        </CardHeader>
+        {localQuestions?.length ? (
+          <CardContent className="pt-0">
+            <div
+              className="relative"
+              style={{ height: `${virtualizer.getTotalSize()}px` }}
+            >
+              <Reorder.Group
+                onReorder={() => {}}
+                values={localQuestions}
+                as="div"
+                className={cn(
+                  "absolute top-0 left-0 w-full",
+                  isRefetchingQuestions ? "animate-pulse" : ""
+                )}
+                style={{
+                  transform: `translateY(${virtualItems[0]?.start ?? 0}px)`,
+                }}
+              >
+                {virtualItems.map(({ index }) => {
+                  const data = localQuestions?.[index];
+                  return (
+                    <Reorder.Item
+                      value={data}
+                      as="div"
+                      key={data.id}
+                      ref={virtualizer.measureElement}
+                      data-index={index}
+                      dragListener={false}
+                    >
+                      <CardQuestion
+                        onChangeOrder={onHandleChangeOrder}
+                        hideOptions={hideOptions}
+                        data={data}
+                        onClickEdit={() => setSelectedQuestion(data)}
+                        className={cn(
+                          isRefetchingQuestions ? "cursor-progress" : ""
+                        )}
+                        onDeleteSuccess={() => {
+                          const findIndex = localQuestions.findIndex(
+                            (q) => q.id === data.id
+                          );
+                          if (findIndex >= 0) {
+                            // Update the order of questions after deletion
+                            setLocalQuestions((prev) => {
+                              const filtered = prev.filter(
+                                (q) => q.id !== data.id
+                              );
+                              return filtered.map((q, index) => ({
+                                ...q,
+                                order:
+                                  q.order && data.order && q.order > data.order
+                                    ? q.order - 1
+                                    : index + 1,
+                              }));
+                            });
+                          }
+                        }}
+                        previousQuestionId={localQuestions[index - 1]?.id}
+                        nextQuestionId={localQuestions[index + 1]?.id}
+                      />
+                      <SeparatorAdd
+                        onClick={() => {
+                          if (data.order) {
+                            setAddQuestionOnOrder(data.order + 1);
+                          } else {
+                            setAddQuestionOnOrder(localQuestions.length + 1);
+                          }
+                        }}
+                      />
+                    </Reorder.Item>
+                  );
+                })}
+              </Reorder.Group>
+            </div>
+          </CardContent>
+        ) : (
+          <CardContent className="pt-0">
+            <EmptyQuestion
+              onClickAddQuestion={() => {
+                setAddQuestionOnOrder(localQuestions.length + 1);
+              }}
+            />
+          </CardContent>
+        )}
+      </Card>
       <DialogEditQuestion
         defaultValue={selectedQuestion}
         onSuccess={(question) => {
@@ -333,12 +391,15 @@ const Questions = () => {
       <DialogAddQuestion
         order={addQuestionOnOrder}
         referenceId={dataSession?.id}
+        referenceType="test-session"
         refetch={refetchQuestions}
         onClose={() => {
           setAddQuestionOnOrder(undefined);
         }}
         onSuccessCreateQuestion={(questions) => {
-          setLocalQuestions((prev) => insertQuestionsAtCorrectPosition(prev, questions));
+          setLocalQuestions((prev) =>
+            insertQuestionsAtCorrectPosition(prev, questions)
+          );
           setAddQuestionOnOrder(undefined);
           if (questions.length === 1) {
             setSelectedQuestion(questions[0]);
@@ -370,9 +431,8 @@ const EmptyQuestion = ({
 }: {
   onClickAddQuestion?: () => void;
 }) => {
-  
   return (
-    <div className="border rounded-lg flex flex-col justify-center items-center py-16 border-dashed gap-4">
+    <div className="border rounded-lg flex flex-col justify-center items-center py-16  gap-4">
       <h1>No question found on this session</h1>
       <Button
         size={"sm"}

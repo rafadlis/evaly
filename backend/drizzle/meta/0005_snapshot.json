@@ -1,6 +1,6 @@
 {
-  "id": "05c0f407-72f4-4249-ad1c-99ffe2e4bf29",
-  "prevId": "78ec534d-7355-4add-80d3-0f1f626639c0",
+  "id": "a2f9c21d-3d58-4c41-b9d7-8322edf0da7a",
+  "prevId": "44e7c3d3-f0e9-421e-a485-594a4e0e2ee4",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -1558,6 +1558,18 @@
           "notNull": false,
           "default": "'multiple-choice'"
         },
+        "point_value": {
+          "name": "point_value",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "options": {
+          "name": "options",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
@@ -1597,111 +1609,6 @@
         }
       },
       "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.question_option": {
-      "name": "question_option",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(255)",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "question_id": {
-          "name": "question_id",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "text": {
-          "name": "text",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "is_correct": {
-          "name": "is_correct",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "point_value": {
-          "name": "point_value",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "media_url": {
-          "name": "media_url",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "media_type": {
-          "name": "media_type",
-          "type": "varchar(10)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "order": {
-          "name": "order",
-          "type": "smallint",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "CURRENT_TIMESTAMP"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "CURRENT_TIMESTAMP"
-        }
-      },
-      "indexes": {
-        "option_question_idx": {
-          "name": "option_question_idx",
-          "columns": [
-            {
-              "expression": "question_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "question_option_question_id_question_id_fk": {
-          "name": "question_option_question_id_question_id_fk",
-          "tableFrom": "question_option",
-          "tableTo": "question",
-          "columnsFrom": [
-            "question_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},

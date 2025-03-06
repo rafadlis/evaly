@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChevronLeft, GripVertical, Loader2 } from "lucide-react";
+import { GripVertical, Loader2, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   Drawer,
-  DrawerDescription,
   DrawerHeader,
+  DrawerNavbar,
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { DrawerContent } from "@/components/ui/drawer";
@@ -15,8 +15,18 @@ import { DrawerFooter } from "@/components/ui/drawer";
 import QuestionTypeSelection from "@/components/shared/question-type-selection";
 import { Editor } from "@/components/shared/editor/editor";
 import { Separator } from "@/components/ui/separator";
-import { Question, UpdateQuestion } from "@evaly/backend/types";
+import {
+  Question,
+  UpdateQuestion,
+  UpdateQuestionOption,
+  UpdateQuestionWithOptions,
+} from "@evaly/backend/types";
 import { useUpdateQuestionMutation } from "@/query/organization/question/use-update-question.mutation";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { Reorder } from "motion/react";
+
+dayjs.extend(relativeTime);
 
 const DialogEditQuestion = ({
   defaultValue,
@@ -30,7 +40,7 @@ const DialogEditQuestion = ({
   const [open, setOpen] = useState(false);
 
   const { mutateAsync: updateQuestion, isPending: isPendingUpdateQuestion } =
-  useUpdateQuestionMutation()
+    useUpdateQuestionMutation();
 
   const {
     control,
@@ -38,9 +48,10 @@ const DialogEditQuestion = ({
     reset,
     watch,
     formState: { isDirty },
-  } = useForm<UpdateQuestion>();
+  } = useForm<UpdateQuestion | UpdateQuestionWithOptions>();
 
   const type = watch("type");
+  const updatedAt = watch("updatedAt");
 
   useEffect(() => {
     if (defaultValue) {
@@ -52,7 +63,7 @@ const DialogEditQuestion = ({
     }
   }, [defaultValue, reset, onClose]);
 
-  const onSubmit = async (data: UpdateQuestion, saveAndClose?: boolean) => {
+  const onSubmit = async (data: UpdateQuestion | UpdateQuestionWithOptions, saveAndClose?: boolean) => {
     if (!defaultValue?.id) return;
 
     const updatedQuestion = await updateQuestion(data);
@@ -93,26 +104,14 @@ const DialogEditQuestion = ({
       handleOnly
     >
       <DrawerContent className="h-dvh">
-        <header className="px-6 py-3 border-b border-border">
-          <div className="mx-auto flex items-center">
-            <button
-              className="p-2 rounded-full hover:bg-muted transition-all duration-200 cursor-pointer"
-              onClick={() => {
-                closeDialog(isDirty);
-              }}
-            >
-              <ChevronLeft className="text-muted-foreground" size={20} />
-            </button>
-            <h1 className="ml-3 font-medium">Edit Question</h1>
-          </div>
-        </header>
+        <DrawerNavbar
+          onBack={() => closeDialog(isDirty)}
+          title={`Edit Question #${defaultValue?.order}`}
+        />
 
         <div className="flex flex-col overflow-y-auto">
-          <DrawerHeader className="pt-20 container max-w-4xl px-6">
+          <DrawerHeader className="pt-10 container max-w-4xl px-6">
             <DrawerTitle className="flex justify-between items-center">
-              <span className="text-lg font-bold">
-                Edit Question #{defaultValue?.order}
-              </span>
               <Controller
                 control={control}
                 name="type"
@@ -125,21 +124,40 @@ const DialogEditQuestion = ({
                   />
                 )}
               />
+              <div className="flex flex-row gap-2 text-muted-foreground font-normal">
+                Last updated: {dayjs(updatedAt).fromNow()}
+              </div>
             </DrawerTitle>
-            <DrawerDescription className="hidden"></DrawerDescription>
           </DrawerHeader>
 
-          <div className="mt-2 container max-w-4xl pb-10">
+          <div className="container max-w-4xl pb-10">
             <Controller
               control={control}
               name="question"
               render={({ field }) => (
-                <Editor value={field.value || ""} onChange={field.onChange} />
+                <Editor
+                  value={field.value || ""}
+                  onChange={field.onChange}
+                  placeholder="Type your question here..."
+                />
               )}
             />
 
             <Separator className="my-6" />
-            {type === "multiple-choice" ? <MultipleChoiceAnswer /> : null}
+            {type === "multiple-choice" ? (
+              <Controller
+                control={control}
+                name="options"
+                render={({ field }) => (
+                  <MultipleChoiceAnswer
+                    value={field.value || []}
+                    onChange={(value) => {
+                      field.onChange(value);
+                    }}
+                  />
+                )}
+              />
+            ) : null}
           </div>
         </div>
 
@@ -192,31 +210,74 @@ const DialogEditQuestion = ({
   );
 };
 
-const MultipleChoiceAnswer = () => {
+const MultipleChoiceAnswer = ({
+  value,
+  onChange,
+}: {
+  value: UpdateQuestionOption[];
+  onChange: (options: UpdateQuestionOption[]) => void;
+}) => {
   return (
-    <div className="flex flex-col gap-4 mt-2 text-sm">
-      {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="flex flex-row items-center gap-1">
+    <Reorder.Group
+      className="flex flex-col gap-4 mt-2 text-sm"
+      onReorder={(newOrder) => {
+        onChange(newOrder);
+      }}
+      values={value}
+    >
+      {value.map((option, i) => (
+        <Reorder.Item
+          key={option.id}
+          value={option}
+          className="flex flex-row items-center gap-1"
+          dragListener={false}
+        >
           <div className="flex-1 relative flex flex-row items-center">
             <Button
               size={"icon-xs"}
               className="absolute left-2 select-none"
-              variant={i == 2 ? "default" : "secondary"}
+              variant={option.isCorrect ? "default" : "secondary"}
               rounded={false}
+              onClick={() => {
+                onChange(
+                  value.map((item) => {
+                    if (item.id === option.id) {
+                      return { ...item, isCorrect: !item.isCorrect };
+                    }
+                    return item;
+                  })
+                );
+              }}
             >
-              A
+              {String.fromCharCode(65 + i)}
             </Button>
             <Input
               placeholder={`Type options ${i + 1}`}
               className="pl-12 h-10"
+              value={option.text}
+              onChange={(e) => {
+                onChange(
+                  value.map((item) => {
+                    if (item.id === option.id) {
+                      return { ...item, text: e.target.value };
+                    }
+                    return item;
+                  })
+                );
+              }}
             />
           </div>
-          <Button rounded={false} variant={"ghost"} size={"icon-sm"}>
-            <GripVertical className="text-muted-foreground" />
-          </Button>
-        </div>
+          <div>
+            <Button rounded={false} variant={"ghost"} size={"icon-sm"}>
+              <GripVertical className="text-muted-foreground" />
+            </Button>
+            <Button rounded={false} variant={"ghost"} size={"icon-sm"}>
+              <Trash2 className="text-muted-foreground" />
+            </Button>
+          </div>
+        </Reorder.Item>
       ))}
-    </div>
+    </Reorder.Group>
   );
 };
 

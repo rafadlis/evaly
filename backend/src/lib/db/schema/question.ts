@@ -9,11 +9,11 @@ import {
   integer,
   boolean,
   jsonb,
-  unique,
+  unique
 } from "drizzle-orm/pg-core";
 import { ulid } from "ulidx";
 import { testSession } from "./test.session";
-import { MEDIA_TYPES, QUESTION_TYPES } from "../../../types";
+import { MEDIA_TYPES, MediaType, QUESTION_TYPES } from "../../../types";
 
 // Main question table
 export const question = pgTable(
@@ -24,11 +24,28 @@ export const question = pgTable(
       .$defaultFn(() => "qst-" + ulid()),
     question: text("question"),
     referenceId: varchar("reference_id", { length: 255 }).notNull(),
-    order: smallint("order"),
+    referenceType: varchar("reference_type", {
+      length: 100,
+      enum: ["test-session", "template", "ai-generated"],
+    })
+      .notNull()
+      .default("test-session"),
+    organizationId: varchar("organization_id", { length: 255 }), // Owner of the question
+    order: smallint("order").default(1).notNull(),
     type: varchar("type", {
       length: 20,
       enum: QUESTION_TYPES,
     }).default("multiple-choice"),
+    pointValue: smallint("point_value"),
+    options: jsonb("options").$type<
+      {
+        text: string;
+        isCorrect: boolean;
+        mediaUrl?: string;
+        mediaType?: MediaType;
+        pointValue?: number;
+      }[]
+    >(),
     createdAt: timestamp("created_at", {
       mode: "string",
       withTimezone: true,
@@ -49,40 +66,6 @@ export const question = pgTable(
   },
   (table) => ({
     referenceIdIndex: index("reference_idx").on(table.referenceId),
-  })
-);
-
-// Options table for questions with predefined options
-export const questionOption = pgTable(
-  "question_option",
-  {
-    id: varchar("id", { length: 255 })
-      .primaryKey()
-      .$defaultFn(() => "opt-" + ulid()),
-    questionId: varchar("question_id", { length: 255 })
-      .notNull()
-      .references(() => question.id, { onDelete: "cascade" }),
-    optionText: text("option_text").notNull(),
-    isCorrect: boolean("is_correct"),
-    pointValue: integer("point_value"),
-    order: smallint("order"),
-    imageUrl: text("image_url"), // For image-choice questions
-    createdAt: timestamp("created_at", {
-      mode: "string",
-      withTimezone: true,
-    })
-      .notNull()
-      .default(sql`CURRENT_TIMESTAMP`),
-    updatedAt: timestamp("updated_at", {
-      mode: "string",
-      withTimezone: true,
-    })
-      .notNull()
-      .default(sql`CURRENT_TIMESTAMP`)
-      .$onUpdate(() => new Date().toISOString()),
-  },
-  (table) => ({
-    questionIdIndex: index("option_question_idx").on(table.questionId),
   })
 );
 
@@ -173,7 +156,9 @@ export const mediaConfig = pgTable(
     }).notNull(),
     allowedFormats: text("allowed_formats", {
       enum: ["audio", "video", "file", "image"],
-    }).array().notNull(),
+    })
+      .array()
+      .notNull(),
     maxFileSizeMb: integer("max_file_size_mb"),
     sampleResponseUrl: text("sample_response_url"),
     instructions: text("instructions"),
@@ -444,7 +429,6 @@ export const questionRelation = relations(question, ({ one, many }) => ({
     references: [testSession.id],
     relationName: "testSession.question",
   }),
-  options: many(questionOption),
   textFieldConfig: one(textFieldConfig),
   fillBlankSegments: many(fillBlankSegment),
   mediaConfig: one(mediaConfig),
@@ -455,14 +439,6 @@ export const questionRelation = relations(question, ({ one, many }) => ({
   codeEditorConfig: one(codeEditorConfig),
   dateTimeConfig: one(dateTimeConfig),
   formulaConfig: one(formulaConfig),
-}));
-
-export const questionOptionRelation = relations(questionOption, ({ one }) => ({
-  question: one(question, {
-    fields: [questionOption.questionId],
-    references: [question.id],
-    relationName: "question.options",
-  }),
 }));
 
 export const textFieldConfigRelation = relations(

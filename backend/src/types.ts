@@ -5,7 +5,7 @@ export interface Pagination {
     totalPages: number;
 }
 
-import { question, questionOption } from "./lib/db/schema/question";
+import { question } from "./lib/db/schema/question";
 import { test } from "./lib/db/schema/test";
 import { testSession } from "./lib/db/schema/test.session";
 
@@ -39,10 +39,10 @@ export const MEDIA_TYPES = ["audio", "video", "file", "image"] as const;
 
 export type MediaType = typeof MEDIA_TYPES
 export type Question = typeof question.$inferSelect;
-export type InsertQuestion = typeof question.$inferInsert;
+export type InsertQuestion = typeof question.$inferInsert
 export type UpdateQuestion = Partial<InsertQuestion>;
-export type QuestionOption = typeof questionOption.$inferSelect;
-export type InsertQuestionOption = typeof questionOption.$inferInsert;
+
+
 export interface BaseQuestionInput {
   question: string;
   referenceId: string;

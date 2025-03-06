@@ -3,8 +3,8 @@ CREATE TABLE "account" (
 	"user_id" varchar(255) NOT NULL,
 	"account_id" varchar(255) NOT NULL,
 	"provider_id" varchar(255) NOT NULL,
-	"access_token" varchar(255),
-	"refresh_token" varchar(255),
+	"access_token" text,
+	"refresh_token" text,
 	"access_token_expires_at" timestamp,
 	"refresh_token_expires_at" timestamp,
 	"scope" varchar(255),
@@ -39,7 +39,7 @@ CREATE TABLE "user" (
 CREATE TABLE "verification" (
 	"id" varchar(255) PRIMARY KEY NOT NULL,
 	"identifier" varchar(255) NOT NULL,
-	"value" varchar(255) NOT NULL,
+	"value" text NOT NULL,
 	"expires_at" timestamp NOT NULL,
 	"created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
@@ -201,11 +201,12 @@ CREATE TABLE "question" (
 CREATE TABLE "question_option" (
 	"id" varchar(255) PRIMARY KEY NOT NULL,
 	"question_id" varchar(255) NOT NULL,
-	"option_text" text NOT NULL,
+	"text" text NOT NULL,
 	"is_correct" boolean,
 	"point_value" integer,
+	"media_url" text,
+	"media_type" varchar(10),
 	"order" smallint,
-	"image_url" text,
 	"created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
@@ -236,8 +237,6 @@ CREATE TABLE "text_field_config" (
 	CONSTRAINT "text_field_config_question_id_unique" UNIQUE("question_id")
 );
 --> statement-breakpoint
-ALTER TABLE "account" ADD CONSTRAINT "account_user_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "session" ADD CONSTRAINT "session_user_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "organizer" ADD CONSTRAINT "organizer_user_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "organizer" ADD CONSTRAINT "organizer_organization_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organization"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "code_editor_config" ADD CONSTRAINT "code_editor_config_question_id_question_id_fk" FOREIGN KEY ("question_id") REFERENCES "public"."question"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

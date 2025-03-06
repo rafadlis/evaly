@@ -6,9 +6,9 @@ import { UpdateQuestion } from "../../../types";
 export async function updateQuestion(questionId: string, data: UpdateQuestion) {
   const updatedQuestion = await db
     .update(question)
-    .set(data)
+    .set({ ...data, updatedAt: new Date().toISOString() })
     .where(eq(question.id, questionId))
     .returning();
-  
+
   return { updatedQuestion: updatedQuestion[0] };
 }

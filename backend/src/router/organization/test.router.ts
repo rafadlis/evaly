@@ -55,14 +55,19 @@ export const testRouter = new Elysia().group("/test", (app) => {
       // Get Test By Id
       .get(
         "/:id",
-        async ({ params, organizer }) => {
+        async ({ params, organizer, error }) => {
           const organizationId = organizer.organizationId;
           const testId = params.id;
-
-          return await getTestById({
+          const data = await getTestById({
             organizationId,
             id: testId,
           });
+
+          if (!data) {
+            return error("Not Found", "Test not found");
+          }
+
+          return data;
         },
         {
           params: t.Object({

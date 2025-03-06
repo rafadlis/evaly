@@ -19,6 +19,7 @@ interface Props {
   onChange?: (value: string) => void;
   maxLength?: number;
   onContentLengthChange?: (length: number) => void;
+  placeholder?: string;
 }
 
 export const Editor = ({
@@ -28,6 +29,7 @@ export const Editor = ({
   onChange,
   maxLength,
   onContentLengthChange,
+  placeholder,
 }: Props) => {
   const editor = useEditor({
     extensions: extensions({ limit: maxLength }),
@@ -35,7 +37,7 @@ export const Editor = ({
     editorProps: {
       attributes: {
         class: cn(
-          "custom-prose focus:outline-none outline-none relative py-2 px-6 border border-foreground/20 border-t-0 w-full min-h-[160px] min-w-full rounded-b-xl",
+          "custom-prose focus:outline-none outline-none border px-8 py-6 rounded-lg relative w-full min-h-[140px] rounded-t-none border-t-0 min-w-full",
           editorInputClassName
         ),
       },
@@ -75,7 +77,7 @@ export const Editor = ({
         {editor && (
           <EditorToolbar editor={editor}  />
         )}
-        <EditorContent editor={editor} className="h-full" />
+        <EditorContent editor={editor} className="h-full" placeholder={placeholder} />
         <ImageResizer />
       </EditorContext.Provider>
     </div>

@@ -156,8 +156,14 @@
 
 @layer components {
   .custom-prose {
-    @apply prose prose-sm sm:prose-base dark:prose-invert prose-p:leading-normal prose-li:leading-normal prose-li:m-0 prose-neutral
-       prose-headings:mb-3 prose-headings:mt-0 prose-h1:text-3xl prose-h1:mt-8 prose-h2:text-2xl prose-h2:mt-6 prose-h3:text-xl prose-h3:mt-4 prose-p:my-2 prose-a:text-blue-500
+    @apply prose prose-sm sm:prose-base lg:prose-lg dark:prose-invert prose-neutral
+       prose-li:leading-normal prose-li:m-0  
+       prose-headings:mb-3 prose-headings:mt-0 
+       prose-h1:text-3xl prose-h1:mt-14  prose-h1:mb-10
+       prose-h2:text-2xl prose-h2:mt-12  prose-h2:mb-6  
+       prose-h3:text-xl prose-h3:mt-10 prose-h3:mb-4
+       prose-p:my-6 prose-p:leading-normal prose-p:text-foreground
+       prose-a:text-foreground prose-a:underline-offset-4 prose-a:decoration-1 prose-a:decoration-foreground/30 prose-a:cursor-pointer prose-a:font-medium
        prose-img:my-2; 
   }
   
@@ -170,6 +176,10 @@
   }
 
   .custom-prose > h3:first-child {
+    margin-top: 0;
+  }
+
+  .custom-prose > p:first-child {
     margin-top: 0;
   }
 

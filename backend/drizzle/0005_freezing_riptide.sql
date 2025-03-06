@@ -1,0 +1,1 @@
+ALTER TABLE "question" ALTER COLUMN "options" SET DATA TYPE json;

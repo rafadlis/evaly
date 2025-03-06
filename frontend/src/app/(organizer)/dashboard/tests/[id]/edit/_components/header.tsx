@@ -2,12 +2,14 @@ import { Button } from "@/components/ui/button";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ClockIcon, Loader2, Rocket, Save } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useParams } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { UpdateTest } from "@evaly/backend/types";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
+import DialogPreviewTest from "@/components/shared/dialog/dialog-preview-test";
+import { useTestByIdQuery } from "@/query/organization/test/use-test-by-id.query";
 
 const Header = () => {
   const { id } = useParams();
@@ -16,16 +18,7 @@ const Header = () => {
     data: dataTest,
     isPending: isPendingTest,
     refetch: refetchTest,
-  } = useQuery({
-    queryKey: ["tests", id],
-    queryFn: async () => {
-      const response = await $api.organization
-        .test({ id: id?.toString() || "" })
-        .get();
-      return response.data;
-    },
-    enabled: !!id,
-  });
+  } = useTestByIdQuery({ id: id?.toString() || "" });
 
   const { mutate: updateTest, isPending: isPendingUpdateTest } = useMutation({
     mutationKey: ["update-test"],
@@ -49,8 +42,11 @@ const Header = () => {
     register,
     reset,
     formState: { isDirty },
+    watch,
     getValues,
   } = useForm<UpdateTest>();
+  
+  const testId = watch("id");
 
   useEffect(() => {
     if (dataTest) {
@@ -82,6 +78,11 @@ const Header = () => {
     };
   }, [dataSessions]);
 
+
+  if (!isPendingTest && !dataTest) {
+    return notFound()
+  }
+
   return (
     <>
       <input
@@ -91,7 +92,7 @@ const Header = () => {
         disabled={isPendingTest}
       />
       <AnimatePresence>
-        {isDirty && !isPendingTest && (
+        {isDirty && !isPendingTest && testId ? (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
@@ -118,7 +119,7 @@ const Header = () => {
               Save
             </Button>
           </motion.div>
-        )}
+        ): null}
       </AnimatePresence>
 
       <div className="mb-6 mt-4 flex flex-row justify-between items-center">
@@ -127,11 +128,12 @@ const Header = () => {
           <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
 
-        <div className="flex flex-row items-center gap-4">
+        <div className="flex flex-row items-center gap-2">
           <Button variant={"ghost"} className="text-foreground/75">
             <ClockIcon /> Total duration: {hours > 0 ? `${hours}h ` : ""}
             {minutes}m
           </Button>
+          <DialogPreviewTest />
           <Button>
             <Rocket /> Publish
           </Button>

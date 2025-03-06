@@ -1,6 +1,6 @@
 {
-  "id": "197696b7-0ac7-44d4-9136-d7b00142991c",
-  "prevId": "a40ab6ea-b897-4eac-b499-a3158554e14a",
+  "id": "78ec534d-7355-4add-80d3-0f1f626639c0",
+  "prevId": "8a28d9ac-0146-413f-9b02-ddab24c2b71e",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -34,13 +34,13 @@
         },
         "access_token": {
           "name": "access_token",
-          "type": "varchar(255)",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
         "refresh_token": {
           "name": "refresh_token",
-          "type": "varchar(255)",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
@@ -305,7 +305,7 @@
         },
         "value": {
           "name": "value",
-          "type": "varchar(255)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -1531,6 +1531,19 @@
           "primaryKey": false,
           "notNull": true
         },
+        "reference_type": {
+          "name": "reference_type",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'test-session'"
+        },
+        "organization_id": {
+          "name": "organization_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "order": {
           "name": "order",
           "type": "smallint",
@@ -1605,8 +1618,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "option_text": {
-          "name": "option_text",
+        "text": {
+          "name": "text",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -1623,15 +1636,21 @@
           "primaryKey": false,
           "notNull": false
         },
-        "order": {
-          "name": "order",
-          "type": "smallint",
+        "media_url": {
+          "name": "media_url",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "image_url": {
-          "name": "image_url",
-          "type": "text",
+        "media_type": {
+          "name": "media_type",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "order": {
+          "name": "order",
+          "type": "smallint",
           "primaryKey": false,
           "notNull": false
         },

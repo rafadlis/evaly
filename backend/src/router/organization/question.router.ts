@@ -6,6 +6,8 @@ import { createQuestion } from "../../services/organization/question/create-ques
 import { getAllQuestionByReferenceId } from "../../services/organization/question/get-all-question-by-reference-id";
 import { updateQuestion } from "../../services/organization/question/update-question";
 import { deleteQuestion } from "../../services/organization/question/delete-question";
+import { checkQuestionOwner } from "../../services/organization/question/check-question-owner";
+import { updateOrderBetweenQuestions } from "../../services/organization/question/update-order-between-questions";
 
 export const questionRouter = new Elysia().group("/question", (app) => {
   return (
@@ -15,13 +17,36 @@ export const questionRouter = new Elysia().group("/question", (app) => {
       // Create Question
       .post(
         "/create",
-        async ({ body }) => {
-          return await createQuestion(body.referenceId, body.order, body.type);
+        async ({ body, organizer: { organizationId }, error }) => {
+          const inputQuestions = body.map((question) => ({
+            ...question,
+            organizationId: organizationId,
+          }));
+
+          const questions = await createQuestion(inputQuestions);
+
+          if (questions.length !== body.length) {
+            return error(400, "Failed to create question");
+          }
+
+          return { questions };
         },
         {
-          body: createInsertSchema(question, {
-            order: t.Number(),
-          }),
+          body: t.Array(
+            createInsertSchema(question, {
+              options: t.Optional(
+                t.Array(
+                  t.Object({
+                    text: t.String(),
+                    isCorrect: t.Boolean(),
+                    mediaUrl: t.Optional(t.String()),
+                    mediaType: t.Optional(t.Any()),
+                    pointValue: t.Optional(t.Number()),
+                  })
+                )
+              ),
+            })
+          ),
         }
       )
 
@@ -57,6 +82,33 @@ export const questionRouter = new Elysia().group("/question", (app) => {
         },
         {
           params: t.Object({ id: t.String() }),
+        }
+      )
+
+      // Update Order between two questions
+      .put(
+        "/update-order",
+        async ({ body, organizer: { organizationId }, error }) => {
+          await checkQuestionOwner(
+            body.map((question) => question.questionId),
+            organizationId
+          );
+
+          const isUpdated = await updateOrderBetweenQuestions(body);
+
+          if (!isUpdated) {
+            return error(400, "Failed to update order");
+          }
+
+          return { message: "Order updated successfully" };
+        },
+        {
+          body: t.Array(
+            t.Object({
+              questionId: t.String(),
+              order: t.Number(),
+            })
+          ),
         }
       )
   );

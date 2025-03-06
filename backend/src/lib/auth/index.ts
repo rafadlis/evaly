@@ -40,17 +40,20 @@ export const auth = betterAuth({
   },
   trustedOrigins: [env.WEB_PUBLIC_URL!],
 
-  advanced: {
-    useSecureCookies: env.ENVIRONMENT !== "development",
-    crossSubDomainCookies: {
-      enabled: true,
-      domain: env.ENVIRONMENT === "development" ? "localhost" : ".evaly.io",
-    },
-    defaultCookieAttributes: {
-      secure: env.ENVIRONMENT !== "development",
-      httpOnly: true,
-      sameSite: "none",
-      partitioned: true,
-    },
-  },
+  advanced:
+    env.ENVIRONMENT === "development"
+      ? undefined
+      : {
+          useSecureCookies: true,
+          crossSubDomainCookies: {
+            enabled: true,
+            domain: ".evaly.io",
+          },
+          defaultCookieAttributes: {
+            secure: true,
+            httpOnly: true,
+            sameSite: "none",
+            partitioned: true,
+          },
+        },
 });

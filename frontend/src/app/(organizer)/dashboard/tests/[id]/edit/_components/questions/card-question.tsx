@@ -3,27 +3,88 @@ import QuestionTypeSelection from "@/components/shared/question-type-selection";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { useUpdateBetweenQuestionMutation } from "@/query/organization/question/use-update-between-question.mutation";
 import { Question } from "@evaly/backend/types";
-import { ArrowDown, ArrowUp, CircleHelpIcon } from "lucide-react";
+import { ArrowDown, ArrowUp, CircleHelpIcon, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 const CardQuestion = ({
   className,
   // hideOptions = false,
   data,
   onClickEdit,
-  onMoveUp,
-  onMoveDown,
+  onChangeOrder,
   onDeleteSuccess,
+  previousQuestionId,
+  nextQuestionId,
 }: {
   className?: string;
   hideOptions?: boolean;
-  data?: Question
+  data?: Question;
+  previousQuestionId?: string;
+  nextQuestionId?: string;
   onClickEdit?: () => void;
-  onMoveUp?: () => void;
-  onMoveDown?: () => void;
+  onChangeOrder?: (questions: { questionId: string; order: number }[]) => void;
   onDeleteSuccess?: () => void;
 }) => {
+  const [isMoving, setIsMoving] = useState<"up" | "down">();
+  const {
+    mutateAsync: updateBetweenQuestion,
+    isPending: isPendingUpdateBetweenQuestion,
+  } = useUpdateBetweenQuestionMutation();
+
+  const handleMove = async (direction: "up" | "down") => {
+    if (!data) return;
+    const currentId = data.id;
+    setIsMoving(direction);
+
+    // For moving up, we swap with the previous question
+    // For moving down, we swap with the next question
+    // The index of the question is not important, we just need to swap the order of the questions based on the order-key of the questions
+    let questions: { questionId: string; order: number }[] = [];
+
+    if (direction === "up") {
+      questions = [
+        {
+          questionId: currentId,
+          order: data.order - 1,
+        },
+        {
+          questionId: previousQuestionId as string,
+          order: data.order,
+        },
+      ];
+    } else {
+      questions = [
+        {
+          questionId: currentId,
+          order: data.order + 1,
+        },
+        {
+          questionId: nextQuestionId as string,
+          order: data.order,
+        },
+      ];
+    }
+
+    // We already checked for undefined IDs above, so we can safely assert these are strings
+    await updateBetweenQuestion({
+      questions,
+    })
+      .catch((error: unknown) => {
+        toast.error(
+          error instanceof Error ? error.message : "An unknown error occurred"
+        );
+      })
+      .then(() => {
+        setIsMoving(undefined);
+        onChangeOrder?.(questions);
+      });
+  };
+
   if (!data) return null;
+
   return (
     <Card
       className={cn(
@@ -41,28 +102,47 @@ const CardQuestion = ({
           <QuestionTypeSelection value={data.type} />
         </div>
         <div className="flex flex-row h-5 justify-end items-center">
-          <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              onMoveUp?.();
-            }}
-            size={"icon-xs"}
-            variant={"ghost"}
-            rounded={false}
-          >
-            <ArrowUp className="text-muted-foreground" />
-          </Button>
-          <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              onMoveDown?.();
-            }}
-            size={"icon-xs"}
-            variant={"ghost"}
-            rounded={false}
-          >
-            <ArrowDown className="text-muted-foreground" />
-          </Button>
+          {previousQuestionId ? (
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleMove("up");
+              }}
+              size={"icon-xs"}
+              variant={"ghost"}
+              rounded={false}
+              disabled={isPendingUpdateBetweenQuestion && isMoving === "up"}
+            >
+              {isMoving === "up" ? (
+                <Loader2 className="text-muted-foreground" />
+              ) : (
+                <ArrowUp className="text-muted-foreground" />
+              )}
+            </Button>
+          ) : null}
+
+          {nextQuestionId ? (
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleMove("down");
+              }}
+              size={"icon-xs"}
+              variant={"ghost"}
+              disabled={
+                (isPendingUpdateBetweenQuestion && isMoving === "down") ||
+                !nextQuestionId
+              }
+              rounded={false}
+            >
+              {isMoving === "down" ? (
+                <Loader2 className="text-muted-foreground" />
+              ) : (
+                <ArrowDown className="text-muted-foreground" />
+              )}
+            </Button>
+          ) : null}
+
           <DialogDeleteQuestion
             className="ml-2"
             questionId={data.id}
@@ -74,7 +154,7 @@ const CardQuestion = ({
       </CardHeader>
       <CardContent>
         <div
-          className="custom-prose"
+          className="custom-prose max-w-full max-h-[220px] overflow-y-auto"
           dangerouslySetInnerHTML={{
             __html:
               !data.question || data.question === "<p></p>"
