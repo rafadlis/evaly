@@ -121,14 +121,14 @@ declare const question: drizzle_orm_pg_core.PgTableWithColumns<{
             tableName: "question";
             dataType: "string";
             columnType: "PgVarchar";
-            data: "multiple-choice" | "yes-or-no" | "point-based" | "text-field" | "file-upload" | "fill-the-blank" | "audio-response" | "video-response" | "dropdown" | "matching-pairs" | "slider-scale" | "ranking" | "hotspot" | "drag-and-drop" | "matrix" | "likert-scale" | "open-ended" | "code-snippet" | "math-formula" | "drawing";
+            data: "multiple-choice" | "yes-or-no" | "text-field" | "file-upload" | "fill-the-blank" | "audio-response" | "video-response" | "dropdown" | "matching-pairs" | "slider-scale" | "ranking" | "hotspot" | "drag-and-drop" | "matrix" | "likert-scale" | "open-ended" | "code-snippet" | "math-formula" | "drawing";
             driverParam: string;
             notNull: false;
             hasDefault: true;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
-            enumValues: ["multiple-choice", "yes-or-no", "point-based", "text-field", "file-upload", "fill-the-blank", "audio-response", "video-response", "dropdown", "matching-pairs", "slider-scale", "ranking", "hotspot", "drag-and-drop", "matrix", "likert-scale", "open-ended", "code-snippet", "math-formula", "drawing"];
+            enumValues: ["multiple-choice", "yes-or-no", "text-field", "file-upload", "fill-the-blank", "audio-response", "video-response", "dropdown", "matching-pairs", "slider-scale", "ranking", "hotspot", "drag-and-drop", "matrix", "likert-scale", "open-ended", "code-snippet", "math-formula", "drawing"];
             baseColumn: never;
             identity: undefined;
             generated: undefined;

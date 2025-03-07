@@ -15,7 +15,7 @@ declare function updateQuestion(questionId: string, data: UpdateQuestion): Promi
         referenceType: "test-session" | "template" | "ai-generated";
         organizationId: string | null;
         order: number;
-        type: "multiple-choice" | "yes-or-no" | "point-based" | "text-field" | "file-upload" | "fill-the-blank" | "audio-response" | "video-response" | "dropdown" | "matching-pairs" | "slider-scale" | "ranking" | "hotspot" | "drag-and-drop" | "matrix" | "likert-scale" | "open-ended" | "code-snippet" | "math-formula" | "drawing" | null;
+        type: "multiple-choice" | "yes-or-no" | "text-field" | "file-upload" | "fill-the-blank" | "audio-response" | "video-response" | "dropdown" | "matching-pairs" | "slider-scale" | "ranking" | "hotspot" | "drag-and-drop" | "matrix" | "likert-scale" | "open-ended" | "code-snippet" | "math-formula" | "drawing" | null;
         pointValue: number | null;
         options: {
             id: string;

@@ -2,7 +2,6 @@
 export const QUESTION_TYPES = [
   "multiple-choice",
   "yes-or-no",
-  "point-based",
   "text-field",
   "file-upload",
   "fill-the-blank",

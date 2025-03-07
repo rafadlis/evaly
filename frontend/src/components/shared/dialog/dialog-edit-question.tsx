@@ -1,5 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, GripVertical, Loader2, Trash2 } from "lucide-react";
+import {
+  CheckCircle2,
+  GripVertical,
+  Loader2,
+  Trash2,
+  PlusCircle,
+  XIcon,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
@@ -24,6 +31,7 @@ import { getDefaultOptions } from "@/lib/get-default-options";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { nanoid } from "nanoid";
 
 dayjs.extend(relativeTime);
 
@@ -54,51 +62,52 @@ const DialogEditQuestion = ({
     clearErrors,
     formState: { isDirty, errors },
   } = useForm<UpdateQuestion>({
-    reValidateMode:"onChange"
+    reValidateMode: "onChange",
   });
 
   const type = watch("type");
   const updatedAt = watch("updatedAt");
-  const isOptionsType =
-    type === "multiple-choice" ||
-    type === "yes-or-no" ||
-    type === "point-based";
+  const isOptionsType = type === "multiple-choice" || type === "yes-or-no";
   const allowMultipleAnswers = watch("allowMultipleAnswers");
   const options = watch("options");
 
   // Validate options
   const validateOptions = () => {
     if (!isOptionsType || !options) return true;
-    
+
     // Check if there are at least 2 options for multiple-choice questions
     if (options.length < 2) {
       return "At least 2 options are required";
     }
-    
+
     // Check if at least one option is marked as correct
-    const correctOptions = options.filter(option => option.isCorrect);
+    const correctOptions = options.filter((option) => option.isCorrect);
     if (correctOptions.length === 0) {
       return "At least one option must be marked as correct";
     }
-    
+
     // For multiple-choice with allowMultipleAnswers, not all options should be correct
     if (allowMultipleAnswers && correctOptions.length === options.length) {
       return "Not all options can be marked as correct in multiple-choice questions";
     }
-    
+
     // Check if all options have text content
-    const emptyOptions = options.filter(option => !option.text || option.text.trim() === '');
+    const emptyOptions = options.filter(
+      (option) => !option.text || option.text.trim() === ""
+    );
     if (emptyOptions.length > 0) {
       return "All options must have text content";
     }
-    
+
     // Check for duplicate option values
-    const optionTexts = options.map(option => option.text?.trim().toLowerCase());
-    const uniqueOptionTexts = new Set(optionTexts.filter(text => text)); // Filter out empty strings
-    if (uniqueOptionTexts.size < optionTexts.filter(text => text).length) {
+    const optionTexts = options.map((option) =>
+      option.text?.trim().toLowerCase()
+    );
+    const uniqueOptionTexts = new Set(optionTexts.filter((text) => text)); // Filter out empty strings
+    if (uniqueOptionTexts.size < optionTexts.filter((text) => text).length) {
       return "All options must have unique values";
     }
-    
+
     return true;
   };
 
@@ -122,31 +131,40 @@ const DialogEditQuestion = ({
         alert("At least 2 options are required");
         return;
       }
-      
+
       // Check if at least one option is marked as correct
-      const correctOptions = data.options.filter(option => option.isCorrect);
+      const correctOptions = data.options.filter((option) => option.isCorrect);
       if (correctOptions.length === 0) {
         alert("At least one option must be marked as correct");
         return;
       }
-      
+
       // For multiple-choice with allowMultipleAnswers, not all options should be correct
-      if (data.allowMultipleAnswers && correctOptions.length === data.options.length) {
-        alert("Not all options can be marked as correct in multiple-choice questions");
+      if (
+        data.allowMultipleAnswers &&
+        correctOptions.length === data.options.length
+      ) {
+        alert(
+          "Not all options can be marked as correct in multiple-choice questions"
+        );
         return;
       }
-      
+
       // Check if all options have text content
-      const emptyOptions = data.options.filter(option => !option.text || option.text.trim() === '');
+      const emptyOptions = data.options.filter(
+        (option) => !option.text || option.text.trim() === ""
+      );
       if (emptyOptions.length > 0) {
         alert("All options must have text content");
         return;
       }
-      
+
       // Check for duplicate option values
-      const optionTexts = data.options.map(option => option.text?.trim().toLowerCase());
-      const uniqueOptionTexts = new Set(optionTexts.filter(text => text)); // Filter out empty strings
-      if (uniqueOptionTexts.size < optionTexts.filter(text => text).length) {
+      const optionTexts = data.options.map((option) =>
+        option.text?.trim().toLowerCase()
+      );
+      const uniqueOptionTexts = new Set(optionTexts.filter((text) => text)); // Filter out empty strings
+      if (uniqueOptionTexts.size < optionTexts.filter((text) => text).length) {
         alert("All options must have unique values");
         return;
       }
@@ -198,28 +216,99 @@ const DialogEditQuestion = ({
         <div className="flex flex-col overflow-y-auto">
           <DrawerHeader className="pt-10 container max-w-4xl px-6">
             <DrawerTitle className="flex justify-between items-center">
-              <Controller
-                control={control}
-                name="type"
-                render={({ field }) => (
-                  <QuestionTypeSelection
-                    size={"default"}
-                    variant={"outline-solid"}
-                    value={field.value || undefined}
-                    onValueChange={(value) => {
-                      field.onChange(value);
+              <div className="flex flex-row gap-2 items-center">
+                <Controller
+                  control={control}
+                  name="type"
+                  render={({ field }) => (
+                    <QuestionTypeSelection
+                      size={"default"}
+                      variant={"outline-solid"}
+                      value={field.value || undefined}
+                      onValueChange={(value) => {
+                        field.onChange(value);
 
-                      // if the question type is changed, then reset the options with the default options of the new question type
-                      const defaultOptions = getDefaultOptions(value);
-                      if (defaultOptions) {
-                        setValue("options", defaultOptions);
-                        setValue("allowMultipleAnswers", false);
-                        clearErrors()
+                        // if the question type is changed, then reset the options with the default options of the new question type
+                        const defaultOptions = getDefaultOptions(value);
+                        if (defaultOptions) {
+                          setValue("options", defaultOptions);
+                          setValue("allowMultipleAnswers", false);
+                          clearErrors();
+                        }
+                      }}
+                    />
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="pointValue"
+                  rules={{
+                    validate: (value) => {
+                      if (
+                        typeof value === "number" &&
+                        (value == 0 || value > 100)
+                      ) {
+                        return "Point value must be between 0 and 100";
                       }
-                    }}
-                  />
+                      return true;
+                    },
+                  }}
+                  render={({ field }) =>
+                    typeof field.value === "number" ? (
+                      <div className="flex flex-row gap-2 items-center relative">
+                        <Label className="absolute left-2.5 text-xs text-muted-foreground/80 pt-0.5">
+                          Point:
+                        </Label>
+                        <Input
+                          type="number"
+                          className={cn(
+                            "w-28 pl-12",
+                            errors.pointValue ? "border-destructive" : ""
+                          )}
+                          min={0}
+                          max={100}
+                          placeholder="0"
+                          value={
+                            field.value === 0 && !field.value ? "" : field.value
+                          }
+                          onChange={(e) => {
+                            const value =
+                              e.target.value === ""
+                                ? 0
+                                : Number(e.target.value);
+                            field.onChange(value);
+                          }}
+                        />
+                        <Button
+                          variant={"ghost"}
+                          size={"icon-xxs"}
+                          className="absolute right-1"
+                          onClick={() => {
+                            setValue("pointValue", null, { shouldDirty: true });
+                          }}
+                        >
+                          <XIcon className="size-3" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button
+                        onClick={() => {
+                          field.onChange(5);
+                        }}
+                        variant={"secondary"}
+                        size={"sm"}
+                      >
+                        Add Point
+                      </Button>
+                    )
+                  }
+                />
+                {errors.pointValue && (
+                  <span className="text-xs text-destructive">
+                    {errors.pointValue.message}
+                  </span>
                 )}
-              />
+              </div>
               <div className="flex flex-row gap-2 text-muted-foreground font-normal text-sm">
                 Last updated: {dayjs(updatedAt).fromNow()}
               </div>
@@ -248,7 +337,11 @@ const DialogEditQuestion = ({
                     value={field.value || ""}
                     onChange={field.onChange}
                     placeholder="Type your question here..."
-                    className={cn(errors.question ? "bg-destructive/5 border-destructive" : "")}
+                    className={cn(
+                      errors.question
+                        ? "bg-destructive/5 border-destructive"
+                        : ""
+                    )}
                   />
                   <span
                     className={cn(
@@ -291,7 +384,8 @@ const DialogEditQuestion = ({
                             options?.map((option) => ({
                               ...option,
                               isCorrect: false,
-                            }))
+                            })),
+                            { shouldDirty: true }
                           );
                         }
                         setValue("allowMultipleAnswers", value);
@@ -307,7 +401,7 @@ const DialogEditQuestion = ({
                 control={control}
                 name="options"
                 rules={{
-                  validate: validateOptions
+                  validate: validateOptions,
                 }}
                 render={({ field }) => (
                   <>
@@ -396,16 +490,22 @@ const Options = ({
   };
 
   // Calculate validation states
-  const correctOptionsCount = value?.filter(option => option.isCorrect)?.length || 0;
+  const correctOptionsCount =
+    value?.filter((option) => option.isCorrect)?.length || 0;
   const hasNoCorrectOption = correctOptionsCount === 0;
-  const allOptionsCorrect = value && value.length > 0 && correctOptionsCount === value.length;
-  const hasEmptyOptions = value?.some(option => !option.text || option.text.trim() === '');
+  const allOptionsCorrect =
+    value && value.length > 0 && correctOptionsCount === value.length;
+  const hasEmptyOptions = value?.some(
+    (option) => !option.text || option.text.trim() === ""
+  );
   const hasTooFewOptions = value && value.length < 2;
-  
+
   // Check for duplicate options
   const hasDuplicateOptions = (() => {
     if (!value) return false;
-    const optionTexts = value.map(option => option.text?.trim().toLowerCase()).filter(text => text);
+    const optionTexts = value
+      .map((option) => option.text?.trim().toLowerCase())
+      .filter((text) => text);
     const uniqueOptionTexts = new Set(optionTexts);
     return uniqueOptionTexts.size < optionTexts.length;
   })();
@@ -413,33 +513,6 @@ const Options = ({
   if (!value) return null;
   return (
     <div className="flex flex-col gap-2">
-      {/* Validation warnings */}
-      {hasNoCorrectOption && (
-        <div className="text-sm text-warning-foreground bg-warning p-2 rounded-md mb-2">
-          At least one option must be marked as correct.
-        </div>
-      )}
-      {allowMultipleAnswers && allOptionsCorrect && (
-        <div className="text-sm text-warning-foreground bg-warning p-2 rounded-md mb-2">
-          Not all options should be marked as correct in multiple-choice questions.
-        </div>
-      )}
-      {hasEmptyOptions && (
-        <div className="text-sm text-warning-foreground bg-warning p-2 rounded-md mb-2">
-          All options must have text content.
-        </div>
-      )}
-      {hasTooFewOptions && (
-        <div className="text-sm text-warning-foreground bg-warning p-2 rounded-md mb-2">
-          At least 2 options are required.
-        </div>
-      )}
-      {hasDuplicateOptions && (
-        <div className="text-sm text-warning-foreground bg-warning p-2 rounded-md mb-2">
-          All options must have unique values.
-        </div>
-      )}
-
       <Reorder.Group
         className="flex flex-col gap-4 mt-2 text-sm"
         onReorder={(newOrder) => {
@@ -449,13 +522,17 @@ const Options = ({
       >
         {value.map((option, i) => {
           // Check if this option is a duplicate
-          const isDuplicate = !!(option.text && option.text.trim() !== '' && 
-            value.some(o => 
-              o.id !== option.id && 
-              o.text && 
-              o.text.trim().toLowerCase() === option.text.trim().toLowerCase()
-            ));
-            
+          const isDuplicate = !!(
+            option.text &&
+            option.text.trim() !== "" &&
+            value.some(
+              (o) =>
+                o.id !== option.id &&
+                o.text &&
+                o.text.trim().toLowerCase() === option.text.trim().toLowerCase()
+            )
+          );
+
           return (
             <OptionItem
               option={option}
@@ -468,7 +545,8 @@ const Options = ({
                   onChange(
                     value.map((item) => ({
                       ...item,
-                      isCorrect: item.id === option.id ? !option.isCorrect : false,
+                      isCorrect:
+                        item.id === option.id ? !option.isCorrect : false,
                     }))
                   );
                 } else {
@@ -491,6 +569,79 @@ const Options = ({
           );
         })}
       </Reorder.Group>
+
+      {/* Add Option Button */}
+      {value && (
+        <div className="mt-4">
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full"
+            onClick={() => {
+              // Determine max options based on question type
+              const maxOptions =
+                value[0]?.text === "Yes" && value[1]?.text === "No" ? 2 : 5;
+
+              // Only add if we haven't reached the maximum
+              if (value.length < maxOptions) {
+                const newOption = {
+                  id: nanoid(5),
+                  text: "",
+                  isCorrect: false,
+                };
+                onChange([...value, newOption]);
+              }
+            }}
+            disabled={
+              // Disable if we've reached the maximum options
+              // For yes-or-no questions, max is 2
+              // For other option-based questions, max is 5
+              (value[0]?.text === "Yes" &&
+                value[1]?.text === "No" &&
+                value.length >= 2) ||
+              value.length >= 5
+            }
+          >
+            {value.length >=
+            (value[0]?.text === "Yes" && value[1]?.text === "No" ? 2 : 5) ? (
+              <span>Maximum options reached</span>
+            ) : (
+              <>
+                <PlusCircle className="h-4 w-4 mr-2" />
+                Add Option
+              </>
+            )}
+          </Button>
+        </div>
+      )}
+
+      {/* Validation warnings */}
+      {hasNoCorrectOption && (
+        <div className="text-sm text-warning-foreground bg-warning p-2 rounded-md mb-2">
+          At least one option must be marked as correct.
+        </div>
+      )}
+      {allowMultipleAnswers && allOptionsCorrect && (
+        <div className="text-sm text-warning-foreground bg-warning p-2 rounded-md mb-2">
+          Not all options should be marked as correct in multiple-choice
+          questions.
+        </div>
+      )}
+      {hasEmptyOptions && (
+        <div className="text-sm text-warning-foreground bg-warning p-2 rounded-md mb-2">
+          All options must have text content.
+        </div>
+      )}
+      {hasTooFewOptions && (
+        <div className="text-sm text-warning-foreground bg-warning p-2 rounded-md mb-2">
+          At least 2 options are required.
+        </div>
+      )}
+      {hasDuplicateOptions && (
+        <div className="text-sm text-warning-foreground bg-warning p-2 rounded-md mb-2">
+          All options must have unique values.
+        </div>
+      )}
     </div>
   );
 };
@@ -511,7 +662,7 @@ const OptionItem = ({
   isDuplicate?: boolean;
 }) => {
   const control = useDragControls();
-  const isEmptyOption = !option.text || option.text.trim() === '';
+  const isEmptyOption = !option.text || option.text.trim() === "";
 
   return (
     <Reorder.Item
@@ -536,7 +687,7 @@ const OptionItem = ({
         <Input
           placeholder={`Type options ${index + 1}`}
           className={cn(
-            "h-10", 
+            "h-10",
             isEmptyOption ? "border-destructive" : "",
             isDuplicate ? "border-amber-500 bg-warning" : ""
           )}

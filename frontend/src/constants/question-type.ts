@@ -1,7 +1,6 @@
 import {
   CheckSquare, // Single choice
-  ToggleLeft, // Yes or No
-  BarChart2, // Point based
+  ToggleLeft, // Point based
   AlignLeft, // Text field
   Upload, // File upload
   TextCursor, // Fill the blank
@@ -35,12 +34,6 @@ export const questionTypes = {
     value: "yes-or-no",
     label: "Yes or No",
     icon: ToggleLeft,
-    isHidden: false
-  },
-  "point-based": {
-    value: "point-based",
-    label: "Point Based",
-    icon: BarChart2,
     isHidden: false
   },
   "text-field": {

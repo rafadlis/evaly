@@ -3,9 +3,7 @@ import { question } from "../../../lib/db/schema";
 import { and, eq, gte, ne, sql } from "drizzle-orm";
 import { InsertQuestion, Question } from "../../../types/question";
 
-export async function createQuestion(
-  listQuestion: InsertQuestion[]
-) {
+export async function createQuestion(listQuestion: InsertQuestion[]) {
   return await db.transaction(async (tx) => {
     const listQuestionWithOptions: Question[] = [];
     for (const item of listQuestion) {
@@ -13,7 +11,6 @@ export async function createQuestion(
         .insert(question)
         .values({
           ...item,
-          pointValue: item.type === "point-based" ? 5 : undefined,
         })
         .returning();
       const insertedQuestion = insertNewQuestion.at(0);

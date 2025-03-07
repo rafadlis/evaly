@@ -5,7 +5,11 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useUpdateBetweenQuestionMutation } from "@/query/organization/question/use-update-between-question.mutation";
 import { Question } from "@evaly/backend/types/question";
-import { ArrowDown, ArrowUp, CheckCircle2, CircleHelpIcon, Loader2 } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  CheckCircle2, Loader2
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -96,9 +100,14 @@ const CardQuestion = ({
       <CardHeader className="border-b py-3 flex flex-row justify-between items-center">
         <div className="flex flex-row gap-3">
           <Button variant={"secondary"} size={"xs"}>
-            <CircleHelpIcon />
+            #
             Question {data.order}
           </Button>
+          {data.pointValue ? (
+            <Button variant={"secondary"} size={"xs"}>
+              Point: {data.pointValue}
+            </Button>
+          ) : null}
           <QuestionTypeSelection value={data.type} />
         </div>
         <div className="flex flex-row h-5 justify-end items-center">
@@ -171,7 +180,11 @@ const CardQuestion = ({
                   size={"icon-xs"}
                   variant={option.isCorrect ? "success" : "secondary"}
                 >
-                  {option.isCorrect ? <CheckCircle2 /> :String.fromCharCode(65 + i)}
+                  {option.isCorrect ? (
+                    <CheckCircle2 />
+                  ) : (
+                    String.fromCharCode(65 + i)
+                  )}
                 </Button>
                 <span
                   className={cn(
