@@ -11,6 +11,7 @@ COPY /backend/package.json ./backend/package.json
 COPY /frontend/package.json ./frontend/package.json
 
 RUN bun install
+RUN bun run build:tsup
 
 COPY /backend ./backend
 
@@ -23,8 +24,6 @@ RUN bun build \
   --target bun \
   --outfile server \
   ./backend/src/index.ts
-
-RUN bun run build:tsup
 
 FROM gcr.io/distroless/base
 
