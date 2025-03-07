@@ -50,7 +50,7 @@ function PaginationLink({
       className={cn(className)}
       variant={isActive ? "default" : "ghost"}
       size={size}
-      rounded={false}
+      
       {...props}
     />
   );

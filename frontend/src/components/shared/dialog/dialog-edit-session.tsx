@@ -70,7 +70,7 @@ const DialogEditSession = ({ sessionId }: { sessionId: string }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size={"icon-xs"} variant={"ghost"} rounded={false}>
+        <Button size={"icon-xs"} variant={"ghost"} >
           <PencilLine />
         </Button>
       </DialogTrigger>

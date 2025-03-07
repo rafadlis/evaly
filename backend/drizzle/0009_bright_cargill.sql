@@ -1,0 +1,1 @@
+ALTER TABLE "question" ADD COLUMN "allow_multiple_answers" boolean DEFAULT false;

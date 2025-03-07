@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { GripVertical, Loader2, Trash2 } from "lucide-react";
+import { CheckCircle2, GripVertical, Loader2, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
@@ -14,17 +14,15 @@ import { DrawerFooter } from "@/components/ui/drawer";
 import QuestionTypeSelection from "@/components/shared/question-type-selection";
 import { Editor } from "@/components/shared/editor/editor";
 import { Separator } from "@/components/ui/separator";
-import {
-  Question,
-  QuestionType,
-  UpdateQuestion,
-} from "@evaly/backend/types/question";
+import { Question, UpdateQuestion } from "@evaly/backend/types/question";
 import { useUpdateQuestionMutation } from "@/query/organization/question/use-update-question.mutation";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Reorder, useDragControls } from "motion/react";
 import { Input } from "@/components/ui/input";
 import { getDefaultOptions } from "@/lib/get-default-options";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 dayjs.extend(relativeTime);
 
@@ -56,9 +54,9 @@ const DialogEditQuestion = ({
   const isOptionsType =
     type === "multiple-choice" ||
     type === "yes-or-no" ||
-    type === "single-choice" ||
     type === "point-based";
-
+  const allowMultipleAnswers = watch("allowMultipleAnswers");
+  const options = watch("options");
   useEffect(() => {
     if (defaultValue) {
       reset(defaultValue);
@@ -159,13 +157,27 @@ const DialogEditQuestion = ({
 
             {isOptionsType ? (
               <div className="mt-8 mb-6 flex flex-row items-center gap-2">
-                <Separator className="max-w-4" />
-                <span className="text-sm text-muted-foreground">
-                  {type === "multiple-choice"
-                    ? "You can select multiple correct answers"
-                    : "Select the correct answer"}
-                </span>
+                <Label className="text-sm text-muted-foreground">
+                  Select the correct answer
+                </Label>
                 <Separator className="flex-1" />
+                {options && options?.length > 2 ?  <div className="flex flex-row items-center gap-2">
+                  <Label className="text-sm text-muted-foreground">
+                    Allow multiple answers
+                  </Label>
+                 <Switch
+                    checked={allowMultipleAnswers === true}
+                    onCheckedChange={(value) => {
+                      if (value === false && (options?.filter((option) => option.isCorrect).length || 0) > 1) {
+                        setValue("options", options?.map((option) => ({
+                          ...option,
+                          isCorrect: false,
+                        })));
+                      }
+                      setValue("allowMultipleAnswers", value);
+                    }}
+                  />
+                </div>: null}
               </div>
             ) : null}
 
@@ -179,7 +191,7 @@ const DialogEditQuestion = ({
                     onChange={(value) => {
                       field.onChange(value);
                     }}
-                    type={type}
+                    allowMultipleAnswers={allowMultipleAnswers === true}
                   />
                 )}
               />
@@ -239,13 +251,12 @@ const DialogEditQuestion = ({
 const Options = ({
   value,
   onChange,
-  type,
+  allowMultipleAnswers,
 }: {
   value: UpdateQuestion["options"];
   onChange: (options: UpdateQuestion["options"]) => void;
-  type: QuestionType;
+  allowMultipleAnswers: boolean;
 }) => {
-
   const onChangeOption = (
     option: NonNullable<UpdateQuestion["options"]>[number]
   ) => {
@@ -270,19 +281,20 @@ const Options = ({
             onChangeOption(option);
           }}
           onClickCorrect={() => {
-            // if the question type is single-choice or point-based, then only one option can be correct, other options will be incorrect
-            if (type === "single-choice" || type === "point-based" || type === "yes-or-no") {
+            if (!allowMultipleAnswers) {
               onChange(
                 value.map((item) => ({
                   ...item,
-                  isCorrect: item.id === option.id ? !option.isCorrect : false
+                  isCorrect: item.id === option.id ? !option.isCorrect : false,
                 }))
               );
             } else {
               // For multiple-choice, toggle the current option's correctness without affecting others
               onChange(
                 value.map((item) =>
-                  item.id === option.id ? { ...item, isCorrect: !item.isCorrect } : item
+                  item.id === option.id
+                    ? { ...item, isCorrect: !item.isCorrect }
+                    : item
                 )
               );
             }
@@ -319,19 +331,18 @@ const OptionItem = ({
       dragListener={false}
       dragControls={control}
     >
-      <div className="flex-1 relative flex flex-row items-center">
-        <Button
-          size={"icon-xs"}
-          className="absolute left-2 select-none"
-          variant={option.isCorrect ? "default" : "secondary"}
-          rounded={false}
-          onClick={onClickCorrect}
-        >
-          {String.fromCharCode(65 + index)}
-        </Button>
+      <Button
+        size={"icon"}
+        className="select-none size-10"
+        variant={option.isCorrect ? "success" : "secondary"}
+        onClick={onClickCorrect}
+      >
+        {option.isCorrect ? <CheckCircle2 className="size-5"/> :String.fromCharCode(65 + index)}
+      </Button>
+      <div className="flex-1 flex flex-row items-center">
         <Input
           placeholder={`Type options ${index + 1}`}
-          className="pl-12 h-10"
+          className="h-10"
           value={option.text}
           onChange={(e) => {
             onChange({ ...option, text: e.target.value });
@@ -341,18 +352,12 @@ const OptionItem = ({
       <div>
         <Button
           onPointerDown={(e) => control.start(e)}
-          rounded={false}
           variant={"ghost"}
           size={"icon-sm"}
         >
           <GripVertical className="text-muted-foreground" />
         </Button>
-        <Button
-          rounded={false}
-          variant={"ghost"}
-          size={"icon-sm"}
-          onClick={onDelete}
-        >
+        <Button variant={"ghost"} size={"icon-sm"} onClick={onDelete}>
           <Trash2 className="text-muted-foreground" />
         </Button>
       </div>

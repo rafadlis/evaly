@@ -1,6 +1,5 @@
 // Define question types
 export const QUESTION_TYPES = [
-  "single-choice",
   "multiple-choice",
   "yes-or-no",
   "point-based",

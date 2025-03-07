@@ -195,7 +195,6 @@ const SectionCreateQuestion = ({
         };
         
         if (
-          typeSelected === "single-choice" ||
           typeSelected === "point-based" ||
           typeSelected === "multiple-choice" ||
           typeSelected === "yes-or-no"
@@ -240,7 +239,7 @@ const SectionCreateQuestion = ({
           <Button
             key={type.value}
             size={"lg"}
-            variant={"secondary-outline"}
+            variant={"secondary"}
             className="group"
             disabled={
               type.isHidden ||
@@ -423,11 +422,11 @@ const SectionSelectMethod = ({
               onMouseLeave={() => setHoveredCard(null)}
             >
               <div
-                className={`absolute inset-0 bg-gradient-to-b from-blue-500/20 to-transparent rounded-3xl transition-opacity duration-300 ${
+                className={`absolute inset-0 bg-gradient-to-b from-blue-500/20 to-transparent  transition-opacity duration-300 ${
                   hoveredCard === 2 ? "opacity-100" : "opacity-0"
                 }`}
               ></div>
-              <div className="relative z-10 border border-border rounded-3xl overflow-hidden h-full transition-all duration-300 hover:border-blue-500/50 group">
+              <div className="relative z-10 border border-border  overflow-hidden h-full transition-all duration-300 hover:border-blue-500/50 group">
                 <div className="absolute top-0 left-0 w-full h-1 bg-blue-500 transform origin-left transition-transform duration-300 scale-x-0 group-hover:scale-x-100"></div>
 
                 <div className="p-8 flex flex-col h-full">
@@ -486,7 +485,7 @@ const SectionSelectMethod = ({
                     <button
                       onClick={() => setSelectedMethod("create")}
                       type="button"
-                      className="w-full py-3 rounded-xl bg-card hover:bg-blue-500/20 border border-foreground/10 hover:border-blue-500/50 transition-all duration-200 text-muted-foreground hover:text-blue-400 font-medium cursor-pointer"
+                      className="w-full py-3 rounded-xl bg-card hover:bg-blue-500 border border-foreground/10 hover:border-blue-500/50 transition-all duration-200 text-muted-foreground hover:text-white font-medium cursor-pointer"
                     >
                       Create question
                     </button>
@@ -506,11 +505,11 @@ const SectionSelectMethod = ({
               </Badge>
 
               <div
-                className={`absolute inset-0 bg-gradient-to-b from-emerald-500/20 to-transparent rounded-3xl transition-opacity duration-300 ${
+                className={`absolute inset-0 bg-gradient-to-b from-emerald-500/20 to-transparent  transition-opacity duration-300 ${
                   hoveredCard === 0 ? "opacity-100" : "opacity-0"
                 }`}
               ></div>
-              <div className="relative z-10 border border-border rounded-3xl overflow-hidden h-full transition-all duration-300 hover:border-emerald-500/50 group">
+              <div className="relative z-10 border border-border  overflow-hidden h-full transition-all duration-300 hover:border-emerald-500/50 group">
                 <div className="absolute top-0 left-0 w-full h-1 bg-emerald-500 transform origin-left transition-transform duration-300 scale-x-0 group-hover:scale-x-100"></div>
 
                 <div className="p-8 flex flex-col h-full">
@@ -579,11 +578,11 @@ const SectionSelectMethod = ({
               </Badge>
 
               <div
-                className={`absolute inset-0 bg-gradient-to-b from-purple-500/20 to-transparent rounded-3xl transition-opacity duration-300 ${
+                className={`absolute inset-0 bg-gradient-to-b from-purple-500/20 to-transparent  transition-opacity duration-300 ${
                   hoveredCard === 1 ? "opacity-100" : "opacity-0"
                 }`}
               ></div>
-              <div className="relative z-10 border border-border rounded-3xl overflow-hidden h-full transition-all duration-300 hover:border-purple-500/50 group">
+              <div className="relative z-10 border border-border  overflow-hidden h-full transition-all duration-300 hover:border-purple-500/50 group">
                 <div className="absolute top-0 left-0 w-full h-1 bg-purple-500 transform origin-left transition-transform duration-300 scale-x-0 group-hover:scale-x-100"></div>
 
                 <div className="p-8 flex flex-col h-full">

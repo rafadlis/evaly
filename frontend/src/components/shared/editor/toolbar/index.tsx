@@ -29,7 +29,7 @@ export const EditorToolbar = ({
         disabled={!editor.can().chain().focus().toggleBold().run()}
         variant={editor.isActive("bold") ? "default" : "ghost"}
         className="text-base"
-        rounded={false}
+        
       >
         B
       </Button>
@@ -38,7 +38,7 @@ export const EditorToolbar = ({
         size={"icon-sm"}
         disabled={!editor.can().chain().focus().toggleItalic().run()}
         variant={editor.isActive("italic") ? "default" : "ghost"}
-        rounded={false}
+        
         className="italic font-mono text-base"
       >
         I
@@ -49,7 +49,7 @@ export const EditorToolbar = ({
         size={"icon-sm"}
         disabled={!editor.can().chain().focus().toggleUnderline().run()}
         variant={editor.isActive("underline") ? "default" : "ghost"}
-        rounded={false}
+        
         className="font-mono  underline text-base"
       >
         U
@@ -60,7 +60,7 @@ export const EditorToolbar = ({
         size={"icon-sm"}
         disabled={!editor.can().chain().focus().toggleStrike().run()}
         variant={editor.isActive("strike") ? "default" : "ghost"}
-        rounded={false}
+        
         className="font-mono  line-through text-base"
       >
         S
@@ -71,7 +71,7 @@ export const EditorToolbar = ({
         size={"icon-sm"}
         disabled={!editor.can().chain().focus().toggleBlockquote().run()}
         variant={editor.isActive("blockquote") ? "default" : "ghost"}
-        rounded={false}
+        
       >
         <Quote size={16} />
       </Button>
@@ -82,7 +82,7 @@ export const EditorToolbar = ({
         size={"icon-sm"}
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         variant={editor.isActive("bulletList") ? "default" : "ghost"}
-        rounded={false}
+        
       >
         <List size={16} />
       </Button>
@@ -90,7 +90,7 @@ export const EditorToolbar = ({
         size={"icon-sm"}
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
         variant={editor.isActive("orderedList") ? "default" : "ghost"}
-        rounded={false}
+        
       >
         <ListOrdered size={16} />
       </Button>
@@ -101,7 +101,7 @@ export const EditorToolbar = ({
         size={"icon-sm"}
         onClick={() => editor.chain().focus().toggleCodeBlock().run()}
         variant={editor.isActive("codeBlock") ? "default" : "ghost"}
-        rounded={false}
+        
       >
         <Code size={16} />
       </Button>

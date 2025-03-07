@@ -23,7 +23,7 @@ const QuestionTypeSelection = ({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button size={size} rounded={true} variant={variant}>
+        <Button size={size}  variant={variant}>
           <SelectedIcon size={16} className="mr-1" /> 
           {selectedType.label} 
           <ChevronDownIcon className="ml-1" size={14} />
@@ -41,7 +41,7 @@ const QuestionTypeSelection = ({
                     e.stopPropagation();
                     onValueChange?.(type.value as QuestionType);
                   }}
-                  rounded={false}
+                  
                   size={"sm"}
                   key={type.value}
                   className="w-full justify-start gap-2"

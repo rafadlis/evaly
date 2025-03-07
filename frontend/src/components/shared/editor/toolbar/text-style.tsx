@@ -12,7 +12,7 @@ const TextStyle = ({ editor }: { editor: Editor }) => {
         <PopoverTrigger asChild>
           <Button
             size={"sm"}
-            rounded={false}
+            
             variant={"ghost"}
             className="justify-between px-2 w-[100px]"
           >

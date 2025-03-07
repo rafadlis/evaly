@@ -48,6 +48,7 @@ export const question = pgTable(
         pointValue?: number;
       }[]
     >().default([]),
+    allowMultipleAnswers: boolean("allow_multiple_answers").default(false).notNull(),
     createdAt: timestamp("created_at", {
       mode: "string",
       withTimezone: true,
@@ -156,11 +157,6 @@ export const mediaConfig = pgTable(
       length: 10,
       enum: MEDIA_TYPES,
     }).notNull(),
-    allowedFormats: text("allowed_formats", {
-      enum: ["audio", "video", "file", "image"],
-    })
-      .array()
-      .notNull(),
     maxFileSizeMb: integer("max_file_size_mb"),
     sampleResponseUrl: text("sample_response_url"),
     instructions: text("instructions"),

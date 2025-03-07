@@ -23,7 +23,7 @@ const DialogDeleteQuestion = ({
       disabled={disabled}
       size={"icon-xxs"}
       variant={"ghost"}
-      rounded={false}
+      
       className={cn("text-muted-foreground", className)}
       onClick={(e) => {
         e.stopPropagation();

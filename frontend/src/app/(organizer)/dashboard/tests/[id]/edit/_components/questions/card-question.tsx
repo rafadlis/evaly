@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useUpdateBetweenQuestionMutation } from "@/query/organization/question/use-update-between-question.mutation";
 import { Question } from "@evaly/backend/types/question";
-import { ArrowDown, ArrowUp, CircleHelpIcon, Loader2 } from "lucide-react";
+import { ArrowDown, ArrowUp, CheckCircle2, CircleHelpIcon, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -95,7 +95,7 @@ const CardQuestion = ({
     >
       <CardHeader className="border-b py-3 flex flex-row justify-between items-center">
         <div className="flex flex-row gap-3">
-          <Button variant={"secondary"} size={"xs"} rounded={true}>
+          <Button variant={"secondary"} size={"xs"}>
             <CircleHelpIcon />
             Question {data.order}
           </Button>
@@ -110,7 +110,6 @@ const CardQuestion = ({
               }}
               size={"icon-xs"}
               variant={"ghost"}
-              rounded={false}
               disabled={isPendingUpdateBetweenQuestion && isMoving === "up"}
             >
               {isMoving === "up" ? (
@@ -133,7 +132,6 @@ const CardQuestion = ({
                 (isPendingUpdateBetweenQuestion && isMoving === "down") ||
                 !nextQuestionId
               }
-              rounded={false}
             >
               {isMoving === "down" ? (
                 <Loader2 className="text-muted-foreground" />
@@ -170,11 +168,10 @@ const CardQuestion = ({
                 className="flex flex-row flex-wrap items-start gap-3"
               >
                 <Button
-                  rounded={false}
                   size={"icon-xs"}
-                  variant={option.isCorrect ? "default" : "outline"}
+                  variant={option.isCorrect ? "success" : "secondary"}
                 >
-                  {String.fromCharCode(65 + i)}
+                  {option.isCorrect ? <CheckCircle2 /> :String.fromCharCode(65 + i)}
                 </Button>
                 <span
                   className={cn(

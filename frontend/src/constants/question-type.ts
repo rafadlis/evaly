@@ -17,22 +17,14 @@ import {
   Grid, // Matrix
   MousePointer, // Hotspot
   SquarePi, // Formula input
-  Code, // Code editor
-  CircleSlash,
-  ThumbsUp, // Likert scale
+  Code, ThumbsUp, // Likert scale
   FileText, // Open-ended
   Braces, // Code snippet
   PenTool,
-  HandIcon, // Drawing
+  HandIcon
 } from "lucide-react";
 
 export const questionTypes = {
-  "single-choice": {
-    value: "single-choice",
-    label: "Single Choice",
-    icon: CircleSlash,
-    isHidden: false
-  },
   "multiple-choice": {
     value: "multiple-choice",
     label: "Multiple Choice",

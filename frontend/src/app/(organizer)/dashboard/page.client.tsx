@@ -115,7 +115,7 @@ const DashboardPageClient = () => {
                   <Button
                     variant={"ghost"}
                     size={"icon-xs"}
-                    rounded={false}
+                    
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -133,7 +133,7 @@ const DashboardPageClient = () => {
                           e.preventDefault();
                           e.stopPropagation();
                         }}
-                        rounded={false}
+                        
                       >
                         <Trash2Icon />
                       </Button>

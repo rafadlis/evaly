@@ -120,7 +120,7 @@ const EditorMenuInsertLink = ({ editor }: { editor: Editor }) => {
       <PopoverTrigger asChild>
         <Button
           size={"icon-sm"}
-          rounded={false}
+          
           variant={editor.isActive("link") ? "secondary" : "ghost"}
         >
           <Link size={16} />
@@ -153,7 +153,7 @@ const EditorMenuInsertLink = ({ editor }: { editor: Editor }) => {
             <Button
               type="submit"
               className="flex-1"
-              rounded={false}
+              
               variant={"default"}
             >
               {editor.isActive("link") ? "Update Link" : "Insert Link"}
@@ -162,7 +162,7 @@ const EditorMenuInsertLink = ({ editor }: { editor: Editor }) => {
             {editor.isActive("link") && (
               <Button
                 type="button"
-                rounded={false}
+                
                 variant={"destructive"}
                 onClick={handleRemoveLink}
               >

@@ -28,7 +28,7 @@ const InsertImage = ({ editor, loading }: Props) => {
       <Button
         type="button"
         size={"icon-sm"}
-        rounded={false}
+        
         disabled={loading}
         variant={editor.isActive("link") ? "secondary" : "ghost"}
         onClick={handleClick}

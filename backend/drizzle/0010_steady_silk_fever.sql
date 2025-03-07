@@ -1,0 +1,1 @@
+ALTER TABLE "question" ALTER COLUMN "allow_multiple_answers" SET NOT NULL;
