@@ -1,11 +1,23 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { useTestByIdQuery } from "@/query/organization/test/use-test-by-id.query";
 import { CheckCircle2, LockIcon } from "lucide-react";
+import { useParams } from "next/navigation";
 
 const Setting = () => {
+  const { id: testId } = useParams();
+  const { isPending } = useTestByIdQuery({
+    id: testId?.toString() || "",
+  });
+
+  if (isPending) {
+    return <Skeleton className="w-full h-[80dvh]" />;
+  }
+
   return (
     <>
       <div className="flex flex-col divide-y">
@@ -13,16 +25,16 @@ const Setting = () => {
           <div className="w-2xs">
             <h1 className="font-semibold">Type</h1>
             <Label>
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+              This determines how candidates will interact with your assessment.
             </Label>
           </div>
           <div className="flex-1 flex flex-row flex-wrap gap-4">
             <Card className="w-2xs p-3 border-foreground cursor-pointer relative">
               <CheckCircle2 size={18} className="absolute top-2 right-2" />
-              <h1 className="font-medium text-sm">Self-paced Test</h1>
+              <h1 className="font-medium mb-2">Self-paced Test</h1>
               <Label>
-              Allow candidates to take the test at their own pace. Ideal for
-              screening and pre-assessment purposes.
+                Allow candidates to take the test at their own pace. Ideal for
+                screening and pre-assessment purposes.
               </Label>
             </Card>
 
@@ -31,10 +43,10 @@ const Setting = () => {
                 size={18}
                 className="absolute top-2 right-2 opacity-50"
               />
-              <h1 className="font-medium">Live Test</h1>
+              <h1 className="font-medium mb-2">Live Test</h1>
               <Label>
-              Schedule a synchronized test for all candidates. Ideal for
-              final assessments and examinations.
+                Schedule a synchronized test for all candidates. Ideal for final
+                assessments and examinations.
               </Label>
             </Card>
           </div>
@@ -42,9 +54,10 @@ const Setting = () => {
 
         <div className="flex flex-row gap-10 py-8">
           <div className="w-2xs">
-            <h1 className="font-semibold">Participants</h1>
+            <h1 className="font-semibold">Access</h1>
             <Label>
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+              Control who can access your test. Public tests are visible to
+              anyone.
             </Label>
           </div>
           <Tabs className="flex-1" defaultValue="public">
@@ -65,7 +78,8 @@ const Setting = () => {
           <div className="w-2xs">
             <h1 className="font-semibold">Description</h1>
             <Label>
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+              Add a description to provide more information about your test to
+              candidates.
             </Label>
           </div>
           <div className="flex-1">
