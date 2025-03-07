@@ -14,4 +14,6 @@ export const frontend = new sst.aws.Nextjs("Frontend", {
   },
   environment: frontendSecrets,
   warm: 1,
+  buildCommand:
+    "cd ../backend && bun run db:migrate && cd ../frontend && npx --yes @opennextjs/aws@3.4.1 build",
 });
