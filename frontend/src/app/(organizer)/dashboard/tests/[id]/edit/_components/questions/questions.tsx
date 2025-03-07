@@ -132,7 +132,6 @@ const Questions = () => {
   const {
     data: dataQuestions,
     isRefetching: isRefetchingQuestions,
-    refetch: refetchQuestions,
     isPending: isPendingQuestions,
   } = useAllQuestionByReferenceIdQuery({
     referenceId: selectedSession as string,
@@ -149,13 +148,12 @@ const Questions = () => {
   const [hideOptions, setHideOptions] = useState(false);
 
   const onSuccessDeleteSession = async () => {
-    await refetchQuestions();
-    await refetchSessions();
-
+    const response = await refetchSessions();
+    const updatedDataSessions = response.data;
     // Find the next available session to select after deletion
-    if (dataSessions && dataSessions.length > 0) {
+    if (updatedDataSessions && updatedDataSessions.length > 0) {
       // Set the first available session as selected
-      setSelectedSession(dataSessions[0].id);
+      setSelectedSession(updatedDataSessions[0].id);
     } else {
       // If no sessions left, clear the selection
       setSelectedSession(null);
@@ -286,68 +284,68 @@ const Questions = () => {
         </CardHeader>
         {localQuestions?.length ? (
           <CardContent className="pt-0">
-           <Reorder.Group
-                onReorder={() => {}}
-                values={localQuestions}
-                as="div"
-                className={cn(
-                  "w-full",
-                  isRefetchingQuestions ? "animate-pulse" : ""
-                )}
-              >
-                {localQuestions.map((data, index) => {
-                  return (
-                    <Reorder.Item
-                      value={data}
-                      as="div"
-                      key={data.id}
-                      data-index={index}
-                      dragListener={false}
-                    >
-                      <CardQuestion
-                        onChangeOrder={onHandleChangeOrder}
-                        hideOptions={hideOptions}
-                        data={data}
-                        onClickEdit={() => setSelectedQuestion(data)}
-                        className={cn(
-                          isRefetchingQuestions ? "cursor-progress" : ""
-                        )}
-                        onDeleteSuccess={() => {
-                          const findIndex = localQuestions.findIndex(
-                            (q) => q.id === data.id
-                          );
-                          if (findIndex >= 0) {
-                            // Update the order of questions after deletion
-                            setLocalQuestions((prev) => {
-                              const filtered = prev.filter(
-                                (q) => q.id !== data.id
-                              );
-                              return filtered.map((q, index) => ({
-                                ...q,
-                                order:
-                                  q.order && data.order && q.order > data.order
-                                    ? q.order - 1
-                                    : index + 1,
-                              }));
-                            });
-                          }
-                        }}
-                        previousQuestionId={localQuestions[index - 1]?.id}
-                        nextQuestionId={localQuestions[index + 1]?.id}
-                      />
-                      <SeparatorAdd
-                        onClick={() => {
-                          if (data.order) {
-                            setAddQuestionOnOrder(data.order + 1);
-                          } else {
-                            setAddQuestionOnOrder(localQuestions.length + 1);
-                          }
-                        }}
-                      />
-                    </Reorder.Item>
-                  );
-                })}
-              </Reorder.Group>
+            <Reorder.Group
+              onReorder={() => {}}
+              values={localQuestions}
+              as="div"
+              className={cn(
+                "w-full",
+                isRefetchingQuestions ? "animate-pulse" : ""
+              )}
+            >
+              {localQuestions.map((data, index) => {
+                return (
+                  <Reorder.Item
+                    value={data}
+                    as="div"
+                    key={data.id}
+                    data-index={index}
+                    dragListener={false}
+                  >
+                    <CardQuestion
+                      onChangeOrder={onHandleChangeOrder}
+                      hideOptions={hideOptions}
+                      data={data}
+                      onClickEdit={() => setSelectedQuestion(data)}
+                      className={cn(
+                        isRefetchingQuestions ? "cursor-progress" : ""
+                      )}
+                      onDeleteSuccess={() => {
+                        const findIndex = localQuestions.findIndex(
+                          (q) => q.id === data.id
+                        );
+                        if (findIndex >= 0) {
+                          // Update the order of questions after deletion
+                          setLocalQuestions((prev) => {
+                            const filtered = prev.filter(
+                              (q) => q.id !== data.id
+                            );
+                            return filtered.map((q, index) => ({
+                              ...q,
+                              order:
+                                q.order && data.order && q.order > data.order
+                                  ? q.order - 1
+                                  : index + 1,
+                            }));
+                          });
+                        }
+                      }}
+                      previousQuestionId={localQuestions[index - 1]?.id}
+                      nextQuestionId={localQuestions[index + 1]?.id}
+                    />
+                    <SeparatorAdd
+                      onClick={() => {
+                        if (data.order) {
+                          setAddQuestionOnOrder(data.order + 1);
+                        } else {
+                          setAddQuestionOnOrder(localQuestions.length + 1);
+                        }
+                      }}
+                    />
+                  </Reorder.Item>
+                );
+              })}
+            </Reorder.Group>
           </CardContent>
         ) : (
           <CardContent className="pt-0">

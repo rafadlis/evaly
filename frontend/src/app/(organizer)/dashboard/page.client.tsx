@@ -73,7 +73,7 @@ const DashboardPageClient = () => {
           <Link href={`/dashboard/tests/${e.id}/edit`} key={e.id}>
             <div
               key={e.id}
-              className="p-4 border rounded-xl transition-all bg-background w-full hover:border-foreground/10 active:border-foreground"
+              className="p-4 border rounded-xl transition-all bg-background w-full hover:border-foreground/15 active:border-foreground"
             >
               <div className="flex justify-between items-start mb-3">
                 <div>

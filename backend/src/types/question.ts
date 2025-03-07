@@ -30,6 +30,7 @@ export const ValidatedInsertQuestion = createInsertSchema(question, {
     )
   ),
 });
+
 export const ValidatedUpdateQuestion = createUpdateSchema(question, {
   options: t.Optional(
     t.Nullable(

@@ -14,7 +14,6 @@ import { cn } from "@/lib/utils";
 
 interface Props {
   className?: string;
-  editorInputClassName?: string;
   value?: string;
   onChange?: (value: string) => void;
   maxLength?: number;
@@ -24,7 +23,6 @@ interface Props {
 
 export const Editor = ({
   className,
-  editorInputClassName,
   value,
   onChange,
   maxLength,
@@ -38,7 +36,7 @@ export const Editor = ({
       attributes: {
         class: cn(
           "custom-prose focus:outline-none outline-none border px-8 py-6 rounded-lg relative w-full min-h-[140px] rounded-t-none border-t-0 min-w-full",
-          editorInputClassName
+          className
         ),
       },
       transformPastedText: (text) => {
@@ -72,10 +70,10 @@ export const Editor = ({
   }, [editor, value]);
 
   return (
-    <div className={cn("", className)}>
+    <div>
       <EditorContext.Provider value={{ editor }}>
         {editor && (
-          <EditorToolbar editor={editor}  />
+          <EditorToolbar editor={editor} className={className}  />
         )}
         <EditorContent editor={editor} className="h-full" placeholder={placeholder} />
         <ImageResizer />

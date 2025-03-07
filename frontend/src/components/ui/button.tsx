@@ -23,7 +23,7 @@ const buttonVariants = cva(
           "bg-secondary border-foreground/10 text-secondary-foreground shadow-xs hover:bg-secondary/80 hover:border-transparent",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        success: "bg-emerald-500 text-white",
+        success: "bg-emerald-500/10 text-emerald-500",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:pl-3 gap-2",
@@ -36,10 +36,15 @@ const buttonVariants = cva(
         "icon-xs": "size-7 text-xs",
         "icon-xxs": "size-6 text-xs",
       },
+      rounded: {
+        false: "rounded-none",
+        true: "rounded-full",
+      }
     },
     defaultVariants: {
       variant: "default",
       size: "default",
+      rounded: false,
     },
   }
 );
