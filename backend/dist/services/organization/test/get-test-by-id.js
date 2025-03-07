@@ -1,2 +1,0 @@
-import n from'../../../lib/db';import {test}from'../../../lib/db/schema';import {and,eq,isNull}from'drizzle-orm';async function f({id:i,organizationId:r}){return await n.query.test.findFirst({where:and(eq(test.id,i),eq(test.organizationId,r),isNull(test.deletedAt))})}export{f as getTestById};//# sourceMappingURL=get-test-by-id.js.map
-//# sourceMappingURL=get-test-by-id.js.map

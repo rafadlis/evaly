@@ -1,2 +1,0 @@
-import n from'../../../lib/db';import {question}from'../../../lib/db/schema';import {eq}from'drizzle-orm';async function u(t){return (await Promise.all(t.map(async e=>await n.update(question).set({order:e.order}).where(eq(question.id,e.questionId)).returning()))).every(e=>e.length>0)}export{u as updateOrderBetweenQuestions};//# sourceMappingURL=update-order-between-questions.js.map
-//# sourceMappingURL=update-order-between-questions.js.map

@@ -1,2 +1,0 @@
-import o from'./index';import {migrate}from'drizzle-orm/bun-sql/migrator';const t=async()=>{try{await migrate(o,{migrationsFolder:"drizzle"}),console.log("Migration completed");}catch(r){console.error("Error during migration:",r),process.exit(1);}};t();//# sourceMappingURL=migrate.js.map
-//# sourceMappingURL=migrate.js.map

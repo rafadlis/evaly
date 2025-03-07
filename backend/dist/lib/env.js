@@ -1,2 +1,0 @@
-import {z}from'zod';const n=z.object({ENVIRONMENT:z.enum(["development","staging","production"]),WEB_PUBLIC_URL:z.string(),BETTER_AUTH_SECRET:z.string(),GOOGLE_CLIENT_ID:z.string(),GOOGLE_CLIENT_SECRET:z.string(),DATABASE_URL_DEVELOPMENT:z.string(),DATABASE_URL_STAGING:z.string(),DATABASE_URL_PROD:z.string(),AXIOM_API_TOKEN:z.string(),AXIOM_DATASET_NAME:z.string()}),t=n.parse(process.env);export{t as env};//# sourceMappingURL=env.js.map
-//# sourceMappingURL=env.js.map

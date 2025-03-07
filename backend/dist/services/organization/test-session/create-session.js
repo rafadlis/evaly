@@ -1,2 +1,0 @@
-import t from'../../../lib/db';import {testSession}from'../../../lib/db/schema';import {sql,and,eq,isNull}from'drizzle-orm/sql';async function d(s){const[{count:r}]=await t.select({count:sql`count(*)`}).from(testSession).where(and(eq(testSession.testId,s),isNull(testSession.deletedAt)));return {sessions:await t.insert(testSession).values({testId:s,order:Number(r)+1}).returning()}}export{d as createSession};//# sourceMappingURL=create-session.js.map
-//# sourceMappingURL=create-session.js.map

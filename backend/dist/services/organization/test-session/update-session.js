@@ -1,2 +1,0 @@
-import o from'../../../lib/db';import {testSession}from'../../../lib/db/schema';import {eq}from'drizzle-orm';async function m(e,t){return await o.update(testSession).set(t).where(eq(testSession.id,e)).returning()}export{m as updateSession};//# sourceMappingURL=update-session.js.map
-//# sourceMappingURL=update-session.js.map

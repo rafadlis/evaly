@@ -1,2 +1,0 @@
-import u from'../../../lib/db';async function d(n){return {questions:await u.query.question.findMany({orderBy(e,{asc:r}){return r(e.order)},where(e,{and:r,eq:t,isNull:o}){return r(t(e.referenceId,n),o(e.deletedAt))}})}}export{d as getAllQuestionByReferenceId};//# sourceMappingURL=get-all-question-by-reference-id.js.map
-//# sourceMappingURL=get-all-question-by-reference-id.js.map

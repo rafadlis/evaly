@@ -1,2 +1,0 @@
-import o from'../../../lib/db';async function a(t){return {sessions:await o.query.testSession.findMany({orderBy(e,s){return s.asc(e.order)},where(e,{isNull:s,and:r,eq:n}){return r(n(e.testId,t),s(e.deletedAt))}})}}export{a as getAllSessionByTestId};//# sourceMappingURL=get-all-session-by-test-id.js.map
-//# sourceMappingURL=get-all-session-by-test-id.js.map

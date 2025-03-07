@@ -1,2 +1,0 @@
-import i from'elysia';import {organizationMiddleware}from'../../middlewares/auth.middleware';import {testRouter}from'./test.router';import {questionRouter}from'./question.router';const s=new i().group("/organization",r=>r.derive(organizationMiddleware).get("/",()=>"Hello World").get("/profile",({organizer:o,user:e,session:t})=>({organizer:o,user:e,session:t})).use(testRouter).use(questionRouter));export{s as organizationRouter};//# sourceMappingURL=organization.router.js.map
-//# sourceMappingURL=organization.router.js.map

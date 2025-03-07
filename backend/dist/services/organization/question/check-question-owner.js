@@ -1,2 +1,0 @@
-import {eq,and,or}from'drizzle-orm';import u from'../../../lib/db';import {question}from'../../../lib/db/schema';async function g(n,i){const e=n.map(s=>eq(question.id,s)),o=await u.query.question.findMany({where:and(or(...e),eq(question.organizationId,i))});if(o.length!==n.length)throw new Error("Some questions are not owned by the organization");return o}export{g as checkQuestionOwner};//# sourceMappingURL=check-question-owner.js.map
-//# sourceMappingURL=check-question-owner.js.map
