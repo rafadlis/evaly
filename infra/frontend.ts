@@ -14,4 +14,5 @@ export const frontend = new sst.aws.Nextjs("Frontend", {
   },
   environment: frontendSecrets,
   warm: 1,
+  buildCommand: "cd ../backend && bun run build:tsup && cd ../frontend && bun run build",
 });
