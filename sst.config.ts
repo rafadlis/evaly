@@ -23,7 +23,7 @@ export default $config({
           ) {
             return {
               stage: "production",
-              runner: { engine: "codebuild", compute: "xlarge" },
+              runner: { engine: "codebuild", compute: "xlarge", },
             };
           }
           if (
@@ -33,17 +33,18 @@ export default $config({
           ) {
             return {
               stage: "staging",
-              runner: { engine: "codebuild", compute: "large" },
+              runner: { engine: "codebuild", compute: "large", },
             };
           }
         },
       },
     },
     async run() {
-      const infra = await import("./infra");
+      await import("./infra/backend");
+      const frontend = await import("./infra/frontend");
   
       return {
-        frontend: infra.frontend.url,
+        frontend: frontend.frontend.url,
       };
     },
   });
