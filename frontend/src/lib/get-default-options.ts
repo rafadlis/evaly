@@ -9,12 +9,6 @@ export const getDefaultOptions = (type: QuestionType) => {
         text: ``,
         isCorrect: index === 0,
       }));
-    case "single-choice":
-      return Array.from({ length: 4 }, (_, index) => ({
-        id: nanoid(5),
-        text: ``,
-        isCorrect: index === 0,
-      }));
     case "point-based":
       return Array.from({ length: 4 }, (_, index) => ({
         id: nanoid(5),
