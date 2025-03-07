@@ -1,0 +1,2 @@
+import r from'../../../lib/db';import {test,testSession}from'../../../lib/db/schema';async function f(s){const t=await r.insert(test).values(s).returning(),e=t.at(0)?.id;return e&&await r.insert(testSession).values({testId:e,order:1}),t.at(0)}export{f as createNewTest};//# sourceMappingURL=create-new-test.js.map
+//# sourceMappingURL=create-new-test.js.map

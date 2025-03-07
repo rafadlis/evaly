@@ -1,0 +1,2 @@
+import {drizzle}from'drizzle-orm/bun-sql';import*as A from'./schema';import {env}from'../env';let r;env.ENVIRONMENT==="development"?r=env.DATABASE_URL_DEVELOPMENT:env.ENVIRONMENT==="staging"?r=env.DATABASE_URL_STAGING:r=env.DATABASE_URL_PROD;const E=drizzle(r,{schema:A});var m=E;export{m as default};//# sourceMappingURL=index.js.map
+//# sourceMappingURL=index.js.map

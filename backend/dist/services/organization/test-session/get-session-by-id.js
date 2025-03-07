@@ -1,0 +1,2 @@
+import s from'../../../lib/db';async function d(e){return await s.query.testSession.findFirst({where(t,{and:r,eq:n,isNull:i}){return r(n(t.id,e),i(t.deletedAt))}})}export{d as getSessionById};//# sourceMappingURL=get-session-by-id.js.map
+//# sourceMappingURL=get-session-by-id.js.map

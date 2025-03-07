@@ -1,0 +1,2 @@
+import a from'../../../lib/db';import {testSession}from'../../../lib/db/schema';import {and,eq}from'drizzle-orm';async function f(e,i){await Promise.all(i.map(async(o,s)=>{await a.update(testSession).set({order:s+1}).where(and(eq(testSession.id,o),eq(testSession.testId,e)));}));}export{f as updateOrderSession};//# sourceMappingURL=update-order-session.js.map
+//# sourceMappingURL=update-order-session.js.map

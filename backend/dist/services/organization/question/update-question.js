@@ -1,0 +1,2 @@
+import i from'../../../lib/db';import {question}from'../../../lib/db/schema/question';import {eq}from'drizzle-orm';async function m(e,o){return {updatedQuestion:(await i.update(question).set({...o,updatedAt:new Date().toISOString()}).where(eq(question.id,e)).returning())[0]}}export{m as updateQuestion};//# sourceMappingURL=update-question.js.map
+//# sourceMappingURL=update-question.js.map

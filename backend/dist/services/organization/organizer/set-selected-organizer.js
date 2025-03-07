@@ -1,0 +1,2 @@
+import i from'../../../lib/db';import {user}from'../../../lib/db/schema';import {eq}from'drizzle-orm';async function d(r,t){await i.update(user).set({selectedOrganizerId:t}).where(eq(user.id,r));}export{d as setSelectedOrganizer};//# sourceMappingURL=set-selected-organizer.js.map
+//# sourceMappingURL=set-selected-organizer.js.map

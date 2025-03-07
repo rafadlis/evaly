@@ -1,0 +1,2 @@
+import {auth}from'./index';const t=e=>{if(["POST","GET"].includes(e.request.method))return auth.handler(e.request);e.error(405);};var s=t;export{s as default};//# sourceMappingURL=auth-view.js.map
+//# sourceMappingURL=auth-view.js.map

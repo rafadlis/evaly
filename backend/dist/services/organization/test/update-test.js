@@ -1,0 +1,2 @@
+import o from'../../../lib/db';import {test}from'../../../lib/db/schema';import {and,eq}from'drizzle-orm';async function g({id:r,data:a,organizationId:i}){return (await o.update(test).set(a).where(and(eq(test.id,r),eq(test.organizationId,i))).returning())[0]}export{g as updateTest};//# sourceMappingURL=update-test.js.map
+//# sourceMappingURL=update-test.js.map

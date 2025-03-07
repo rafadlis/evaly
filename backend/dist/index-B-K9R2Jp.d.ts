@@ -1,0 +1,51 @@
+import { account, accountRelations, session, sessionRelations, user, userRelations, verification } from './lib/db/schema/user.js';
+import { Organizer, organization, organizationRelations, organizer, organizerRelations } from './lib/db/schema/organization.js';
+import { test } from './lib/db/schema/test.js';
+import { NewTestSession, TestSession, UpdateTestSession, testSession, testSessionRelation } from './lib/db/schema/test.session.js';
+import { codeEditorConfig, codeEditorConfigRelation, dateTimeConfig, dateTimeConfigRelation, fillBlankSegment, fillBlankSegmentRelation, formulaConfig, formulaConfigRelation, hotspotConfig, hotspotConfigRelation, matchingPair, matchingPairRelation, matrixConfig, matrixConfigRelation, mediaConfig, mediaConfigRelation, question, questionRelation, sliderConfig, sliderConfigRelation, textFieldConfig, textFieldConfigRelation } from './lib/db/schema/question.js';
+
+declare const schema_NewTestSession: typeof NewTestSession;
+declare const schema_Organizer: typeof Organizer;
+declare const schema_TestSession: typeof TestSession;
+declare const schema_UpdateTestSession: typeof UpdateTestSession;
+declare const schema_account: typeof account;
+declare const schema_accountRelations: typeof accountRelations;
+declare const schema_codeEditorConfig: typeof codeEditorConfig;
+declare const schema_codeEditorConfigRelation: typeof codeEditorConfigRelation;
+declare const schema_dateTimeConfig: typeof dateTimeConfig;
+declare const schema_dateTimeConfigRelation: typeof dateTimeConfigRelation;
+declare const schema_fillBlankSegment: typeof fillBlankSegment;
+declare const schema_fillBlankSegmentRelation: typeof fillBlankSegmentRelation;
+declare const schema_formulaConfig: typeof formulaConfig;
+declare const schema_formulaConfigRelation: typeof formulaConfigRelation;
+declare const schema_hotspotConfig: typeof hotspotConfig;
+declare const schema_hotspotConfigRelation: typeof hotspotConfigRelation;
+declare const schema_matchingPair: typeof matchingPair;
+declare const schema_matchingPairRelation: typeof matchingPairRelation;
+declare const schema_matrixConfig: typeof matrixConfig;
+declare const schema_matrixConfigRelation: typeof matrixConfigRelation;
+declare const schema_mediaConfig: typeof mediaConfig;
+declare const schema_mediaConfigRelation: typeof mediaConfigRelation;
+declare const schema_organization: typeof organization;
+declare const schema_organizationRelations: typeof organizationRelations;
+declare const schema_organizer: typeof organizer;
+declare const schema_organizerRelations: typeof organizerRelations;
+declare const schema_question: typeof question;
+declare const schema_questionRelation: typeof questionRelation;
+declare const schema_session: typeof session;
+declare const schema_sessionRelations: typeof sessionRelations;
+declare const schema_sliderConfig: typeof sliderConfig;
+declare const schema_sliderConfigRelation: typeof sliderConfigRelation;
+declare const schema_test: typeof test;
+declare const schema_testSession: typeof testSession;
+declare const schema_testSessionRelation: typeof testSessionRelation;
+declare const schema_textFieldConfig: typeof textFieldConfig;
+declare const schema_textFieldConfigRelation: typeof textFieldConfigRelation;
+declare const schema_user: typeof user;
+declare const schema_userRelations: typeof userRelations;
+declare const schema_verification: typeof verification;
+declare namespace schema {
+  export { schema_NewTestSession as NewTestSession, schema_Organizer as Organizer, schema_TestSession as TestSession, schema_UpdateTestSession as UpdateTestSession, schema_account as account, schema_accountRelations as accountRelations, schema_codeEditorConfig as codeEditorConfig, schema_codeEditorConfigRelation as codeEditorConfigRelation, schema_dateTimeConfig as dateTimeConfig, schema_dateTimeConfigRelation as dateTimeConfigRelation, schema_fillBlankSegment as fillBlankSegment, schema_fillBlankSegmentRelation as fillBlankSegmentRelation, schema_formulaConfig as formulaConfig, schema_formulaConfigRelation as formulaConfigRelation, schema_hotspotConfig as hotspotConfig, schema_hotspotConfigRelation as hotspotConfigRelation, schema_matchingPair as matchingPair, schema_matchingPairRelation as matchingPairRelation, schema_matrixConfig as matrixConfig, schema_matrixConfigRelation as matrixConfigRelation, schema_mediaConfig as mediaConfig, schema_mediaConfigRelation as mediaConfigRelation, schema_organization as organization, schema_organizationRelations as organizationRelations, schema_organizer as organizer, schema_organizerRelations as organizerRelations, schema_question as question, schema_questionRelation as questionRelation, schema_session as session, schema_sessionRelations as sessionRelations, schema_sliderConfig as sliderConfig, schema_sliderConfigRelation as sliderConfigRelation, schema_test as test, schema_testSession as testSession, schema_testSessionRelation as testSessionRelation, schema_textFieldConfig as textFieldConfig, schema_textFieldConfigRelation as textFieldConfigRelation, schema_user as user, schema_userRelations as userRelations, schema_verification as verification };
+}
+
+export { schema as s };

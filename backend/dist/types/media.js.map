@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/types/media.ts"],"names":["MEDIA_TYPES"],"mappings":"AACO,MAAMA,CAAc,CAAA,CAAC,OAAS,CAAA,OAAA,CAAS,OAAQ,OAAO","file":"media.js","sourcesContent":["// Define media types constant\nexport const MEDIA_TYPES = [\"audio\", \"video\", \"file\", \"image\"] as const;\n\n\nexport type MediaType = typeof MEDIA_TYPES[number];"]}
