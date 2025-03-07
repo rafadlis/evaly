@@ -2,7 +2,7 @@ import { QuestionType } from "@evaly/backend/types/question-types";
 import { nanoid } from "nanoid";
 
 export const getDefaultOptions = (type: QuestionType) => {
-  switch (type) {
+  switch (type) { 
     case "multiple-choice":
       return Array.from({ length: 4 }, (_, index) => ({
         id: nanoid(5),
