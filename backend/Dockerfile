@@ -24,6 +24,8 @@ RUN bun build \
   --outfile server \
   ./backend/src/index.ts
 
+RUN bun run build:tsup
+
 FROM gcr.io/distroless/base
 
 WORKDIR /app
