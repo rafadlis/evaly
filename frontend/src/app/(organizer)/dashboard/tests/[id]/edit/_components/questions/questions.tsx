@@ -383,6 +383,7 @@ const Questions = () => {
           if (questions.length === 1) {
             setSelectedQuestion(questions[0]);
           }
+          refetchSessions();
         }}
       />
     </div>

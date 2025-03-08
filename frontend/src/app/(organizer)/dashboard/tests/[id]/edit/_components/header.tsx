@@ -6,10 +6,11 @@ import { notFound, useParams } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { UpdateTest } from "@evaly/backend/types/test";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
 import DialogPreviewTest from "@/components/shared/dialog/dialog-preview-test";
 import { useTestByIdQuery } from "@/query/organization/test/use-test-by-id.query";
+import { useSessionByTestIdQuery } from "@/query/organization/session/use-session-by-test-id";
 
 const Header = () => {
   const { id } = useParams();
@@ -54,15 +55,8 @@ const Header = () => {
     }
   }, [dataTest, reset]);
 
-  const { data: dataSessions } = useQuery({
-    queryKey: ["sessions-by-test-id", id],
-    queryFn: async () => {
-      const response = await $api.organization.test.session.all.get({
-        query: { testId: id as string },
-      });
-      return response.data?.sessions
-    },
-    enabled: !!id,
+  const { data: dataSessions } = useSessionByTestIdQuery({
+    testId: id?.toString() || "",
   });
 
   const { hours, minutes } = useMemo(() => {
