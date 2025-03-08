@@ -21,7 +21,7 @@ COPY /backend ./backend
 ENV NODE_ENV=production
 
 # Run the build:tsup script to generate the dist folder
-RUN cd backend && bun run db:migrate
+RUN cd backend
 
 RUN bun build \
   --compile \
