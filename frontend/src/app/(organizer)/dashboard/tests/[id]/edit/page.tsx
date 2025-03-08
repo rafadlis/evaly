@@ -10,7 +10,7 @@ const DetailTestPage = () => {
   const [tabs, setTabs] = useTabsState();
 
   return (
-    <div className="container min-h-dvh">
+    <div className="container min-h-dvh pb-10">
       <BackButton className="mb-4" fallbackUrl="/dashboard" />
       <Tabs defaultValue="questions" value={tabs} onValueChange={setTabs}>
         <Header />
