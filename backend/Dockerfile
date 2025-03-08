@@ -2,13 +2,9 @@ FROM oven/bun AS build
 
 WORKDIR /app
 
-# Cache packages installation
-COPY package.json package.json
-COPY bun.lock bun.lock
-# COPY .npmrc .npmrc
-
-COPY /backend/package.json ./backend/package.json
-COPY /frontend/package.json ./frontend/package.json
+COPY package.json bun.lock ./
+COPY backend/package.json ./backend/
+COPY frontend/package.json ./frontend/
 
 RUN bun install
 
@@ -17,7 +13,7 @@ COPY /backend ./backend
 ENV NODE_ENV=production
 
 # Run the build:tsup script to generate the dist folder
-RUN cd backend
+RUN cd backend && bun run prepare
 
 RUN bun build \
   --compile \
