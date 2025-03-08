@@ -11,6 +11,7 @@ import { checkTestOwner } from "../../services/organization/test/check-test-owne
 import { addInvitationTest } from "../../services/organization/test/add-invitation-test";
 import { getInvitationListTest } from "../../services/organization/test/get-invitation-list-test";
 import { deleteInvitationTest } from "../../services/organization/test/delete-invitation-test";
+import { validateTestIsPublishable } from "../../services/organization/test/validate-test-is-publishable";
 
 export const testRouter = new Elysia().group("/test", (app) => {
   return (
@@ -160,6 +161,24 @@ export const testRouter = new Elysia().group("/test", (app) => {
           params: t.Object({
             id: t.String(),
             email: t.String({ format: "email" }),
+          }),
+        }
+      )
+
+      // Validate Test is Publishable
+      .get(
+        "/:id/validate-publish",
+        async ({ params, organizer }) => {
+          const organizationId = organizer.organizationId;
+          const testId = params.id;
+
+          await checkTestOwner(testId, organizationId);
+          const res = await validateTestIsPublishable(testId, organizationId);
+          return {data: res};
+        },
+        {
+          params: t.Object({
+            id: t.String(),
           }),
         }
       )

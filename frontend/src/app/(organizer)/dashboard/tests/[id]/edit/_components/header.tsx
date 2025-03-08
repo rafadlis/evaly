@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ClockIcon, Loader2, Rocket, Save } from "lucide-react";
+import { ClockIcon, Loader2, Save } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { notFound, useParams } from "next/navigation";
 import { useEffect, useMemo } from "react";
@@ -10,6 +10,7 @@ import { useMutation } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
 import { useTestByIdQuery } from "@/query/organization/test/use-test-by-id.query";
 import { useSessionByTestIdQuery } from "@/query/organization/session/use-session-by-test-id";
+import DialogPublishTest from "@/components/shared/dialog/dialog-publish-test";
 
 const Header = () => {
   const { id } = useParams();
@@ -125,9 +126,7 @@ const Header = () => {
             {minutes}m
           </Button>
           {/* <DialogPreviewTest /> */}
-          <Button>
-            <Rocket /> Publish
-          </Button>
+         <DialogPublishTest testId={id?.toString() || ""} />
         </div>
       </div>
     </>

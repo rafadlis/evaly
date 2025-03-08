@@ -45,6 +45,9 @@
   
   --warning: hsla(32, 95%, 44%, 0.151);
   --warning-foreground: hsl(32.1 94.6% 43.7%);
+
+  --success: rgba(16, 185, 129, 0.2);
+  --success-foreground: hsl(160.1 84.1% 39.4%);
 }
 
 .dark {
@@ -86,6 +89,9 @@
 
   --warning: hsla(32, 95%, 44%, 0.151);
   --warning-foreground: hsl(32.1 94.6% 43.7%);
+
+  --success: rgba(16, 185, 129, 0.2);
+  --success-foreground: hsl(160.1 84.1% 39.4%);
 
 
 }
@@ -133,6 +139,9 @@
 
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
+
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
 }
 
 @utility container {

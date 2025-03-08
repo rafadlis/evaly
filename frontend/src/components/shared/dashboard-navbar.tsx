@@ -52,7 +52,7 @@ export function DashboardNavbar({className}: {className?: string}) {
   return (
     <nav
       className={cn(
-        "sticky top-0 left-0 w-full z-50 transition-all py-5 border-b",
+        "sticky top-0 left-0 w-full z-50 transition-all py-3 border-b",
         className,
         isScrolled ? "border-border bg-background" : "border-transparent"
       )}
