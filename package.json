@@ -2,6 +2,7 @@
   "name": "evaly",
   "private": true,
   "scripts": {
+    "prepare": "bun --filter @evaly/backend build:tsup",
     "check-types": "tsc --noEmit",
     "db:generate": "bun --filter @evaly/backend db:generate",
     "db:migrate": "bun --filter @evaly/backend db:migrate",
