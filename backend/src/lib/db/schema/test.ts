@@ -14,7 +14,7 @@ export const test = pgTable("test", {
     .$defaultFn(() => "ts-" + ulid()),
   title: varchar("title", { length: 255 }),
   type: varchar("type", { length: 20, enum: ["live", "self-paced"] }).default("self-paced").notNull(),
-  access: varchar("access", {length: 20, enum: ["public", "invite-only"]}),
+  access: varchar("access", {length: 20, enum: ["public", "invite-only"]}).default("public"),
   isPublished: boolean("is_published").default(false),
   description: text("description"),
   createdByOrganizerId: varchar("created_by_organizer_id", { // Someone that created this test

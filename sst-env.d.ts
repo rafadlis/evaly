@@ -5,6 +5,30 @@
 
 declare module "sst" {
   export interface Resource {
+    "AXIOM_API_TOKEN": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "AXIOM_DATASET_NAME": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "BETTER_AUTH_SECRET_DEVELOPMENT": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "BETTER_AUTH_SECRET_STAGING": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "DATABASE_URL_DEVELOPMENT": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "DATABASE_URL_STAGING": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
     "EvalyBackendService": {
       "service": string
       "type": "sst.aws.Service"
@@ -16,6 +40,38 @@ declare module "sst" {
     "Frontend": {
       "type": "sst.aws.Nextjs"
       "url": string
+    }
+    "GOOGLE_CLIENT_ID": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "GOOGLE_CLIENT_SECRET": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "NEXT_PUBLIC_API_URL_DEVELOPMENT": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "NEXT_PUBLIC_API_URL_STAGING": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "NEXT_PUBLIC_URL_DEVELOPMENT": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "NEXT_PUBLIC_URL_STAGING": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "WEB_PUBLIC_URL_DEVELOPMENT": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "WEB_PUBLIC_URL_STAGING": {
+      "type": "sst.sst.Secret"
+      "value": string
     }
   }
 }

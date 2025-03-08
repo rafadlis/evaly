@@ -337,9 +337,14 @@ const DialogEditQuestion = ({
                     value={field.value || ""}
                     onChange={field.onChange}
                     placeholder="Type your question here..."
-                    className={cn(
+                    editorClassName={cn(
                       errors.question
-                        ? "bg-destructive/5 border-destructive"
+                        ? "border-destructive"
+                        : ""
+                    )}
+                    toolbarClassName={cn(
+                      errors.question
+                        ? "border-destructive"
                         : ""
                     )}
                   />

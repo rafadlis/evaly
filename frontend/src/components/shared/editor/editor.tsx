@@ -13,21 +13,23 @@ import { ImageResizer } from "./extensions/image-resizer";
 import { cn } from "@/lib/utils";
 
 interface Props {
-  className?: string;
   value?: string;
   onChange?: (value: string) => void;
   maxLength?: number;
   onContentLengthChange?: (length: number) => void;
   placeholder?: string;
+  editorClassName?: string;
+  toolbarClassName?: string;
 }
 
 export const Editor = ({
-  className,
   value,
   onChange,
   maxLength,
   onContentLengthChange,
   placeholder,
+  editorClassName,
+  toolbarClassName,
 }: Props) => {
   const editor = useEditor({
     extensions: extensions({ limit: maxLength }),
@@ -36,7 +38,7 @@ export const Editor = ({
       attributes: {
         class: cn(
           "custom-prose focus:outline-none outline-none border px-8 py-6 rounded-lg relative w-full min-h-[140px] rounded-t-none border-t-0 min-w-full",
-          className
+          editorClassName
         ),
       },
       transformPastedText: (text) => {
@@ -73,9 +75,13 @@ export const Editor = ({
     <div>
       <EditorContext.Provider value={{ editor }}>
         {editor && (
-          <EditorToolbar editor={editor} className={className}  />
+          <EditorToolbar editor={editor} className={cn(toolbarClassName)}  />
         )}
-        <EditorContent editor={editor} className="h-full" placeholder={placeholder} />
+        <EditorContent
+          editor={editor}
+          className={cn("h-full", editorClassName)}
+          placeholder={placeholder}
+        />
         <ImageResizer />
       </EditorContext.Provider>
     </div>

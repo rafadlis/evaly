@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/components/ui/sonner";
 import Provider from "@/components/provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +27,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       {/* {process.env.NODE_ENV === "development" && <ReactScan />} */}
-      <body className={`antialiased min-h-svh flex flex-col ${geistSans.variable} ${geistMono.variable}`}>
+      <body
+        className={`antialiased min-h-svh flex flex-col ${geistSans.variable} ${geistMono.variable}`}
+      >
         <Provider>{children}</Provider>
         <Toaster />
       </body>

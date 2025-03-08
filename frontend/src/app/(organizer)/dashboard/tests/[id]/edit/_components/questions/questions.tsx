@@ -311,6 +311,7 @@ const Questions = () => {
                         isRefetchingQuestions ? "cursor-progress" : ""
                       )}
                       onDeleteSuccess={() => {
+                        refetchSessions();
                         const findIndex = localQuestions.findIndex(
                           (q) => q.id === data.id
                         );

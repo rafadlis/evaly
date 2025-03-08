@@ -8,7 +8,6 @@ import { useForm } from "react-hook-form";
 import { UpdateTest } from "@evaly/backend/types/test";
 import { useMutation } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
-import DialogPreviewTest from "@/components/shared/dialog/dialog-preview-test";
 import { useTestByIdQuery } from "@/query/organization/test/use-test-by-id.query";
 import { useSessionByTestIdQuery } from "@/query/organization/session/use-session-by-test-id";
 
@@ -18,7 +17,6 @@ const Header = () => {
   const {
     data: dataTest,
     isPending: isPendingTest,
-    refetch: refetchTest,
   } = useTestByIdQuery({ id: id?.toString() || "" });
 
   const { mutate: updateTest, isPending: isPendingUpdateTest } = useMutation({
@@ -34,7 +32,6 @@ const Header = () => {
         throw new Error("Failed to update test. Please try again later.");
       }
 
-      refetchTest();
       reset(data);
     },
   });
@@ -127,7 +124,7 @@ const Header = () => {
             <ClockIcon /> Total duration: {hours > 0 ? `${hours}h ` : ""}
             {minutes}m
           </Button>
-          <DialogPreviewTest />
+          {/* <DialogPreviewTest /> */}
           <Button>
             <Rocket /> Publish
           </Button>
