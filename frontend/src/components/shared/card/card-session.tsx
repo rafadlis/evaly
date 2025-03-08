@@ -54,7 +54,7 @@ const CardSession = ({
           </span>
         )}
         <span className="flex flex-row gap-1 items-center">
-          <CircleHelp size={14} /> 0 Questions
+          <CircleHelp size={14} /> {JSON.stringify(data.numOfQuestions)} Questions
         </span>
       </div>
       <DialogDeleteSession
