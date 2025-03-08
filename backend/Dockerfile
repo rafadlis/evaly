@@ -2,18 +2,26 @@ FROM oven/bun AS build
 
 WORKDIR /app
 
-COPY package.json bun.lock ./
-COPY backend/package.json ./backend/
-COPY frontend/package.json ./frontend/
+# Cache packages installation
+COPY package.json package.json
+COPY bun.lock bun.lock
+# COPY .npmrc .npmrc
+
+COPY /backend/package.json ./backend/package.json
+COPY /frontend/package.json ./frontend/package.json
 
 RUN bun install
 
 COPY /backend ./backend
 
+# Generate the types in backend
+WORKDIR /app/backend
+RUN bun tsup src/index.ts src/types/*.ts --dts
+
 ENV NODE_ENV=production
 
 # Run the build:tsup script to generate the dist folder
-RUN cd backend && bun run prepare
+WORKDIR /app/backend
 
 RUN bun build \
   --compile \
