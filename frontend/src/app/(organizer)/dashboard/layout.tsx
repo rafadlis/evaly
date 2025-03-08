@@ -6,7 +6,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <Provider>
       <DashboardNavbar />
-      <div className="flex-1 py-16 flex flex-col">{children}</div>
+      <div className="flex-1 py-10 flex flex-col">{children}</div>
     </Provider>
   );
 };

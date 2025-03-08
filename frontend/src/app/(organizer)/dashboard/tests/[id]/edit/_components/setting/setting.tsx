@@ -69,8 +69,8 @@ const Setting = () => {
               This determines how candidates will interact with your assessment.
             </Label>
           </div>
-          <div className="flex-1 flex flex-row flex-wrap gap-4">
-            <Card className="w-2xs p-3 border-foreground cursor-pointer relative">
+          <div className="flex-1 grid grid-cols-2 gap-4">
+            <Card className="w-full p-3 border-foreground cursor-pointer relative">
               <CheckCircle2 size={18} className="absolute top-2 right-2" />
               <h1 className="font-medium mb-2">Self-paced Test</h1>
               <Label>
@@ -79,7 +79,7 @@ const Setting = () => {
               </Label>
             </Card>
 
-            <Card className="w-2xs p-3 opacity-70 ring-offset-4 ring-foreground/50 transition-all relative">
+            <Card className="w-full p-3 opacity-70 ring-offset-4 ring-foreground/50 transition-all relative">
               <LockIcon
                 size={18}
                 className="absolute top-2 right-2 opacity-50"
