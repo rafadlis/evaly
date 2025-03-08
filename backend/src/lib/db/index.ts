@@ -5,11 +5,11 @@ import { env } from "../env";
 let dbUrl: string;
 
 if (env.ENVIRONMENT === "development") {
-  dbUrl = env.DATABASE_URL_DEVELOPMENT;
+  dbUrl = env.DATABASE_URL;
 } else if (env.ENVIRONMENT === "staging") {
-  dbUrl = env.DATABASE_URL_STAGING;
+  dbUrl = env.DATABASE_URL;
 } else {
-  dbUrl = env.DATABASE_URL_PROD;
+  dbUrl = env.DATABASE_URL;
 }
 
 const db = drizzle(dbUrl, { schema });

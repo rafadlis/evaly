@@ -7,12 +7,7 @@ export default defineConfig({
   dialect: "postgresql",
   schema: "./src/lib/db/schema",
   dbCredentials: {
-    url:
-      env.ENVIRONMENT === "development"
-        ? env.DATABASE_URL_DEVELOPMENT
-        : env.ENVIRONMENT === "staging"
-        ? env.DATABASE_URL_STAGING
-        : env.DATABASE_URL_PROD,
+    url: env.DATABASE_URL,
   },
   verbose: true,
   strict: true,

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -193,9 +193,8 @@ const SectionCreateQuestion = ({
           type: typeSelected,
           referenceType: referenceType,
         };
-        
+
         if (
-          typeSelected === "point-based" ||
           typeSelected === "multiple-choice" ||
           typeSelected === "yes-or-no"
         ) {
