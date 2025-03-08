@@ -10,18 +10,18 @@ COPY bun.lock bun.lock
 COPY /backend/package.json ./backend/package.json
 COPY /frontend/package.json ./frontend/package.json
 
-RUN bun install
-
+# Copy the backend code because we need to generate the types first
 COPY /backend ./backend
 
-# Generate the types in backend
-WORKDIR /app/backend
-RUN bun tsup src/index.ts src/types/*.ts --dts
+RUN bun install
+
+# Copy the backend code again
+COPY /backend ./backend
 
 ENV NODE_ENV=production
 
 # Run the build:tsup script to generate the dist folder
-WORKDIR /app/backend
+RUN cd backend
 
 RUN bun build \
   --compile \
