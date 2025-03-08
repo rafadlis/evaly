@@ -1,19 +1,17 @@
-import { defineConfig } from 'tsup';
+import { defineConfig } from "tsup";
 
 export default defineConfig((options) => ({
-  entry: [
-    'src/**/*.ts',
-  ],
+  entry: ["src/index.ts", "src/types/*.ts"],
   splitting: false,
   clean: true,
   dts: true,
   bundle: false,
-  format: ['esm'],
-  platform: 'node',
+  format: ["esm"],
+  platform: "node",
   target: ["es2020", "node18"],
-  tsconfig: './tsconfig.build.json',
+  tsconfig: "./tsconfig.build.json",
   sourcemap: !options.watch,
   minify: !options.watch,
-  outDir: 'dist',
+  outDir: "dist",
   treeshake: true,
 }));

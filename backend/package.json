@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": false,
   "scripts": {
-    "prepare": "bun tsup",
+    "prepare": "bun tsup src/index.ts src/types/*.ts --dtsestion-by-reference-id.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch src/index.ts",
     "db:studio": "drizzle-kit studio",
