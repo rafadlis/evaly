@@ -1,17 +1,17 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-    Card,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import {
-    Dialog,
-    DialogContent, DialogHeader,
-    DialogTitle,
-    DialogTrigger
+  Dialog,
+  DialogContent, DialogHeader,
+  DialogTitle,
+  DialogTrigger
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -76,7 +76,7 @@ const DialogTestDescriptionTemplate = ({
                   </CardTitle>
                   <CardDescription className="">
                     <div
-                      className="prose prose-sm overflow-y-auto"
+                      className="prose prose-sm overflow-y-auto prose-neutral dark:prose-invert"
                       dangerouslySetInnerHTML={{ __html: template.content }}
                     />
                   </CardDescription>
