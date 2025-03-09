@@ -22,8 +22,8 @@
   --accent-foreground: hsl(0 0% 98%);
   --destructive: hsl(0 84.2% 60.2%);
   --destructive-foreground: hsl(0 0% 98%);
-  --border: hsl(0 0% 92%);
-  --input: hsl(0 0% 92%);
+  --border: hsl(0 0% 90%);
+  --input: hsl(0 0% 90%);
   --ring: hsl(0 0% 10%);
   --chart-1: hsl(12 76% 61%);
   --chart-2: hsl(173 58% 39%);
@@ -67,8 +67,8 @@
   --accent-foreground: hsl(0 0% 98%);
   --destructive: hsl(0 84.2% 60.2%);
   --destructive-foreground: hsl(0 0% 98%);
-  --border: hsl(0 0% 10%);
-  --input: hsl(0 0% 10%);
+  --border: hsl(0 0% 14%);
+  --input: hsl(0 0% 14%);
   --ring: hsl(0 0% 83.1%);
   --chart-1: hsl(220 70% 50%);
   --chart-2: hsl(160 60% 45%);

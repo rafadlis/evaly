@@ -39,11 +39,11 @@ const Header = () => {
     <>
       <div className="flex flex-row items-center justify-between">
         {isPendingTest ? (
-          <h1 className="animate-pulse text-muted-foreground text-4xl font-bold">
+          <h1 className="animate-pulse text-muted-foreground text-3xl font-bold">
             Loading...
           </h1>
         ) : (
-          <h1 className="text-4xl font-bold">{dataTest?.title}</h1>
+          <h1 className="text-3xl font-bold">{dataTest?.title}</h1>
         )}
         <div className="flex flex-row items-center gap-2">
           <Button variant={"ghost"} size={"icon"} onClick={copyLinkToShare}>
