@@ -1,0 +1,23 @@
+import { TestType } from "@evaly/backend/types/test";
+
+export const testTypeFormatter = (type: TestType) => {
+  switch (type) {
+    case "live":
+      return "Live test";
+    case "self-paced":
+      return "Self-Paced test";
+    default:
+      return "Unknown test type";
+  }
+};
+
+export const testTypeColor = (type: TestType) => {
+  switch (type) {
+    case "live":
+      return "bg-emerald-600/10 text-emerald-600 border border-emerald-600/10";
+    case "self-paced":
+      return "bg-blue-500/10 text-blue-500 border border-blue-500/10";
+    default:
+      return "bg-gray-500/10 text-gray-500 border border-gray-500/10";
+  }
+};

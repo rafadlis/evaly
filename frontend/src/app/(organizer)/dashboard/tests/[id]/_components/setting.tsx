@@ -15,8 +15,8 @@ import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Editor } from "@/components/shared/editor/editor";
 import DialogTestDescriptionTemplate from "@/components/shared/dialog/dialog-test-description-template";
-import InviteOnly from "./invite-only";
 import { AnimatePresence, motion } from "motion/react";
+import InviteOnly from "../edit/_components/setting/invite-only";
 
 const Setting = () => {
   const { id: testId } = useParams();

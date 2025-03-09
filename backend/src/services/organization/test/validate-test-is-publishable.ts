@@ -101,7 +101,7 @@ export async function validateTestIsPublishable(testId: string, organizationId: 
         id: "type",
         title: "Test type",
         status: "ok",
-        message: `Type: ${test.type === "live" ? "Live test" : "Self-paced test"}`
+        message: `${test.type === "live" ? "Live test" : "Self-paced test"}`
     });
 
     // Get test sessions
@@ -254,7 +254,7 @@ export async function validateTestIsPublishable(testId: string, organizationId: 
             id: "duration",
             title: "Test duration",
             status: "warning",
-            message: "No duration set for sessions"
+            message: "No time limit set for sessions. Participants can complete the test at their own pace."
         });
     } else if (testSessions.length > 0) {
         checklist.push({

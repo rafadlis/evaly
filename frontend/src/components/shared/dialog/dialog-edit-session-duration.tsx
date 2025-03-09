@@ -12,7 +12,7 @@ import { useSessionByIdQuery } from "@/query/organization/session/use-session-by
 import { useSessionByTestIdQuery } from "@/query/organization/session/use-session-by-test-id";
 import { UpdateTestSession } from "@evaly/backend/types/test";
 import { useMutation } from "@tanstack/react-query";
-import { ClockIcon, Loader2 } from "lucide-react";
+import { CircleHelpIcon, ClockIcon, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -28,14 +28,16 @@ const DialogEditSessionDuration = ({
   onSuccess?: () => void;
 }) => {
   const [open, setOpen] = useState(false);
- 
+
   const {
     data: dataSession,
     isRefetching: isRefetchingSession,
     refetch: refetchSession,
-  } = useSessionByIdQuery({id: sessionId as string})
+  } = useSessionByIdQuery({ id: sessionId as string });
 
-  const { refetch: refetchSessions } = useSessionByTestIdQuery({testId: dataSession?.testId as string})
+  const { refetch: refetchSessions } = useSessionByTestIdQuery({
+    testId: dataSession?.testId as string,
+  });
 
   const { mutate: updateSession, isPending: isPendingUpdateSession } =
     useMutation({
@@ -110,16 +112,39 @@ const DialogEditSessionDuration = ({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-max">
-        <form className="grid grid-cols-2 gap-4">
+        <div className="flex flex-row gap-2 items-center">
+          <Label>Duration</Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant={"ghost"} size={"icon-xs"}>
+                <CircleHelpIcon />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent>
+              If you want participants to be able to finish the test whenever
+              they want, you can leave the duration empty.
+            </PopoverContent>
+          </Popover>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
           <div>
             <Label>Hours</Label>
             <Input
               type="number"
               className="w-20"
-              value={hours}
               min={0}
               max={23}
-              onChange={(e) => setHours(Number(e.target.value))}
+              placeholder="0-23"
+              value={hours === 0 && !hours ? "" : hours}
+              onChange={(e) => {
+                if (Number(e.target.value) > 23) {
+                  toast.error("Hours must be between 0 and 23");
+                  return;
+                }
+                const value =
+                  e.target.value === "" ? 0 : Number(e.target.value);
+                setHours(value);
+              }}
             />
           </div>
           <div>
@@ -127,10 +152,19 @@ const DialogEditSessionDuration = ({
             <Input
               type="number"
               className="w-20"
-              value={minutes}
+              value={minutes === 0 && !minutes ? "" : minutes}
               min={0}
               max={59}
-              onChange={(e) => setMinutes(Number(e.target.value))}
+              placeholder="0-59"
+              onChange={(e) => {
+                const value =
+                  e.target.value === "" ? 0 : Number(e.target.value);
+                if (value > 59) {
+                  toast.error("Minutes must be between 0 and 59");
+                  return;
+                }
+                setMinutes(value);
+              }}
             />
           </div>
           <Button
@@ -145,7 +179,7 @@ const DialogEditSessionDuration = ({
               "Save"
             )}
           </Button>
-        </form>
+        </div>
       </PopoverContent>
     </Popover>
   );

@@ -1,7 +1,7 @@
 import { $api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 
-export const useTestValidatePublishable = (testId: string) => {
+export const useTestValidatePublishable = (testId: string, enabled: boolean = true) => {
   return useQuery({
     queryKey: ["test-validate-publishable"],
     queryFn: async () => {
@@ -10,5 +10,6 @@ export const useTestValidatePublishable = (testId: string) => {
         ["validate-publish"].get();
       return res.data?.data;
     },
+    enabled,
   });
 };

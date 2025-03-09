@@ -12,6 +12,7 @@ import { addInvitationTest } from "../../services/organization/test/add-invitati
 import { getInvitationListTest } from "../../services/organization/test/get-invitation-list-test";
 import { deleteInvitationTest } from "../../services/organization/test/delete-invitation-test";
 import { validateTestIsPublishable } from "../../services/organization/test/validate-test-is-publishable";
+import { publishUnpublishTest } from "../../services/organization/test/publish-unpublish";
 
 export const testRouter = new Elysia().group("/test", (app) => {
   return (
@@ -111,7 +112,7 @@ export const testRouter = new Elysia().group("/test", (app) => {
 
           await checkTestOwner(testId, organizationId);
           const res = await addInvitationTest(testId, body.emails);
-          return {data: res};
+          return { data: res };
         },
         {
           params: t.Object({
@@ -155,7 +156,7 @@ export const testRouter = new Elysia().group("/test", (app) => {
 
           await checkTestOwner(testId, organizationId);
           const res = await deleteInvitationTest(testId, email);
-          return {data: res};
+          return { data: res };
         },
         {
           params: t.Object({
@@ -174,7 +175,52 @@ export const testRouter = new Elysia().group("/test", (app) => {
 
           await checkTestOwner(testId, organizationId);
           const res = await validateTestIsPublishable(testId, organizationId);
-          return {data: res};
+          return { data: res };
+        },
+        {
+          params: t.Object({
+            id: t.String(),
+          }),
+        }
+      )
+
+      // Publish test
+      .put(
+        "/:id/publish",
+        async ({ params, organizer, error }) => {
+          const organizationId = organizer.organizationId;
+          const testId = params.id;
+
+          await checkTestOwner(testId, organizationId);
+          const { isPublishable } = await validateTestIsPublishable(
+            testId,
+            organizationId
+          );
+
+          if (!isPublishable) {
+            return error("Bad Request", "Test is not publishable");
+          }
+
+          const res = await publishUnpublishTest(testId, true);
+          return { data: res };
+        },
+        {
+          params: t.Object({
+            id: t.String(),
+          }),
+        }
+      )
+
+      // Unpublish test
+      .put(
+        "/:id/unpublish",
+        async ({ params, organizer, error }) => {
+          const organizationId = organizer.organizationId;
+          const testId = params.id;
+
+          await checkTestOwner(testId, organizationId);
+          const res = await publishUnpublishTest(testId, false);
+          return { data: res };
         },
         {
           params: t.Object({

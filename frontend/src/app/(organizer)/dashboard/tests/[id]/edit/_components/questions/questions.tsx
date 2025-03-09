@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ListTreeIcon, ListXIcon, PlusIcon } from "lucide-react";
-import CardQuestion from "./card-question";
+import CardQuestion from "../../../../../../../../components/shared/card/card-question";
 import {
   Card,
   CardContent,

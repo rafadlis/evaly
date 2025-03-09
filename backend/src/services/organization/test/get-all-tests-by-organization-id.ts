@@ -1,8 +1,9 @@
 import db from "../../../lib/db";
-import { test } from "../../../lib/db/schema";
+import { test, testSession, testInvitation } from "../../../lib/db/schema";
 import { Pagination } from "../../../types/pagination";
 import { SQL, sql } from "drizzle-orm";
-import { and, eq, isNull, like, between, or } from "drizzle-orm";
+import { and, eq, isNull, like, between, or, inArray } from "drizzle-orm";
+import { Test } from "../../../types/test";
 
 export async function getAllTestsByOrganizationId({
   organizationId,
@@ -46,7 +47,8 @@ export async function getAllTestsByOrganizationId({
     );
   }
 
-  const data = await db.query.test.findMany({
+  // Fetch tests
+  const tests = await db.query.test.findMany({
     where: (_, { and }) => and(...whereConditions),
     limit,
     offset,
@@ -74,6 +76,78 @@ export async function getAllTestsByOrganizationId({
     .from(test)
     .where(and(...whereConditions));
 
+  // If we have tests, fetch their durations and invitation counts in single queries
+  let testsWithExtras: Test[] = [];
+  
+  if (tests.length > 0) {
+    // Get all test IDs
+    const testIds = tests.map(t => t.id);
+    
+    try {
+      // Fetch the sum of durations for each test in a single query
+      const testDurations = await db
+        .select({
+          testId: testSession.testId,
+          totalDuration: sql<number>`COALESCE(SUM(${testSession.duration}), 0)`,
+        })
+        .from(testSession)
+        .where(and(
+          inArray(testSession.testId, testIds),
+          isNull(testSession.deletedAt)
+        ))
+        .groupBy(testSession.testId);
+      
+      // Create a map of test ID to duration for quick lookup
+      const durationMap = new Map<string, number>();
+      testDurations.forEach(item => {
+        durationMap.set(item.testId, item.totalDuration);
+      });
+      
+      // Get invite-only test IDs
+      const inviteOnlyTestIds = tests
+        .filter(t => t.access === "invite-only")
+        .map(t => t.id);
+      
+      // Only fetch invitation counts for invite-only tests
+      let invitationCountMap = new Map<string, number>();
+      
+      if (inviteOnlyTestIds.length > 0) {
+        // Fetch the count of invitations for each invite-only test
+        const invitationCounts = await db
+          .select({
+            testId: testInvitation.testId,
+            count: sql<number>`COUNT(*)`,
+          })
+          .from(testInvitation)
+          .where(inArray(testInvitation.testId, inviteOnlyTestIds))
+          .groupBy(testInvitation.testId);
+        
+        // Create a map of test ID to invitation count
+        invitationCounts.forEach(item => {
+          invitationCountMap.set(item.testId, item.count);
+        });
+      }
+      
+      // Combine the test data with durations and invitation counts
+      testsWithExtras = tests.map(test => ({
+        ...test,
+        duration: durationMap.get(test.id) || 0,
+        // Only set invitations for invite-only tests
+        invitations: test.access === "invite-only" ? invitationCountMap.get(test.id) || 0 : undefined
+      }));
+      
+    } catch (error) {
+      // Fallback: return tests with zero duration and undefined invitations
+      testsWithExtras = tests.map(test => ({
+        ...test,
+        duration: 0,
+        invitations: test.access === "invite-only" ? 0 : undefined
+      }));
+    }
+  } else {
+    testsWithExtras = [];
+  }
+
   const pagination: Pagination = {
     total: count,
     page,
@@ -82,7 +156,7 @@ export async function getAllTestsByOrganizationId({
   };
 
   return {
-    data,
+    data: testsWithExtras,
     pagination,
   };
 }

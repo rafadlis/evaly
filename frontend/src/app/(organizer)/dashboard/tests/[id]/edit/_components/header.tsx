@@ -11,14 +11,22 @@ import { $api } from "@/lib/api";
 import { useTestByIdQuery } from "@/query/organization/test/use-test-by-id.query";
 import { useSessionByTestIdQuery } from "@/query/organization/session/use-session-by-test-id";
 import DialogPublishTest from "@/components/shared/dialog/dialog-publish-test";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import DialogUnpublishTest from "@/components/shared/dialog/dialog-unpublish-test";
+import { useProgressRouter } from "@/components/shared/progress-bar";
 
 const Header = () => {
   const { id } = useParams();
 
-  const {
-    data: dataTest,
-    isPending: isPendingTest,
-  } = useTestByIdQuery({ id: id?.toString() || "" });
+  const router = useProgressRouter()
+
+  const { data: dataTest, isPending: isPendingTest } = useTestByIdQuery({
+    id: id?.toString() || "",
+  });
 
   const { mutate: updateTest, isPending: isPendingUpdateTest } = useMutation({
     mutationKey: ["update-test"],
@@ -44,8 +52,9 @@ const Header = () => {
     watch,
     getValues,
   } = useForm<UpdateTest>();
-  
+
   const testId = watch("id");
+  const isPublished = watch("isPublished");
 
   useEffect(() => {
     if (dataTest) {
@@ -57,7 +66,7 @@ const Header = () => {
     testId: id?.toString() || "",
   });
 
-  const { hours, minutes } = useMemo(() => {
+  const { hours, minutes, totalDuration } = useMemo(() => {
     if (!dataSessions?.length) return { hours: 0, minutes: 0 };
 
     const totalDuration = dataSessions.reduce((acc, session) => {
@@ -67,12 +76,12 @@ const Header = () => {
     return {
       hours: Math.floor(totalDuration / 60),
       minutes: totalDuration % 60,
+      totalDuration,
     };
   }, [dataSessions]);
 
-
   if (!isPendingTest && !dataTest) {
-    return notFound()
+    return notFound();
   }
 
   return (
@@ -111,7 +120,7 @@ const Header = () => {
               Save
             </Button>
           </motion.div>
-        ): null}
+        ) : null}
       </AnimatePresence>
 
       <div className="mb-6 mt-4 flex flex-row justify-between items-center">
@@ -121,12 +130,43 @@ const Header = () => {
         </TabsList>
 
         <div className="flex flex-row items-center gap-2">
-          <Button variant={"ghost"} className="text-foreground/75">
-            <ClockIcon /> Total duration: {hours > 0 ? `${hours}h ` : ""}
-            {minutes}m
-          </Button>
-          {/* <DialogPreviewTest /> */}
-         <DialogPublishTest testId={id?.toString() || ""} />
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant={"ghost"} className="text-foreground/75">
+                <ClockIcon /> Total duration: {hours > 0 ? `${hours}h ` : ""}
+                {minutes}m
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent>
+              {!totalDuration ? (
+                <p>
+                  There is no duration for this test, your participants will be
+                  able to finish the test whenever they want.
+                </p>
+              ) : (
+                <p>
+                  If you want participants to be able to finish the test
+                  whenever they want, you can leave the duration empty.
+                </p>
+              )}
+            </PopoverContent>
+          </Popover>
+          {!isPublished ? (
+            <DialogPublishTest
+              testId={id?.toString() || ""}
+              onPublished={(newTest) => {
+                reset(newTest);
+                router.replace(`/dashboard/tests/${newTest.id}`);
+              }}
+            />
+          ) : (
+            <DialogUnpublishTest
+              testId={id?.toString() || ""}
+              isUnpublished={(newTest) => {
+                reset(newTest);
+              }}
+            />
+          )}
         </div>
       </div>
     </>

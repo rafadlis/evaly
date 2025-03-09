@@ -11,15 +11,20 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, PencilLine } from "lucide-react";
+import { CircleHelpIcon, Loader2, PencilLine } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import DialogEditSessionDuration from "./dialog-edit-session-duration";
+import { Controller, useForm } from "react-hook-form";
 import { UpdateTestSession } from "@evaly/backend/types/test";
 import { useMutation } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
 import { useSessionByIdQuery } from "@/query/organization/session/use-session-by-id";
 import { useSessionByTestIdQuery } from "@/query/organization/session/use-session-by-test-id";
+import { toast } from "sonner";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const DialogEditSession = ({ sessionId }: { sessionId: string }) => {
   const [open, setOpen] = useState(false);
@@ -27,6 +32,7 @@ const DialogEditSession = ({ sessionId }: { sessionId: string }) => {
     register,
     handleSubmit,
     reset,
+    control,
     formState: { isDirty },
   } = useForm<UpdateTestSession>();
 
@@ -34,15 +40,17 @@ const DialogEditSession = ({ sessionId }: { sessionId: string }) => {
     data: dataSession,
     refetch: refetchSession,
     isRefetching: isRefetchingSession,
-  } = useSessionByIdQuery({id: sessionId})
+  } = useSessionByIdQuery({ id: sessionId });
 
-  const { refetch: refetchSessions } = useSessionByTestIdQuery({testId: dataSession?.testId as string})
+  const { refetch: refetchSessions } = useSessionByTestIdQuery({
+    testId: dataSession?.testId as string,
+  });
 
   useEffect(() => {
-    if (dataSession) {
+    if (dataSession && !isDirty) {
       reset(dataSession);
     }
-  }, [dataSession, reset]);
+  }, [dataSession, reset, isDirty]);
 
   const { mutate: updateSession, isPending: isPendingUpdateSession } =
     useMutation({
@@ -70,7 +78,7 @@ const DialogEditSession = ({ sessionId }: { sessionId: string }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size={"icon-xs"} variant={"ghost"} >
+        <Button size={"icon-xs"} variant={"ghost"}>
           <PencilLine />
         </Button>
       </DialogTrigger>
@@ -91,10 +99,77 @@ const DialogEditSession = ({ sessionId }: { sessionId: string }) => {
             />
           </div>
           <div className="flex flex-col gap-2">
-            <Label>Duration</Label>
-            <DialogEditSessionDuration
-              sessionId={sessionId}
-              className="w-max"
+            <div className="flex flex-row gap-2 items-center">
+              <Label>Duration</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant={"ghost"} size={"icon-xs"}>
+                    <CircleHelpIcon />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  If you want participants to be able to finish the test whenever
+                  they want, you can leave the duration empty.
+                </PopoverContent>
+              </Popover>
+            </div>
+            <Controller
+              control={control}
+              name="duration"
+              render={({ field }) => {
+                const hours = Math.floor((field.value || 0) / 60);
+                const minutes = (field.value || 0) % 60 || 0;
+                return (
+                  <>
+                    <div className="flex flex-row gap-4">
+                      <div>
+                        <Label>Hours</Label>
+                        <Input
+                          type="number"
+                          className="w-20"
+                          min={0}
+                          max={23}
+                          placeholder="0-23"
+                          value={hours === 0 && !hours ? "" : hours}
+                          onChange={(e) => {
+                            if (Number(e.target.value) > 23) {
+                              toast.error("Hours must be between 0 and 23");
+                              return;
+                            }
+                            const value =
+                              e.target.value === ""
+                                ? 0
+                                : Number(e.target.value);
+                            field.onChange(value * 60 + minutes);
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <Label>Minutes</Label>
+                        <Input
+                          type="number"
+                          className="w-20"
+                          value={minutes === 0 && !minutes ? "" : minutes}
+                          min={0}
+                          max={59}
+                          placeholder="0-59"
+                          onChange={(e) => {
+                            const value =
+                              e.target.value === ""
+                                ? 0
+                                : Number(e.target.value);
+                            if (value > 59) {
+                              toast.error("Minutes must be between 0 and 59");
+                              return;
+                            }
+                            field.onChange(value + hours * 60);
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </>
+                );
+              }}
             />
           </div>
           <div className="flex flex-col gap-2">

@@ -1,5 +1,4 @@
 "use client";
-import { Link } from "@/components/shared/progress-bar";
 import { parseAsInteger, useQueryStates } from "nuqs";
 import {
   Pagination,
@@ -12,19 +11,11 @@ import {
 import { Separator } from "@/components/ui/separator";
 import LoadingTest from "@/components/shared/loading/loading-test";
 import {
-  Calendar,
-  Clock,
-  FileSpreadsheet,
-  PencilLine,
-  Trash2Icon,
-  Users,
+  FileSpreadsheet
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import dayjs from "dayjs";
-import DialogDeleteTest from "@/components/shared/dialog/dialog-delete-test";
 import DialogCreateTest from "@/components/shared/dialog/dialog-create-test";
 import { useTestQuery } from "@/query/organization/test/use-test.query";
+import CardTest from "@/components/shared/card/card-test";
 
 const DashboardPageClient = () => {
   const [queryStates, setQueryStates] = useQueryStates({
@@ -70,79 +61,7 @@ const DashboardPageClient = () => {
       </div>
       <div className="flex flex-col mt-10 min-h-dvh gap-4">
         {tests.map((e) => (
-          <Link href={`/dashboard/tests/${e.id}/edit`} key={e.id}>
-            <div
-              key={e.id}
-              className="p-4 border rounded-xl transition-all bg-background w-full hover:border-foreground/15 active:border-foreground"
-            >
-              <div className="flex justify-between items-start mb-3">
-                <div>
-                  <h3 className="font-medium text-lg">
-                    {e.title || "Untitled Test"}
-                  </h3>
-                  <div className="flex flex-wrap items-center gap-2 mt-1.5">
-                    <Badge variant={"secondary"}>{e.type}</Badge>
-                    <Badge variant={"ghost"}>
-                      <Clock size={14} />
-                      <span>10m</span>
-                    </Badge>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <Badge
-                    variant={"default"}
-                    className="bg-emerald-600/10 text-emerald-600 border border-emerald-600/10"
-                  >
-                    Active
-                  </Badge>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-4 text-sm pt-2 border-t mt-2 text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <Users size={16} />
-                  <span>10 participants</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Calendar size={16} />
-                  <span>
-                    Created on {dayjs(e.createdAt).format("DD MMM YYYY")}
-                  </span>
-                </div>
-
-                <div className="ml-auto flex gap-1">
-                  <Button
-                    variant={"ghost"}
-                    size={"icon-xs"}
-                    
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                  >
-                    <PencilLine />
-                  </Button>
-                  <Separator orientation="vertical" />
-                  <DialogDeleteTest
-                    dialogTrigger={
-                      <Button
-                        variant={"ghost"}
-                        size={"icon-xs"}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                        }}
-                        
-                      >
-                        <Trash2Icon />
-                      </Button>
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-          </Link>
+         <CardTest data={e} key={e.id} />
         ))}
       </div>
 

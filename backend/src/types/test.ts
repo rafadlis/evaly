@@ -2,7 +2,10 @@ import { test } from "../lib/db/schema/test";
 import { testInvitation } from "../lib/db/schema/test.invitation";
 import { testSession } from "../lib/db/schema/test.session";
 
-export type Test = typeof test.$inferSelect;
+export type Test = typeof test.$inferSelect & {
+  duration?: number | null;
+  invitations?: number | null;
+}
 export type InsertTest = typeof test.$inferInsert;
 export type UpdateTest = Partial<InsertTest>;
 
@@ -19,3 +22,5 @@ export type TestInvitation = typeof testInvitation.$inferSelect & {
 };
 export type InsertTestInvitation = typeof testInvitation.$inferInsert;
 export type UpdateTestInvitation = Partial<InsertTestInvitation>;
+
+export type TestType = Test["type"]
