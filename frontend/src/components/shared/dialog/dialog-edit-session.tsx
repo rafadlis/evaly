@@ -47,10 +47,10 @@ const DialogEditSession = ({ sessionId }: { sessionId: string }) => {
   });
 
   useEffect(() => {
-    if (dataSession && !isDirty) {
+    if (dataSession) {
       reset(dataSession);
     }
-  }, [dataSession, reset, isDirty]);
+  }, [dataSession, reset]);
 
   const { mutate: updateSession, isPending: isPendingUpdateSession } =
     useMutation({

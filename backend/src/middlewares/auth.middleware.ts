@@ -51,3 +51,12 @@ export const organizationMiddleware = async ({ request, error }: Context) => {
     return error("Internal Server Error", errorBody.message);
   }
 };
+
+export const participantMiddleware = async ({ request, error }: Context) => {
+  const session = await auth.api.getSession({ headers: request.headers });
+
+  return {
+    user: session?.user,
+    session: session?.session,
+  };
+};

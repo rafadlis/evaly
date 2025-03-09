@@ -2,6 +2,7 @@ import { relations, sql } from "drizzle-orm";
 import { smallint, pgTable, varchar, timestamp } from "drizzle-orm/pg-core";
 import { ulid } from "ulidx";
 import { question } from "./question";
+import { test } from "./test";
 
 export const testSession = pgTable("test-session", {
   id: varchar("id", { length: 255 })
@@ -32,8 +33,12 @@ export const testSession = pgTable("test-session", {
 });
 
 //Relations
-export const testSessionRelation = relations(testSession, ({ many }) => ({
+export const testSessionRelation = relations(testSession, ({ many, one }) => ({
   question: many(question, { relationName: "testSession.question" }),
+  test: one(test, {
+    fields: [testSession.testId],
+    references: [test.id],
+  }),
 }));
 
 

@@ -1,64 +1,125 @@
 "use client";
 
-import { useState } from "react";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, FileText, AlertCircle, User, Users, Play } from "lucide-react";
+import { Clock, FileText, AlertCircle, Users, Play } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { testTypeColor, testTypeFormatter } from "@/lib/test-type-formatter";
-import { TestType } from "@evaly/backend/types/test";
 import { cn } from "@/lib/utils";
-    
-// Mock data - would be fetched from API in real implementation
-const testData = {
-  title: "Frontend Development Assessment",
-  type: "self-paced",
-  duration: 60, // minutes
-  totalSessions: 3,
-  totalQuestions: 25,
-  // This would be the rich text content from your editor
-  description: `<p>This assessment evaluates your frontend development skills across HTML, CSS, JavaScript, and modern frameworks.</p><p>You'll work through multiple sections with increasing complexity to test your knowledge and problem-solving abilities.</p><ul><li>Complete all sections to finish the assessment</li><li>Answer questions carefully</li><li>Review your work before submitting</li></ul>`,
-  sessions: [
-    { title: "HTML & CSS Fundamentals", questionCount: 10, duration: 20 },
-    { title: "JavaScript Core Concepts", questionCount: 8, duration: 20 },
-    { title: "Frontend Frameworks", questionCount: 7, duration: 20 },
-  ],
-};
+import { useTestById } from "@/query/participants/test/use-test-by-id";
+import { useParams, useRouter, usePathname } from "next/navigation";
+import dayjs from "dayjs";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Page = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const pathName = usePathname();
+  const { testId } = useParams();
+  const {
+    data: testData,
+    isPending: isPendingTestData,
+    error,
+  } = useTestById(testId as string);
+  const handleStartTest = () => {};
 
-  const handleStartTest = () => {
-    setIsLoading(true);
-    // In a real implementation, this would navigate to the first question
-    setTimeout(() => {
-      setIsLoading(false);
-      // Navigation would happen here
-    }, 1000);
-  };
+  if (isPendingTestData) {
+    return (
+      <div className="py-10 xl:py-16 container">
+        <div className="flex flex-col md:flex-row gap-8 md:justify-between md:items-end mb-8">
+          <div>
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-6 w-20" />
+            </div>
+
+            <Skeleton className="h-10 w-[300px] md:w-[400px] lg:w-[500px] mt-2 mb-4" />
+
+            <div className="flex items-center gap-4 text-sm">
+              <Skeleton className="h-5 w-24" />
+              <Skeleton className="h-5 w-28" />
+              <Skeleton className="h-5 w-32" />
+            </div>
+          </div>
+          <div className="flex flex-col gap-2 md:items-end">
+            <Skeleton className="h-10 w-full md:w-32" />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6">
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-7 w-48 mb-2" />
+              <Skeleton className="h-5 w-full max-w-[500px]" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-24 w-full mb-4" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[1, 2, 3].map((item) => (
+                  <div
+                    key={item}
+                    className="flex items-start gap-4 p-4 border rounded-lg"
+                  >
+                    <Skeleton className="h-10 w-10 rounded-full" />
+                    <div className="space-y-2 flex-1">
+                      <Skeleton className="h-5 w-3/4" />
+                      <Skeleton className="h-4 w-full" />
+                      <div className="flex gap-2 mt-2">
+                        <Skeleton className="h-5 w-16" />
+                        <Skeleton className="h-5 w-16" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+            <CardFooter className="border-t pt-6 flex flex-col gap-4">
+              <div className="flex items-center gap-3 w-full">
+                <Skeleton className="h-9 w-9 rounded-full" />
+                <div className="flex-1">
+                  <Skeleton className="h-5 w-40 mb-1" />
+                  <Skeleton className="h-4 w-32" />
+                </div>
+                <Skeleton className="h-5 w-32" />
+              </div>
+              <Skeleton className="h-4 w-full max-w-[400px] mx-auto" />
+            </CardFooter>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex-1 flex flex-col gap-2 items-center justify-center text-2xl font-medium text-center">
+        <h1>{error.message}</h1>
+        <Button onClick={() => router.push(`/login?callbackURL=${pathName}`)}>Login</Button>
+      </div>
+    );
+  }
+
+  if (!testData) {
+    return <div>{JSON.stringify(testData)}</div>;
+    // return notFound();
+  }
 
   return (
     <div className="py-10 xl:py-16 container">
-      <div className="flex flex-col md:flex-row gap-8 mb-8">
-        {/* Left column - Test info */}
-        <div className="md:w-1/2">
-          <div className="flex items-center gap-2 mb-2">
+      <div className="flex flex-col md:flex-row gap-8 md:justify-between md:items-end mb-8">
+        <div>
+          <div className="flex items-center gap-2">
             <Badge
-              variant="outline"
-              className="uppercase text-xs font-semibold tracking-wider"
+              variant="secondary"
+              className={cn("capitalize", testTypeColor(testData?.type))}
             >
-              Assessment
-            </Badge>
-            <Badge variant="secondary" className={cn("capitalize", testTypeColor(testData.type as TestType))}>
-              {testTypeFormatter(testData.type as TestType)}
+              {testTypeFormatter(testData?.type)}
             </Badge>
           </div>
 
@@ -66,10 +127,10 @@ const Page = () => {
             {testData.title}
           </h1>
 
-          <div className="flex items-center gap-4 mb-6 text-sm">
+          <div className="flex items-center gap-4 text-sm">
             <div className="flex items-center gap-1.5">
               <Clock className="h-4 w-4 text-muted-foreground" />
-              <span>{testData.duration} min</span>
+              {testData.totalDuration ? `${testData.totalDuration} min` : "No time limit"}
             </div>
             <div className="flex items-center gap-1.5">
               <FileText className="h-4 w-4 text-muted-foreground" />
@@ -80,50 +141,16 @@ const Page = () => {
               <span>All participants</span>
             </div>
           </div>
-
-          {/* Rich Text Description */}
-          <Card className="mb-6">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">Description</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div
-                className="prose prose-sm dark:prose-invert max-w-none"
-                dangerouslySetInnerHTML={{ __html: testData.description }}
-              />
-            </CardContent>
-          </Card>
-
-          {/* Important notes */}
-          <Card className="border border-amber-200 bg-amber-50 dark:border-amber-900 dark:bg-amber-950/30 mb-6">
-            <CardContent className="pt-6">
-              <div className="flex gap-2.5">
-                <AlertCircle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="font-medium text-amber-700 dark:text-amber-400 mb-1">
-                    Important Notes
-                  </h3>
-                  <p className="text-sm text-amber-700/80 dark:text-amber-400/80">
-                    Once started, you&apos;ll have {testData.duration} minutes
-                    to complete all sections. You can pause and resume, but the
-                    timer will continue running.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
-
-        {/* Right column - Sections */}
-        <div className="md:w-1/2">
+        <div className="flex flex-col gap-2 md:items-end">
           {/* Start Button */}
           <Button
             size="lg"
             onClick={handleStartTest}
-            disabled={isLoading}
-            className="w-full mb-6"
+            // disabled={isLoading}
+            className="w-full md:w-max"
           >
-            {isLoading ? (
+            {false ? (
               <span className="flex items-center gap-2">
                 <div className="h-4 w-4 border-2 border-background border-t-transparent rounded-full animate-spin"></div>
                 Preparing...
@@ -135,11 +162,55 @@ const Page = () => {
               </span>
             )}
           </Button>
+        </div>
+      </div>
+      <div className="flex flex-col md:flex-row gap-8 mb-8">
+        {/* Left column - Test info */}
+        <div className="md:w-1/2">
+          {/* Rich Text Description */}
+          <Card className="mb-6">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Description</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div
+                className="custom-prose md:prose-sm max-w-none"
+                dangerouslySetInnerHTML={{
+                  __html: testData.description ?? "No description",
+                }}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Important notes */}
+          {testData.totalDuration && testData.totalDuration > 0 ? (
+            <Card className="border border-amber-200 bg-amber-50 dark:border-amber-900 dark:bg-amber-950/30 mb-6">
+              <CardContent className="pt-6">
+                <div className="flex gap-2.5">
+                  <AlertCircle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="font-medium text-amber-700 dark:text-amber-400 mb-1">
+                      Important Notes
+                    </h3>
+                    <p className="text-sm text-amber-700/80 dark:text-amber-400/80">
+                      Once started, you&apos;ll have {testData.totalDuration}{" "}
+                      minutes to complete all sections. You can pause and
+                      resume, but the timer will continue running.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ) : null}
+        </div>
+
+        {/* Right column - Sections */}
+        <div className="md:w-1/2">
           <Card>
             <CardHeader className="border-b">
               <CardTitle>Test Sections</CardTitle>
               <CardDescription>
-                Complete all {testData.totalSessions} sections to finish
+                Complete all {testData.testSessions?.length} sections to finish
               </CardDescription>
             </CardHeader>
 
@@ -160,8 +231,8 @@ const Page = () => {
 
               {/* Sections */}
               <div className="space-y-6">
-                {testData.sessions.map((session, index) => (
-                  <div key={index} className="relative">
+                {testData.testSessions?.map((session, index) => (
+                  <div key={session.id} className="relative">
                     {index > 0 && (
                       <div className="absolute left-4 top-0 h-full w-px bg-muted -translate-y-full"></div>
                     )}
@@ -181,14 +252,14 @@ const Page = () => {
                         <div className="flex justify-between items-start">
                           <h3 className="font-medium">{session.title}</h3>
                           <Badge variant="outline" className="ml-2">
-                            {session.duration} min
+                            {session.duration ? `${session.duration} min` : "No time limit"}
                           </Badge>
                         </div>
 
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
                           <div className="flex items-center gap-1.5">
                             <FileText className="h-4 w-4" />
-                            <span>{session.questionCount} questions</span>
+                            <span>{session.totalQuestions} questions</span>
                           </div>
                           {index === 0 && (
                             <Badge variant="secondary" className="text-xs">
@@ -198,101 +269,8 @@ const Page = () => {
                         </div>
 
                         <p className="text-sm text-muted-foreground">
-                          {index === 0 &&
-                            "Covers basic HTML structure, CSS styling, and responsive design principles."}
-                          {index === 1 &&
-                            "Tests your understanding of JavaScript fundamentals, DOM manipulation, and ES6+ features."}
-                          {index === 2 &&
-                            "Evaluates knowledge of modern frameworks like React, Vue, or Angular."}
+                          {session.description}
                         </p>
-
-                        {/* Topics covered */}
-                        <div className="flex flex-wrap gap-1.5 mt-1">
-                          {index === 0 && (
-                            <>
-                              <Badge
-                                variant="outline"
-                                className="bg-background text-xs font-normal"
-                              >
-                                HTML5
-                              </Badge>
-                              <Badge
-                                variant="outline"
-                                className="bg-background text-xs font-normal"
-                              >
-                                CSS3
-                              </Badge>
-                              <Badge
-                                variant="outline"
-                                className="bg-background text-xs font-normal"
-                              >
-                                Flexbox
-                              </Badge>
-                              <Badge
-                                variant="outline"
-                                className="bg-background text-xs font-normal"
-                              >
-                                Grid
-                              </Badge>
-                            </>
-                          )}
-                          {index === 1 && (
-                            <>
-                              <Badge
-                                variant="outline"
-                                className="bg-background text-xs font-normal"
-                              >
-                                ES6+
-                              </Badge>
-                              <Badge
-                                variant="outline"
-                                className="bg-background text-xs font-normal"
-                              >
-                                DOM
-                              </Badge>
-                              <Badge
-                                variant="outline"
-                                className="bg-background text-xs font-normal"
-                              >
-                                Async
-                              </Badge>
-                              <Badge
-                                variant="outline"
-                                className="bg-background text-xs font-normal"
-                              >
-                                APIs
-                              </Badge>
-                            </>
-                          )}
-                          {index === 2 && (
-                            <>
-                              <Badge
-                                variant="outline"
-                                className="bg-background text-xs font-normal"
-                              >
-                                React
-                              </Badge>
-                              <Badge
-                                variant="outline"
-                                className="bg-background text-xs font-normal"
-                              >
-                                Vue
-                              </Badge>
-                              <Badge
-                                variant="outline"
-                                className="bg-background text-xs font-normal"
-                              >
-                                State
-                              </Badge>
-                              <Badge
-                                variant="outline"
-                                className="bg-background text-xs font-normal"
-                              >
-                                Hooks
-                              </Badge>
-                            </>
-                          )}
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -304,20 +282,27 @@ const Page = () => {
               <div className="flex items-center gap-3 w-full">
                 <Avatar className="h-9 w-9">
                   <AvatarImage src="/placeholder-avatar.jpg" alt="Avatar" />
-                  <AvatarFallback>U</AvatarFallback>
+                  <AvatarFallback>
+                    {testData.createdByOrganizer?.user.email
+                      .charAt(0)
+                      .toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
                   <div className="text-sm font-medium">
-                    Created by Frontend Team
+                    Created by {testData.createdByOrganizer?.user.name}
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    Last updated: June 15, 2023
+                    Last updated:{" "}
+                    {dayjs(testData.createdByOrganizer?.user.updatedAt).format(
+                      "DD MMM YYYY"
+                    )}
                   </div>
                 </div>
-                <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                {/* <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <User className="h-4 w-4" />
                   <span>1,234 completions</span>
-                </div>
+                </div> */}
               </div>
 
               <p className="text-xs text-center text-muted-foreground">

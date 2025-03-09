@@ -1,6 +1,6 @@
 import { TestType } from "@evaly/backend/types/test";
 
-export const testTypeFormatter = (type: TestType) => {
+export const testTypeFormatter = (type?: TestType) => {
   switch (type) {
     case "live":
       return "Live test";
@@ -11,7 +11,7 @@ export const testTypeFormatter = (type: TestType) => {
   }
 };
 
-export const testTypeColor = (type: TestType) => {
+export const testTypeColor = (type?: TestType) => {
   switch (type) {
     case "live":
       return "bg-emerald-600/10 text-emerald-600 border border-emerald-600/10";

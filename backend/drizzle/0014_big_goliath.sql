@@ -1,0 +1,1 @@
+ALTER TABLE "test" ADD COLUMN "requires_login" boolean DEFAULT true;

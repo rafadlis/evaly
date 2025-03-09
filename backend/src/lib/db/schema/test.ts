@@ -16,11 +16,18 @@ export const test = pgTable("test", {
     .primaryKey()
     .$defaultFn(() => "ts-" + ulid()),
   title: varchar("title", { length: 255 }),
-  type: varchar("type", { length: 20, enum: ["live", "self-paced"] }).default("self-paced").notNull(),
-  access: varchar("access", {length: 20, enum: ["public", "invite-only"]}).default("public"),
+  type: varchar("type", { length: 20, enum: ["live", "self-paced"] })
+    .default("self-paced")
+    .notNull(),
+  access: varchar("access", {
+    length: 20,
+    enum: ["public", "invite-only"],
+  }).default("public"),
+  requiresLogin: boolean("requires_login").default(true), // If false, system will not able to check participant's identity
   isPublished: boolean("is_published").default(false),
   description: text("description"),
-  createdByOrganizerId: varchar("created_by_organizer_id", { // Someone that created this test
+  createdByOrganizerId: varchar("created_by_organizer_id", {
+    // Someone that created this test
     length: 255,
   }).notNull(),
   organizationId: varchar("organization_id", { length: 255 }).notNull(), // Organization that owned this test
@@ -51,7 +58,7 @@ export const test = pgTable("test", {
   }),
 });
 
-export const testRelations = relations(test, ({ many,one }) => ({
+export const testRelations = relations(test, ({ many, one }) => ({
   invitations: many(testInvitation),
   testSessions: many(testSession),
   createdByOrganizer: one(organizer, {
