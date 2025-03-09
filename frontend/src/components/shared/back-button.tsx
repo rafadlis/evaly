@@ -6,14 +6,20 @@ const BackButton = ({
   className,
   label = "Back",
   fallbackUrl = "/dashboard",
+  href,
 }: {
   className?: string;
   label?: string | React.ReactNode;
   fallbackUrl?: string;
+  href?: string;
 }) => {
   const router = useRouter();
 
   const onBackClick = () => {
+    if (href) {
+      router.push(href);
+      return;
+    }
     // Check if there's a previous page in the history
     if (window.history.length > 1) {
       router.back();

@@ -18,11 +18,12 @@ import {
 } from "@/components/ui/popover";
 import DialogUnpublishTest from "@/components/shared/dialog/dialog-unpublish-test";
 import { useProgressRouter } from "@/components/shared/progress-bar";
+import BackButton from "@/components/shared/back-button";
 
 const Header = () => {
   const { id } = useParams();
 
-  const router = useProgressRouter()
+  const router = useProgressRouter();
 
   const { data: dataTest, isPending: isPendingTest } = useTestByIdQuery({
     id: id?.toString() || "",
@@ -86,6 +87,10 @@ const Header = () => {
 
   return (
     <>
+      <BackButton
+        className="mb-2"
+        href={isPublished ? `/dashboard/tests/${id}` : `/dashboard`}
+      />
       <input
         {...register("title")}
         className="outline-none text-4xl font-bold"
