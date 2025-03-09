@@ -22,7 +22,7 @@ const Header = () => {
 
   const copyLinkToShare = () => {
     navigator.clipboard.writeText(
-      `${env.NEXT_PUBLIC_URL}/join/${dataTest?.id}`
+      `${env.NEXT_PUBLIC_URL}/s/${dataTest?.id}`
     );
     toast.success("Link copied to clipboard",{position: "top-right"});
   };
@@ -39,11 +39,11 @@ const Header = () => {
     <>
       <div className="flex flex-row items-center justify-between">
         {isPendingTest ? (
-          <h1 className="animate-pulse text-muted-foreground text-3xl font-bold">
+          <h1 className="animate-pulse text-muted-foreground text-3xl font-medium">
             Loading...
           </h1>
         ) : (
-          <h1 className="text-3xl font-bold">{dataTest?.title}</h1>
+          <h1 className="text-3xl font-medium">{dataTest?.title}</h1>
         )}
         <div className="flex flex-row items-center gap-2">
           <Button variant={"ghost"} size={"icon"} onClick={copyLinkToShare}>

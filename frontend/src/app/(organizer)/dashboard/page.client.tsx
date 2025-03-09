@@ -32,7 +32,7 @@ const DashboardPageClient = () => {
     return (
       <div className="container">
         <div className="flex flex-row items-start justify-between mb-10">
-          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <h1 className="text-2xl font-medium">Dashboard</h1>
           <DialogCreateTest />
         </div>
         <LoadingTest />
@@ -44,7 +44,7 @@ const DashboardPageClient = () => {
     return (
       <div className="flex flex-col items-center justify-center flex-1 text-center">
         <FileSpreadsheet className="size-16 text-muted-foreground mb-6" />
-        <h1 className="text-2xl font-bold">No tests yet</h1>
+        <h1 className="text-2xl font-medium">No tests yet</h1>
         <h2 className="max-w-md mt-2 text-muted-foreground mb-4">
           Create your first test and make assessment a breeze. Start building
           engaging questions today!
@@ -56,7 +56,7 @@ const DashboardPageClient = () => {
   return (
     <div className="container">
       <div className="flex flex-row items-start justify-between">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <h1 className="text-2xl font-medium">Dashboard</h1>
         <DialogCreateTest />
       </div>
       <div className="flex flex-col mt-10 min-h-dvh gap-4">

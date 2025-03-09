@@ -216,7 +216,7 @@ const Questions = () => {
         <CardHeader
           ref={headerRef}
           className={cn(
-            `sticky top-[70px] bg-background z-10 pb-4 mb-4 transition-all duration-300 border-b`,
+            `sticky top-[60px] bg-background z-10 pb-4 mb-4 transition-all duration-300 border-b`,
             isSticky
               ? "border-border shadow-md shadow-black/5"
               : "border-transparent"
