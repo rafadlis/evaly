@@ -159,7 +159,7 @@ const CardQuestion = ({
           />
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-6">
         <div
           className="custom-prose max-w-full max-h-[220px] h-max overflow-y-auto"
           dangerouslySetInnerHTML={{

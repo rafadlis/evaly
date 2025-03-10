@@ -9,15 +9,21 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, FileText, AlertCircle, Users, Play } from "lucide-react";
+import {
+  Clock,
+  FileText,
+  AlertCircle,
+  Users,
+  Play, Orbit
+} from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { testTypeColor, testTypeFormatter } from "@/lib/test-type-formatter";
-import { cn } from "@/lib/utils";
 import { useTestById } from "@/query/participants/test/use-test-by-id";
 import { useParams, useRouter, usePathname } from "next/navigation";
 import dayjs from "dayjs";
 import { Skeleton } from "@/components/ui/skeleton";
+import { testTypeFormatter } from "@/lib/test-type-formatter";
+import Navbar from "../../_components/navbar";
 
 const Page = () => {
   const router = useRouter();
@@ -28,7 +34,10 @@ const Page = () => {
     isPending: isPendingTestData,
     error,
   } = useTestById(testId as string);
-  const handleStartTest = () => {};
+
+  const handleStartTest = () => {
+    router.push(`/s/${testId}/attemptId`);
+  };
 
   if (isPendingTestData) {
     return (
@@ -101,7 +110,9 @@ const Page = () => {
       <div className="flex-1 flex flex-col gap-2 items-center justify-center text-2xl font-medium text-center">
         <h1>{error.message}</h1>
         {error.cause === 401 && (
-          <Button onClick={() => router.push(`/login?callbackURL=${pathName}`)}>Login</Button>
+          <Button onClick={() => router.push(`/login?callbackURL=${pathName}`)}>
+            Login
+          </Button>
         )}
         {error.cause === 403 && (
           <Button onClick={() => router.push(`/`)}>Go to Home</Button>
@@ -116,206 +127,210 @@ const Page = () => {
   }
 
   return (
-    <div className="py-10 xl:py-16 container">
-      <div className="flex flex-col md:flex-row gap-8 md:justify-between md:items-end mb-8">
-        <div>
-          <div className="flex items-center gap-2">
-            <Badge
-              variant="secondary"
-              className={cn("capitalize", testTypeColor(testData?.type))}
+    <div>
+      <Navbar />
+      <div className="py-10 xl:py-16 container">
+        <div className="flex flex-col md:flex-row gap-8 md:justify-between md:items-end mb-8">
+          <div>
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-medium tracking-tight mb-4">
+              {testData.title}
+            </h1>
+
+            <div className="flex items-center gap-6 text-sm">
+              <div className="flex items-center gap-1.5">
+                <Orbit className="h-4 w-4 text-muted-foreground" />
+                {testTypeFormatter(testData?.type)}
+              </div>
+
+              <div className="flex items-center gap-1.5">
+                <Clock className="h-4 w-4 text-muted-foreground" />
+                {testData.totalDuration
+                  ? `${testData.totalDuration} min`
+                  : "No time limit"}
+              </div>
+              <div className="flex items-center gap-1.5">
+                <FileText className="h-4 w-4 text-muted-foreground" />
+                <span>{testData.totalQuestions} questions</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Users className="h-4 w-4 text-muted-foreground" />
+                <span>All participants</span>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col gap-2 md:items-end">
+            {/* Start Button */}
+            <Button
+              size="lg"
+              onClick={handleStartTest}
+              // disabled={isLoading}
+              className="w-full md:w-max"
             >
-              {testTypeFormatter(testData?.type)}
-            </Badge>
-          </div>
-
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-medium tracking-tight mb-4">
-            {testData.title}
-          </h1>
-
-          <div className="flex items-center gap-4 text-sm">
-            <div className="flex items-center gap-1.5">
-              <Clock className="h-4 w-4 text-muted-foreground" />
-              {testData.totalDuration ? `${testData.totalDuration} min` : "No time limit"}
-            </div>
-            <div className="flex items-center gap-1.5">
-              <FileText className="h-4 w-4 text-muted-foreground" />
-              <span>{testData.totalQuestions} questions</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Users className="h-4 w-4 text-muted-foreground" />
-              <span>All participants</span>
-            </div>
+              {false ? (
+                <span className="flex items-center gap-2">
+                  <div className="h-4 w-4 border-2 border-background border-t-transparent rounded-full animate-spin"></div>
+                  Preparing...
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
+                  <Play className="h-4 w-4" />
+                  Start Assessment
+                </span>
+              )}
+            </Button>
           </div>
         </div>
-        <div className="flex flex-col gap-2 md:items-end">
-          {/* Start Button */}
-          <Button
-            size="lg"
-            onClick={handleStartTest}
-            // disabled={isLoading}
-            className="w-full md:w-max"
-          >
-            {false ? (
-              <span className="flex items-center gap-2">
-                <div className="h-4 w-4 border-2 border-background border-t-transparent rounded-full animate-spin"></div>
-                Preparing...
-              </span>
-            ) : (
-              <span className="flex items-center gap-2">
-                <Play className="h-4 w-4" />
-                Start Assessment
-              </span>
-            )}
-          </Button>
-        </div>
-      </div>
-      <div className="flex flex-col md:flex-row gap-8 mb-8">
-        {/* Left column - Test info */}
-        <div className="md:w-1/2">
-          {/* Rich Text Description */}
-          <Card className="mb-6">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">Description</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div
-                className="custom-prose md:prose-sm max-w-none"
-                dangerouslySetInnerHTML={{
-                  __html: testData.description ?? "No description",
-                }}
-              />
-            </CardContent>
-          </Card>
-
-          {/* Important notes */}
-          {testData.totalDuration && testData.totalDuration > 0 ? (
-            <Card className="border border-amber-200 bg-amber-50 dark:border-amber-900 dark:bg-amber-950/30 mb-6">
-              <CardContent className="pt-6">
-                <div className="flex gap-2.5">
-                  <AlertCircle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="font-medium text-amber-700 dark:text-amber-400 mb-1">
-                      Important Notes
-                    </h3>
-                    <p className="text-sm text-amber-700/80 dark:text-amber-400/80">
-                      Once started, you&apos;ll have {testData.totalDuration}{" "}
-                      minutes to complete all sections. You can pause and
-                      resume, but the timer will continue running.
-                    </p>
-                  </div>
-                </div>
+        <div className="flex flex-col md:flex-row gap-8 mb-8">
+          {/* Left column - Test info */}
+          <div className="md:w-1/2">
+            {/* Rich Text Description */}
+            <Card className="mb-6">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Description</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div
+                  className="custom-prose md:prose-sm max-w-none"
+                  dangerouslySetInnerHTML={{
+                    __html: testData.description ?? "No description",
+                  }}
+                />
               </CardContent>
             </Card>
-          ) : null}
-        </div>
 
-        {/* Right column - Sections */}
-        <div className="md:w-1/2">
-          <Card>
-            <CardHeader className="border-b">
-              <CardTitle>Test Sections</CardTitle>
-              <CardDescription>
-                Complete all {testData.testSessions?.length} sections to finish
-              </CardDescription>
-            </CardHeader>
-
-            <CardContent className="pt-6">
-              {/* Progress bar */}
-              <div className="mb-6">
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-muted-foreground">Your progress</span>
-                  <span className="font-medium">Not started</span>
-                </div>
-                <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-primary rounded-full"
-                    style={{ width: "0%" }}
-                  ></div>
-                </div>
-              </div>
-
-              {/* Sections */}
-              <div className="space-y-6">
-                {testData.testSessions?.map((session, index) => (
-                  <div key={session.id} className="relative">
-                    {index > 0 && (
-                      <div className="absolute left-4 top-0 h-full w-px bg-muted -translate-y-full"></div>
-                    )}
-                    <div className="flex gap-4">
-                      <div className="relative">
-                        <div
-                          className={`w-8 h-8 rounded-full flex items-center justify-center z-10 relative ${
-                            index === 0
-                              ? "bg-primary text-primary-foreground"
-                              : "bg-muted text-muted-foreground"
-                          }`}
-                        >
-                          {index + 1}
-                        </div>
-                      </div>
-                      <div className="space-y-2 flex-1">
-                        <div className="flex justify-between items-start">
-                          <h3 className="font-medium">{session.title}</h3>
-                          <Badge variant="outline" className="ml-2">
-                            {session.duration ? `${session.duration} min` : "No time limit"}
-                          </Badge>
-                        </div>
-
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <div className="flex items-center gap-1.5">
-                            <FileText className="h-4 w-4" />
-                            <span>{session.totalQuestions} questions</span>
-                          </div>
-                          {index === 0 && (
-                            <Badge variant="secondary" className="text-xs">
-                              Current
-                            </Badge>
-                          )}
-                        </div>
-
-                        <p className="text-sm text-muted-foreground">
-                          {session.description}
-                        </p>
-                      </div>
+            {/* Important notes */}
+            {testData.totalDuration && testData.totalDuration > 0 ? (
+              <Card className="border border-amber-200 bg-amber-50 dark:border-amber-900 dark:bg-amber-950/30 mb-6">
+                <CardContent className="pt-6">
+                  <div className="flex gap-2.5">
+                    <AlertCircle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="font-medium text-amber-700 dark:text-amber-400 mb-1">
+                        Important Notes
+                      </h3>
+                      <p className="text-sm text-amber-700/80 dark:text-amber-400/80">
+                        Once started, you&apos;ll have {testData.totalDuration}{" "}
+                        minutes to complete all sections. You can pause and
+                        resume, but the timer will continue running.
+                      </p>
                     </div>
                   </div>
-                ))}
-              </div>
-            </CardContent>
+                </CardContent>
+              </Card>
+            ) : null}
+          </div>
 
-            <CardFooter className="border-t pt-6 flex flex-col gap-4">
-              <div className="flex items-center gap-3 w-full">
-                <Avatar className="h-9 w-9">
-                  <AvatarImage src="/placeholder-avatar.jpg" alt="Avatar" />
-                  <AvatarFallback>
-                    {testData.createdByOrganizer?.user.email
-                      .charAt(0)
-                      .toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                  <div className="text-sm font-medium">
-                    Created by {testData.createdByOrganizer?.user.name}
+          {/* Right column - Sections */}
+          <div className="md:w-1/2">
+            <Card>
+              <CardHeader className="border-b">
+                <CardTitle>Test Sections</CardTitle>
+                <CardDescription>
+                  Complete all {testData.testSessions?.length} sections to
+                  finish
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent className="pt-6">
+                {/* Progress bar */}
+                <div className="mb-6">
+                  <div className="flex justify-between text-sm mb-2">
+                    <span className="text-muted-foreground">Your progress</span>
+                    <span className="font-medium">Not started</span>
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    Last updated:{" "}
-                    {dayjs(testData.createdByOrganizer?.user.updatedAt).format(
-                      "DD MMM YYYY"
-                    )}
+                  <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-primary rounded-full"
+                      style={{ width: "0%" }}
+                    ></div>
                   </div>
                 </div>
-                {/* <div className="flex items-center gap-1 text-sm text-muted-foreground">
+
+                {/* Sections */}
+                <div className="space-y-6">
+                  {testData.testSessions?.map((session, index) => (
+                    <div key={session.id} className="relative">
+                      {index > 0 && (
+                        <div className="absolute left-4 top-0 h-full w-px bg-muted -translate-y-full"></div>
+                      )}
+                      <div className="flex gap-4">
+                        <div className="relative">
+                          <div
+                            className={`w-8 h-8 rounded-full flex items-center justify-center z-10 relative ${
+                              index === 0
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-muted text-muted-foreground"
+                            }`}
+                          >
+                            {index + 1}
+                          </div>
+                        </div>
+                        <div className="space-y-2 flex-1">
+                          <div className="flex justify-between items-start">
+                            <h3 className="font-medium">{session.title}</h3>
+                            <Badge variant="outline" className="ml-2">
+                              {session.duration
+                                ? `${session.duration} min`
+                                : "No time limit"}
+                            </Badge>
+                          </div>
+
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                            <div className="flex items-center gap-1.5">
+                              <FileText className="h-4 w-4" />
+                              <span>{session.totalQuestions} questions</span>
+                            </div>
+                            {index === 0 && (
+                              <Badge variant="secondary" className="text-xs">
+                                Current
+                              </Badge>
+                            )}
+                          </div>
+
+                          <p className="text-sm text-muted-foreground">
+                            {session.description}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+
+              <CardFooter className="border-t pt-6 flex flex-col gap-4">
+                <div className="flex items-center gap-3 w-full">
+                  <Avatar className="h-9 w-9">
+                    <AvatarImage src="/placeholder-avatar.jpg" alt="Avatar" />
+                    <AvatarFallback>
+                      {testData.createdByOrganizer?.user.email
+                        .charAt(0)
+                        .toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <div className="text-sm font-medium">
+                      Created by {testData.createdByOrganizer?.user.name}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      Last updated:{" "}
+                      {dayjs(
+                        testData.createdByOrganizer?.user.updatedAt
+                      ).format("DD MMM YYYY")}
+                    </div>
+                  </div>
+                  {/* <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <User className="h-4 w-4" />
                   <span>1,234 completions</span>
                 </div> */}
-              </div>
+                </div>
 
-              <p className="text-xs text-center text-muted-foreground">
-                By starting this test, you agree to our assessment terms and
-                conditions
-              </p>
-            </CardFooter>
-          </Card>
+                <p className="text-xs text-center text-muted-foreground">
+                  By starting this test, you agree to our assessment terms and
+                  conditions
+                </p>
+              </CardFooter>
+            </Card>
+          </div>
         </div>
       </div>
     </div>

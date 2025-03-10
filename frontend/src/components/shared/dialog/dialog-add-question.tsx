@@ -291,7 +291,7 @@ const SectionImportQuestions = () => {
                   Upload files with questions from documents or spreadsheets
                 </CardDescription>
               </CardHeader>
-              <CardContent className="pt-0">
+              <CardContent>
                 <Button
                   variant="secondary-outline"
                   className="w-full"
@@ -347,7 +347,7 @@ d) Mars`}
                   format
                 </CardDescription>
               </CardHeader>
-              <CardContent className="pt-0">
+              <CardContent>
                 <Button
                   variant="secondary-outline"
                   className="w-full"

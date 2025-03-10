@@ -33,5 +33,14 @@ export const testRouter = new Elysia().group("/test", (app) => {
           }),
         }
       )
+
+      // Start Test
+      .post(
+        "/:id/start",
+        async ({ params, user, error }) => {
+          
+          return "Hello World";
+        }
+      )
   );
 });

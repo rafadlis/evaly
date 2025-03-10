@@ -3,8 +3,9 @@ import { smallint, pgTable, varchar, timestamp } from "drizzle-orm/pg-core";
 import { ulid } from "ulidx";
 import { question } from "./question";
 import { test } from "./test";
+import { testAttempt } from "./test.attempt";
 
-export const testSession = pgTable("test-session", {
+export const testSession = pgTable("test_session", {
   id: varchar("id", { length: 255 })
     .primaryKey()
     .$defaultFn(() => "ss-" + ulid()),
@@ -39,6 +40,7 @@ export const testSessionRelation = relations(testSession, ({ many, one }) => ({
     fields: [testSession.testId],
     references: [test.id],
   }),
+  attempt: many(testAttempt, { relationName: "testSession.attempt" }),
 }));
 
 

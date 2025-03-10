@@ -283,7 +283,7 @@ const Questions = () => {
           </CardDescription>
         </CardHeader>
         {localQuestions?.length ? (
-          <CardContent className="pt-0">
+          <CardContent>
             <Reorder.Group
               onReorder={() => {}}
               values={localQuestions}
@@ -349,7 +349,7 @@ const Questions = () => {
             </Reorder.Group>
           </CardContent>
         ) : (
-          <CardContent className="pt-0">
+          <CardContent>
             <EmptyQuestion
               onClickAddQuestion={() => {
                 setAddQuestionOnOrder(localQuestions.length + 1);
