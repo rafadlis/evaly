@@ -100,7 +100,12 @@ const Page = () => {
     return (
       <div className="flex-1 flex flex-col gap-2 items-center justify-center text-2xl font-medium text-center">
         <h1>{error.message}</h1>
-        <Button onClick={() => router.push(`/login?callbackURL=${pathName}`)}>Login</Button>
+        {error.cause === 401 && (
+          <Button onClick={() => router.push(`/login?callbackURL=${pathName}`)}>Login</Button>
+        )}
+        {error.cause === 403 && (
+          <Button onClick={() => router.push(`/`)}>Go to Home</Button>
+        )}
       </div>
     );
   }

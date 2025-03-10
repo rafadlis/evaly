@@ -7,7 +7,9 @@ export function useTestById(testId: string) {
     queryFn: async () => {
       const response = await $api.participant.test({ id: testId }).get();
       if (response.error?.value) {
-        throw new Error(response.error.value.toString());
+        throw new Error(response.error.value.toString(), {
+          cause: response.error.status,
+        });
       }
       return response.data;
     },

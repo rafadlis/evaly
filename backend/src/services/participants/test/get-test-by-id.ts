@@ -1,3 +1,4 @@
+import { error } from "elysia";
 import db from "../../../lib/db";
 import {
   question,
@@ -19,16 +20,16 @@ export async function getTestById({
   });
 
   if (!checkTestResult) {
-    throw new Error("Test not found");
+    return error("Not Found","Test not found");
   }
 
   if (checkTestResult.requiresLogin && !email) {
-    throw new Error("Test requires login");
+    return error("Unauthorized","Test requires login");
   }
 
   if (checkTestResult.access === "invite-only") {
     if (!email) {
-      throw new Error("Test requires login");
+      return error("Unauthorized","Test requires login");
     }
     const invitationResult = await db.query.testInvitation.findFirst({
       where: and(
@@ -38,7 +39,7 @@ export async function getTestById({
     });
 
     if (!invitationResult) {
-      throw new Error("You are not allowed to access this test");
+      return error("Forbidden","You are not allowed to access this test");
     }
   }
 
