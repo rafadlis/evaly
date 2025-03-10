@@ -36,19 +36,10 @@ export default function Home() {
       </header>
 
       <main className="flex-1">
-        {/* Hero Section */}
         <Hero />
-
-        {/* Logos Section */}
         <LogosSection />
-
-        {/* Features Section */}
         <FeatureTabs />
-
-        {/* Benefits Section */}
         <BenefitsSection />
-
-        {/* CTA Section */}
         <CTASection />
       </main>
 

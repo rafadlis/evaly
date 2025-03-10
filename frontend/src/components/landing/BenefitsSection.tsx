@@ -26,7 +26,7 @@ const benefits = [
 
 export const BenefitsSection = () => {
   return (
-    <section className="py-12">
+    <section className="py-20">
       <div className="container">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl font-bold">Why Choose Evaly</h2>

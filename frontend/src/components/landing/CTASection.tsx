@@ -9,7 +9,7 @@ const MotionDiv = motion.div;
 
 export const CTASection = () => {
   return (
-    <section className="py-12 bg-foreground/[0.02] relative">
+    <section className="py-20 bg-foreground/[0.02] relative">
       <div className="absolute inset-0 bg-grid-pattern opacity-[0.015] pointer-events-none"></div>
       <div className="container text-center">
         <MotionDiv 

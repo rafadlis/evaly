@@ -2,8 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Wand2 } from "lucide-react";
 import { motion } from "motion/react";
+import { Badge } from "../ui/badge";
 
 const MotionDiv = motion.div;
 
@@ -19,33 +20,6 @@ export const Hero = () => {
       {/* Animated background grid */}
       <div className="absolute inset-0 -z-10 bg-grid-pattern opacity-[0.03]"></div>
       
-      {/* Floating elements */}
-      <MotionDiv 
-        className="absolute top-20 right-[15%] w-12 h-12 rounded-lg bg-primary/10 backdrop-blur-sm border border-primary/20"
-        animate={{ 
-          y: [0, -15, 0],
-          rotate: [0, 5, 0]
-        }}
-        transition={{ 
-          duration: 6,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
-      
-      <MotionDiv 
-        className="absolute bottom-20 left-[15%] w-16 h-16 rounded-full bg-foreground/5 backdrop-blur-sm border border-foreground/10"
-        animate={{ 
-          y: [0, 20, 0],
-          x: [0, -10, 0]
-        }}
-        transition={{ 
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
-      
       <div className="container">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Content */}
@@ -55,13 +29,13 @@ export const Hero = () => {
             transition={{ duration: 0.6 }}
             className="max-w-2xl"
           >
-            <div className="inline-flex items-center gap-2 mb-6 bg-background/80 backdrop-blur-sm px-4 py-2 rounded-full border border-border/40 shadow-sm">
-              <div className="bg-primary/10 px-3 py-1 rounded-full text-xs font-medium text-primary flex items-center">
-                AI-Powered <Sparkles className="h-3 w-3 ml-1" />
-              </div>
+            <Button variant={"outline"} className="p-1 pr-3 rounded-full h-max mb-2">
+              <Badge>
+                AI-Powered <Wand2 />
+              </Badge>
               <div className="h-1 w-1 rounded-full bg-border"></div>
               <div className="text-xs text-muted-foreground">Making Online Exams Easier, Safer, and Smarter</div>
-            </div>
+            </Button>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
               Comprehensive Online Examination Platform
