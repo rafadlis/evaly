@@ -1,4 +1,3 @@
-import { error } from "elysia";
 import db from "../../../lib/db";
 import {
   question,
@@ -19,17 +18,41 @@ export async function getTestById({
     where: and(eq(test.id, id), isNull(test.deletedAt)),
   });
 
+  if (!checkTestResult?.isPublished) {
+    return {
+      error: {
+        message: "Test not found",
+        status: 404,
+      },
+    };
+  }
+
   if (!checkTestResult) {
-    return error("Not Found","Test not found");
+    return {
+      error: {
+        message: "Test not found",
+        status: 404,
+      },
+    };
   }
 
   if (checkTestResult.requiresLogin && !email) {
-    return error("Unauthorized","Test requires login");
+    return {
+      error: {
+        message: "Test requires login",
+        status: 401,
+      },
+    };
   }
 
   if (checkTestResult.access === "invite-only") {
     if (!email) {
-      return error("Unauthorized","Test requires login");
+      return {
+        error: {
+          message: "Test requires login",
+          status: 401,
+        },
+    };
     }
     const invitationResult = await db.query.testInvitation.findFirst({
       where: and(
@@ -39,7 +62,12 @@ export async function getTestById({
     });
 
     if (!invitationResult) {
-      return error("Forbidden","You are not allowed to access this test");
+      return {
+        error: {
+          message: "You are not allowed to access this test",
+          status: 403,
+        },
+      };
     }
   }
 
@@ -61,15 +89,16 @@ export async function getTestById({
   });
 
   // Get session IDs to use for question counting
-  const sessionIds = testResult?.testSessions?.map(session => session.id) || [];
-  
+  const sessionIds =
+    testResult?.testSessions?.map((session) => session.id) || [];
+
   // Count questions for each session separately
   const sessionQuestionCounts = await Promise.all(
     sessionIds.map(async (sessionId) => {
       const result = await db
         .select({ count: count() })
         .from(question)
-        .where(eq(question.referenceId, sessionId));
+        .where(and(eq(question.referenceId, sessionId), isNull(question.deletedAt)));
       return { sessionId, count: result[0].count };
     })
   );
@@ -80,13 +109,13 @@ export async function getTestById({
   );
 
   // Add question counts to test sessions
-  const testSessionsWithCounts = testResult?.testSessions.map(session => ({
+  const testSessionsWithCounts = testResult?.testSessions.map((session) => ({
     ...session,
-    totalQuestions: questionCountMap[session.id] || 0
+    totalQuestions: questionCountMap[session.id] || 0,
   }));
 
   const totalQuestions = sessionQuestionCounts.reduce(
-    (sum, { count }) => sum + count, 
+    (sum, { count }) => sum + count,
     0
   );
 

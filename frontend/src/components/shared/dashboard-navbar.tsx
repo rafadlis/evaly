@@ -18,6 +18,8 @@ import { motion } from "motion/react";
 import { usePathname } from "next/navigation";
 import { Link } from "./progress-bar";
 import { useTheme } from "next-themes";
+import { LogoType } from "./logo";
+import ThemeToggle from "./theme-toggle";
 
 export function DashboardNavbar({className}: {className?: string}) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -52,32 +54,24 @@ export function DashboardNavbar({className}: {className?: string}) {
   return (
     <nav
       className={cn(
-        "sticky top-0 left-0 w-full z-50 transition-all py-3 border-b",
+        "sticky top-0 left-0 w-full z-50 transition-all border-b border-dashed  bg-background",
         className,
-        isScrolled ? "border-border bg-background" : "border-transparent"
+        isScrolled ? "border-border" : "border-transparent"
       )}
     >
-      <div className="mx-auto px-6 max-w-[1500px] container">
+      <div className="mx-auto px-6 py-3">
         <div className="flex items-center justify-between">
-          <div className="flex flex-row gap-12 items-center">
+          <div className="flex flex-row items-center">
             {/* Logo */}
-            <Link href="/dashboard" className="flex items-center">
-            <div className="h-7 w-7 text-lg bg-background text-foreground flex items-center justify-center font-bold mr-3 shadow-[3px_3px_0px_0px_var(--primary)] hover:shadow-[0px_0px_0px_0px_var(--primary)] border-2 border-primary transition-all">
-              E
-            </div>
-            <span className="text-2xl font-bold hidden sm:block">
-              evaly
-            </span>
-          </Link>
+           <LogoType href="/dashboard"/>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-0.5">
+            <div className="hidden md:flex items-center ml-16">
               {navItems.map((item) => (
                 <Link key={item.href} href={item.href}>
                   <Button
-                    size={"sm"}
                     variant={activeItem === item.href ? "secondary-outline" : "ghost"}
-                    className=""
+                    className="font-medium text-primary px-3"
                   >
                     {item.name}
                   </Button>
@@ -93,18 +87,7 @@ export function DashboardNavbar({className}: {className?: string}) {
               <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500"></span>
             </Button>
 
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="hidden sm:flex"
-            >
-              {theme === "light" ? (
-                <Sun className="h-5 w-5" />
-              ) : (
-                <Moon className="h-5 w-5" />
-              )}
-            </Button>
+            <ThemeToggle />
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

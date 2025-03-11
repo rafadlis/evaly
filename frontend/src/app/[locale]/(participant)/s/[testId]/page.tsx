@@ -9,21 +9,20 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  Clock,
-  FileText,
-  AlertCircle,
-  Users,
-  Play, Orbit
-} from "lucide-react";
+import { Clock, FileText, AlertCircle, Users, Play, Orbit } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useTestById } from "@/query/participants/test/use-test-by-id";
-import { useParams, useRouter, usePathname } from "next/navigation";
+import { useParams, usePathname, notFound } from "next/navigation";
 import dayjs from "dayjs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { testTypeFormatter } from "@/lib/test-type-formatter";
 import Navbar from "../../_components/navbar";
+import { useMutation } from "@tanstack/react-query";
+import { $api } from "@/lib/api";
+import { toast } from "sonner";
+import { useRouter } from "@/i18n/navigation";
+import { useTransition } from "react";
 
 const Page = () => {
   const router = useRouter();
@@ -34,10 +33,52 @@ const Page = () => {
     isPending: isPendingTestData,
     error,
   } = useTestById(testId as string);
+  const [isRedirecting, startTransitionRedirect] = useTransition();
 
-  const handleStartTest = () => {
-    router.push(`/s/${testId}/attemptId`);
-  };
+  const { mutate: mutateStartTest, isPending: isPendingStartTest } =
+    useMutation({
+      mutationKey: ["start-test"],
+      mutationFn: async () => {
+        const res = await $api.participant
+          .test({ id: testId as string })
+          .start.post();
+
+        if (res.error?.value) {
+          throw new Error(res.error.value);
+        }
+
+        const data = res.data;
+
+        if (!data) {
+          throw new Error("Something went wrong");
+        }
+
+        return data;
+      },
+      onSuccess: (data) => {
+        let unFinishedSession;
+        for (const session of data) {
+          if (session.completedAt) {
+            continue;
+          }
+
+          unFinishedSession = session;
+          break;
+        }
+
+        if (!unFinishedSession?.id) {
+          toast.error("You have completed all sections");
+          return;
+        }
+
+        startTransitionRedirect(() => {
+          router.push(`/s/${testId}/${unFinishedSession.id}`);
+        });
+      },
+      onError(error) {
+        toast.error(error.message);
+      },
+    });
 
   if (isPendingTestData) {
     return (
@@ -122,8 +163,7 @@ const Page = () => {
   }
 
   if (!testData) {
-    return <div>{JSON.stringify(testData)}</div>;
-    // return notFound();
+    return notFound();
   }
 
   return (
@@ -162,14 +202,19 @@ const Page = () => {
             {/* Start Button */}
             <Button
               size="lg"
-              onClick={handleStartTest}
-              // disabled={isLoading}
+              onClick={() => mutateStartTest()}
+              disabled={isPendingStartTest || isRedirecting}
               className="w-full md:w-max"
             >
-              {false ? (
+              {isPendingStartTest ? (
                 <span className="flex items-center gap-2">
                   <div className="h-4 w-4 border-2 border-background border-t-transparent rounded-full animate-spin"></div>
                   Preparing...
+                </span>
+              ) : isRedirecting ? (
+                <span className="flex items-center gap-2">
+                  <Play className="h-4 w-4" />
+                  Redirecting to section...
                 </span>
               ) : (
                 <span className="flex items-center gap-2">

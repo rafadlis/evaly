@@ -13,6 +13,7 @@ import { getInvitationListTest } from "../../services/organization/test/get-invi
 import { deleteInvitationTest } from "../../services/organization/test/delete-invitation-test";
 import { validateTestIsPublishable } from "../../services/organization/test/validate-test-is-publishable";
 import { publishUnpublishTest } from "../../services/organization/test/publish-unpublish";
+import { deleteTest } from "../../services/organization/test/delete-test";
 
 export const testRouter = new Elysia().group("/test", (app) => {
   return (
@@ -229,5 +230,23 @@ export const testRouter = new Elysia().group("/test", (app) => {
         }
       )
       .use(testSessionRouter)
+
+      // Delete Test
+      .delete(
+        "/:id",
+        async ({ params, organizer }) => {
+          const organizationId = organizer.organizationId;
+          const testId = params.id;
+
+          await checkTestOwner(testId, organizationId);
+          const res = await deleteTest(testId);
+          return { data: res };
+        },
+        {
+          params: t.Object({
+            id: t.String(),
+          }),
+        }
+      )
   );
 });

@@ -3,8 +3,8 @@ export const backendSecrets = {
   ENVIRONMENT: $app.stage,
   GOOGLE_CLIENT_ID: new sst.Secret("GOOGLE_CLIENT_ID").value,
   GOOGLE_CLIENT_SECRET: new sst.Secret("GOOGLE_CLIENT_SECRET").value,
-  AXIOM_API_TOKEN: new sst.Secret("AXIOM_API_TOKEN").value,
-  AXIOM_DATASET_NAME: new sst.Secret("AXIOM_DATASET_NAME").value,
+  AXIOM_TOKEN: new sst.Secret("AXIOM_TOKEN").value,
+  AXIOM_DATASET: new sst.Secret("AXIOM_DATASET").value,
 
   //development
   WEB_PUBLIC_URL_DEVELOPMENT: new sst.Secret("WEB_PUBLIC_URL_DEVELOPMENT").value,

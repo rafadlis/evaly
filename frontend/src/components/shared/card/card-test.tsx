@@ -1,14 +1,15 @@
 import { Test } from "@evaly/backend/types/test";
 import { Link } from "../progress-bar";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, PencilLine, Trash2Icon, Users } from "lucide-react";
+import { Calendar, Clock, PencilLine, Users } from "lucide-react";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import DialogDeleteTest from "../dialog/dialog-delete-test";
 import { testTypeColor, testTypeFormatter } from "@/lib/test-type-formatter";
+import { toast } from "sonner";
 
-const CardTest = ({ data }: { data: Test }) => {
+const CardTest = ({ data, onDelete }: { data: Test, onDelete?: () => void }) => {
   const redirectLink = data.isPublished
     ? `/dashboard/tests/${data.id}`
     : `/dashboard/tests/${data.id}/edit`;
@@ -69,30 +70,16 @@ const CardTest = ({ data }: { data: Test }) => {
           </div>
 
           <div className="ml-auto flex gap-1">
-            <Button
-              variant={"ghost"}
-              size={"icon-xs"}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-            >
+            <Button variant={"ghost"} size={"icon-xs"}>
               <PencilLine />
             </Button>
             <Separator orientation="vertical" />
             <DialogDeleteTest
-              dialogTrigger={
-                <Button
-                  variant={"ghost"}
-                  size={"icon-xs"}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }}
-                >
-                  <Trash2Icon />
-                </Button>
-              }
+              testId={data.id}
+              onSuccess={() => {
+                toast.success("Test deleted successfully");
+                onDelete?.();
+              }}
             />
           </div>
         </div>

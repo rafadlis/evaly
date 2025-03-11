@@ -14,8 +14,8 @@ type Environment = typeof ENVIRONMENTS[number];
 // Define common environment variables schema
 const commonSchema = {
   ENVIRONMENT: z.enum(ENVIRONMENTS),
-  AXIOM_API_TOKEN: z.string(),
-  AXIOM_DATASET_NAME: z.string(),
+  AXIOM_TOKEN: z.string(),
+  AXIOM_DATASET: z.string(),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
 };
@@ -43,8 +43,8 @@ const rawEnv = envSchema.parse(process.env);
 // Define the type for our environment object
 type EnvType = {
   ENVIRONMENT: Environment;
-  AXIOM_API_TOKEN: string;
-  AXIOM_DATASET_NAME: string;
+  AXIOM_TOKEN: string;
+  AXIOM_DATASET: string;
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET: string;
   WEB_PUBLIC_URL: string;
@@ -58,8 +58,8 @@ function createEnv(): EnvType {
   // Start with common variables
   const env = {
     ENVIRONMENT: environment,
-    AXIOM_API_TOKEN: rawEnv.AXIOM_API_TOKEN,
-    AXIOM_DATASET_NAME: rawEnv.AXIOM_DATASET_NAME,
+    AXIOM_TOKEN: rawEnv.AXIOM_TOKEN,
+    AXIOM_DATASET: rawEnv.AXIOM_DATASET,
     GOOGLE_CLIENT_ID: rawEnv.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: rawEnv.GOOGLE_CLIENT_SECRET,
   } as Partial<EnvType>;

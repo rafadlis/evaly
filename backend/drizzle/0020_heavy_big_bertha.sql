@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "unique_test_session_attempt" ON "test_attempt" USING btree ("test_session_id","test_id","participant_email");

@@ -5,11 +5,11 @@
 
 declare module "sst" {
   export interface Resource {
-    "AXIOM_API_TOKEN": {
+    "AXIOM_DATASET": {
       "type": "sst.sst.Secret"
       "value": string
     }
-    "AXIOM_DATASET_NAME": {
+    "AXIOM_TOKEN": {
       "type": "sst.sst.Secret"
       "value": string
     }

@@ -55,6 +55,10 @@ export const organizationMiddleware = async ({ request, error }: Context) => {
 export const participantMiddleware = async ({ request, error }: Context) => {
   const session = await auth.api.getSession({ headers: request.headers });
 
+  if (!session) {
+    return error(401, "Please log in to access this");
+  }
+
   return {
     user: session?.user,
     session: session?.session,

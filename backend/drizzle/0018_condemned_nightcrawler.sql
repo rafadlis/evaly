@@ -1,0 +1,2 @@
+ALTER TABLE "test_attempt" ADD COLUMN "test_id" varchar;--> statement-breakpoint
+ALTER TABLE "test_attempt" ADD CONSTRAINT "test_attempt_test_id_test_id_fk" FOREIGN KEY ("test_id") REFERENCES "public"."test"("id") ON DELETE no action ON UPDATE no action;

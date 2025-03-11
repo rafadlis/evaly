@@ -120,6 +120,34 @@
       "when": 1741644841096,
       "tag": "0016_burly_dreaming_celestial",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1741713039110,
+      "tag": "0017_married_metal_master",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1741713538214,
+      "tag": "0018_condemned_nightcrawler",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1741715781225,
+      "tag": "0019_nifty_tomorrow_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1741719387621,
+      "tag": "0020_heavy_big_bertha",
+      "breakpoints": true
     }
   ]
 }

@@ -1,10 +1,10 @@
 import {
-    integer,
-    jsonb,
-    pgTable,
-    text,
-    timestamp,
-    varchar,
+  integer,
+  jsonb,
+  pgTable,
+  text,
+  timestamp,
+  varchar,
 } from "drizzle-orm/pg-core";
 import { ulid } from "ulidx";
 import { testAttempt } from "./test.attempt";
@@ -15,7 +15,7 @@ import { MEDIA_TYPES } from "../../../types/media";
 export const testAttemptAnswer = pgTable("test_attempt_answer", {
   id: varchar("id")
     .primaryKey()
-    .$defaultFn(() => "taa" + ulid()),
+    .$defaultFn(() => "taa-" + ulid()),
   attemptId: varchar("attempt_id").references(() => testAttempt.id),
   questionId: varchar("question_id").references(() => question.id),
   answerText: text("answer_text"),

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ClockIcon, Loader2, Save } from "lucide-react";
+import { CircleAlertIcon, ClockIcon, Loader2, Save } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { notFound, useParams } from "next/navigation";
 import { useEffect, useMemo } from "react";
@@ -174,6 +174,19 @@ const Header = () => {
           )}
         </div>
       </div>
+
+      {isPublished && (
+        <div className="bg-warning text-warning-foreground p-4 flex flex-row items-start border-warning-foreground/20 border mb-4">
+          <CircleAlertIcon className="size-6 mr-4" />
+          <div className="flex-1 -mt-1 font-medium">
+            <p>
+              This test is published and can be taken by participants, every
+              change you make will be reflected on the test.
+            </p>
+            <p>Please be careful when making changes.</p>
+          </div>
+        </div>
+      )}
     </>
   );
 };

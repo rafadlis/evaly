@@ -10,20 +10,21 @@ import {
 } from "@/components/ui/pagination";
 import { Separator } from "@/components/ui/separator";
 import LoadingTest from "@/components/shared/loading/loading-test";
-import {
-  FileSpreadsheet
-} from "lucide-react";
+import { FileSpreadsheet } from "lucide-react";
 import DialogCreateTest from "@/components/shared/dialog/dialog-create-test";
 import { useTestQuery } from "@/query/organization/test/use-test.query";
 import CardTest from "@/components/shared/card/card-test";
+import { useQueryClient } from "@tanstack/react-query";
+import { AnimatePresence, motion } from "motion/react";
 
 const DashboardPageClient = () => {
   const [queryStates, setQueryStates] = useQueryStates({
-    limit: parseAsInteger.withDefault(15),
+    limit: parseAsInteger.withDefault(100),
     page: parseAsInteger.withDefault(1),
   });
 
-  const { data, isPending } = useTestQuery(queryStates)
+  const { data, isPending } = useTestQuery(queryStates);
+  const queryClient = useQueryClient();
 
   const tests = data?.data;
   const pagination = data?.pagination;
@@ -60,9 +61,36 @@ const DashboardPageClient = () => {
         <DialogCreateTest />
       </div>
       <div className="flex flex-col mt-10 min-h-dvh gap-4">
-        {tests.map((e) => (
-         <CardTest data={e} key={e.id} />
-        ))}
+        <AnimatePresence>
+          {tests.map((e) => (
+            <motion.div
+              key={e.id}
+              layout
+              initial={{ opacity: 1 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.1 }}
+            >
+              <CardTest
+                data={e}
+                key={e.id}
+                onDelete={() => {
+                  const newData = tests.filter((test) => test.id !== e.id);
+                  console.log(newData);
+                  queryClient.setQueryData(
+                    ["tests", queryStates.limit, queryStates.page],
+                    {
+                      data: newData,
+                      pagination: {
+                        ...pagination,
+                        totalPages: newData.length,
+                      },
+                    }
+                  );
+                }}
+              />
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
 
       {pagination?.totalPages && pagination?.totalPages > 1 ? (
