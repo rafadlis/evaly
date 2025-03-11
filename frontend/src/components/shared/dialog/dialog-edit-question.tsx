@@ -223,7 +223,6 @@ const DialogEditQuestion = ({
                   render={({ field }) => (
                     <QuestionTypeSelection
                       size={"default"}
-                      variant={"outline-solid"}
                       value={field.value || undefined}
                       onValueChange={(value) => {
                         field.onChange(value);

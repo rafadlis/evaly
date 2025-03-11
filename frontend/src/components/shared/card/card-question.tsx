@@ -92,12 +92,12 @@ const CardQuestion = ({
   return (
     <Card
       className={cn(
-        "transition-all hover:border-foreground/50 cursor-pointer",
+        "transition-all hover:border-foreground/20 cursor-pointer ",
         className
       )}
       onClick={onClickEdit}
     >
-      <CardHeader className="border-b py-3 flex flex-row justify-between items-center">
+      <CardHeader className="border-b py-3 flex flex-row justify-between items-center ">
         <div className="flex flex-row gap-3">
           <Button variant={"secondary"} size={"xs"}>
             #

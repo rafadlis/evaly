@@ -1,7 +1,7 @@
 import Navbar from "@/app/[locale]/(participant)/_components/navbar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
 
 const Page = () => {
   const listQuestions: { question: string; options: string[] }[] = [
@@ -2415,21 +2415,21 @@ const Page = () => {
   return (
     <div>
       <Navbar />
-      <div className="flex flex-col py-20 gap-10 container max-w-[900px]">
+      <div className="flex flex-col py-20 gap-10 container max-w-[900px] select-none">
         {listQuestions.map((question, i) => (
-          <Card key={i} className="border-dashed">
-            <CardHeader className="border-b border-dashed py-4">
-              <Label>Question {i + 1}</Label>
+          <Card key={i} className="">
+            <CardHeader className="border-b py-4">
+              <Badge variant={"secondary"} className="font-semibold"># {i + 1}</Badge>
             </CardHeader>
             <CardContent className="pt-6">
               <p>{question.question}</p>
               <div className="flex flex-col gap-4 mt-8">
                 {question.options.map((option, i) => (
-                  <div key={i} className="flex items-start gap-4 text-muted-foreground hover:text-primary cursor-pointer">
-                    <Button variant={"outline"} size={"icon-xs"}>
+                  <div key={i} className="flex items-start gap-4 text-primary/80 cursor-pointer transition-colors">
+                    <Button variant={i === 0 ? "default" : "secondary"} size={"icon-xs"}>
                       {String.fromCharCode(65 + i)}
                     </Button>
-                    <p className="flex-1 -mt-1">{option}</p>
+                    <p className="flex-1 pt-0.5">{option}</p>
                   </div>
                 ))}
               </div>

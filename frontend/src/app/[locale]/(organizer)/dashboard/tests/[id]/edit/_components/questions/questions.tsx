@@ -2,11 +2,11 @@ import { Button } from "@/components/ui/button";
 import { ListTreeIcon, ListXIcon, PlusIcon } from "lucide-react";
 import CardQuestion from "../../../../../../../../../components/shared/card/card-question";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import SectionSidebar from "./section-sidebar";
 import { useEffect, useState, useRef } from "react";
@@ -234,10 +234,10 @@ const Questions = () => {
                 <Skeleton className="w-1/2 h-5" />
               )}
             </CardTitle>
-            <div className="flex flex-row gap-2">
+            <div className="flex flex-row gap-1">
               <Button
                 size={"xs"}
-                variant={hideOptions ? "default" : "outline"}
+                variant={hideOptions ? "default" : "ghost"}
                 onClick={() => {
                   setHideOptions((prev) => !prev);
                 }}
@@ -334,15 +334,28 @@ const Questions = () => {
                       previousQuestionId={localQuestions[index - 1]?.id}
                       nextQuestionId={localQuestions[index + 1]?.id}
                     />
-                    <SeparatorAdd
-                      onClick={() => {
-                        if (data.order) {
-                          setAddQuestionOnOrder(data.order + 1);
-                        } else {
-                          setAddQuestionOnOrder(localQuestions.length + 1);
-                        }
-                      }}
-                    />
+                    <div className={cn("h-8 flex items-center justify-center group/separator relative", index === localQuestions.length - 1 ? "mt-4" : "")}>
+                      <Button
+                        size={"xxs"}
+                        variant={"default"}
+                        onClick={() => {
+                          if (data.order) {
+                            setAddQuestionOnOrder(data.order + 1);
+                          } else {
+                            setAddQuestionOnOrder(localQuestions.length + 1);
+                          }
+                        }}
+                        className={cn(
+                          "absolute opacity-50 lg:opacity-0 group-hover/separator:opacity-100",
+                          index === localQuestions.length - 1
+                            ? "lg:opacity-100"
+                            : ""
+                        )}
+                      >
+                        <PlusIcon /> Add Question
+                      </Button>
+                      <div className="h-auto border-b border-border/50 w-full group-hover/separator:border-foreground/20" />
+                    </div>
                   </Reorder.Item>
                 );
               })}
@@ -387,22 +400,6 @@ const Questions = () => {
           refetchSessions();
         }}
       />
-    </div>
-  );
-};
-
-const SeparatorAdd = ({ onClick }: { onClick: () => void }) => {
-  return (
-    <div className="h-8 flex items-center justify-center group/separator relative">
-      <Button
-        size={"xxs"}
-        variant={"default"}
-        onClick={onClick}
-        className="absolute opacity-30 lg:opacity-0 group-hover/separator:opacity-100"
-      >
-        <PlusIcon /> Add Question
-      </Button>
-      <div className="h-auto border-b border-border/50 border-dashed w-full group-hover/separator:border-solid group-hover/separator:border-border" />
     </div>
   );
 };

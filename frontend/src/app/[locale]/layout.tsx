@@ -48,10 +48,10 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable}`}>
       {/* {process.env.NODE_ENV === "development" && <ReactScan />} */}
       <body
-        className={`antialiased min-h-svh flex flex-col ${geistSans.variable} ${geistMono.variable}`}
+        className={`antialiased min-h-svh flex flex-col font-sans`}
       >
         <NextIntlClientProvider messages={messages}>
           <Provider>{children}</Provider>

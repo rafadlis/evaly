@@ -22,7 +22,7 @@ const DialogDeleteSession = ({
     <Button
       disabled={disabled}
       size={"icon-xs"}
-      variant={"outline"}
+      variant={"ghost"}
       className={cn(className)}
       onClick={(e) => {
         e.stopPropagation();

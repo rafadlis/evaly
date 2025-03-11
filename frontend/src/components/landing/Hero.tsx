@@ -47,12 +47,12 @@ export const Hero = () => {
             
             <div className="flex flex-wrap gap-4">
               <Link href="/auth/register">
-                <Button size="lg" className="rounded-full shadow-md hover:shadow-lg transition-all">
+                <Button size="lg">
                   Start Free Trial <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
               <Link href="#">
-                <Button variant="outline" size="lg" className="rounded-full">
+                <Button variant="outline" size="lg">
                   Watch Demo <ArrowUpRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>

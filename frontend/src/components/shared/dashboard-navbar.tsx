@@ -62,13 +62,13 @@ export function DashboardNavbar({className}: {className?: string}) {
           <div className="flex flex-row gap-12 items-center">
             {/* Logo */}
             <Link href="/dashboard" className="flex items-center">
-              <div className="h-7 w-7 text-lg bg-background text-foreground flex items-center justify-center font-bold mr-3 shadow-[2px_2px_0px_0px_var(--primary)] border-2 border-primary rounded-[8px]">
-                E
-              </div>
-              <span className="text-2xl font-bold hidden sm:block">
-                evaly
-              </span>
-            </Link>
+            <div className="h-7 w-7 text-lg bg-background text-foreground flex items-center justify-center font-bold mr-3 shadow-[3px_3px_0px_0px_var(--primary)] hover:shadow-[0px_0px_0px_0px_var(--primary)] border-2 border-primary transition-all">
+              E
+            </div>
+            <span className="text-2xl font-bold hidden sm:block">
+              evaly
+            </span>
+          </Link>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-0.5">

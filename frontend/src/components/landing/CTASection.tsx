@@ -25,12 +25,12 @@ export const CTASection = () => {
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link href="/auth/register">
-                <Button variant="default" size="lg" className="rounded-full shadow-md hover:shadow-lg transition-all">
+                <Button variant="default" size="lg" >
                   Start Free Trial <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
               <Link href="#">
-                <Button variant="outline" size="lg" className="rounded-full">
+                <Button variant="outline" size="lg">
                   Schedule Demo
                 </Button>
               </Link>

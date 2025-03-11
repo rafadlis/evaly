@@ -103,7 +103,7 @@ const DialogEditSessionDuration = ({
         <Button
           disabled={disabled}
           size={"xs"}
-          variant={"outline"}
+          variant={"ghost"}
           className={cn(className)}
           onClick={(e) => e.stopPropagation()}
         >

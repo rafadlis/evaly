@@ -92,11 +92,12 @@
 
   --success: rgba(16, 185, 129, 0.2);
   --success-foreground: hsl(160.1 84.1% 39.4%);
-
-
 }
 
 @theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
