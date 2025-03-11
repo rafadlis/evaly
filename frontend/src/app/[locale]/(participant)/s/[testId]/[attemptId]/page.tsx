@@ -1,4 +1,4 @@
-import Navbar from "@/app/(participant)/_components/navbar";
+import Navbar from "@/app/[locale]/(participant)/_components/navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";

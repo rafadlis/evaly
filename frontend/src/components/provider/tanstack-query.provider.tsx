@@ -7,6 +7,7 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 import superjson from "superjson";
+import { useTranslations } from 'next-intl';
 
 let clientQueryClientSingleton: QueryClient;
 
@@ -17,8 +18,11 @@ const TanstackQueryProvider = ({ children }: { children: React.ReactNode }) => {
   //       render if it suspends and there is no boundary
   const queryClient = getQueryClient();
 
+  const t = useTranslations('HomePage');
+
   return (
       <QueryClientProvider client={queryClient}>
+        <h1>{t('title')}</h1>
         {children}
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>

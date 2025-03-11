@@ -1,8 +1,7 @@
-import { NextResponse } from "next/server";
-
-export async function middleware() {
-  return NextResponse.next();
-}
+import createMiddleware from 'next-intl/middleware';
+import { routing } from './i18n/routing';
+ 
+export default createMiddleware(routing);
 
 export const config = {
   /*
