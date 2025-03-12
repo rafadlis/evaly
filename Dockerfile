@@ -23,13 +23,13 @@ ENV NODE_ENV=production
 # Run the build:tsup script to generate the dist folder
 RUN cd backend
 
-RUN bun build \
-  --compile \
-  --minify-whitespace \
-  --minify-syntax \
-  --target bun \
-  --outfile server \
-  ./backend/src/cluster.ts
+# RUN bun build \
+#   --compile \
+#   --minify-whitespace \
+#   --minify-syntax \
+#   --target bun \
+#   --outfile server \
+#   ./backend/src/cluster.ts
 
 # FROM gcr.io/distroless/base
 
@@ -37,6 +37,6 @@ RUN bun build \
 
 # COPY --from=build /app/server server
 
-CMD ["./server"]
+CMD ["bun", "./backend/src/cluster.ts"]
 
 EXPOSE 4000
