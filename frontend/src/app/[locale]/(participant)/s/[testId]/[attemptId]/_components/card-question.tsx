@@ -68,9 +68,7 @@ const CardQuestion = ({
             <>
               <Loader2 className="size-3 animate-spin" /> Saving...
             </>
-          ) : (
-            ""
-          )}
+          ) : null}
         </span>
       </div>
       <div className="mt-2">
@@ -101,7 +99,8 @@ const CardQuestion = ({
                 }
                 size={"icon-xs"}
               >
-                {isPendingAnswer ? (
+                {localAnswer?.answerOptions?.includes(option.id) &&
+                isPendingAnswer ? (
                   <Loader2 className="size-4 animate-spin" />
                 ) : (
                   String.fromCharCode(65 + i)

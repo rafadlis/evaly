@@ -4,14 +4,16 @@ import { useQuery } from "@tanstack/react-query";
 export function useAttemptById(attemptId: string) {
   return useQuery({
     queryKey: ["attempt", attemptId],
-    queryFn: async()=>{
+    queryFn: async () => {
       const res = await $api.participant.test.attempt({ id: attemptId }).get();
 
       if (res.status !== 200) {
-        throw new Error(res.error?.value.toString());
+        throw new Error(res.error?.value.toString(), {
+          cause: res.status,
+        });
       }
 
       return res.data;
-    }
+    },
   });
 }

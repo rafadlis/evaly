@@ -6,14 +6,20 @@ import { useParams } from "next/navigation";
 import Navbar from "./_components/navbar";
 import CardQuestion from "./_components/card-question";
 import { useAttemptAnswerByAttemptId } from "@/query/participants/attempt/use-attempt-answer-by-attempt-id";
+import { usePathname, useRouter } from "@/i18n/navigation";
+import { Button } from "@/components/ui/button";
 
 export const dynamic = "force-static";
 
 const Page = () => {
   const { attemptId } = useParams();
-  const { data: attempt, isPending: isPendingAttempt } = useAttemptById(
-    attemptId as string
-  );
+  const router = useRouter();
+  const pathName = usePathname();
+  const {
+    data: attempt,
+    isPending: isPendingAttempt,
+    error: errorAttempt,
+  } = useAttemptById(attemptId as string);
   const { data: attemptAnswers, isPending: isPendingAttemptAnswers } =
     useAttemptAnswerByAttemptId(attemptId as string);
 
@@ -21,6 +27,22 @@ const Page = () => {
     return (
       <div className="flex justify-center items-center h-screen">
         <Loader2 className="size-12 animate-spin" />
+      </div>
+    );
+  }
+
+  if (errorAttempt) {
+    return (
+      <div className="flex-1 flex flex-col gap-2 items-center justify-center text-2xl font-medium text-center">
+        <h1>{errorAttempt.message}</h1>
+        {errorAttempt.cause === 401 && (
+          <Button onClick={() => router.push(`/login?callbackURL=${pathName}`)}>
+            Login
+          </Button>
+        )}
+        {errorAttempt.cause === 403 && (
+          <Button onClick={() => router.push(`/`)}>Go to Home</Button>
+        )}
       </div>
     );
   }

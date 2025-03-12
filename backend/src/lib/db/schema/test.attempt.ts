@@ -52,6 +52,7 @@ export const testAttemptRelations = relations(testAttempt, ({ one }) => ({
   testSection: one(testSection, {
     fields: [testAttempt.testSectionId],
     references: [testSection.id],
+    relationName: "testAttempt.testSection",
   }),
   participant: one(user, {
     fields: [testAttempt.participantEmail],

@@ -6,7 +6,8 @@ export async function checkAttemptAccess(attemptId: string, participantEmail: st
     const attempt = await db.query.testAttempt.findFirst({
         columns:{
             id: true,
-            completedAt: true
+            completedAt: true,
+            testId: true,
         },
         where: and(
             eq(testAttempt.id, attemptId),

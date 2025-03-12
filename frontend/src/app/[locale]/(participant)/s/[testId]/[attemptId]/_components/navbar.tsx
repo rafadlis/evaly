@@ -14,9 +14,15 @@ import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 import { useState } from "react";
 import { TestAttemptWithSection } from "@evaly/backend/types/test.attempt";
+import { useMutation } from "@tanstack/react-query";
+import { $api } from "@/lib/api";
+import { useTransition } from "react";
+import { useRouter } from "@/i18n/navigation";
 
 const Navbar = ({ attempt }: { attempt: TestAttemptWithSection }) => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useTransition();
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,6 +32,28 @@ const Navbar = ({ attempt }: { attempt: TestAttemptWithSection }) => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const { mutate: submitAttempt, isPending: isSubmitting } = useMutation({
+    mutationKey: ["submit-attempt"],
+    mutationFn: async () => {
+      const res = await $api.participant.test
+        .attempt({ id: attempt.id })
+        .submit.post();
+
+      if (res.status !== 200) {
+        throw new Error(res.error?.value.toString());
+      }
+
+      if (!res.data?.testId) {
+        throw new Error("Something went wrong, please try again later");
+      }
+
+      setIsRedirecting(() => {
+        router.push(`/s/${res.data.testId}`);
+      });
+      return res.data;
+    },
+  });
 
   return (
     <div
@@ -38,7 +66,14 @@ const Navbar = ({ attempt }: { attempt: TestAttemptWithSection }) => {
         {attempt.testSection?.title || `Section ${attempt.testSection?.order}`}
       </div>
       <div className="flex flex-row items-center gap-2">
-        <Button variant="outline" className="mr-4">Submit</Button>
+        <Button
+          variant="outline"
+          className="mr-4"
+          onClick={() => submitAttempt()}
+          disabled={isSubmitting || isRedirecting}
+        >
+          {isSubmitting ? "Submitting..." : isRedirecting ? "Redirecting..." : "Submit"}
+        </Button>
         <ThemeToggle />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

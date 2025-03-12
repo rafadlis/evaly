@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, FileText, AlertCircle, Play, Orbit } from "lucide-react";
+import { Clock, FileText, AlertCircle, Play, Orbit, Check, LockIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useTestById } from "@/query/participants/test/use-test-by-id";
@@ -22,7 +22,8 @@ import { useMutation } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
 import { toast } from "sonner";
 import { usePathname, useRouter } from "@/i18n/navigation";
-import { useTransition } from "react";
+import { useMemo, useTransition } from "react";
+import { cn } from "@/lib/utils";
 
 const Page = () => {
   const router = useRouter();
@@ -33,15 +34,49 @@ const Page = () => {
     isPending: isPendingTestData,
     error,
   } = useTestById(testId as string);
+
+  const attempt = testData?.attempt;
+  const completedAttempts =
+    testData?.attempt.filter((attempt) => attempt.completedAt).length || 0;
+  const totalAttempts = testData?.attempt.length || 0;
+
+  const attemptProgress =
+    testData?.attempt && testData?.testSections?.length
+      ? (completedAttempts / totalAttempts) * 100
+      : 0;
+
+  const getAttemptBySectionId = (sectionId: string) => {
+    return attempt?.find((attempt) => attempt.testSectionId === sectionId);
+  };
+
+  const currentSection = useMemo(() => {
+    if (!testData?.testSections?.length || !testData?.attempt.length)
+      return null;
+
+    // Find the first section that doesn't have a completed attempt
+    const nextIncompleteSection = testData.testSections.find((section) => {
+      const sectionAttempt = testData.attempt.find(
+        (attempt) => attempt.testSectionId === section.id
+      );
+      return !sectionAttempt?.completedAt;
+    });
+
+    return nextIncompleteSection || null;
+  }, [testData?.testSections, testData?.attempt]);
+
   const [isRedirecting, startTransitionRedirect] = useTransition();
 
   const { mutate: mutateStartTest, isPending: isPendingStartTest } =
     useMutation({
       mutationKey: ["start-test"],
       mutationFn: async () => {
-        const res = await $api.participant
-          .test({ id: testId as string })
-          .start.post();
+        if (!testData) {
+          throw new Error("Test not found");
+        }
+
+        const res = await $api.participant.test.attempt
+          .start({ testId: testId as string })
+          .post();
 
         if (res.error?.value) {
           throw new Error(res.error.value);
@@ -199,8 +234,19 @@ const Page = () => {
             <Button
               size="lg"
               onClick={() => mutateStartTest()}
-              disabled={isPendingStartTest || isRedirecting}
+              disabled={
+                isPendingStartTest ||
+                isRedirecting ||
+                totalAttempts === completedAttempts
+              }
               className="w-full md:w-max"
+              variant={
+                totalAttempts === completedAttempts
+                  ? "outline"
+                  : totalAttempts > 0
+                  ? "secondary"
+                  : "default"
+              }
             >
               {isPendingStartTest ? (
                 <span className="flex items-center gap-2">
@@ -211,6 +257,16 @@ const Page = () => {
                 <span className="flex items-center gap-2">
                   <Play className="h-4 w-4" />
                   Redirecting to section...
+                </span>
+              ) : totalAttempts === completedAttempts ? (
+                <span className="flex items-center gap-2">
+                  <LockIcon className="h-4 w-4" />
+                  You have completed all sections
+                </span>
+              ) : totalAttempts > 0 ? (
+                <span className="flex items-center gap-2">
+                  <Play className="h-4 w-4" />
+                  Continue Assessment
                 </span>
               ) : (
                 <span className="flex items-center gap-2">
@@ -277,64 +333,85 @@ const Page = () => {
                 <div className="mb-6">
                   <div className="flex justify-between text-sm mb-2">
                     <span className="text-muted-foreground">Your progress</span>
-                    <span className="font-medium">Not started</span>
+                    <span className="font-medium">
+                      {attemptProgress > 0
+                        ? `${attemptProgress}%`
+                        : totalAttempts > 0
+                        ? "In progress"
+                        : "Not started"}
+                    </span>
                   </div>
                   <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
                     <div
                       className="h-full bg-primary rounded-full"
-                      style={{ width: "0%" }}
+                      style={{
+                        width: totalAttempts > 0 ? `${attemptProgress}%` : "0%",
+                      }}
                     ></div>
                   </div>
                 </div>
 
                 {/* Sections */}
                 <div className="space-y-6">
-                  {testData.testSections?.map((section, index) => (
-                    <div key={section.id} className="relative">
-                      {index > 0 && (
-                        <div className="absolute left-4 top-0 h-full w-px bg-muted -translate-y-full"></div>
-                      )}
-                      <div className="flex gap-4">
-                        <div className="relative">
-                          <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center z-10 relative ${
-                              index === 0
-                                ? "bg-primary text-primary-foreground"
-                                : "bg-muted text-muted-foreground"
-                            }`}
-                          >
-                            {index + 1}
-                          </div>
-                        </div>
-                        <div className="space-y-2 flex-1">
-                          <div className="flex justify-between items-start">
-                            <h3 className="font-medium">{section.title}</h3>
-                            <Badge variant="outline" className="ml-2">
-                              {section.duration
-                                ? `${section.duration} min`
-                                : "No time limit"}
-                            </Badge>
-                          </div>
-
-                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                            <div className="flex items-center gap-1.5">
-                              <FileText className="h-4 w-4" />
-                              <span>{section.totalQuestions} questions</span>
+                  {testData.testSections?.map((section, index) => {
+                    const attempt = getAttemptBySectionId(section.id);
+                    return (
+                      <div key={section.id} className="relative">
+                        {index > 0 && (
+                          <div className="absolute left-3.5 top-0 h-full w-px bg-muted -translate-y-full"></div>
+                        )}
+                        <div className="flex gap-4">
+                          <div className="relative">
+                            <div
+                              className={cn(
+                                "size-7 rounded-full flex items-center justify-center z-10 relative",
+                                currentSection?.id === section.id
+                                  ? "bg-primary text-primary-foreground"
+                                  : "bg-muted text-muted-foreground",
+                                attempt?.completedAt
+                                  ? "bg-success text-success-foreground"
+                                  : ""
+                              )}
+                            >
+                              {attempt?.completedAt ? (
+                                <Check className="size-4" />
+                              ) : (
+                                index + 1
+                              )}
                             </div>
-                            {index === 0 && (
-                              <Badge variant="secondary" className="text-xs">
-                                Current
-                              </Badge>
-                            )}
                           </div>
+                          <div className="space-y-2 flex-1">
+                            <div className="flex justify-between items-start">
+                              <h3 className="font-medium">
+                                {section.title || `Section ${index + 1}`}
+                              </h3>
+                              <Badge variant="outline" className="ml-2">
+                                {section.duration
+                                  ? `${section.duration} min`
+                                  : "No time limit"}
+                              </Badge>
+                            </div>
 
-                          <p className="text-sm text-muted-foreground">
-                            {section.description}
-                          </p>
+                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                              <div className="flex items-center gap-1.5">
+                                <FileText className="h-4 w-4" />
+                                <span>{section.totalQuestions} questions</span>
+                              </div>
+                              {currentSection?.id === section.id && (
+                                <Badge variant="secondary" className="text-xs">
+                                  Current
+                                </Badge>
+                              )}
+                            </div>
+
+                            <p className="text-sm text-muted-foreground">
+                              {section.description}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </CardContent>
 
