@@ -3,7 +3,8 @@ import { spawn } from "bun";
 const cpus = navigator.hardwareConcurrency; // Number of CPU cores
 const buns = new Array(cpus);
 
-for (let i = 0; i < cpus; i++) {
+// Start half of the CPUs
+for (let i = 0; i < cpus / 2; i++) {
   buns[i] = spawn({
     cmd: ["../server"],
     stdout: "inherit",
