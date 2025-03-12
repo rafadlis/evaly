@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ArrowRight, ArrowUpRight, Wand2 } from "lucide-react";
 import { motion } from "motion/react";
 import { Badge } from "../ui/badge";
