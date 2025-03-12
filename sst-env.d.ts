@@ -21,20 +21,26 @@ declare module "sst" {
       "type": "sst.sst.Secret"
       "value": string
     }
-    "DATABASE_URL_DEVELOPMENT": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-    "DATABASE_URL_STAGING": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
     "EvalyBackendService": {
       "service": string
       "type": "sst.aws.Service"
       "url": string
     }
     "EvalyBackendVPC": {
+      "type": "sst.aws.Vpc"
+    }
+    "EvalyDB": {
+      "clusterArn": string
+      "database": string
+      "host": string
+      "password": string
+      "port": number
+      "reader": string
+      "secretArn": string
+      "type": "sst.aws.Aurora"
+      "username": string
+    }
+    "EvalyDBVPC": {
       "type": "sst.aws.Vpc"
     }
     "Frontend": {

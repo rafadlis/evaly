@@ -1,16 +1,9 @@
 import { drizzle } from "drizzle-orm/bun-sql";
 import * as schema from "./schema";
-import { env } from "../env";
+import { Resource } from "sst";
 
-let dbUrl: string;
-
-if (env.ENVIRONMENT === "development") {
-  dbUrl = env.DATABASE_URL;
-} else if (env.ENVIRONMENT === "staging") {
-  dbUrl = env.DATABASE_URL;
-} else {
-  dbUrl = env.DATABASE_URL;
-}
+const dbRes = Resource.EvalyDB;
+const dbUrl = `postgres://${dbRes.username}:${dbRes.password}@${dbRes.host}:${dbRes.port}/${dbRes.database}`;
 
 const db = drizzle(dbUrl, { schema });
 

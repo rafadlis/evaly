@@ -1,23 +1,19 @@
 
-export const dbMigrate = new sst.x.DevCommand("Migrate", {
-  dev: {
-    command: "bun --filter @evaly/backend db:migrate",
-  },
-  environment: backendSecrets
+export const vpc = new sst.aws.Vpc("EvalyDBVPC",{
 });
 
-import { backendSecrets } from "./secrets";
-
-export const dbStudio = new sst.x.DevCommand("Studio", {
-  dev: {
-    command: "bun --filter @evaly/backend db:studio",
+export const auroraDB = new sst.aws.Aurora("EvalyDB", {
+  engine: "postgres",
+  scaling: {
+    min: "0.5 ACU",
+    max: "1 ACU",
   },
-  environment: backendSecrets
-});
-
-// export const dbPush = new sst.x.DevCommand("Push", {
-//   dev: {
-//     command: "bun --filter backend db:push",
-//   },
-//   environment: backendSecrets
-// });
+  vpc,
+  dev: {
+    database: "postgres",
+    host: "127.0.0.1",
+    password: "",
+    port: 5432,
+    username: "postgres",
+  }
+})

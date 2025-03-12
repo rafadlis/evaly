@@ -1,3 +1,4 @@
+import { auroraDB } from "./db";
 import { backendSecrets } from "./secrets";
 
 export const vpc = new sst.aws.Vpc("EvalyBackendVPC",{
@@ -9,6 +10,7 @@ export const cluster = new sst.aws.Cluster("EvalyBackendCluster", {
 });
 
 cluster.addService("EvalyBackendService", {
+  link: [auroraDB],
   public: {
     ports: [
       { listen: "4000/http" },

@@ -1,10 +1,24 @@
-"use client"
+"use client";
+
 import { Button } from "../ui/button";
 import { useTheme } from "next-themes";
-import { Moon, Sun } from "lucide-react";
+import { Loader2, Moon, Sun } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const ThemeToggle = () => {
+  const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted)
+    return (
+      <Button variant="ghost" size="icon" className="hidden sm:flex">
+      <Loader2 className="h-5 w-5 animate-spin" />
+    </Button>
+  );
   return (
     <Button
       variant="ghost"

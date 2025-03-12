@@ -3,8 +3,9 @@
   "private": true,
   "scripts": {
     "check-types": "tsc --noEmit",
-    "db:generate": "bun --filter @evaly/backend db:generate",
-    "db:migrate": "bun --filter @evaly/backend db:migrate",
+    "shell:dev": "bunx sst shell --stage development",
+    "shell:staging": "bunx sst shell --stage staging",
+    "shell:production": "bunx sst shell --stage production",
     "db:studio": "bun --filter @evaly/backend db:studio",
     "dev": "bunx sst dev --stage=development --verbose",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
