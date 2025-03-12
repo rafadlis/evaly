@@ -8,7 +8,6 @@ import { opentelemetry } from "@elysiajs/opentelemetry";
 import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-node";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-proto";
 import { env } from "./lib/env";
-import db from "./lib/db";
 
 const app = new Elysia()
   .use(cors())
@@ -29,8 +28,8 @@ const app = new Elysia()
     })
   )
   .get("/", async () => {
-    const res = await db.query.user.findMany()
-    return res
+    // const res = await db.query.user.findMany()
+    return "Hello World"
   })
   .all("/api/auth/*", betterAuthView) // Handle auth routes
   .use(organizationRouter)
