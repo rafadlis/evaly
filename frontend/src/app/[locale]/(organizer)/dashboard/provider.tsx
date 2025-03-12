@@ -2,7 +2,7 @@
 
 import { $api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
-import { usePathname, useRouter } from "next/navigation";
+import { notFound, usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useTransition } from "react";
 
 const Provider = ({ children }: { children: React.ReactNode }) => {
@@ -34,6 +34,8 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
         Loading...
       </div>
     );
+
+  if (data?.status !== 200) return notFound();
   if (isRedirecting) return <div>Redirecting...</div>;
 
   return <>{children}</>;
