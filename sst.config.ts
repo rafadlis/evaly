@@ -8,7 +8,7 @@ export default $config({
       home: "aws",
       providers: {
         aws: {
-          region: "us-east-1",
+          region: "ap-southeast-1",
         },
       },
     };
@@ -23,7 +23,7 @@ export default $config({
         ) {
           return {
             stage: "production",
-            runner: { engine: "codebuild", compute: "xlarge" },
+            runner: { engine: "codebuild", compute: "large" },
           };
         }
         if (
@@ -40,7 +40,7 @@ export default $config({
     },
   },
   async run() {
-    const { frontend } = await import("./infra");
+    const { frontend } = await import("./infra/frontend");
 
     return {
       frontend: frontend.url,

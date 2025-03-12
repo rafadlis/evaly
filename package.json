@@ -3,11 +3,10 @@
   "private": true,
   "scripts": {
     "check-types": "tsc --noEmit",
-    "shell:dev": "bunx sst shell --stage development",
-    "shell:staging": "bunx sst shell --stage staging",
-    "shell:production": "bunx sst shell --stage production",
+    "db:migrate": "bun --filter @evaly/backend db:migrate",
     "db:studio": "bun --filter @evaly/backend db:studio",
-    "dev": "bunx sst dev --stage=development --verbose",
+    "dev:fe": "bunx sst dev --stage=development --verbose",
+    "dev:be": "bun --filter @evaly/backend dev",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "deploy:staging": "bunx sst deploy --stage staging --verbose",
     "deploy:production": "bunx sst deploy --stage production --verbose"

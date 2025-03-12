@@ -11,13 +11,15 @@ const envSchema = z.object({
   //development-backend
   WEB_PUBLIC_URL_DEVELOPMENT: z.string(),
   BETTER_AUTH_SECRET_DEVELOPMENT: z.string(),
+  DATABASE_URL_DEVELOPMENT: z.string(),
 
   //staging-backend
   WEB_PUBLIC_URL_STAGING: z.string(),
   BETTER_AUTH_SECRET_STAGING: z.string(),
+  DATABASE_URL_STAGING: z.string(),
 });
 
-const envAllStage = envSchema.parse(process.env);
+const envAllStage = envSchema.parse(Bun.env);
 
 export const env =
   envAllStage.ENVIRONMENT === "development"
@@ -25,9 +27,11 @@ export const env =
         ...envAllStage,
         WEB_PUBLIC_URL: envAllStage.WEB_PUBLIC_URL_DEVELOPMENT,
         BETTER_AUTH_SECRET: envAllStage.BETTER_AUTH_SECRET_DEVELOPMENT,
+        DATABASE_URL: envAllStage.DATABASE_URL_DEVELOPMENT,
       }
     : {
         ...envAllStage,
         WEB_PUBLIC_URL: envAllStage.WEB_PUBLIC_URL_STAGING,
         BETTER_AUTH_SECRET: envAllStage.BETTER_AUTH_SECRET_STAGING,
+        DATABASE_URL: envAllStage.DATABASE_URL_STAGING,
       };

@@ -1,10 +1,7 @@
 import { drizzle } from "drizzle-orm/bun-sql";
 import * as schema from "./schema";
-import { Resource } from "sst";
+import { env } from "../env";
 
-const dbRes = Resource.EvalyDB;
-const dbUrl = `postgres://${dbRes.username}:${dbRes.password}@${dbRes.host}:${dbRes.port}/${dbRes.database}`;
-
-const db = drizzle(dbUrl, { schema });
+const db = drizzle(env.DATABASE_URL, { schema });
 
 export default db;

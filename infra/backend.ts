@@ -1,6 +1,4 @@
-import { auroraDB } from "./index";
-import { backendSecrets } from "./secrets";
-
+// UNUSED: we are using coolify to deploy the backend and database
 export const backendVpc = new sst.aws.Vpc("EvalyBackendVPC",{
 });
 
@@ -10,7 +8,6 @@ export const cluster = new sst.aws.Cluster("EvalyBackendCluster", {
 });
 
 cluster.addService("EvalyBackendService", {
-  link: [auroraDB],
   public: {
     ports: [
       { listen: "4000/http" },
@@ -42,5 +39,4 @@ cluster.addService("EvalyBackendService", {
     memoryUtilization: 50,
     cpuUtilization: 50,
   },
-  environment: backendSecrets,
 });
