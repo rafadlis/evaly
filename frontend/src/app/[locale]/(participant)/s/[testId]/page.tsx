@@ -39,6 +39,7 @@ const Page = () => {
   const completedAttempts =
     testData?.attempt.filter((attempt) => attempt.completedAt).length || 0;
   const totalAttempts = testData?.attempt.length || 0;
+  const totalSections = testData?.testSections?.length || 0;
 
   const attemptProgress =
     testData?.attempt && testData?.testSections?.length
@@ -237,11 +238,11 @@ const Page = () => {
               disabled={
                 isPendingStartTest ||
                 isRedirecting ||
-                totalAttempts === completedAttempts
+                totalAttempts === completedAttempts && totalSections === completedAttempts
               }
               className="w-full md:w-max"
               variant={
-                totalAttempts === completedAttempts
+                totalAttempts === completedAttempts && totalSections === completedAttempts
                   ? "outline"
                   : totalAttempts > 0
                   ? "secondary"
@@ -258,7 +259,7 @@ const Page = () => {
                   <Play className="h-4 w-4" />
                   Redirecting to section...
                 </span>
-              ) : totalAttempts === completedAttempts ? (
+              ) : totalAttempts === completedAttempts && totalSections === completedAttempts ? (
                 <span className="flex items-center gap-2">
                   <LockIcon className="h-4 w-4" />
                   You have completed all sections
