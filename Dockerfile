@@ -31,9 +31,9 @@ RUN bun build \
   --outfile server \
   ./backend/src/cluster.ts
 
-FROM gcr.io/distroless/base
+# FROM gcr.io/distroless/base
 
-WORKDIR /app
+# WORKDIR /app
 
 COPY --from=build /app/server server
 
