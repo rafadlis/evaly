@@ -37,6 +37,6 @@ WORKDIR /app
 
 COPY --from=build /app/server server
 
-CMD ["bun", "./backend/cluster.ts"]
+CMD ["bun", "./backend/src/cluster.ts"]
 
 EXPOSE 4000
