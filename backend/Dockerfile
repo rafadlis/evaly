@@ -4,24 +4,15 @@ WORKDIR /app
 
 # Cache packages installation
 COPY package.json package.json
-COPY bun.lock bun.lock
 # COPY .npmrc .npmrc
 
-COPY /backend/package.json ./backend/package.json
-COPY /frontend/package.json ./frontend/package.json
-
-# Copy the backend code because we need to generate the types first
-COPY /backend ./backend
-
+# Install dependencies
 RUN bun install
 
 # Copy the backend code again
-COPY /backend ./backend
+COPY ./src ./src
 
 ENV NODE_ENV=production
-
-# Run the build:tsup script to generate the dist folder
-RUN cd backend
 
 RUN bun build \
   --compile \
@@ -29,7 +20,7 @@ RUN bun build \
   --minify-syntax \
   --target bun \
   --outfile server \
-  ./backend/src/index.ts
+  ./src/index.ts
 
 FROM gcr.io/distroless/base
 
