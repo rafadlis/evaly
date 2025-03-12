@@ -6,7 +6,7 @@ const buns = new Array(cpus);
 // Start half of the CPUs
 for (let i = 0; i < cpus / 2; i++) {
   buns[i] = spawn({
-    cmd: ["../server"],
+    cmd: ["bun", "./index.ts"],
     stdout: "inherit",
     stderr: "inherit",
     stdin: "inherit",

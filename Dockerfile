@@ -29,7 +29,7 @@ RUN bun build \
   --minify-syntax \
   --target bun \
   --outfile server \
-  ./backend/src/index.ts
+  ./backend/src/cluster.ts
 
 FROM gcr.io/distroless/base
 
@@ -37,6 +37,6 @@ WORKDIR /app
 
 COPY --from=build /app/server server
 
-CMD ["bun", "./backend/src/cluster.ts"]
+CMD ["./server"]
 
 EXPOSE 4000
