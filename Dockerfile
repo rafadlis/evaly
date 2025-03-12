@@ -35,7 +35,7 @@ RUN bun build \
 
 # WORKDIR /app
 
-COPY --from=build /app/server server
+# COPY --from=build /app/server server
 
 CMD ["./server"]
 
