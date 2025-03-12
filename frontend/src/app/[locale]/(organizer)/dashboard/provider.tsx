@@ -35,7 +35,7 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
       </div>
     );
 
-  if (data?.status !== 200) return notFound();
+  if (data?.status !== 200 && data?.status !== 401) return notFound();
   if (isRedirecting) return <div>Redirecting...</div>;
 
   return <>{children}</>;
