@@ -13,7 +13,7 @@ import { Clock, FileText, AlertCircle, Users, Play, Orbit } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useTestById } from "@/query/participants/test/use-test-by-id";
-import { useParams, usePathname, notFound } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import dayjs from "dayjs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { testTypeFormatter } from "@/lib/test-type-formatter";
@@ -21,7 +21,7 @@ import Navbar from "../../_components/navbar";
 import { useMutation } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
 import { toast } from "sonner";
-import { useRouter } from "@/i18n/navigation";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import { useTransition } from "react";
 
 const Page = () => {

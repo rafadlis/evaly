@@ -1,8 +1,9 @@
 "use client";
 
+import { usePathname, useRouter } from "@/i18n/navigation";
 import { $api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
-import { notFound, usePathname, useRouter } from "next/navigation";
+import { notFound } from "next/navigation";
 import React, { useEffect, useTransition } from "react";
 
 const Provider = ({ children }: { children: React.ReactNode }) => {

@@ -15,8 +15,8 @@ import { authClient } from "@/lib/auth.client";
 import Image from "next/image";
 import { Loader2, X } from "lucide-react";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import { Link } from "@/components/shared/progress-bar";
+import { useRouter } from "@/i18n/navigation";
 
 const SignUp = () => {
   const [firstName, setFirstName] = useState("");

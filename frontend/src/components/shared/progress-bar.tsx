@@ -7,7 +7,7 @@ import {
   useSpring,
 } from "motion/react";
 import NextLink from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import {
   ComponentProps,
   ReactNode,

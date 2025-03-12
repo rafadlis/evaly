@@ -15,11 +15,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
-import { usePathname } from "next/navigation";
 import { Link } from "./progress-bar";
 import { useTheme } from "next-themes";
 import { LogoType } from "./logo";
 import ThemeToggle from "./theme-toggle";
+import { usePathname } from "@/i18n/navigation";
 
 export function DashboardNavbar({className}: {className?: string}) {
   const [isScrolled, setIsScrolled] = useState(false);
