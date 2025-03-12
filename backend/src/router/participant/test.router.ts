@@ -25,7 +25,7 @@ export const testRouter = new Elysia().group("/test", (app) => {
             return error(testResult.error.status, testResult.error.message);
           }
 
-          const attempt = await getAllAttemptByTestId(params.id);
+          const attempt = await getAllAttemptByTestId(params.id, user?.email);
 
           return {
             ...testResult,
