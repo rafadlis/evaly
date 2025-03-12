@@ -1,11 +1,11 @@
-import { auroraDB } from "./db";
+import { auroraDB } from "./index";
 import { backendSecrets } from "./secrets";
 
-export const vpc = new sst.aws.Vpc("EvalyBackendVPC",{
+export const backendVpc = new sst.aws.Vpc("EvalyBackendVPC",{
 });
 
 export const cluster = new sst.aws.Cluster("EvalyBackendCluster", {
-  vpc,
+  vpc: backendVpc,
   forceUpgrade: "v2",
 });
 
