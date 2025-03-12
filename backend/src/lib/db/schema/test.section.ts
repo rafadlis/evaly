@@ -5,7 +5,7 @@ import { question } from "./question";
 import { test } from "./test";
 import { testAttempt } from "./test.attempt";
 
-export const testSession = pgTable("test_session", {
+export const testSection = pgTable("test_section", {
   id: varchar("id", { length: 255 })
     .primaryKey()
     .$defaultFn(() => "ss-" + ulid()),
@@ -34,17 +34,11 @@ export const testSession = pgTable("test_session", {
 });
 
 //Relations
-export const testSessionRelation = relations(testSession, ({ many, one }) => ({
-  question: many(question, { relationName: "testSession.question" }),
+export const testSectionRelation = relations(testSection, ({ many, one }) => ({
+  question: many(question, { relationName: "testSection.question" }),
   test: one(test, {
-    fields: [testSession.testId],
+    fields: [testSection.testId],
     references: [test.id],
   }),
-  attempt: many(testAttempt, { relationName: "testSession.attempt" }),
+  attempt: many(testAttempt, { relationName: "testSection.attempt" }),
 }));
-
-
-// Types
-export type TestSession = typeof testSession.$inferSelect;
-export type NewTestSession = typeof testSession.$inferInsert;
-export type UpdateTestSession = Partial<NewTestSession>;

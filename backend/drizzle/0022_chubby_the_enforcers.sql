@@ -1,0 +1,2 @@
+CREATE UNIQUE INDEX "unique_attempt_question" ON "test_attempt_answer" USING btree ("attempt_id","question_id");--> statement-breakpoint
+CREATE INDEX "attempt_id_index" ON "test_attempt_answer" USING btree ("attempt_id");

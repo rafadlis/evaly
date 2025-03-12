@@ -97,7 +97,7 @@ const CardQuestion = ({
       )}
       onClick={onClickEdit}
     >
-      <CardHeader className="border-b py-3 flex flex-row justify-between items-center ">
+      <CardHeader className="border-b py-2 px-4 flex flex-row justify-between items-center ">
         <div className="flex flex-row gap-3">
           <Button variant={"secondary"} size={"xs"}>
             #
@@ -159,7 +159,7 @@ const CardQuestion = ({
           />
         </div>
       </CardHeader>
-      <CardContent className="pt-6">
+      <CardContent className="pt-6 px-4">
         <div
           className="custom-prose max-w-full max-h-[220px] h-max overflow-y-auto"
           dangerouslySetInnerHTML={{

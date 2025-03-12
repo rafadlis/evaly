@@ -1,6 +1,6 @@
 import { test } from "../lib/db/schema/test";
 import { testInvitation } from "../lib/db/schema/test.invitation";
-import { testSession } from "../lib/db/schema/test.session";
+import { testSection } from "../lib/db/schema/test.section";
 
 export type Test = typeof test.$inferSelect & {
   duration?: number | null;
@@ -9,11 +9,11 @@ export type Test = typeof test.$inferSelect & {
 export type InsertTest = typeof test.$inferInsert;
 export type UpdateTest = Partial<InsertTest>;
 
-export type TestSession = typeof testSession.$inferSelect & {
+export type TestSection = typeof testSection.$inferSelect & {
   numOfQuestions?: number;
 };
-export type InsertTestSession = typeof testSession.$inferInsert;
-export type UpdateTestSession = Partial<InsertTestSession>;
+export type InsertTestSection = typeof testSection.$inferInsert;
+export type UpdateTestSection = Partial<InsertTestSection>;
 
 
 export type TestInvitation = typeof testInvitation.$inferSelect & {

@@ -1,22 +1,22 @@
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { CircleCheck, CircleHelp, ClockIcon, Trash2Icon } from "lucide-react";
-import DialogDeleteSession from "../dialog/dialog-delete-session";
+import DialogDeleteSection from "../dialog/dialog-delete-section";
 import { Button } from "@/components/ui/button";
-import { TestSession } from "@evaly/backend/types/test";
+import { TestSection } from "@evaly/backend/types/test";
 
-const CardSession = ({
+const CardSection = ({
   data,
   isSelected,
   onClick,
   onDeleteSuccess,
-  isLastSession,
+  isLastSection,
 }: {
-  data?: TestSession
+  data?: TestSection
   onClick?: () => void;
   isSelected?: boolean;
   onDeleteSuccess?: () => void;
-  isLastSession?: boolean;
+  isLastSection?: boolean;
 }) => {
   if (!data) return null;
   return (
@@ -24,9 +24,9 @@ const CardSession = ({
       key={data.id}
       onClick={onClick}
       className={cn(
-        "flex flex-col group/session justify-start  cursor-pointer p-3 relative select-none",
+        "flex flex-col group/section justify-start  cursor-pointer p-3 relative select-none",
         isSelected
-          ? "border-foreground/20 bg-secondary"
+          ? "border-foreground/50"
           : "hover:bg-secondary/50"
       )}
     >
@@ -36,7 +36,7 @@ const CardSession = ({
         </div>
       ) : null}
       <span className="text-sm font-medium">
-        {data.order}. {data.title || "Untitled Session"}
+        {data.order}. {data.title || `Section ${data.order}`}
       </span>
       <div className="text-muted-foreground text-xs mt-2 flex flex-row gap-3 flex-wrap">
         {data.duration ? (
@@ -57,17 +57,17 @@ const CardSession = ({
           <CircleHelp size={14} /> {JSON.stringify(data.numOfQuestions)} Questions
         </span>
       </div>
-      <DialogDeleteSession
-        sessionId={data.id}
+      <DialogDeleteSection
+        sectionId={data.id}
         onSuccess={() => {
           onDeleteSuccess?.();
         }}
-        isLastSession={isLastSession}
+        isLastSection={isLastSection}
         dialogTrigger={
           <Button
             size={"icon-xxs"}
             variant={"outline"}
-            className="absolute bottom-2 right-2 opacity-0 group-hover/session:opacity-100 transition-opacity"
+            className="absolute bottom-2 right-2 opacity-0 group-hover/section:opacity-100 transition-opacity"
             onClick={(e) => {
               e.stopPropagation();
             }}
@@ -80,4 +80,4 @@ const CardSession = ({
   );
 };
 
-export default CardSession;
+export default CardSection;

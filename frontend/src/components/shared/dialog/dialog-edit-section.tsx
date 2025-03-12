@@ -14,11 +14,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { CircleHelpIcon, Loader2, PencilLine } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { UpdateTestSession } from "@evaly/backend/types/test";
+import { UpdateTestSection } from "@evaly/backend/types/test";
 import { useMutation } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
-import { useSessionByIdQuery } from "@/query/organization/session/use-session-by-id";
-import { useSessionByTestIdQuery } from "@/query/organization/session/use-session-by-test-id";
+import { useTestSectionByIdQuery } from "@/query/organization/test-section/use-test-section-by-id";
+import { useTestSectionByTestIdQuery } from "@/query/organization/test-section/use-test-section-by-test-id";
 import { toast } from "sonner";
 import {
   Popover,
@@ -26,7 +26,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-const DialogEditSession = ({ sessionId }: { sessionId: string }) => {
+const DialogEditSection = ({ sectionId }: { sectionId: string }) => {
   const [open, setOpen] = useState(false);
   const {
     register,
@@ -34,42 +34,42 @@ const DialogEditSession = ({ sessionId }: { sessionId: string }) => {
     reset,
     control,
     formState: { isDirty },
-  } = useForm<UpdateTestSession>();
+  } = useForm<UpdateTestSection>();
 
   const {
-    data: dataSession,
-    refetch: refetchSession,
-    isRefetching: isRefetchingSession,
-  } = useSessionByIdQuery({ id: sessionId });
+    data: dataSection,
+    refetch: refetchSection,
+    isRefetching: isRefetchingSection,
+  } = useTestSectionByIdQuery({ id: sectionId });
 
-  const { refetch: refetchSessions } = useSessionByTestIdQuery({
-    testId: dataSession?.testId as string,
+  const { refetch: refetchSections } = useTestSectionByTestIdQuery({
+    testId: dataSection?.testId as string,
   });
 
   useEffect(() => {
-    if (dataSession) {
-      reset(dataSession);
+    if (dataSection) {
+      reset(dataSection);
     }
-  }, [dataSession, reset]);
+  }, [dataSection, reset]);
 
-  const { mutate: updateSession, isPending: isPendingUpdateSession } =
+  const { mutate: updateSection, isPending: isPendingUpdateSection } =
     useMutation({
-      mutationKey: ["update-session"],
-      mutationFn: async (data: UpdateTestSession) => {
+      mutationKey: ["update-section"],
+      mutationFn: async (data: UpdateTestSection) => {
         const response = await $api.organization.test
-          .session({ id: sessionId })
+          .section({ id: sectionId })
           .put(data);
         return response.data;
       },
       onSuccess: async () => {
-        await refetchSession();
-        refetchSessions();
+        await refetchSection();
+        refetchSections();
         setOpen(false);
       },
     });
 
-  const onSubmit = (data: UpdateTestSession) => {
-    updateSession({
+  const onSubmit = (data: UpdateTestSection) => {
+    updateSection({
       ...data,
       duration: data.duration || 0, // Ensure duration is a number, not null or undefined
     });
@@ -84,7 +84,7 @@ const DialogEditSession = ({ sessionId }: { sessionId: string }) => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit session detail</DialogTitle>
+          <DialogTitle>Edit section detail</DialogTitle>
           <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <form
@@ -94,7 +94,7 @@ const DialogEditSession = ({ sessionId }: { sessionId: string }) => {
           <div className="flex flex-col gap-2">
             <Label>Title</Label>
             <Input
-              placeholder="Type session's title here..."
+              placeholder="Type section's title here..."
               {...register("title")}
             />
           </div>
@@ -175,12 +175,12 @@ const DialogEditSession = ({ sessionId }: { sessionId: string }) => {
           <div className="flex flex-col gap-2">
             <Label>Description (Optional)</Label>
             <Textarea
-              placeholder="Type session's description here..."
+              placeholder="Type section's description here..."
               {...register("description")}
             />
           </div>
           <DialogFooter className="mt-0">
-            <Button
+            <Button 
               onClick={() => {
                 setOpen(false);
               }}
@@ -190,11 +190,11 @@ const DialogEditSession = ({ sessionId }: { sessionId: string }) => {
             </Button>
             <Button
               disabled={
-                isPendingUpdateSession || !isDirty || isRefetchingSession
+                isPendingUpdateSection || !isDirty || isRefetchingSection
               }
               type="submit"
             >
-              {isPendingUpdateSession || isRefetchingSession ? (
+              {isPendingUpdateSection || isRefetchingSection ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 "Save & exit"
@@ -207,4 +207,4 @@ const DialogEditSession = ({ sessionId }: { sessionId: string }) => {
   );
 };
 
-export default DialogEditSession;
+export default DialogEditSection;

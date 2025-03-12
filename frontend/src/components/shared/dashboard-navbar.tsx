@@ -70,8 +70,8 @@ export function DashboardNavbar({className}: {className?: string}) {
               {navItems.map((item) => (
                 <Link key={item.href} href={item.href}>
                   <Button
-                    variant={activeItem === item.href ? "secondary-outline" : "ghost"}
-                    className="font-medium text-primary px-3"
+                    variant={activeItem === item.href ? "secondary" : "ghost"}
+                    className="font-medium px-3"
                   >
                     {item.name}
                   </Button>
@@ -144,7 +144,7 @@ export function DashboardNavbar({className}: {className?: string}) {
                 href={item.href}
                 className={cn(
                   "block py-2 px-3 text-sm font-medium transition-colors relative rounded-md",
-                  activeItem === item.href
+                  item.href.includes(activeItem)
                     ? "text-primary"
                     : "hover:text-primary/80"
                 )}

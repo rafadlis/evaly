@@ -15,7 +15,7 @@ import { Trash2Icon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
-const DialogDeleteSession = ({
+const DialogDeleteSection = ({
   className,
   disabled = false,
   dialogTrigger = (
@@ -31,23 +31,23 @@ const DialogDeleteSession = ({
       <Trash2Icon />
     </Button>
   ),
-  sessionId,
+  sectionId,
   onSuccess,
-  isLastSession = false,
+  isLastSection = false,
 }: {
   className?: string;
   disabled?: boolean;
   dialogTrigger?: React.ReactNode;
-  sessionId: string;
+  sectionId: string;
   onSuccess: () => void;
-  isLastSession?: boolean;
+  isLastSection?: boolean;
 }) => {
   const [open, setOpen] = useState(false);
-  const { mutate: deleteSession, isPending } = useMutation({
-    mutationKey: ["delete-session"],
+  const { mutate: deleteSection, isPending } = useMutation({
+    mutationKey: ["delete-section"],
     mutationFn: async () => {
       const response = await $api.organization.test
-        .session({ id: sessionId })
+        .section({ id: sectionId })
         .delete.delete();
 
       if (response.status !== 200) {
@@ -68,16 +68,16 @@ const DialogDeleteSession = ({
       <DialogTrigger asChild>{dialogTrigger}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Are you sure want to delete this session?</DialogTitle>
+          <DialogTitle>Are you sure want to delete this section?</DialogTitle>
           <DialogDescription>
-            All information related to this session including all question will
+            All information related to this section including all question will
             be removed
           </DialogDescription>
         </DialogHeader>
-        {isLastSession && (
+        {isLastSection && (
           <span className="text-sm text-muted-foreground bg-secondary p-2 rounded-md">
-            You can&apos;t delete the last session. Please add at least one
-            session before deleting.
+            You can&apos;t delete the last section. Please add at least one
+            section before deleting.
           </span>
         )}
         <DialogFooter>
@@ -86,8 +86,8 @@ const DialogDeleteSession = ({
           </Button>
           <Button
             variant={"destructive"}
-            disabled={isPending || isLastSession}
-            onClick={() => deleteSession()}
+            disabled={isPending || isLastSection}
+            onClick={() => deleteSection()}
           >
             {isPending ? "Deleting..." : "Delete"}
           </Button>
@@ -97,4 +97,4 @@ const DialogDeleteSession = ({
   );
 };
 
-export default DialogDeleteSession;
+export default DialogDeleteSection;

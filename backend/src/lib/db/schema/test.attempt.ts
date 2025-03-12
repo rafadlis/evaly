@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { testSession } from "./test.session";
+import { testSection } from "./test.section";
 import { pgTable, varchar, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 import { ulid } from "ulidx";
 import { user } from "./user";
@@ -11,7 +11,7 @@ export const testAttempt = pgTable(
     id: varchar("id")
       .primaryKey()
       .$defaultFn(() => "ta-" + ulid()),
-    testSessionId: varchar("test_session_id").references(() => testSession.id),
+    testSectionId: varchar("test_section_id").references(() => testSection.id),
     testId: varchar("test_id").references(() => test.id),
     participantEmail: varchar("participant_email").notNull(),
     startedAt: timestamp("started_at", {
@@ -40,8 +40,8 @@ export const testAttempt = pgTable(
     }),
   },
   (t) => ({
-    uniqueTestSession: uniqueIndex("unique_test_session_attempt").on(
-      t.testSessionId,
+    uniqueTestSection: uniqueIndex("unique_test_section_attempt").on(
+      t.testSectionId,
       t.testId,
       t.participantEmail
     ),
@@ -49,9 +49,9 @@ export const testAttempt = pgTable(
 );
 
 export const testAttemptRelations = relations(testAttempt, ({ one }) => ({
-  testSession: one(testSession, {
-    fields: [testAttempt.testSessionId],
-    references: [testSession.id],
+  testSection: one(testSection, {
+    fields: [testAttempt.testSectionId],
+    references: [testSection.id],
   }),
   participant: one(user, {
     fields: [testAttempt.participantEmail],

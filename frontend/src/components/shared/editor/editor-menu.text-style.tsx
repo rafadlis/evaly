@@ -14,7 +14,7 @@ const EditorMenuTextStyle = ({ editor }: { editor: Editor }) => {
             size={"sm"}
             
             variant={"outline"}
-            className="justify-between px-2 w-[100px]"
+            className="justify-between w-[120px]"
           >
             {editor.getAttributes("heading").level
               ? `Heading ${editor.getAttributes("heading").level}`

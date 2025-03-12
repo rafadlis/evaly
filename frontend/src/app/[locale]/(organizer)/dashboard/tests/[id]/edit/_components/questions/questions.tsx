@@ -10,20 +10,19 @@ import {
 } from "@/components/ui/card";
 import SectionSidebar from "./section-sidebar";
 import { useEffect, useState, useRef } from "react";
-import { useSelectedSession } from "../../_hooks/use-selected-session";
-import DialogDeleteSession from "@/components/shared/dialog/dialog-delete-session";
-import DialogEditSessionDuration from "@/components/shared/dialog/dialog-edit-session-duration";
-import DialogEditSession from "@/components/shared/dialog/dialog-edit-session";
+import { useSelectedSection } from "../../_hooks/use-selected-section";
+import DialogDeleteSection from "@/components/shared/dialog/dialog-delete-section";
+import DialogEditSectionDuration from "@/components/shared/dialog/dialog-edit-section-duration";
+import DialogEditSection from "@/components/shared/dialog/dialog-edit-section";
 import DialogEditQuestion from "@/components/shared/dialog/dialog-edit-question";
 import { cn } from "@/lib/utils";
 import { Reorder } from "motion/react";
 import DialogAddQuestion from "@/components/shared/dialog/dialog-add-question";
 import { Question } from "@evaly/backend/types/question";
-import { useQuery } from "@tanstack/react-query";
-import { $api } from "@/lib/api";
 import { useAllQuestionByReferenceIdQuery } from "@/query/organization/question/use-all-question-by-reference-id.query";
-import { useSessionByTestIdQuery } from "@/query/organization/session/use-session-by-test-id";
+import { useTestSectionByTestIdQuery } from "@/query/organization/test-section/use-test-section-by-test-id";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTestSectionByIdQuery } from "@/query/organization/test-section/use-test-section-by-id";
 
 /**
  * Insert questions at the correct position based on their order
@@ -98,35 +97,26 @@ const updateQuestionInArray = (
 };
 
 const Questions = () => {
-  const [selectedSession, setSelectedSession] = useSelectedSession();
+  const [selectedSection, setSelectedSection] = useSelectedSection();
   const [selectedQuestion, setSelectedQuestion] = useState<Question>();
   const [addQuestionOnOrder, setAddQuestionOnOrder] = useState<number>();
   const [isSticky, setIsSticky] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
 
   const {
-    data: dataSession,
-    isRefetching: isRefetchingSession,
-    isPending: isPendingSession,
-    refetch: refetchSession,
-  } = useQuery({
-    queryKey: ["session", selectedSession],
-    queryFn: async () => {
-      const response = await $api.organization.test
-        .session({ id: selectedSession as string })
-        .get();
-      return response.data;
-    },
-    enabled: !!selectedSession,
-  });
+    data: dataSection,
+    isRefetching: isRefetchingSection,
+    isPending: isPendingSection,
+    refetch: refetchSection,
+  } = useTestSectionByIdQuery({ id: selectedSection as string });
 
   const {
-    refetch: refetchSessions,
-    data: dataSessions,
-    isRefetching: isRefetchingSessions,
-    isPending: isPendingSessions,
-  } = useSessionByTestIdQuery({
-    testId: dataSession?.testId as string,
+    refetch: refetchSections,
+    data: dataSections,
+    isRefetching: isRefetchingSections,
+    isPending: isPendingSections,
+  } = useTestSectionByTestIdQuery({
+    testId: dataSection?.testId as string,
   });
 
   const {
@@ -134,7 +124,7 @@ const Questions = () => {
     isRefetching: isRefetchingQuestions,
     isPending: isPendingQuestions,
   } = useAllQuestionByReferenceIdQuery({
-    referenceId: selectedSession as string,
+    referenceId: selectedSection as string,
   });
 
   const [localQuestions, setLocalQuestions] = useState<Question[]>([]);
@@ -147,16 +137,16 @@ const Questions = () => {
 
   const [hideOptions, setHideOptions] = useState(false);
 
-  const onSuccessDeleteSession = async () => {
-    const response = await refetchSessions();
-    const updatedDataSessions = response.data;
-    // Find the next available session to select after deletion
-    if (updatedDataSessions && updatedDataSessions.length > 0) {
-      // Set the first available session as selected
-      setSelectedSession(updatedDataSessions[0].id);
+  const onSuccessDeleteSection = async () => {
+    const response = await refetchSections();
+    const updatedDataSections = response.data;
+    // Find the next available section to select after deletion
+    if (updatedDataSections && updatedDataSections.length > 0) {
+      // Set the first available section as selected
+      setSelectedSection(updatedDataSections[0].id);
     } else {
-      // If no sessions left, clear the selection
-      setSelectedSession(null);
+      // If no sections left, clear the selection
+      setSelectedSection(null);
     }
   };
 
@@ -224,11 +214,11 @@ const Questions = () => {
         >
           <div className="flex flex-row items-start">
             <CardTitle className="flex-1 flex flex-row flex-wrap items-center gap-2">
-              {dataSession ? (
+              {dataSection ? (
                 <>
-                  {dataSession?.order}.{" "}
-                  {dataSession?.title || "Untitled session"}
-                  <DialogEditSession sessionId={selectedSession as string} />
+                  {dataSection?.order}.{" "}
+                  {dataSection?.title || "Untitled section"}
+                  <DialogEditSection sectionId={selectedSection as string} />
                 </>
               ) : (
                 <Skeleton className="w-1/2 h-5" />
@@ -255,31 +245,31 @@ const Questions = () => {
                 )}
               </Button>
 
-              <DialogEditSessionDuration
-                sessionId={selectedSession as string}
+              <DialogEditSectionDuration
+                sectionId={selectedSection as string}
                 onSuccess={() => {
-                  refetchSessions();
-                  refetchSession();
+                  refetchSections();
+                  refetchSection();
                 }}
-                disabled={isPendingSession || isRefetchingSession}
+                disabled={isPendingSection || isRefetchingSection}
               />
-              <DialogDeleteSession
-                isLastSession={dataSessions?.length === 1}
+              <DialogDeleteSection
+                isLastSection={dataSections?.length === 1}
                 disabled={
                   isRefetchingQuestions ||
-                  isRefetchingSessions ||
+                  isRefetchingSections ||
                   isPendingQuestions ||
-                  isPendingSessions
+                  isPendingSections
                 }
-                sessionId={selectedSession as string}
+                sectionId={selectedSection as string}
                 onSuccess={() => {
-                  onSuccessDeleteSession();
+                  onSuccessDeleteSection();
                 }}
               />
             </div>
           </div>
           <CardDescription className="max-w-md flex flex-row items-end gap-2">
-            {dataSession?.description || "No description"}
+            {dataSection?.description || "No section description"}
           </CardDescription>
         </CardHeader>
         {localQuestions?.length ? (
@@ -311,7 +301,7 @@ const Questions = () => {
                         isRefetchingQuestions ? "cursor-progress" : ""
                       )}
                       onDeleteSuccess={() => {
-                        refetchSessions();
+                        refetchSections();
                         const findIndex = localQuestions.findIndex(
                           (q) => q.id === data.id
                         );
@@ -384,8 +374,8 @@ const Questions = () => {
 
       <DialogAddQuestion
         order={addQuestionOnOrder}
-        referenceId={dataSession?.id}
-        referenceType="test-session"
+        referenceId={dataSection?.id}
+        referenceType="test-section"
         onClose={() => {
           setAddQuestionOnOrder(undefined);
         }}
@@ -397,7 +387,7 @@ const Questions = () => {
           if (questions.length === 1) {
             setSelectedQuestion(questions[0]);
           }
-          refetchSessions();
+          refetchSections();
         }}
       />
     </div>
@@ -411,7 +401,7 @@ const EmptyQuestion = ({
 }) => {
   return (
     <div className="border rounded-lg flex flex-col justify-center items-center py-16  gap-4">
-      <h1>No question found on this session</h1>
+      <h1>No question found on this section</h1>
       <Button
         size={"sm"}
         variant={"outline"}

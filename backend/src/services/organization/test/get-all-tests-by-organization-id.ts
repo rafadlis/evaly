@@ -1,5 +1,5 @@
 import db from "../../../lib/db";
-import { test, testSession, testInvitation } from "../../../lib/db/schema";
+import { test, testSection, testInvitation } from "../../../lib/db/schema";
 import { Pagination } from "../../../types/pagination";
 import { SQL, sql } from "drizzle-orm";
 import { and, eq, isNull, like, between, or, inArray } from "drizzle-orm";
@@ -87,15 +87,15 @@ export async function getAllTestsByOrganizationId({
       // Fetch the sum of durations for each test in a single query
       const testDurations = await db
         .select({
-          testId: testSession.testId,
-          totalDuration: sql<number>`COALESCE(SUM(${testSession.duration}), 0)`,
+          testId: testSection.testId,
+          totalDuration: sql<number>`COALESCE(SUM(${testSection.duration}), 0)`,
         })
-        .from(testSession)
+        .from(testSection)
         .where(and(
-          inArray(testSession.testId, testIds),
-          isNull(testSession.deletedAt)
+          inArray(testSection.testId, testIds),
+          isNull(testSection.deletedAt)
         ))
-        .groupBy(testSession.testId);
+        .groupBy(testSection.testId);
       
       // Create a map of test ID to duration for quick lookup
       const durationMap = new Map<string, number>();

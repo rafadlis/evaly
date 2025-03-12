@@ -6,7 +6,6 @@ import { getTestById } from "../../services/organization/test/get-test-by-id";
 import { updateTest } from "../../services/organization/test/update-test";
 import { createUpdateSchema } from "drizzle-typebox";
 import { test } from "../../lib/db/schema";
-import { testSessionRouter } from "./test.session.router";
 import { checkTestOwner } from "../../services/organization/test/check-test-owner";
 import { addInvitationTest } from "../../services/organization/test/add-invitation-test";
 import { getInvitationListTest } from "../../services/organization/test/get-invitation-list-test";
@@ -14,6 +13,7 @@ import { deleteInvitationTest } from "../../services/organization/test/delete-in
 import { validateTestIsPublishable } from "../../services/organization/test/validate-test-is-publishable";
 import { publishUnpublishTest } from "../../services/organization/test/publish-unpublish";
 import { deleteTest } from "../../services/organization/test/delete-test";
+import { testSectionRouter } from "./test.section.router";
 
 export const testRouter = new Elysia().group("/test", (app) => {
   return (
@@ -229,7 +229,7 @@ export const testRouter = new Elysia().group("/test", (app) => {
           }),
         }
       )
-      .use(testSessionRouter)
+      .use(testSectionRouter)
 
       // Delete Test
       .delete(

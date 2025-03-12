@@ -8,7 +8,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { ulid } from "ulidx";
 import { testInvitation } from "./test.invitation";
-import { testSession } from "./test.session";
+import { testSection } from "./test.section";
 import { organization, organizer } from "./organization";
 
 export const test = pgTable("test", {
@@ -60,7 +60,7 @@ export const test = pgTable("test", {
 
 export const testRelations = relations(test, ({ many, one }) => ({
   invitations: many(testInvitation),
-  testSessions: many(testSession),
+  testSections: many(testSection),
   createdByOrganizer: one(organizer, {
     fields: [test.createdByOrganizerId],
     references: [organizer.id],

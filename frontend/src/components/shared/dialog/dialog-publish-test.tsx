@@ -31,7 +31,7 @@ const DialogPublishTest = ({
   onPublished?: (newTest: Test) => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { data } = useTestValidatePublishable(testId, isOpen);
+  const { data, isPending } = useTestValidatePublishable(testId, isOpen);
   const { mutate: publishTest, isPending: isPublishing } = useMutation({
     mutationKey: ["publish-test"],
     mutationFn: async () => {
@@ -65,7 +65,10 @@ const DialogPublishTest = ({
           title="Publish Test"
         />
         <div className="overflow-y-auto">
-          <div className="flex-1 container max-w-2xl py-10">
+          {isPending ? (
+              <Loader2 className="animate-spin mx-auto size-10 mt-10" />
+          ) : (
+            <div className="flex-1 container max-w-2xl py-10">
             <div className="flex flex-row justify-between items-center">
               <h1 className="text-xl font-bold">
                 Review Test Before Publishing
@@ -150,8 +153,8 @@ const DialogPublishTest = ({
                 </p>
               </div>
               <div className="p-4">
-                <Label>Total Sessions</Label>
-                <p>{data?.summary?.totalSessions || "No total sessions"}</p>
+                <Label>Total Sections</Label>
+                <p>{data?.summary?.totalSections || "No total sections"}</p>
               </div>
               <div className="p-4">
                 <Label>Total Questions</Label>
@@ -178,6 +181,7 @@ const DialogPublishTest = ({
               </div>
             </div>
           </div>
+          )}
         </div>
       </DrawerContent>
     </Drawer>

@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, FileText, AlertCircle, Users, Play, Orbit } from "lucide-react";
+import { Clock, FileText, AlertCircle, Play, Orbit } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useTestById } from "@/query/participants/test/use-test-by-id";
@@ -56,23 +56,23 @@ const Page = () => {
         return data;
       },
       onSuccess: (data) => {
-        let unFinishedSession;
-        for (const session of data) {
-          if (session.completedAt) {
+        let unFinishedSection;
+        for (const section of data) {
+          if (section.completedAt) {
             continue;
           }
 
-          unFinishedSession = session;
+          unFinishedSection = section;
           break;
         }
 
-        if (!unFinishedSession?.id) {
+        if (!unFinishedSection?.id) {
           toast.error("You have completed all sections");
           return;
         }
 
         startTransitionRedirect(() => {
-          router.push(`/s/${testId}/${unFinishedSession.id}`);
+          router.push(`/s/${testId}/${unFinishedSection.id}`);
         });
       },
       onError(error) {
@@ -192,10 +192,6 @@ const Page = () => {
                 <FileText className="h-4 w-4 text-muted-foreground" />
                 <span>{testData.totalQuestions} questions</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <Users className="h-4 w-4 text-muted-foreground" />
-                <span>All participants</span>
-              </div>
             </div>
           </div>
           <div className="flex flex-col gap-2 md:items-end">
@@ -271,7 +267,7 @@ const Page = () => {
               <CardHeader className="border-b">
                 <CardTitle>Test Sections</CardTitle>
                 <CardDescription>
-                  Complete all {testData.testSessions?.length} sections to
+                  Complete all {testData.testSections?.length} sections to
                   finish
                 </CardDescription>
               </CardHeader>
@@ -293,8 +289,8 @@ const Page = () => {
 
                 {/* Sections */}
                 <div className="space-y-6">
-                  {testData.testSessions?.map((session, index) => (
-                    <div key={session.id} className="relative">
+                  {testData.testSections?.map((section, index) => (
+                    <div key={section.id} className="relative">
                       {index > 0 && (
                         <div className="absolute left-4 top-0 h-full w-px bg-muted -translate-y-full"></div>
                       )}
@@ -312,10 +308,10 @@ const Page = () => {
                         </div>
                         <div className="space-y-2 flex-1">
                           <div className="flex justify-between items-start">
-                            <h3 className="font-medium">{session.title}</h3>
+                            <h3 className="font-medium">{section.title}</h3>
                             <Badge variant="outline" className="ml-2">
-                              {session.duration
-                                ? `${session.duration} min`
+                              {section.duration
+                                ? `${section.duration} min`
                                 : "No time limit"}
                             </Badge>
                           </div>
@@ -323,7 +319,7 @@ const Page = () => {
                           <div className="flex items-center gap-4 text-sm text-muted-foreground">
                             <div className="flex items-center gap-1.5">
                               <FileText className="h-4 w-4" />
-                              <span>{session.totalQuestions} questions</span>
+                              <span>{section.totalQuestions} questions</span>
                             </div>
                             {index === 0 && (
                               <Badge variant="secondary" className="text-xs">
@@ -333,7 +329,7 @@ const Page = () => {
                           </div>
 
                           <p className="text-sm text-muted-foreground">
-                            {session.description}
+                            {section.description}
                           </p>
                         </div>
                       </div>

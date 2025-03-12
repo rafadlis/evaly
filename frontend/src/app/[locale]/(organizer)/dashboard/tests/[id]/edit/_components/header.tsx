@@ -9,7 +9,6 @@ import { UpdateTest } from "@evaly/backend/types/test";
 import { useMutation } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
 import { useTestByIdQuery } from "@/query/organization/test/use-test-by-id.query";
-import { useSessionByTestIdQuery } from "@/query/organization/session/use-session-by-test-id";
 import DialogPublishTest from "@/components/shared/dialog/dialog-publish-test";
 import {
   Popover,
@@ -19,6 +18,7 @@ import {
 import DialogUnpublishTest from "@/components/shared/dialog/dialog-unpublish-test";
 import { useProgressRouter } from "@/components/shared/progress-bar";
 import BackButton from "@/components/shared/back-button";
+import { useTestSectionByTestIdQuery } from "@/query/organization/test-section/use-test-section-by-test-id";
 
 const Header = () => {
   const { id } = useParams();
@@ -63,15 +63,15 @@ const Header = () => {
     }
   }, [dataTest, reset]);
 
-  const { data: dataSessions } = useSessionByTestIdQuery({
+  const { data: dataSections } = useTestSectionByTestIdQuery({
     testId: id?.toString() || "",
   });
 
   const { hours, minutes, totalDuration } = useMemo(() => {
-    if (!dataSessions?.length) return { hours: 0, minutes: 0 };
+    if (!dataSections?.length) return { hours: 0, minutes: 0 };
 
-    const totalDuration = dataSessions.reduce((acc, session) => {
-      return acc + (session.duration || 0);
+    const totalDuration = dataSections.reduce((acc, section) => {
+      return acc + (section.duration || 0);
     }, 0);
 
     return {
@@ -79,7 +79,7 @@ const Header = () => {
       minutes: totalDuration % 60,
       totalDuration,
     };
-  }, [dataSessions]);
+  }, [dataSections]);
 
   if (!isPendingTest && !dataTest) {
     return notFound();

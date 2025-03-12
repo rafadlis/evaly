@@ -12,9 +12,9 @@ import {
   unique
 } from "drizzle-orm/pg-core";
 import { ulid } from "ulidx";
-import { testSession } from "./test.session";
 import { QUESTION_TYPES } from "../../../types/question-types";
 import { MEDIA_TYPES, MediaType } from "../../../types/media";
+import { testSection } from "./test.section";
 
 // Main question table
 export const question = pgTable(
@@ -27,10 +27,10 @@ export const question = pgTable(
     referenceId: varchar("reference_id", { length: 255 }).notNull(),
     referenceType: varchar("reference_type", {
       length: 100,
-      enum: ["test-session", "template", "ai-generated"],
+      enum: ["test-section", "template", "ai-generated"],
     })
       .notNull()
-      .default("test-session"),
+      .default("test-section"),
     organizationId: varchar("organization_id", { length: 255 }), // Owner of the question
     order: smallint("order").default(1).notNull(),
     type: varchar("type", {
@@ -422,10 +422,10 @@ export const formulaConfig = pgTable(
 
 //Relations
 export const questionRelation = relations(question, ({ one, many }) => ({
-  testSession: one(testSession, {
+  testSection: one(testSection, {
     fields: [question.referenceId],
-    references: [testSession.id],
-    relationName: "testSession.question",
+    references: [testSection.id],
+    relationName: "testSection.question",
   }),
   textFieldConfig: one(textFieldConfig),
   fillBlankSegments: many(fillBlankSegment),

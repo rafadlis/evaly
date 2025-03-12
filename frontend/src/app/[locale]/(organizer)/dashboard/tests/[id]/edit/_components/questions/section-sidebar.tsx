@@ -1,17 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Loader2, PlusIcon } from "lucide-react";
-import { useSelectedSession } from "../../_hooks/use-selected-session";
+import { useSelectedSection } from "../../_hooks/use-selected-section";
 import { useParams } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useState } from "react";
-import CardSession from "@/components/shared/card/card-session";
+import CardSection from "@/components/shared/card/card-section";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Reorder } from "motion/react";
 import { useMutation } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
-import { useSessionByTestIdQuery } from "@/query/organization/session/use-session-by-test-id";
-import { useSessionByIdQuery } from "@/query/organization/session/use-session-by-id";
+import { useTestSectionByTestIdQuery } from "@/query/organization/test-section/use-test-section-by-test-id";
+import { useTestSectionByIdQuery } from "@/query/organization/test-section/use-test-section-by-id";
 
 const SectionSidebar = ({ className }: { className?: string }) => {
   return (
@@ -24,14 +24,14 @@ const SectionSidebar = ({ className }: { className?: string }) => {
 
 const ListSession = () => {
   const { id } = useParams();
-  const [selectedSession, setSelectedSession] = useSelectedSession();
+  const [selectedSection, setSelectedSection] = useSelectedSection();
 
-  const { data, isPending, isRefetching, refetch } = useSessionByTestIdQuery({
+  const { data, isPending, isRefetching, refetch } = useTestSectionByTestIdQuery({
     testId: id as string,
   });
 
-  const { refetch: refetchSessionById } = useSessionByIdQuery({
-    id: selectedSession as string,
+  const { refetch: refetchSectionById } = useTestSectionByIdQuery({
+    id: selectedSection as string,
   });
 
   const [orderedData, setOrderedData] = useState<typeof data>([]);
@@ -43,28 +43,28 @@ const ListSession = () => {
   }, [data]);
 
   useEffect(() => {
-    if (data?.length && !selectedSession) {
-      setSelectedSession(data[0].id);
+    if (data?.length && !selectedSection) {
+      setSelectedSection(data[0].id);
     }
-  }, [data, selectedSession, setSelectedSession]);
+  }, [data, selectedSection, setSelectedSection]);
 
   const { mutateAsync: updateOrder, isPending: isPendingUpdateOrder } =
     useMutation({
-      mutationKey: ["update-session-order"],
-      mutationFn: async (sessionIds: string[]) => {
-        const response = await $api.organization.test.session.order.put({
+      mutationKey: ["update-section-order"],
+      mutationFn: async (sectionIds: string[]) => {
+        const response = await $api.organization.test.section.order.put({
           testId: id as string,
-          order: sessionIds,
+          order: sectionIds,
         });
         return response.data;
       },
     });
 
   const onChangeOrder = async () => {
-    const sessionIds = orderedData?.map((e) => e.id) || [];
-    await updateOrder(sessionIds);
+    const sectionIds = orderedData?.map((e) => e.id) || [];
+    await updateOrder(sectionIds);
     await refetch();
-    await refetchSessionById();
+    await refetchSectionById();
   };
 
   if (isPending) {
@@ -100,23 +100,23 @@ const ListSession = () => {
             onDragEnd={onChangeOrder}
             dragListener={isPendingUpdateOrder ? false : true}
           >
-            <CardSession
+            <CardSection
               data={e}
               key={e.id}
-              isSelected={e.id === selectedSession}
-              onClick={() => setSelectedSession(e.id)}
+              isSelected={e.id === selectedSection}
+              onClick={() => setSelectedSection(e.id)}
               onDeleteSuccess={async () => {
                 await refetch();
-                if (e.id === selectedSession) {
-                  const nearestSession = data.find(
-                    (session) => session.id !== e.id
+                if (e.id === selectedSection) {
+                  const nearestSection = data.find(
+                    (section) => section.id !== e.id
                   );
-                  if (nearestSession) {
-                    setSelectedSession(nearestSession.id);
+                  if (nearestSection) {
+                    setSelectedSection(nearestSection.id);
                   }
                 }
               }}
-              isLastSession={data.length === 1}
+              isLastSection={data.length === 1}
             />
           </Reorder.Item>
         ))}
@@ -128,26 +128,26 @@ const ListSession = () => {
 
 const AddSession = () => {
   const { id } = useParams();
-  const [, setSelectedSession] = useSelectedSession();
+  const [, setSelectedSection] = useSelectedSection();
 
   const {
     refetch,
     isPending: isPendingSession,
-    isRefetching: isRefetchingSession,
-  } = useSessionByTestIdQuery({ testId: id as string });
+    isRefetching: isRefetchingSection,
+  } = useTestSectionByTestIdQuery({ testId: id as string });
 
   const { mutate, isPending } = useMutation({
-    mutationKey: ["create-session"],
+    mutationKey: ["create-section"],
     mutationFn: async () => {
-      const response = await $api.organization.test.session.create.post({
+      const response = await $api.organization.test.section.create.post({
         testId: id as string,
       });
-      return response.data?.sessions;
+      return response.data?.sections;
     },
     onSuccess(data) {
-      const sessionId = data?.at(0)?.id;
-      if (sessionId) {
-        setSelectedSession(sessionId);
+      const sectionId = data?.at(0)?.id;
+      if (sectionId) {  
+        setSelectedSection(sectionId);
         refetch();
       }
     },
@@ -160,17 +160,17 @@ const AddSession = () => {
       <Button
         variant={"outline"}
         className="w-max"
-        disabled={isPending || isRefetchingSession}
+        disabled={isPending || isRefetchingSection}
         onClick={() => {
           mutate();
         }}
       >
-        {isPending || isRefetchingSession ? (
+        {isPending || isRefetchingSection ? (
           <Loader2 className="animate-spin" />
         ) : (
           <PlusIcon />
-        )}{" "}
-        Add Session
+        )}
+        Add Section
       </Button>
     </div>
   );

@@ -1,16 +1,16 @@
 import { $api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 
-export function useSessionByTestIdQuery({testId}:{testId:string}) {
+export function useTestSectionByTestIdQuery({testId}:{testId:string}) {
     return useQuery({
-        queryKey: ["session-by-test-id",testId],
+        queryKey: ["section-by-test-id",testId],
         queryFn: async () => {
-            const response = await $api.organization.test.session.all.get({
+            const response = await $api.organization.test.section.all.get({
                 query: {
                     testId
                 }
             });
-            return response.data?.sessions
+            return response.data?.sections
         },
         enabled: !!testId,
     });

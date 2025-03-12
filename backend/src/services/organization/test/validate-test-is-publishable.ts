@@ -1,6 +1,6 @@
 import { getTestById } from "./get-test-by-id";
 import db from "../../../lib/db";
-import { testSession, question } from "../../../lib/db/schema";
+import { testSection, question } from "../../../lib/db/schema";
 import { eq, and, isNull } from "drizzle-orm";
 import { getInvitationListTest } from "./get-invitation-list-test";
 
@@ -26,12 +26,12 @@ export type TestPublishabilityResult = {
     description: string | null;
     type: string;
     access: string;
-    totalSessions: number;
+    totalSections: number;
     totalQuestions: number;
     totalDuration: number; // in minutes
     totalParticipants: number;
     scheduledDate: string | null;
-    sessions: Array<{
+    sections: Array<{
       id: string;
       title: string;
       questionCount: number;
@@ -104,47 +104,46 @@ export async function validateTestIsPublishable(testId: string, organizationId: 
         message: `${test.type === "live" ? "Live test" : "Self-paced test"}`
     });
 
-    // Get test sessions
-    const testSessions = await db.query.testSession.findMany({
+    // Get test sections
+    const testSections = await db.query.testSection.findMany({
         where: and(
-            eq(testSession.testId, testId),
-            isNull(testSession.deletedAt)
+            eq(testSection.testId, testId),
+            isNull(testSection.deletedAt)
         ),
     });
 
-    // Check if test has sessions
-    if (testSessions.length === 0) {
+    // Check if test has sections
+    if (testSections.length === 0) {
         checklist.push({
-            id: "sessions",
-            title: "Test sessions",
+            id: "sections",
+            title: "Test sections",
             status: "error",
-            message: "Test must have at least one session"
+            message: "Test must have at least one section"
         });
         hasErrors = true;
     } else {
         checklist.push({
-            id: "sessions",
-            title: "Test sessions",
+            id: "sections",
+            title: "Test sections",
             status: "ok",
-            message: `${testSessions.length} session(s) created`
+            message: `${testSections.length} section(s) created`
         });
 
-        // Check if each session has a title
-        const sessionsWithoutTitle = testSessions.filter(session => !session.title || session.title.trim() === "");
-        if (sessionsWithoutTitle.length > 0) {
+        // Check if each section has a title
+        const sectionsWithoutTitle = testSections.filter(section => !section.title || section.title.trim() === "");
+        if (sectionsWithoutTitle.length > 0) {
             checklist.push({
-                id: "session_titles",
-                title: "Session titles",
-                status: "error",
-                message: `${sessionsWithoutTitle.length} session(s) are missing a title`
+                id: "section_titles",
+                title: "Section titles",
+                status: "warning",
+                message: `${sectionsWithoutTitle.length} section(s) are missing a title`
             });
-            hasErrors = true;
         } else {
             checklist.push({
-                id: "session_titles",
-                title: "Session titles",
+                id: "section_titles",
+                title: "Section titles",
                 status: "ok",
-                message: "All sessions have titles"
+                message: "All sections have titles"
             });
         }
     }
@@ -200,63 +199,63 @@ export async function validateTestIsPublishable(testId: string, organizationId: 
         }
     }
 
-    // Build session details with question counts
-    const sessionDetails = [];
+    // Build section details with question counts
+    const sectionDetails = [];
     let totalQuestions = 0;
     let totalDuration = 0;
-    let sessionsWithoutQuestions = 0;
+    let sectionsWithoutQuestions = 0;
 
-    for (const session of testSessions) {
+    for (const section of testSections) {
         const questions = await db.query.question.findMany({
             where: and(
-                eq(question.referenceId, session.id),
-                eq(question.referenceType, "test-session"),
+                eq(question.referenceId, section.id),
+                eq(question.referenceType, "test-section"),
                 isNull(question.deletedAt)
             ),
         });
 
         if (questions.length === 0) {
-            sessionsWithoutQuestions++;
+            sectionsWithoutQuestions++;
         }
 
         totalQuestions += questions.length;
-        totalDuration += session.duration || 0;
+        totalDuration += section.duration || 0;
 
-        sessionDetails.push({
-            id: session.id,
-            title: session.title || "Untitled Session",
+        sectionDetails.push({
+            id: section.id,
+            title: section.title || "Untitled Section",
             questionCount: questions.length,
-            duration: session.duration || 0
+            duration: section.duration || 0
         });
     }
 
-    // Check if all sessions have questions
-    if (sessionsWithoutQuestions > 0) {
+    // Check if all sections have questions
+    if (sectionsWithoutQuestions > 0) {
         checklist.push({
-            id: "session_questions",
-            title: "Session questions",
+            id: "section_questions",
+            title: "Section questions",
             status: "error",
-            message: `${sessionsWithoutQuestions} session(s) have no questions`
+            message: `${sectionsWithoutQuestions} section(s) have no questions`
         });
         hasErrors = true;
-    } else if (testSessions.length > 0) {
+    } else if (testSections.length > 0) {
         checklist.push({
-            id: "session_questions",
-            title: "Session questions",
+            id: "section_questions",
+            title: "Section questions",
             status: "ok",
-            message: `${totalQuestions} question(s) across all sessions`
+            message: `${totalQuestions} question(s) across all sections`
         });
     }
 
     // Check total duration
-    if (totalDuration === 0 && testSessions.length > 0) {
+    if (totalDuration === 0 && testSections.length > 0) {
         checklist.push({
             id: "duration",
             title: "Test duration",
             status: "warning",
-            message: "No time limit set for sessions. Participants can complete the test at their own pace."
+            message: "No time limit set for sections. Participants can complete the test at their own pace."
         });
-    } else if (testSessions.length > 0) {
+    } else if (testSections.length > 0) {
         checklist.push({
             id: "duration",
             title: "Test duration",
@@ -271,12 +270,12 @@ export async function validateTestIsPublishable(testId: string, organizationId: 
         description: test.description,
         type: test.type,
         access: test.access || "public",
-        totalSessions: testSessions.length,
+        totalSections: testSections.length,
         totalQuestions: totalQuestions,
         totalDuration: totalDuration,
         totalParticipants: invitations.length,
         scheduledDate: test.heldAt,
-        sessions: sessionDetails
+        sections: sectionDetails
     };
 
     return {

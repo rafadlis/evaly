@@ -1,30 +1,31 @@
 import { or } from "drizzle-orm";
 import db from "../../../lib/db";
-import { TestSession, testAttempt } from "../../../lib/db/schema";
+import { testAttempt } from "../../../lib/db/schema";
+import { TestSection } from "../../../types/test";
 
 export async function getOrCreateAttempt({
   testId,
-  testSessions,
+  testSections,
   email,
 }: {
   testId: string;
-  testSessions: TestSession[];
+  testSections: TestSection[];
   email: string;
 }) {
   // Check if there is an attempt already, return the attempt
-  const sessionIds = testSessions.map((session) => session.id);
+  const sectionIds = testSections.map((section) => section.id);
  
   // Get existing attempts
-  let resultAttempts = await getAttempts({ testId, email, sessionIds });
+  let resultAttempts = await getAttempts({ testId, email, sectionIds });
 
-  // If there is no attempt for some sessions, create a new attempt
-  if (resultAttempts.length !== sessionIds.length) {
-    const missingSessionIds = sessionIds.filter(
-      (id) => !resultAttempts.some((resultAttempt) => resultAttempt.testSessionId === id)
+  // If there is no attempt for some sections, create a new attempt
+  if (resultAttempts.length !== sectionIds.length) {
+    const missingSectionIds = sectionIds.filter(
+      (id) => !resultAttempts.some((resultAttempt) => resultAttempt.testSectionId === id)
     );
 
-    const newAttempts = missingSessionIds.map((id) => ({
-      testSessionId: id,
+    const newAttempts = missingSectionIds.map((id) => ({
+      testSectionId: id,
       testId,
       participantEmail: email,
     }));
@@ -39,23 +40,23 @@ export async function getOrCreateAttempt({
     }
 
     // Get the new attempts
-    resultAttempts = await getAttempts({ testId, email, sessionIds: missingSessionIds })
+    resultAttempts = await getAttempts({ testId, email, sectionIds: missingSectionIds })
   }
 
-  // Return the attempt sorted by session order
-  const resultAttemptWithSessions = testSessions.map(testSession => {
-    const attempt = resultAttempts.find(attempt => attempt.testSessionId === testSession.id);
+  // Return the attempt sorted by section order
+  const resultAttemptWithSections = testSections.map(testSection => {
+    const attempt = resultAttempts.find(attempt => attempt.testSectionId === testSection.id);
     return {
       ...attempt,
-      testSession: testSession,
+      testSection: testSection,
     };
   });
 
-  return resultAttemptWithSessions;
+  return resultAttemptWithSections;
 }
 
 
-const getAttempts = async ({ testId, email, sessionIds }: { testId: string, email: string, sessionIds: string[] }) => {
+const getAttempts = async ({ testId, email, sectionIds }: { testId: string, email: string, sectionIds: string[] }) => {
   const resultAttempts = await db.query.testAttempt.findMany({
     with: {
       participant: {
@@ -70,7 +71,7 @@ const getAttempts = async ({ testId, email, sessionIds }: { testId: string, emai
       return and(
         eq(fields.testId, testId),
         eq(fields.participantEmail, email),
-        or(...sessionIds.map((id) => eq(fields.testSessionId, id)))
+        or(...sectionIds.map((id) => eq(fields.testSectionId, id)))
       );
     },
   });

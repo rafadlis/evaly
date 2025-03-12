@@ -1,9 +1,12 @@
 import {
+  boolean,
+  index,
   integer,
   jsonb,
   pgTable,
   text,
   timestamp,
+  uniqueIndex,
   varchar,
 } from "drizzle-orm/pg-core";
 import { ulid } from "ulidx";
@@ -20,7 +23,7 @@ export const testAttemptAnswer = pgTable("test_attempt_answer", {
   questionId: varchar("question_id").references(() => question.id),
   answerText: text("answer_text"),
   answerOptions: jsonb("answer_options").$type<
-    string[] | number[] | boolean[]
+    string[]
   >(),
   answerMediaUrl: varchar("answer_media_url", { length: 512 }),
   answerMediaType: varchar("answer_media_type", {
@@ -28,6 +31,7 @@ export const testAttemptAnswer = pgTable("test_attempt_answer", {
     enum: MEDIA_TYPES,
   }),
   changeCount: integer("change_count").notNull().default(0),
+  isCorrect: boolean("is_correct"),
   createdAt: timestamp("created_at", {
     mode: "string",
     withTimezone: true,
@@ -44,7 +48,15 @@ export const testAttemptAnswer = pgTable("test_attempt_answer", {
     mode: "string",
     withTimezone: true,
   }),
-});
+}, (t) => ({
+  uniqueAttemptQuestion: uniqueIndex("unique_attempt_question").on(
+    t.attemptId,
+    t.questionId
+  ),
+  attemptIdIndex: index("attempt_id_index").on(
+    t.attemptId
+  ),
+}));
 
 export const testAttemptAnswerRelations = relations(
   testAttemptAnswer,

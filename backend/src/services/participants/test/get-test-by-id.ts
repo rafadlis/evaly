@@ -3,7 +3,7 @@ import {
   question,
   test,
   testInvitation,
-  testSession,
+  testSection,
 } from "../../../lib/db/schema";
 import { and, asc, count, eq, isNull } from "drizzle-orm";
 
@@ -79,54 +79,54 @@ export async function getTestById({
       invitations: {
         orderBy: asc(testInvitation.email),
       },
-      testSessions: {
-        where: isNull(testSession.deletedAt),
-        orderBy: asc(testSession.order),
+      testSections: {
+        where: isNull(testSection.deletedAt),
+        orderBy: asc(testSection.order),
       },
       organization: true,
     },
     where: and(eq(test.id, id), isNull(test.deletedAt)),
   });
 
-  // Get session IDs to use for question counting
-  const sessionIds =
-    testResult?.testSessions?.map((session) => session.id) || [];
+  // Get section IDs to use for question counting
+  const sectionIds =
+    testResult?.testSections?.map((section) => section.id) || [];
 
-  // Count questions for each session separately
-  const sessionQuestionCounts = await Promise.all(
-    sessionIds.map(async (sessionId) => {
+  // Count questions for each section separately
+  const sectionQuestionCounts = await Promise.all(
+    sectionIds.map(async (sectionId) => {
       const result = await db
         .select({ count: count() })
         .from(question)
-        .where(and(eq(question.referenceId, sessionId), isNull(question.deletedAt)));
-      return { sessionId, count: result[0].count };
+        .where(and(eq(question.referenceId, sectionId), isNull(question.deletedAt)));
+      return { sectionId, count: result[0].count };
     })
   );
 
-  // Create a map of session ID to question count
+  // Create a map of section ID to question count
   const questionCountMap = Object.fromEntries(
-    sessionQuestionCounts.map(({ sessionId, count }) => [sessionId, count])
+    sectionQuestionCounts.map(({ sectionId, count }) => [sectionId, count])
   );
 
-  // Add question counts to test sessions
-  const testSessionsWithCounts = testResult?.testSessions.map((session) => ({
-    ...session,
-    totalQuestions: questionCountMap[session.id] || 0,
+  // Add question counts to test sections
+  const testSectionsWithCounts = testResult?.testSections.map((section) => ({
+    ...section,
+    totalQuestions: questionCountMap[section.id] || 0,
   }));
 
-  const totalQuestions = sessionQuestionCounts.reduce(
+  const totalQuestions = sectionQuestionCounts.reduce(
     (sum, { count }) => sum + count,
     0
   );
 
-  const totalDuration = testResult?.testSessions.reduce(
-    (acc, session) => acc + (session.duration ?? 0),
+  const totalDuration = testResult?.testSections.reduce(
+    (acc, section) => acc + (section.duration ?? 0),
     0
   );
 
   return {
     ...testResult,
-    testSessions: testSessionsWithCounts,
+    testSections: testSectionsWithCounts,
     totalQuestions,
     totalDuration,
   };

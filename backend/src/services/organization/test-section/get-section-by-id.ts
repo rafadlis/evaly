@@ -2,10 +2,10 @@ import { and, count, eq, isNull } from "drizzle-orm/sql";
 import db from "../../../lib/db";
 import { question } from "../../../lib/db/schema";
 
-export async function getSessionById(sessionId: string) {
-  const session = await db.query.testSession.findFirst({
+export async function getSectionById(sectionId: string) {
+  const section = await db.query.testSection.findFirst({
     where(fields, { and, eq, isNull }) {
-      return and(eq(fields.id, sessionId), isNull(fields.deletedAt));
+      return and(eq(fields.id, sectionId), isNull(fields.deletedAt));
     },
   });
 
@@ -15,10 +15,10 @@ export async function getSessionById(sessionId: string) {
     })
     .from(question)
     .where(
-      and(eq(question.referenceId, sessionId), isNull(question.deletedAt))
+      and(eq(question.referenceId, sectionId), isNull(question.deletedAt))
     );
   return {
-    ...session,
+    ...section,
     numOfQuestions: numOfQuestions[0]?.count,
   };
 }

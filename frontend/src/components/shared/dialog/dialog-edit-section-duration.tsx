@@ -8,43 +8,43 @@ import {
 } from "@/components/ui/popover";
 import { $api } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import { useSessionByIdQuery } from "@/query/organization/session/use-session-by-id";
-import { useSessionByTestIdQuery } from "@/query/organization/session/use-session-by-test-id";
-import { UpdateTestSession } from "@evaly/backend/types/test";
+import { useTestSectionByIdQuery } from "@/query/organization/test-section/use-test-section-by-id";
+import { useTestSectionByTestIdQuery } from "@/query/organization/test-section/use-test-section-by-test-id";
+import { UpdateTestSection } from "@evaly/backend/types/test";
 import { useMutation } from "@tanstack/react-query";
 import { CircleHelpIcon, ClockIcon, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-const DialogEditSessionDuration = ({
+const DialogEditSectionDuration = ({
   className,
   disabled = false,
   onSuccess,
-  sessionId,
+  sectionId,
 }: {
   className?: string;
   disabled?: boolean;
-  sessionId?: string; // Made optional since it's not used in the component
+  sectionId?: string; // Made optional since it's not used in the component
   onSuccess?: () => void;
 }) => {
   const [open, setOpen] = useState(false);
 
   const {
-    data: dataSession,
-    isRefetching: isRefetchingSession,
-    refetch: refetchSession,
-  } = useSessionByIdQuery({ id: sessionId as string });
+    data: dataSection,
+    isRefetching: isRefetchingSection,
+    refetch: refetchSection,
+  } = useTestSectionByIdQuery({ id: sectionId as string });
 
-  const { refetch: refetchSessions } = useSessionByTestIdQuery({
-    testId: dataSession?.testId as string,
+  const { refetch: refetchSections } = useTestSectionByTestIdQuery({
+    testId: dataSection?.testId as string,
   });
 
-  const { mutate: updateSession, isPending: isPendingUpdateSession } =
+  const { mutate: updateSection, isPending: isPendingUpdateSection } =
     useMutation({
-      mutationKey: ["update-session"],
-      mutationFn: async (data: UpdateTestSession) => {
+      mutationKey: ["update-section"],
+      mutationFn: async (data: UpdateTestSection) => {
         const response = await $api.organization.test
-          .session({ id: sessionId as string })
+          .section({ id: sectionId as string })
           .put(data);
         if (response.status !== 200) {
           throw new Error(response.error?.value as unknown as string);
@@ -52,8 +52,8 @@ const DialogEditSessionDuration = ({
         return response.data;
       },
       onSuccess: async () => {
-        await refetchSession();
-        await refetchSessions();
+        await refetchSection();
+        await refetchSections();
         onSuccess?.();
         setOpen(false);
       },
@@ -70,19 +70,19 @@ const DialogEditSessionDuration = ({
     let hours = 0;
     let minutes = 0;
 
-    if (dataSession) {
-      hours = Math.floor((dataSession.duration || 0) / 60);
-      minutes = (dataSession.duration || 0) % 60;
+    if (dataSection) {
+      hours = Math.floor((dataSection.duration || 0) / 60);
+      minutes = (dataSection.duration || 0) % 60;
     }
 
     setHours(hours);
     setMinutes(minutes);
-  }, [dataSession]);
+  }, [dataSection]);
 
   const handleSave = async () => {
     const newTotalMinutes = hours * 60 + minutes;
 
-    updateSession({
+    updateSection({
       duration: newTotalMinutes,
     });
   };
@@ -93,8 +93,8 @@ const DialogEditSessionDuration = ({
       onOpenChange={(open) => {
         if (!open) {
           // set the value to the original value
-          setHours(Math.floor((dataSession?.duration || 0) / 60));
-          setMinutes((dataSession?.duration || 0) % 60);
+          setHours(Math.floor((dataSection?.duration || 0) / 60));
+          setMinutes((dataSection?.duration || 0) % 60);
         }
         setOpen(open);
       }}
@@ -168,12 +168,12 @@ const DialogEditSessionDuration = ({
             />
           </div>
           <Button
-            disabled={isPendingUpdateSession || isRefetchingSession}
+            disabled={isPendingUpdateSection || isRefetchingSection}
             onClick={handleSave}
             type="button"
             className="w-full col-span-2"
           >
-            {isPendingUpdateSession ? (
+            {isPendingUpdateSection ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
               "Save"
@@ -185,4 +185,4 @@ const DialogEditSessionDuration = ({
   );
 };
 
-export default DialogEditSessionDuration;
+export default DialogEditSectionDuration;
