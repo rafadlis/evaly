@@ -9,10 +9,8 @@ import { useAttemptAnswerByAttemptId } from "@/query/participants/attempt/use-at
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 
-export const dynamic = "force-static";
-
 const Page = () => {
-  const { attemptId } = useParams();
+  const { attemptId, testId } = useParams();
   const router = useRouter();
   const pathName = usePathname();
   const {
@@ -41,7 +39,9 @@ const Page = () => {
           </Button>
         )}
         {errorAttempt.cause === 403 && (
-          <Button onClick={() => router.push(`/`)}>Go to Home</Button>
+          <Button onClick={() => router.push(`/s/${testId}`)}>
+            Go to Home
+          </Button>
         )}
       </div>
     );
