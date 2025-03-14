@@ -28,6 +28,7 @@ export async function getOrCreateAttempt({
       testSectionId: id,
       testId,
       participantEmail: email,
+      startedAt: new Date().toISOString(),
     }));
 
     const insertedAttempts = await db

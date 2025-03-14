@@ -21,12 +21,12 @@ import { LogoType } from "./logo";
 import ThemeToggle from "./theme-toggle";
 import { usePathname } from "@/i18n/navigation";
 
-export function DashboardNavbar({className}: {className?: string}) {
+export function DashboardNavbar({ className }: { className?: string }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const [activeItem, setActiveItem] = useState("/dashboard");
-  const { setTheme,theme } = useTheme();
+  const { setTheme, theme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -63,18 +63,20 @@ export function DashboardNavbar({className}: {className?: string}) {
         <div className="flex items-center justify-between">
           <div className="flex flex-row items-center">
             {/* Logo */}
-           <LogoType href="/dashboard"/>
+            <LogoType href="/dashboard" />
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center ml-16">
+            <div className="hidden md:flex items-center ml-16 gap-4">
               {navItems.map((item) => (
-                <Link key={item.href} href={item.href}>
-                  <Button
-                    variant={activeItem === item.href ? "secondary" : "ghost"}
-                    className="font-medium px-3"
-                  >
-                    {item.name}
-                  </Button>
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "text-muted-foreground transition-colors text-[15px] hover:text-primary font-medium",
+                    pathname === item.href && "text-primary",
+                  )}
+                >
+                  {item.name}
                 </Link>
               ))}
             </div>

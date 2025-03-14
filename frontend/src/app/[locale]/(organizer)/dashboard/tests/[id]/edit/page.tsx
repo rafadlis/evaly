@@ -6,10 +6,13 @@ import Header from "./_components/header";
 import Setting from "./_components/setting/setting";
 import { useTabsState } from "./_hooks/use-tabs-state";
 import { useTestByIdQuery } from "@/query/organization/test/use-test-by-id.query";
-import { notFound, useParams } from "next/navigation";
+import { notFound, redirect, useParams } from "next/navigation";
+import { useLocale } from "next-intl";
+
 const DetailTestPage = () => {
   const [tabs, setTabs] = useTabsState("questions");
   const { id } = useParams();
+  const locale = useLocale();
 
   const { data: dataTest, isPending: isPendingTest } = useTestByIdQuery({
     id: id?.toString() || "",
@@ -17,6 +20,10 @@ const DetailTestPage = () => {
 
   if (!isPendingTest && !dataTest) {
     return notFound();
+  }
+
+  if (dataTest?.isPublished && dataTest?.finishedAt) {
+    return redirect(`/${locale}/dashboard/tests/${id}`);
   }
 
   return (

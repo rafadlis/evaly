@@ -95,10 +95,7 @@ const DialogPublishTest = ({
                 <div
                   key={e.id}
                   className={cn(
-                    "flex flex-row items-center gap-6 p-3",
-                    e.id === "session_questions" || e.id === "duration"
-                      ? "col-span-2"
-                      : ""
+                    "flex flex-row items-center gap-6 px-4 py-2",
                   )}
                 >
                   {e.status === "ok" ? (

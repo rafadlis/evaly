@@ -14,6 +14,7 @@ import { validateTestIsPublishable } from "../../services/organization/test/vali
 import { publishUnpublishTest } from "../../services/organization/test/publish-unpublish";
 import { deleteTest } from "../../services/organization/test/delete-test";
 import { testSectionRouter } from "./test.section.router";
+import { reopenTest } from "../../services/organization/test/re-open-test";
 
 export const testRouter = new Elysia().group("/test", (app) => {
   return (
@@ -241,6 +242,25 @@ export const testRouter = new Elysia().group("/test", (app) => {
           await checkTestOwner(testId, organizationId);
           const res = await deleteTest(testId);
           return { data: res };
+        },
+        {
+          params: t.Object({
+            id: t.String(),
+          }),
+        }
+      )
+
+      // Re-open test
+      .put(
+        "/:id/reopen",
+        async ({ params, organizer }) => {
+          const organizationId = organizer.organizationId;
+          const testId = params.id;
+
+          await checkTestOwner(testId, organizationId);
+          const res = await reopenTest(testId);
+
+          return res;
         },
         {
           params: t.Object({

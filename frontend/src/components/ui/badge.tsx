@@ -19,7 +19,8 @@ const badgeVariants = cva(
           "text-foreground [a&]:hover:bg-secondary [a&]:hover:text-secondary-foreground",
         ghost:
           "text-foreground [a&]:hover:bg-secondary [a&]:hover:text-secondary-foreground border-transparent",
-      },
+        "success": "bg-success text-success-foreground border-success-foreground/20"
+        },
     },
     defaultVariants: {
       variant: "default",

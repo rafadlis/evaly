@@ -18,6 +18,18 @@ import { useMutation } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
 import { useTransition } from "react";
 import { useRouter } from "@/i18n/navigation";
+import { ChevronLeft, SendIcon } from "lucide-react";
+import { Link } from "@/components/shared/progress-bar";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const Navbar = ({ attempt }: { attempt: TestAttemptWithSection }) => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -62,18 +74,60 @@ const Navbar = ({ attempt }: { attempt: TestAttemptWithSection }) => {
         isScrolled ? "border-border" : "border-transparent"
       )}
     >
-      <div className="text-lg font-medium">
-        {attempt.testSection?.title || `Section ${attempt.testSection?.order}`}
+      <div className="flex flex-row items-center gap-2">
+        <Link href={`/s/${attempt.testId}`}>
+          <Button variant={"ghost"} size={"icon"}>
+            <ChevronLeft />
+          </Button>
+        </Link>
+        <h1 className="text-lg font-medium">
+          {attempt.testSection?.title ||
+            `Section ${attempt.testSection?.order}`}
+        </h1>
       </div>
       <div className="flex flex-row items-center gap-2">
-        <Button
-          variant="outline"
-          className="mr-4"
-          onClick={() => submitAttempt()}
-          disabled={isSubmitting || isRedirecting}
-        >
-          {isSubmitting ? "Submitting..." : isRedirecting ? "Redirecting..." : "Submit"}
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              variant="outline"
+              className="mr-4"
+              disabled={isSubmitting || isRedirecting}
+            >
+              <SendIcon />
+              {isSubmitting
+                ? "Submitting..."
+                : isRedirecting
+                ? "Redirecting..."
+                : "Submit this section"}
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                Are you sure you want to submit this section?
+              </DialogTitle>
+              <DialogDescription>
+                This action cannot be undone.
+              </DialogDescription>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button
+                  variant="default"
+                  onClick={() => submitAttempt()}
+                  disabled={isSubmitting || isRedirecting}
+                >
+                  {isSubmitting
+                    ? "Submitting..."
+                    : isRedirecting
+                    ? "Redirecting..."
+                    : "Yes, submit"}
+                </Button>
+              </DialogFooter>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
         <ThemeToggle />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

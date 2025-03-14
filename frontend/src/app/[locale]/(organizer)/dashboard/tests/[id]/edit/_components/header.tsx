@@ -15,7 +15,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import DialogUnpublishTest from "@/components/shared/dialog/dialog-unpublish-test";
 import { useProgressRouter } from "@/components/shared/progress-bar";
 import BackButton from "@/components/shared/back-button";
 import { useTestSectionByTestIdQuery } from "@/query/organization/test-section/use-test-section-by-test-id";
@@ -135,27 +134,20 @@ const Header = () => {
         </TabsList>
 
         <div className="flex flex-row items-center gap-2">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant={"ghost"} className="text-foreground/75">
-                <ClockIcon /> Total duration: {hours > 0 ? `${hours}h ` : ""}
-                {minutes}m
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent>
-              {!totalDuration ? (
-                <p>
-                  There is no duration for this test, your participants will be
-                  able to finish the test whenever they want.
-                </p>
-              ) : (
-                <p>
-                  If you want participants to be able to finish the test
-                  whenever they want, you can leave the duration empty.
-                </p>
-              )}
-            </PopoverContent>
-          </Popover>
+          {totalDuration ? (
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant={"ghost"} className="text-foreground/75">
+                  <ClockIcon /> Total duration: {hours > 0 ? `${hours}h ` : ""}
+                  {minutes}m
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent>
+                If you want participants to be able to finish the test whenever
+                they want, you can leave the duration empty.
+              </PopoverContent>
+            </Popover>
+          ) : null}
           {!isPublished ? (
             <DialogPublishTest
               testId={id?.toString() || ""}
@@ -164,14 +156,7 @@ const Header = () => {
                 router.replace(`/dashboard/tests/${newTest.id}`);
               }}
             />
-          ) : (
-            <DialogUnpublishTest
-              testId={id?.toString() || ""}
-              isUnpublished={(newTest) => {
-                reset(newTest);
-              }}
-            />
-          )}
+          ) : null}
         </div>
       </div>
 

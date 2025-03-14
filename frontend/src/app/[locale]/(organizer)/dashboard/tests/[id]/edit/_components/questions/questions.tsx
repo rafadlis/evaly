@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import SectionSidebar from "./section-sidebar";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useSelectedSection } from "../../_hooks/use-selected-section";
 import DialogDeleteSection from "@/components/shared/dialog/dialog-delete-section";
 import DialogEditSectionDuration from "@/components/shared/dialog/dialog-edit-section-duration";
@@ -100,8 +100,6 @@ const Questions = () => {
   const [selectedSection, setSelectedSection] = useSelectedSection();
   const [selectedQuestion, setSelectedQuestion] = useState<Question>();
   const [addQuestionOnOrder, setAddQuestionOnOrder] = useState<number>();
-  const [isSticky, setIsSticky] = useState(false);
-  const headerRef = useRef<HTMLDivElement>(null);
 
   const {
     data: dataSection,
@@ -179,37 +177,12 @@ const Questions = () => {
     });
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (headerRef.current) {
-        // Get the header's position relative to the viewport
-        const headerRect = headerRef.current.getBoundingClientRect();
-        // Check if the header is at or past its sticky position (70px from top)
-        setIsSticky(headerRect.top <= 70);
-      }
-    };
-
-    // Add scroll event listener
-    window.addEventListener("scroll", handleScroll);
-    // Initial check
-    handleScroll();
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
   return (
-    <div className="flex flex-row gap-6">
-      <SectionSidebar />
+    <div className="flex flex-row gap-8">
       <Card className="border overflow-clip flex-1 h-max">
         <CardHeader
-          ref={headerRef}
           className={cn(
-            `sticky top-[60px] bg-background z-10 pb-4 mb-4 transition-all duration-300 border-b`,
-            isSticky
-              ? "border-border shadow-md shadow-black/5"
-              : "border-transparent"
+            `bg-background z-10 pb-4 mb-6 transition-all duration-300 border-b border-dashed`
           )}
         >
           <div className="flex flex-row items-start">
@@ -324,7 +297,12 @@ const Questions = () => {
                       previousQuestionId={localQuestions[index - 1]?.id}
                       nextQuestionId={localQuestions[index + 1]?.id}
                     />
-                    <div className={cn("h-8 flex items-center justify-center group/separator relative", index === localQuestions.length - 1 ? "mt-4" : "")}>
+                    <div
+                      className={cn(
+                        "h-8 flex items-center justify-center group/separator relative",
+                        index === localQuestions.length - 1 ? "mt-4" : ""
+                      )}
+                    >
                       <Button
                         size={"xxs"}
                         variant={"default"}
@@ -361,6 +339,8 @@ const Questions = () => {
           </CardContent>
         )}
       </Card>
+      <SectionSidebar />
+
       <DialogEditQuestion
         defaultValue={selectedQuestion}
         onSuccess={(question) => {
