@@ -19,7 +19,7 @@ const envSchema = z.object({
   DATABASE_URL_STAGING: z.string(),
 });
 
-const envAllStage = envSchema.parse(Bun.env);
+const envAllStage = envSchema.parse(process.env);
 
 export const env =
   envAllStage.ENVIRONMENT === "development"

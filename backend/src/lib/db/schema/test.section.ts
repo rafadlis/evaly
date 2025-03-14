@@ -35,10 +35,10 @@ export const testSection = pgTable("test_section", {
 
 //Relations
 export const testSectionRelation = relations(testSection, ({ many, one }) => ({
-  question: many(question, { relationName: "testSection.question" }),
+  question: many(question),
   test: one(test, {
     fields: [testSection.testId],
     references: [test.id],
   }),
-  attempt: many(testAttempt, { relationName: "testSection.attempt" }),
+  attempt: many(testAttempt),
 }));

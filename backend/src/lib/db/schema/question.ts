@@ -424,8 +424,7 @@ export const formulaConfig = pgTable(
 export const questionRelation = relations(question, ({ one, many }) => ({
   testSection: one(testSection, {
     fields: [question.referenceId],
-    references: [testSection.id],
-    relationName: "testSection.question",
+    references: [testSection.id]
   }),
   textFieldConfig: one(textFieldConfig),
   fillBlankSegments: many(fillBlankSegment),
