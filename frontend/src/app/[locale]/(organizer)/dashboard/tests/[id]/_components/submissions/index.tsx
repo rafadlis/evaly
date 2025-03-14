@@ -1,3 +1,7 @@
+import { useState, useMemo } from "react";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { ArrowUpDown, ArrowUp, ArrowDown, Search, Info } from "lucide-react";
 import {
     Table,
     TableBody,
@@ -6,101 +10,55 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { ArrowUpDown, ArrowUp, ArrowDown, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState, useMemo } from "react";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useDebounce } from "@/hooks/use-debounce";
 
+import { Submission, SortConfig, Column } from "./types";
+import { mockSubmissions } from "./mock-data";
+import { SubmissionDrawer } from "./submission-drawer";
+
 dayjs.extend(relativeTime);
-
-type Submission = {
-    id: number;
-    name: string;
-    email: string;
-    totalQuestions: number;
-    answered: number;
-    correct: number;
-    wrong: number;
-    unanswered: number;
-    submittedAt: string;
-    score: number;
-};
-
-type SortConfig = {
-    key: keyof Submission | null;
-    direction: 'asc' | 'desc';
-};
-
-// This will be replaced with real data later
-const mockData = Array.from({ length: 30 }, (_, index) => {
-    const totalQuestions = 10;
-    const answered = Math.floor(Math.random() * (totalQuestions + 1));
-    const correct = Math.floor(Math.random() * (answered + 1));
-    const wrong = answered - correct;
-    const unanswered = totalQuestions - answered;
-    const score = Math.floor((correct / totalQuestions) * 100);
-
-    // Generate random time within the last 24 hours
-    const date = new Date();
-    date.setHours(date.getHours() - Math.floor(Math.random() * 24));
-
-    return {
-        id: index + 1,
-        name: [
-            "John Doe", "Jane Smith", "Alex Johnson", "Maria Garcia", "David Lee",
-            "Sarah Wilson", "Michael Brown", "Emma Davis", "James Miller", "Lisa Anderson",
-            "Robert Taylor", "Patricia Moore", "Daniel White", "Jennifer Martin", "William Thompson",
-            "Elizabeth Jackson", "Richard Martinez", "Susan Robinson", "Joseph Clark", "Margaret Rodriguez",
-            "Thomas Wright", "Linda Walker", "Charles Hall", "Barbara Young", "Christopher King",
-            "Michelle Scott", "Kenneth Green", "Sandra Adams", "Steven Baker", "Dorothy Nelson"
-        ][index],
-        email: `participant${index + 1}@example.com`,
-        totalQuestions,
-        answered,
-        correct,
-        wrong,
-        unanswered,
-        submittedAt: date.toISOString(),
-        score,
-    };
-}).sort((a, b) => b.score - a.score); // Pre-sort by score for initial ranking
-
-type Column = {
-    key: keyof Submission;
-    label: string;
-    align?: 'left' | 'center' | 'right';
-    width?: string;
-    render?: (value: Submission[keyof Submission], submission: Submission) => React.ReactNode;
-    searchable?: boolean;
-};
 
 const Submissions = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [sortConfig, setSortConfig] = useState<SortConfig>({
-        key: 'score',
-        direction: 'desc'
+        key: 'submittedAt',
+        direction: 'asc'
     });
+    const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null);
 
     const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
     const filteredData = useMemo(() => {
-        if (!debouncedSearchQuery) return mockData;
+        if (!debouncedSearchQuery) return mockSubmissions;
 
-        return mockData.filter(submission => {
+        return mockSubmissions.filter(submission => {
             return submission.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
                    submission.email.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
         });
     }, [debouncedSearchQuery]);
 
-    const sortedAndFilteredData = useMemo(() => {
-        if (!sortConfig.key) return filteredData;
+    // Calculate ranks based on score
+    const dataWithRanks = useMemo(() => {
+        const sortedByScore = [...filteredData].sort((a, b) => b.score - a.score);
+        return sortedByScore.map((item, index) => ({
+            ...item,
+            rank: index + 1
+        }));
+    }, [filteredData]);
 
-        return [...filteredData].sort((a, b) => {
+    const sortedAndFilteredData = useMemo(() => {
+        if (!sortConfig.key) return dataWithRanks;
+
+        return [...dataWithRanks].sort((a, b) => {
             const aValue = a[sortConfig.key!];
             const bValue = b[sortConfig.key!];
 
@@ -118,7 +76,7 @@ const Submissions = () => {
 
             return sortConfig.direction === 'asc' ? comparison : -comparison;
         });
-    }, [sortConfig, filteredData]);
+    }, [sortConfig, dataWithRanks]);
 
     const columns: Column[] = useMemo(() => [
         {
@@ -127,7 +85,7 @@ const Submissions = () => {
             width: 'min-w-[80px]',
             align: 'center',
             render: (_, submission) => {
-                const rank = sortedAndFilteredData.findIndex(item => item.id === submission.id) + 1;
+                const rank = dataWithRanks.find(item => item.id === submission.id)?.rank;
                 return `#${rank}`;
             }
         },
@@ -193,7 +151,7 @@ const Submissions = () => {
                 )
             }
         }
-    ], [sortedAndFilteredData]);
+    ], [dataWithRanks]);
 
     const handleSort = (key: keyof Submission) => {
         setSortConfig(prevConfig => ({
@@ -216,20 +174,30 @@ const Submissions = () => {
     return (
         <div className="space-y-4">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <h2 className="text-2xl font-bold tracking-tight">Submissions</h2>
-                <div className="flex items-center gap-4">
-                    <div className="relative w-full sm:w-[300px]">
-                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input
-                            placeholder="Search participants..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="pl-8"
-                        />
-                    </div>
-                    <Badge variant="secondary">
+                <div className="flex items-center gap-2">
+                    <h2 className="text-lg font-medium tracking-tight">Submissions</h2>
+                    <span className="text-sm text-muted-foreground">
                         Total: {sortedAndFilteredData.length}
-                    </Badge>
+                    </span>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Click on any row to view detailed submission information</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                </div>
+                <div className="relative w-full sm:w-[300px]">
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                        placeholder="Search participants..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-8"
+                    />
                 </div>
             </div>
 
@@ -267,7 +235,11 @@ const Submissions = () => {
                                 </TableRow>
                             ) : (
                                 sortedAndFilteredData.map((submission) => (
-                                    <TableRow key={submission.id}>
+                                    <TableRow 
+                                        key={submission.id}
+                                        className="cursor-pointer hover:bg-muted/50 transition-colors"
+                                        onClick={() => setSelectedSubmission(submission)}
+                                    >
                                         {columns.map((column) => (
                                             <TableCell
                                                 key={column.key}
@@ -290,8 +262,14 @@ const Submissions = () => {
                     <ScrollBar orientation="horizontal" />
                 </ScrollArea>
             </div>
+
+            <SubmissionDrawer 
+                submission={selectedSubmission}
+                open={!!selectedSubmission}
+                onOpenChange={(open) => !open && setSelectedSubmission(null)}
+            />
         </div>
     );
 };
 
-export default Submissions;
+export default Submissions; 
