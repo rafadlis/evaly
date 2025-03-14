@@ -154,8 +154,14 @@ const Header = () => {
                   <DialogClose asChild>
                     <Button variant={"outline"}>Cancel</Button>
                   </DialogClose>
-                  <Button variant={"destructive"} onClick={finishTest}>
-                    Yes, end test
+                  <Button
+                    variant={"destructive"}
+                    onClick={finishTest}
+                    disabled={isUpdatingTest || isRedirect}
+                  >
+                    {isUpdatingTest || isRedirect ? (
+                      <Loader2 className="animate-spin" />
+                    ) : "Yes, end test"}
                   </Button>
                 </DialogFooter>
               </DialogContent>

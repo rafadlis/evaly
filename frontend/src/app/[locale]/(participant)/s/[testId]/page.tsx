@@ -92,6 +92,11 @@ const Page = () => {
         return data;
       },
       onSuccess: (data) => {
+        if (data.length === 0) {
+          toast.error("Something went wrong, please try again.");
+          return;
+        }
+
         let unFinishedSection;
         for (const section of data) {
           if (section.completedAt) {
