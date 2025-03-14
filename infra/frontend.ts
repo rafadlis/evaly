@@ -24,5 +24,4 @@ export const frontend = new sst.aws.Nextjs("Frontend", {
     dns: sst.aws.dns(),
   },
   environment: environment,
-  warm: 50
 });
