@@ -213,7 +213,7 @@ const Header = () => {
 
       <div className="mb-6 mt-4 flex flex-row justify-between items-center">
         <TabsList>
-          <TabsTrigger value="summary">Summary</TabsTrigger>
+          {/* <TabsTrigger value="summary">Summary</TabsTrigger> */}
           <TabsTrigger value="submissions">Submissions</TabsTrigger>
           <TabsTrigger value="share">Share</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>

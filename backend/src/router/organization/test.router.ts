@@ -268,5 +268,16 @@ export const testRouter = new Elysia().group("/test", (app) => {
           }),
         }
       )
+
+      // Get Test Submissions
+      .get("/:id/submissions", async ({ params, organizer }) => {
+        const organizationId = organizer.organizationId;
+        const testId = params.id;
+
+        await checkTestOwner(testId, organizationId);
+
+        // const res = await getTestSubmissions(testId);
+        // return { data: res };
+      })
   );
 });
