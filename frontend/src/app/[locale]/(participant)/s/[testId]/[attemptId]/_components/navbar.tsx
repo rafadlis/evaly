@@ -14,11 +14,11 @@ import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 import { useState } from "react";
 import { TestAttemptWithSection } from "@evaly/backend/types/test.attempt";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useMutationState } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
 import { useTransition } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { ChevronLeft, SendIcon } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { Link } from "@/components/shared/progress-bar";
 import {
   Dialog,
@@ -67,6 +67,20 @@ const Navbar = ({ attempt }: { attempt: TestAttemptWithSection }) => {
     },
   });
 
+  // detect if user still updating the answer from card-question
+  const listUpdatingAnswer = useMutationState({
+    filters: {
+      predicate: (mutation) => {
+        return (
+          mutation.state.status === "pending" &&
+          mutation.options.mutationKey?.[0] === "post-answer"
+        );
+      },
+    },
+  });
+
+  const isStillUpdatingAnswer = listUpdatingAnswer.length > 0;
+
   return (
     <div
       className={cn(
@@ -91,9 +105,8 @@ const Navbar = ({ attempt }: { attempt: TestAttemptWithSection }) => {
             <Button
               variant="outline"
               className="mr-4"
-              disabled={isSubmitting || isRedirecting}
+              disabled={isSubmitting || isRedirecting || isStillUpdatingAnswer}
             >
-              <SendIcon />
               {isSubmitting
                 ? "Submitting..."
                 : isRedirecting
