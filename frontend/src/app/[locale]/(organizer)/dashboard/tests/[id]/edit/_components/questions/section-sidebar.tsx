@@ -160,6 +160,7 @@ const AddSession = () => {
       <Button
         variant={"outline"}
         className="w-max"
+        size={"sm"}
         disabled={isPending || isRefetchingSection}
         onClick={() => {
           mutate();

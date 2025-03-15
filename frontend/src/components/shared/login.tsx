@@ -83,7 +83,7 @@ const LogIn = () => {
               onClick={async () => {
                 await authClient.signIn.social({
                   provider: "google",
-                  callbackURL: callbackURL || "/dashboard",
+                  callbackURL: callbackURL || `${window.location.origin}/dashboard`,
                 });
               }}
             >

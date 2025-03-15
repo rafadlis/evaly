@@ -57,7 +57,12 @@ const DashboardPageClient = () => {
   return (
     <div className="container">
       <div className="flex flex-row items-start justify-between">
-        <h1 className="text-2xl font-medium">Dashboard</h1>
+        <div>
+          <h1 className="text-2xl font-medium">Dashboard</h1>
+          <p className="text-muted-foreground">
+            List of all your tests and assessments.
+          </p>
+        </div>
         <DialogCreateTest />
       </div>
       <div className="flex flex-col mt-10 min-h-dvh gap-4">

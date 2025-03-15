@@ -51,7 +51,7 @@ export default async function RootLayout({
     <html lang={locale} suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable}`}>
      {/* <ReactScan /> */}
       <body
-        className={`antialiased min-h-svh flex flex-col font-sans`}
+        className={`antialiased min-h-svh flex flex-col`}
       >
         <NextIntlClientProvider messages={messages}>
           <Provider>{children}</Provider>

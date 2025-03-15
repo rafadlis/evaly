@@ -237,7 +237,6 @@ const SectionCreateQuestion = ({
         {Object.values(questionTypes).map((type) => (
           <Button
             key={type.value}
-            size={"lg"}
             variant={"secondary"}
             className="group"
             disabled={
@@ -295,7 +294,6 @@ const SectionImportQuestions = () => {
                 <Button
                   variant="secondary-outline"
                   className="w-full"
-                  size={"lg"}
                 >
                   <UploadIcon />
                   Upload file
@@ -327,7 +325,7 @@ d) Mars`}
                   style={{ minHeight: "400px", height: "400px" }}
                 />
               </div>
-              <Button className="w-max text-base h-11 self-end mt-4" size="lg">
+              <Button className="w-max text-base h-11 self-end mt-4">
                 <ZapIcon /> Generate Questions
               </Button>
             </Card>
@@ -351,7 +349,6 @@ d) Mars`}
                 <Button
                   variant="secondary-outline"
                   className="w-full"
-                  size={"lg"}
                 >
                   <UploadIcon />
                   Upload spreadsheet

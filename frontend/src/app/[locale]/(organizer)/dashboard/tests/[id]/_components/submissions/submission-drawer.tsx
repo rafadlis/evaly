@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { CheckCircle, XCircle, HelpCircle, MailIcon } from "lucide-react";
+import { CheckCircle, XCircle, HelpCircle, MailIcon, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -25,7 +25,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 
 import { Submission, Section } from "./types";
-import { generateMockQuestions } from "./mock-data";
+import { useSubmissionDetails } from "@/query/organization/test/use-submission-details";
 
 dayjs.extend(relativeTime);
 
@@ -34,6 +34,7 @@ interface SubmissionDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   sections: Section[];
+  testId: string;
 }
 
 export const SubmissionDrawer = ({
@@ -41,14 +42,21 @@ export const SubmissionDrawer = ({
   open,
   onOpenChange,
   sections,
+  testId,
 }: SubmissionDrawerProps) => {
   const [activeTab, setActiveTab] = useState<string>("overview");
+  
+  // Fetch detailed submission data when drawer is open
+  const { data: submissionDetails, isLoading } = useSubmissionDetails(
+    open ? testId : "", // Only fetch when drawer is open
+    open && submission ? submission.email : ""
+  );
 
-  // Generate mock questions for this submission
+  // Use the detailed questions from the API response
   const questions = useMemo(() => {
-    if (!submission) return [];
-    return generateMockQuestions(submission);
-  }, [submission]);
+    if (!submissionDetails) return [];
+    return submissionDetails.questions || [];
+  }, [submissionDetails]);
 
   // Group questions by section
   const questionsBySection = useMemo(() => {
@@ -61,13 +69,13 @@ export const SubmissionDrawer = ({
       }
       acc[sectionId].push(question);
       return acc;
-    }, {} as Record<number, typeof questions>);
+    }, {} as Record<string, typeof questions>);
   }, [questions]);
 
   if (!submission) return null;
 
   // Calculate section performance
-  const getSectionPerformance = (sectionId: number) => {
+  const getSectionPerformance = (sectionId: string) => {
     const answered = submission.sectionAnswers?.[sectionId] || 0;
     const correct = submission.sectionCorrect?.[sectionId] || 0;
     const wrong = submission.sectionWrong?.[sectionId] || 0;
@@ -221,111 +229,120 @@ export const SubmissionDrawer = ({
                   </div>
                 </div>
 
-                <Accordion type="multiple" className="w-full min-h-dvh">
-                  {sections.map((section) => {
-                    const sectionQuestions =
-                      questionsBySection[section.id] || [];
-                    const performance = getSectionPerformance(section.id);
+                {isLoading ? (
+                  <div className="flex justify-center items-center py-20">
+                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                    <span className="ml-2 text-muted-foreground">Loading questions...</span>
+                  </div>
+                ) : (
+                  <Accordion type="multiple" className="w-full min-h-dvh">
+                    {sections.map((section) => {
+                      const sectionQuestions =
+                        questionsBySection[section.id] || [];
+                      const performance = getSectionPerformance(section.id);
 
-                    return (
-                      <AccordionItem
-                        key={section.id}
-                        value={section.id.toString()}
-                      >
-                        <AccordionTrigger className="hover:bg-secondary rounded-md px-2">
-                          <div className="flex flex-1 justify-between items-center">
-                            <div className="flex items-center gap-2">
-                              <span>{section.name}</span>
-                              <Badge variant="outline" className="ml-2">
-                                {performance.score}%
-                              </Badge>
+                      return (
+                        <AccordionItem
+                          key={section.id}
+                          value={section.id}
+                        >
+                          <AccordionTrigger className="hover:bg-secondary rounded-md px-2">
+                            <div className="flex flex-1 justify-between items-center">
+                              <div className="flex items-center gap-2">
+                                <span>{section.name}</span>
+                                <Badge variant="outline" className="ml-2">
+                                  {performance.score}%
+                                </Badge>
+                              </div>
+                              <div className="flex items-center gap-2 text-sm mr-4">
+                                <span className="text-green-600">
+                                  {performance.correct}
+                                </span>
+                                <span className="text-muted-foreground/50">/</span>
+                                <span className="text-red-600">
+                                  {performance.wrong}
+                                </span>
+                                <span className="text-muted-foreground/50">/</span>
+                                <span className="text-muted-foreground">
+                                  {performance.unanswered}
+                                </span>
+                              </div>
                             </div>
-                            <div className="flex items-center gap-2 text-sm mr-4">
-                              <span className="text-green-600">
-                                {performance.correct}
-                              </span>
-                              <span className="text-muted-foreground/50">/</span>
-                              <span className="text-red-600">
-                                {performance.wrong}
-                              </span>
-                              <span className="text-muted-foreground/50">/</span>
-                              <span className="text-muted-foreground">
-                                {performance.unanswered}
-                              </span>
-                            </div>
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                          <div className="space-y-4 py-2">
-                            {sectionQuestions.map((question, index) => (
-                              <div
-                                key={question.id}
-                                className={`p-4 rounded-md border ${
-                                  question.isCorrect === true
-                                    ? "bg-emerald-500/10 border-emerald-500/20"
-                                    : question.isCorrect === false
-                                    ? "bg-red-500/10 border-red-500/20"
-                                    : "bg-foreground/5 border-foreground/10"
-                                }`}
-                              >
-                                <div className="flex items-start gap-3">
-                                  <div className="mt-0.5">
-                                    {question.isCorrect === true ? (
-                                      <CheckCircle className="h-5 w-5 text-green-600" />
-                                    ) : question.isCorrect === false ? (
-                                      <XCircle className="h-5 w-5 text-red-600" />
-                                    ) : (
-                                      <HelpCircle className="h-5 w-5 text-muted-foreground" />
-                                    )}
-                                  </div>
-                                  <div className="space-y-2 flex-1">
-                                    <div className="flex justify-between">
-                                      <h4 className="font-medium">
-                                        Question {index + 1}
-                                      </h4>
-                                      <Badge variant="outline">
-                                        {question.type.replace("_", " ")}
-                                      </Badge>
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <div className="space-y-4 py-2">
+                              {sectionQuestions.map((question, index) => (
+                                <div
+                                  key={question.id}
+                                  className={`p-4 rounded-md border ${
+                                    question.isCorrect === true
+                                      ? "bg-emerald-500/10 border-emerald-500/20"
+                                      : question.isCorrect === false
+                                      ? "bg-red-500/10 border-red-500/20"
+                                      : "bg-foreground/5 border-foreground/10"
+                                  }`}
+                                >
+                                  <div className="flex items-start gap-3">
+                                    <div className="mt-0.5">
+                                      {question.isCorrect === true ? (
+                                        <CheckCircle className="h-5 w-5 text-green-600" />
+                                      ) : question.isCorrect === false ? (
+                                        <XCircle className="h-5 w-5 text-red-600" />
+                                      ) : (
+                                        <HelpCircle className="h-5 w-5 text-muted-foreground" />
+                                      )}
                                     </div>
-                                    <p className="text-sm">{question.text}</p>
-
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                                      <div className="space-y-1">
-                                        <p className="text-xs text-muted-foreground">
-                                          Correct Answer
-                                        </p>
-                                        <p className="text-sm font-medium">
-                                          {question.correctAnswer}
-                                        </p>
+                                    <div className="space-y-2 flex-1">
+                                      <div className="flex justify-between">
+                                        <h4 className="font-medium">
+                                          Question {index + 1}
+                                        </h4>
+                                        <Badge variant="outline">
+                                          {question.type?.replace("_", " ") || "Unknown"}
+                                        </Badge>
                                       </div>
-                                      <div className="space-y-1">
-                                        <p className="text-xs text-muted-foreground">
-                                          Participant&apos;s Answer
-                                        </p>
-                                        <p
-                                          className={`text-sm font-medium ${
-                                            question.isCorrect === true
-                                              ? "text-green-600"
-                                              : question.isCorrect === false
-                                              ? "text-red-600"
-                                              : "text-muted-foreground italic"
-                                          }`}
-                                        >
-                                          {question.participantAnswer ||
-                                            "Not answered"}
-                                        </p>
+                                      <div 
+                                        className="text-sm custom-prose"
+                                        dangerouslySetInnerHTML={{ __html: question.text || '' }}
+                                      />
+
+                                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                                        <div className="space-y-1">
+                                          <p className="text-xs text-muted-foreground">
+                                            Correct Answer
+                                          </p>
+                                          <div 
+                                            className="text-sm font-medium custom-prose"
+                                            dangerouslySetInnerHTML={{ __html: question.correctAnswer || 'Not available' }}
+                                          />
+                                        </div>
+                                        <div className="space-y-1">
+                                          <p className="text-xs text-muted-foreground">
+                                            Participant&apos;s Answer
+                                          </p>
+                                          <div
+                                            className={`text-sm font-medium custom-prose ${
+                                              question.isCorrect === true
+                                                ? "text-green-600"
+                                                : question.isCorrect === false
+                                                ? "text-red-600"
+                                                : "text-muted-foreground italic"
+                                            }`}
+                                            dangerouslySetInnerHTML={{ __html: question.participantAnswer || 'Not answered' }}
+                                          />
+                                        </div>
                                       </div>
                                     </div>
                                   </div>
                                 </div>
-                              </div>
-                            ))}
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                    );
-                  })}
-                </Accordion>
+                              ))}
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      );
+                    })}
+                  </Accordion>
+                )}
               </div>
             </TabsContent>
           </Tabs>

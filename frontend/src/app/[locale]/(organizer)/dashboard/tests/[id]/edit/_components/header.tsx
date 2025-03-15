@@ -153,7 +153,7 @@ const Header = () => {
               testId={id?.toString() || ""}
               onPublished={(newTest) => {
                 reset(newTest);
-                router.replace(`/dashboard/tests/${newTest.id}`);
+                router.replace(`/dashboard/tests/${newTest.id}?tabs=share`);
               }}
             />
           ) : null}

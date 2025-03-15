@@ -16,6 +16,7 @@ import { deleteTest } from "../../services/organization/test/delete-test";
 import { testSectionRouter } from "./test.section.router";
 import { reopenTest } from "../../services/organization/test/re-open-test";
 import { getTestSubmissions } from "../../services/organization/test/get-test-submissions";
+import { getSubmissionDetailsByEmail } from "../../services/organization/test/get-submission-details-by-email";
 
 export const testRouter = new Elysia().group("/test", (app) => {
   return (
@@ -279,6 +280,27 @@ export const testRouter = new Elysia().group("/test", (app) => {
         const res = await getTestSubmissions(testId);
 
         return res;
+      })
+
+      // Get Submission Details by Email
+      .get("/:id/submissions/:email", async ({ params, organizer, error }) => {
+        const organizationId = organizer.organizationId;
+        const testId = params.id;
+        const email = params.email;
+
+        await checkTestOwner(testId, organizationId);
+        const res = await getSubmissionDetailsByEmail(testId, email);
+        
+        if (!res) {
+          return error("Not Found", "Submission not found");
+        }
+
+        return res;
+      }, {
+        params: t.Object({
+          id: t.String(),
+          email: t.String()
+        })
       })
   );
 });

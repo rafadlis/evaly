@@ -33,12 +33,12 @@ const BackButton = ({
     <button
       type="button"
       className={cn(
-        "flex items-center gap-2 text-sm cursor-pointer hover:opacity-70",
+        "flex items-center gap-2 cursor-pointer hover:opacity-70",
         className
       )}
       onClick={onBackClick}
     >
-      <MoveLeft className="size-4" />
+      <MoveLeft className="size-5" />
       {label}
     </button>
   );

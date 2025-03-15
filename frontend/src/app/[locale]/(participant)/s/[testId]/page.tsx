@@ -238,7 +238,6 @@ const Page = () => {
           <div className="flex flex-col gap-2 md:items-end">
             {/* Start Button */}
             <Button
-              size="lg"
               onClick={() => mutateStartTest()}
               disabled={
                 isPendingStartTest ||
@@ -448,7 +447,7 @@ const Page = () => {
                 </div> */}
                 </div>
 
-                <p className="text-xs text-center text-muted-foreground">
+                <p className="text-xs text-muted-foreground text-start">
                   By starting this test, you agree to our assessment terms and
                   conditions
                 </p>

@@ -9,7 +9,7 @@ import {
   RotateCcw,
   TimerOff,
 } from "lucide-react";
-import { notFound, redirect, useParams } from "next/navigation";
+import { redirect, useParams } from "next/navigation";
 import { useTestByIdQuery } from "@/query/organization/test/use-test-by-id.query";
 import { Link } from "@/components/shared/progress-bar";
 import { toast } from "sonner";
@@ -96,7 +96,7 @@ const Header = () => {
   };
 
   if (!isPendingTest && !dataTest) {
-    return notFound();
+    return null
   }
 
   if (!dataTest?.isPublished && !isPendingTest && !isRefetchingTest) {

@@ -7,7 +7,12 @@ const envSchema = z.object({
   AXIOM_DATASET: z.string(),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
-
+  AWS_ACCESS_KEY_ID: z.string(),
+  AWS_SECRET_ACCESS_KEY: z.string(),
+  AWS_REGION: z.string(),
+  AWS_BUCKET: z.string(),
+  AWS_CDN_URL: z.string(),
+  
   //development-backend
   WEB_PUBLIC_URL_DEVELOPMENT: z.string(),
   BETTER_AUTH_SECRET_DEVELOPMENT: z.string(),

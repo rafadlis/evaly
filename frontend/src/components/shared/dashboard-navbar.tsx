@@ -1,18 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, Bell, Menu, X, Moon, Sun } from "lucide-react";
+import { Search, Menu, X, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 import { Link } from "./progress-bar";
@@ -20,6 +11,7 @@ import { useTheme } from "next-themes";
 import { LogoType } from "./logo";
 import ThemeToggle from "./theme-toggle";
 import { usePathname } from "@/i18n/navigation";
+import AdminAccount from "./account/admin-account";
 
 export function DashboardNavbar({ className }: { className?: string }) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -72,7 +64,7 @@ export function DashboardNavbar({ className }: { className?: string }) {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "text-muted-foreground transition-colors text-[15px] hover:text-primary font-medium",
+                    "text-muted-foreground transition-colors  hover:text-primary font-medium",
                     pathname === item.href && "text-primary",
                   )}
                 >
@@ -84,35 +76,14 @@ export function DashboardNavbar({ className }: { className?: string }) {
 
           {/* Search, Notifications, Profile */}
           <div className="flex items-center space-x-3">
-            <Button variant="ghost" size="icon" className="relative">
+            {/* <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-5 w-5" />
               <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500"></span>
-            </Button>
+            </Button> */}
 
             <ThemeToggle />
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="rounded-full h-8 w-8 p-0">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage
-                      // src="/placeholder.svg?height=32&width=32"
-                      alt="User"
-                    />
-                    <AvatarFallback>JD</AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuItem>Billing</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Log out</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+           <AdminAccount />
 
             <Button
               variant="ghost"
@@ -145,7 +116,7 @@ export function DashboardNavbar({ className }: { className?: string }) {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "block py-2 px-3 text-sm font-medium transition-colors relative rounded-md",
+                  "block py-2 px-3 font-medium transition-colors relative rounded-md",
                   item.href.includes(activeItem)
                     ? "text-primary"
                     : "hover:text-primary/80"

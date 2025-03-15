@@ -1,33 +1,27 @@
 "use client";
 
-import { usePathname, useRouter } from "@/i18n/navigation";
-import { $api } from "@/lib/api";
-import { useQuery } from "@tanstack/react-query";
-import { notFound } from "next/navigation";
+import LoadingScreen from "@/components/shared/loading/loading-screen";
+import { usePathname } from "@/i18n/navigation";
+import { useOrganizerProfile } from "@/query/organization/profile/use-organizer-profile";
+import { notFound, useParams } from "next/navigation";
 import React, { useEffect, useTransition } from "react";
 
 const Provider = ({ children }: { children: React.ReactNode }) => {
   const pathName = usePathname();
   const [isRedirecting, startRedirecting] = useTransition();
-  const router = useRouter();
+  const { locale } = useParams();
 
-  const { isPending, data } = useQuery({
-    queryKey: ["organization"],
-    queryFn: async () => {
-      const response = await $api.organization.profile.get();
-      return response;
-    },
-  });
+  const { isPending, data } = useOrganizerProfile();
 
   useEffect(() => {
     if (!isPending && data?.status === 401 && pathName) {
       startRedirecting(() => {
-        router.replace(
-          `/login?callbackURL=${encodeURIComponent(`${pathName}`)}`
-        );
+        window.location.href = `/${locale}/login?callbackURL=${encodeURIComponent(
+          `${pathName}`
+        )}`;
       });
     }
-  }, [data?.status, pathName, router, isPending]);
+  }, [data?.status, pathName, isPending, locale]);
 
   if (isPending || !pathName)
     return (
@@ -37,7 +31,7 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
     );
 
   if (data?.status !== 200 && data?.status !== 401) return notFound();
-  if (isRedirecting) return <div>Redirecting...</div>;
+  if (isRedirecting) return <LoadingScreen />;
 
   return <>{children}</>;
 };

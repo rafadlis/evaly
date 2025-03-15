@@ -284,7 +284,16 @@ export const getTestSubmissions = async (testId: string) => {
     }
 
     // Sort submissions by score (descending) and assign ranks
-    submissions.sort((a, b) => b.score - a.score);
+    submissions.sort((a, b) => {
+        // First sort by score (descending)
+        if (b.score !== a.score) {
+            return b.score - a.score;
+        }
+        
+        // If scores are equal, sort by submission time (earlier submissions rank higher)
+        return new Date(a.submittedAt).getTime() - new Date(b.submittedAt).getTime();
+    });
+    
     submissions.forEach((submission, index) => {
         submission.rank = index + 1;
     });

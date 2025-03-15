@@ -73,13 +73,13 @@ const CardQuestion = ({
       </div>
       <div className="mt-2">
         <div
-          className="custom-prose lg:prose-lg max-w-none"
+          className="custom-prose max-w-none"
           dangerouslySetInnerHTML={{
             __html: question.question ?? "No question found",
           }}
         />
 
-        <div className="flex flex-col gap-4 mt-8">
+        <div className="flex flex-col gap-3 mt-8">
           {question.options?.map((option, i) => (
             <div
               key={option.id}
