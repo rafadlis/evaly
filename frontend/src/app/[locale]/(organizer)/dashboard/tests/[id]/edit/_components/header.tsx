@@ -127,7 +127,7 @@ const Header = () => {
         ) : null}
       </AnimatePresence>
 
-      <div className="mb-6 mt-4 flex flex-row justify-between items-center">
+      <div className="mb-4 mt-2 flex flex-row justify-between items-center">
         <TabsList>
           <TabsTrigger value="questions">Questions</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>

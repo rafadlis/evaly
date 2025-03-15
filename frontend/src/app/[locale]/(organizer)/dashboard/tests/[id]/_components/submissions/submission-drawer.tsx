@@ -1,7 +1,12 @@
 import { useState, useMemo } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { CheckCircle, XCircle, HelpCircle, MailIcon, Loader2 } from "lucide-react";
+import {
+  CheckCircle,
+  XCircle,
+  HelpCircle, Loader2,
+  FileJson
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -20,7 +25,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 
@@ -45,7 +49,7 @@ export const SubmissionDrawer = ({
   testId,
 }: SubmissionDrawerProps) => {
   const [activeTab, setActiveTab] = useState<string>("overview");
-  
+
   // Fetch detailed submission data when drawer is open
   const { data: submissionDetails, isLoading } = useSubmissionDetails(
     open ? testId : "", // Only fetch when drawer is open
@@ -118,9 +122,7 @@ export const SubmissionDrawer = ({
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent
-              value="overview"
-            >
+            <TabsContent value="overview">
               <div className="space-y-6">
                 <div className="space-y-2">
                   <h3 className="text-lg font-medium">Overall Performance</h3>
@@ -153,17 +155,17 @@ export const SubmissionDrawer = ({
                   </div>
                 </div>
 
-                <Separator />
-
-                <div className="space-y-4">
+                <div className="space-y-4 border-t border-dashed pt-10 mt-10">
                   <h3 className="text-lg font-medium">Section Performance</h3>
                   <div className="space-y-4">
-                    {sections.map((section) => {
+                    {sections.map((section, index) => {
                       const performance = getSectionPerformance(section.id);
                       return (
-                        <div key={section.id} className="space-y-2">
+                        <div key={section.id} className="space-y-2 border p-6">
                           <div className="flex justify-between items-center">
-                            <h4 className="font-medium">{section.name}</h4>
+                            <h4 className="font-medium">
+                              {section.name || `Section ${index + 1}`}
+                            </h4>
                             <Badge variant="outline">
                               {performance.score}%
                             </Badge>
@@ -196,7 +198,7 @@ export const SubmissionDrawer = ({
                           </div>
                           <Progress
                             value={performance.score}
-                            className="h-1.5"
+                            className="mt-5"
                           />
                         </div>
                       );
@@ -232,24 +234,25 @@ export const SubmissionDrawer = ({
                 {isLoading ? (
                   <div className="flex justify-center items-center py-20">
                     <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                    <span className="ml-2 text-muted-foreground">Loading questions...</span>
+                    <span className="ml-2 text-muted-foreground">
+                      Loading questions...
+                    </span>
                   </div>
                 ) : (
                   <Accordion type="multiple" className="w-full min-h-dvh">
-                    {sections.map((section) => {
+                    {sections.map((section, i) => {
                       const sectionQuestions =
                         questionsBySection[section.id] || [];
                       const performance = getSectionPerformance(section.id);
 
                       return (
-                        <AccordionItem
-                          key={section.id}
-                          value={section.id}
-                        >
+                        <AccordionItem key={section.id} value={section.id}>
                           <AccordionTrigger className="hover:bg-secondary rounded-md px-2">
                             <div className="flex flex-1 justify-between items-center">
                               <div className="flex items-center gap-2">
-                                <span>{section.name}</span>
+                                <span>
+                                  {section.name || `Section ${i + 1}`}
+                                </span>
                                 <Badge variant="outline" className="ml-2">
                                   {performance.score}%
                                 </Badge>
@@ -258,11 +261,15 @@ export const SubmissionDrawer = ({
                                 <span className="text-green-600">
                                   {performance.correct}
                                 </span>
-                                <span className="text-muted-foreground/50">/</span>
+                                <span className="text-muted-foreground/50">
+                                  /
+                                </span>
                                 <span className="text-red-600">
                                   {performance.wrong}
                                 </span>
-                                <span className="text-muted-foreground/50">/</span>
+                                <span className="text-muted-foreground/50">
+                                  /
+                                </span>
                                 <span className="text-muted-foreground">
                                   {performance.unanswered}
                                 </span>
@@ -298,12 +305,15 @@ export const SubmissionDrawer = ({
                                           Question {index + 1}
                                         </h4>
                                         <Badge variant="outline">
-                                          {question.type?.replace("_", " ") || "Unknown"}
+                                          {question.type?.replace("_", " ") ||
+                                            "Unknown"}
                                         </Badge>
                                       </div>
-                                      <div 
+                                      <div
                                         className="text-sm custom-prose"
-                                        dangerouslySetInnerHTML={{ __html: question.text || '' }}
+                                        dangerouslySetInnerHTML={{
+                                          __html: question.text || "",
+                                        }}
                                       />
 
                                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
@@ -311,9 +321,13 @@ export const SubmissionDrawer = ({
                                           <p className="text-xs text-muted-foreground">
                                             Correct Answer
                                           </p>
-                                          <div 
+                                          <div
                                             className="text-sm font-medium custom-prose"
-                                            dangerouslySetInnerHTML={{ __html: question.correctAnswer || 'Not available' }}
+                                            dangerouslySetInnerHTML={{
+                                              __html:
+                                                question.correctAnswer ||
+                                                "Not available",
+                                            }}
                                           />
                                         </div>
                                         <div className="space-y-1">
@@ -328,7 +342,11 @@ export const SubmissionDrawer = ({
                                                 ? "text-red-600"
                                                 : "text-muted-foreground italic"
                                             }`}
-                                            dangerouslySetInnerHTML={{ __html: question.participantAnswer || 'Not answered' }}
+                                            dangerouslySetInnerHTML={{
+                                              __html:
+                                                question.participantAnswer ||
+                                                "Not answered",
+                                            }}
                                           />
                                         </div>
                                       </div>
@@ -350,17 +368,12 @@ export const SubmissionDrawer = ({
 
         <DrawerFooter className="border-t border-dashed py-3">
           <div className="container max-w-4xl flex justify-between items-center gap-2">
-            <Button variant="success">
-              Finished {dayjs(submission.submittedAt).fromNow()}
+            <DrawerClose asChild>
+              <Button variant="outline">Close</Button>
+            </DrawerClose>
+            <Button variant="default">
+              <FileJson /> Export
             </Button>
-            <div className="flex gap-2 justify-end">
-              <DrawerClose asChild>
-                <Button variant="outline">Close</Button>
-              </DrawerClose>
-              <Button variant="default">
-                <MailIcon /> Send Email
-              </Button>
-            </div>
           </div>
         </DrawerFooter>
       </DrawerContent>

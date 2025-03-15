@@ -27,6 +27,7 @@ import { SubmissionDrawer } from "./submission-drawer";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
 import { useTestSubmissionsById, TestSubmission } from "@/query/organization/test/use-test-submissions-byid";
+import { ExportDialog } from "./export-dialog";
 
 dayjs.extend(relativeTime);
 
@@ -334,6 +335,10 @@ const Submissions = () => {
             />
             <span className="sr-only">Refresh</span>
           </Button>
+          
+          {/* Export Dialog Component */}
+          <ExportDialog data={dataWithRanks} testName={`Test ${testId}`} />
+          
           {sectionsWithAll.length > 1 && (
             <Select value={selectedSection} onValueChange={handleSectionChange}>
               <SelectTrigger className="w-[180px]">

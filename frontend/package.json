@@ -58,7 +58,10 @@
     "client-only": "^0.0.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
+    "file-saver": "^2.0.5",
     "highlight.js": "^11.11.1",
+    "jspdf": "^3.0.0",
+    "jspdf-autotable": "^5.0.2",
     "lowlight": "^3.3.0",
     "lucide-react": "^0.475.0",
     "motion": "^12.4.11",
@@ -82,6 +85,7 @@
     "ulidx": "^2.4.1",
     "usehooks-ts": "^3.1.1",
     "vaul": "^1.1.2",
+    "xlsx": "^0.18.5",
     "zod": "^3.24.2"
   },
   "devDependencies": {
@@ -89,6 +93,7 @@
     "@tailwindcss/typography": "^0.5.16",
     "@trigger.dev/build": "^3.3.16",
     "@types/bun": "1.2.5",
+    "@types/file-saver": "^2.0.7",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
