@@ -25,7 +25,6 @@ import { useQueryState } from "nuqs";
 
 import { Submission } from "./types";
 import { mockSubmissions, mockSections } from "./mock-data";
-import { SubmissionDrawer } from "./submission-drawer";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
 
@@ -49,7 +48,7 @@ const Submissions = () => {
     const [sortDirection, setSortDirection] = useQueryState("sortDirection", { defaultValue: "" });
     
     // Local state for selected submission
-    const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null);
+    const [, setSelectedSubmission] = useState<Submission | null>(null);
 
     const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
@@ -174,12 +173,12 @@ const Submissions = () => {
                 onSortingChange={handleSortingChange}
             />
 
-            <SubmissionDrawer 
+            {/* <SubmissionDrawer 
                 submission={selectedSubmission}
                 open={!!selectedSubmission}
                 onOpenChange={(open) => !open && setSelectedSubmission(null)}
                 sections={mockSections}
-            />
+            /> */}
         </div>
     );
 };
