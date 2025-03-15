@@ -10,14 +10,14 @@ export type Submission = {
     submittedAt: string;
     score: number;
     rank?: number; // Added for ranking
-    sectionId: number; // Added for section filtering
-    sectionAnswers?: Record<number, number>; // Questions answered per section
-    sectionCorrect?: Record<number, number>; // Correct answers per section
-    sectionWrong?: Record<number, number>; // Wrong answers per section
+    sectionId: string; // Changed to string for section filtering
+    sectionAnswers?: Record<string, number>; // Changed to string keys for section IDs
+    sectionCorrect?: Record<string, number>; // Changed to string keys for section IDs
+    sectionWrong?: Record<string, number>; // Changed to string keys for section IDs
 };
 
 export type Section = {
-    id: number;
+    id: string; // Changed to string to match API response
     name: string;
     questionsCount: number; // Number of questions in this section
 };
@@ -29,7 +29,7 @@ export type Question = {
     correctAnswer: string;
     participantAnswer: string | null;
     isCorrect: boolean | null;
-    sectionId: number; // Added for section filtering
+    sectionId: string; // Changed to string to match section IDs
 };
 
 export type SortConfig = {

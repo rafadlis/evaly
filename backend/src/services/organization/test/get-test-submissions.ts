@@ -130,7 +130,7 @@ export const getTestSubmissions = async (testId: string) => {
         email: user.email,
     })
     .from(user)
-    .where(sql`${user.email} IN (${participantEmails.length > 0 ? participantEmails.map(email => `'${email}'`).join(',') : "''"})`);
+    .where(or(...participantEmails.map(email => eq(user.email, email))));
 
     // Create a map of email to user info for quick lookup
     const userMap = new Map(userInfoRaw.map(u => [u.email, u]));

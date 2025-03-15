@@ -176,6 +176,13 @@
       "when": 1741804034862,
       "tag": "0024_smiling_aaron_stack",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1742050048605,
+      "tag": "0025_sour_shaman",
+      "breakpoints": true
     }
   ]
 }
