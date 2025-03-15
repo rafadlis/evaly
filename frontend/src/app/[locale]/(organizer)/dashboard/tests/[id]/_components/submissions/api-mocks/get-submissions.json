@@ -1,0 +1,182 @@
+{
+  "success": true,
+  "data": {
+    "submissions": [
+      {
+        "id": 1,
+        "name": "John Smith",
+        "email": "john.smith@example.com",
+        "totalQuestions": 60,
+        "answered": 58,
+        "correct": 45,
+        "wrong": 13,
+        "unanswered": 2,
+        "submittedAt": "2023-06-15T14:32:45Z",
+        "score": 75,
+        "rank": 1,
+        "sectionId": 1,
+        "sectionAnswers": {
+          "1": 19,
+          "2": 20,
+          "3": 19
+        },
+        "sectionCorrect": {
+          "1": 15,
+          "2": 18,
+          "3": 12
+        },
+        "sectionWrong": {
+          "1": 4,
+          "2": 2,
+          "3": 7
+        }
+      },
+      {
+        "id": 2,
+        "name": "Emma Johnson",
+        "email": "emma.johnson@example.com",
+        "totalQuestions": 60,
+        "answered": 60,
+        "correct": 42,
+        "wrong": 18,
+        "unanswered": 0,
+        "submittedAt": "2023-06-15T15:10:22Z",
+        "score": 70,
+        "rank": 2,
+        "sectionId": 2,
+        "sectionAnswers": {
+          "1": 20,
+          "2": 20,
+          "3": 20
+        },
+        "sectionCorrect": {
+          "1": 14,
+          "2": 16,
+          "3": 12
+        },
+        "sectionWrong": {
+          "1": 6,
+          "2": 4,
+          "3": 8
+        }
+      },
+      {
+        "id": 3,
+        "name": "Michael Brown",
+        "email": "michael.brown@example.com",
+        "totalQuestions": 60,
+        "answered": 55,
+        "correct": 40,
+        "wrong": 15,
+        "unanswered": 5,
+        "submittedAt": "2023-06-15T13:45:18Z",
+        "score": 67,
+        "rank": 3,
+        "sectionId": 3,
+        "sectionAnswers": {
+          "1": 18,
+          "2": 19,
+          "3": 18
+        },
+        "sectionCorrect": {
+          "1": 13,
+          "2": 15,
+          "3": 12
+        },
+        "sectionWrong": {
+          "1": 5,
+          "2": 4,
+          "3": 6
+        }
+      },
+      {
+        "id": 4,
+        "name": "Sarah Davis",
+        "email": "sarah.davis@example.com",
+        "totalQuestions": 60,
+        "answered": 52,
+        "correct": 38,
+        "wrong": 14,
+        "unanswered": 8,
+        "submittedAt": "2023-06-15T16:20:33Z",
+        "score": 63,
+        "rank": 4,
+        "sectionId": 1,
+        "sectionAnswers": {
+          "1": 17,
+          "2": 18,
+          "3": 17
+        },
+        "sectionCorrect": {
+          "1": 12,
+          "2": 14,
+          "3": 12
+        },
+        "sectionWrong": {
+          "1": 5,
+          "2": 4,
+          "3": 5
+        }
+      },
+      {
+        "id": 5,
+        "name": "David Wilson",
+        "email": "david.wilson@example.com",
+        "totalQuestions": 60,
+        "answered": 50,
+        "correct": 35,
+        "wrong": 15,
+        "unanswered": 10,
+        "submittedAt": "2023-06-15T12:15:40Z",
+        "score": 58,
+        "rank": 5,
+        "sectionId": 2,
+        "sectionAnswers": {
+          "1": 16,
+          "2": 17,
+          "3": 17
+        },
+        "sectionCorrect": {
+          "1": 11,
+          "2": 13,
+          "3": 11
+        },
+        "sectionWrong": {
+          "1": 5,
+          "2": 4,
+          "3": 6
+        }
+      }
+    ],
+    "sections": [
+      {
+        "id": 1,
+        "name": "Basic Knowledge",
+        "questionsCount": 20
+      },
+      {
+        "id": 2,
+        "name": "Technical Skills",
+        "questionsCount": 20
+      },
+      {
+        "id": 3,
+        "name": "Problem Solving",
+        "questionsCount": 20
+      }
+    ],
+    "pagination": {
+      "total": 100,
+      "page": 1,
+      "pageSize": 20,
+      "totalPages": 5
+    },
+    "filters": {
+      "search": "",
+      "section": "all",
+      "sortColumn": "score",
+      "sortDirection": "desc"
+    }
+  },
+  "message": "Submissions retrieved successfully"
+} 
