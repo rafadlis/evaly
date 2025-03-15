@@ -6,17 +6,9 @@ This document outlines the API endpoints for the submissions feature.
 
 ### 1. Get Submissions List
 
-Retrieves a paginated list of submissions with filtering and sorting options.
+Retrieves a list of all submissions with section data. All filtering, sorting, and pagination is handled client-side.
 
 **Endpoint:** `GET /api/tests/{testId}/submissions`
-
-**Query Parameters:**
-- `page` (number, default: 1): The page number to retrieve
-- `pageSize` (number, default: 20): Number of items per page
-- `search` (string, optional): Search term to filter submissions by name or email
-- `section` (string, optional): Section ID to filter by, or "all" for all sections
-- `sortColumn` (string, optional): Column to sort by (e.g., "score", "submittedAt", "name")
-- `sortDirection` (string, optional): Sort direction, either "asc" or "desc"
 
 **Response:**
 ```json
@@ -36,7 +28,6 @@ Retrieves a paginated list of submissions with filtering and sorting options.
         "submittedAt": "2023-06-15T14:32:45Z",
         "score": 75,
         "rank": 1,
-        "sectionId": 1,
         "sectionAnswers": {
           "1": 19,
           "2": 20,
@@ -63,24 +54,32 @@ Retrieves a paginated list of submissions with filtering and sorting options.
       },
       // More sections...
     ],
-    "pagination": {
-      "total": 100,
-      "page": 1,
-      "pageSize": 20,
-      "totalPages": 5
-    },
-    "filters": {
-      "search": "",
-      "section": "all",
-      "sortColumn": "score",
-      "sortDirection": "desc"
-    }
+    "timestamp": "2023-06-15T16:30:00Z"
   },
   "message": "Submissions retrieved successfully"
 }
 ```
 
-### 2. Get Submission Detail
+### 2. Stream Submissions Updates
+
+Provides real-time updates of submissions using Server-Sent Events (SSE).
+
+**Endpoint:** `GET /api/tests/{testId}/submissions/stream`
+
+**Response Format:**
+The response is a stream of events. Each event contains either a full data refresh or delta updates.
+
+**Full Data Event:**
+```
+data: {"type":"full","data":{"submissions":[...],"sections":[...],"timestamp":"2023-06-15T16:30:00Z"}}
+```
+
+**Delta Update Event:**
+```
+data: {"type":"delta","data":[{"id":1,"changes":{"score":80,"correct":48,"sectionCorrect":{"1":16,"2":18,"3":14}}}],"timestamp":"2023-06-15T16:35:00Z"}
+```
+
+### 3. Get Submission Detail
 
 Retrieves detailed information about a specific submission, including all questions and answers.
 
@@ -107,7 +106,6 @@ Retrieves detailed information about a specific submission, including all questi
       "submittedAt": "2023-06-15T14:32:45Z",
       "score": 75,
       "rank": 1,
-      "sectionId": 1,
       "sectionAnswers": {
         "1": 19,
         "2": 20,
@@ -166,7 +164,6 @@ Retrieves detailed information about a specific submission, including all questi
 | submittedAt | string | ISO timestamp of when the submission was completed |
 | score | number | Overall score as a percentage |
 | rank | number | Participant's rank based on score |
-| sectionId | number | Primary section ID for this participant |
 | sectionAnswers | object | Map of section IDs to number of questions answered in each section |
 | sectionCorrect | object | Map of section IDs to number of questions answered correctly in each section |
 | sectionWrong | object | Map of section IDs to number of questions answered incorrectly in each section |
@@ -189,4 +186,61 @@ Retrieves detailed information about a specific submission, including all questi
 | correctAnswer | string | The correct answer |
 | participantAnswer | string | The participant's answer (null if unanswered) |
 | isCorrect | boolean | Whether the participant's answer is correct (null if unanswered) |
-| sectionId | number | The section this question belongs to | 
+| sectionId | number | The section this question belongs to |
+
+## Implementation Notes
+
+### Client-Side Filtering and Pagination
+
+All filtering, sorting, and pagination is handled on the client side. The server sends the complete dataset, and the client is responsible for:
+- Filtering by section or search term
+- Sorting by any column
+- Implementing pagination
+
+### Real-Time Updates with SSE
+
+The streaming endpoint uses Server-Sent Events (SSE) to provide real-time updates. The client should:
+1. Connect to the stream endpoint
+2. Handle "full" type events by replacing the entire dataset
+3. Handle "delta" type events by applying changes to specific submissions
+4. Update the UI to reflect changes (with optional visual indicators for changed items)
+
+Example client implementation:
+
+```typescript
+useEffect(() => {
+  const eventSource = new EventSource('/api/tests/123/submissions/stream');
+  
+  eventSource.onmessage = (event) => {
+    const { type, data, timestamp } = JSON.parse(event.data);
+    
+    if (type === 'full') {
+      // Replace all data
+      setSubmissions(data.submissions);
+      setSections(data.sections);
+    } else if (type === 'delta') {
+      // Update only changed submissions
+      setSubmissions(prev => {
+        const updated = [...prev];
+        
+        data.forEach(change => {
+          const index = updated.findIndex(s => s.id === change.id);
+          if (index >= 0) {
+            // Update existing submission with changed fields
+            updated[index] = { ...updated[index], ...change.changes };
+          }
+        });
+        
+        return updated;
+      });
+    }
+    
+    // Update last sync timestamp
+    setLastUpdated(timestamp);
+  };
+  
+  return () => {
+    eventSource.close();
+  };
+}, []);
+``` 

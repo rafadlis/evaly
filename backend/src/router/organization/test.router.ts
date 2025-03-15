@@ -15,6 +15,7 @@ import { publishUnpublishTest } from "../../services/organization/test/publish-u
 import { deleteTest } from "../../services/organization/test/delete-test";
 import { testSectionRouter } from "./test.section.router";
 import { reopenTest } from "../../services/organization/test/re-open-test";
+import { getTestSubmissions } from "../../services/organization/test/get-test-submissions";
 
 export const testRouter = new Elysia().group("/test", (app) => {
   return (
@@ -276,8 +277,8 @@ export const testRouter = new Elysia().group("/test", (app) => {
 
         await checkTestOwner(testId, organizationId);
 
-        // const res = await getTestSubmissions(testId);
-        // return { data: res };
+        const res = await getTestSubmissions(testId);
+        return res;
       })
   );
 });
