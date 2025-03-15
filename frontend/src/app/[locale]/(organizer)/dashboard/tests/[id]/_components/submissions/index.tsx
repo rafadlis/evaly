@@ -26,7 +26,10 @@ import { Submission, Section } from "./types";
 import { SubmissionDrawer } from "./submission-drawer";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
-import { useTestSubmissionsById, TestSubmission } from "@/query/organization/test/use-test-submissions-byid";
+import {
+  useTestSubmissionsById,
+  TestSubmission,
+} from "@/query/organization/test/use-test-submissions-byid";
 import { ExportDialog } from "./export-dialog";
 
 dayjs.extend(relativeTime);
@@ -114,7 +117,7 @@ const Submissions = () => {
         sectionAnswers: submission.sectionAnswers || {},
         sectionCorrect: submission.sectionCorrect || {},
         sectionWrong: submission.sectionWrong || {},
-        status: submission.status
+        status: submission.status,
       };
     });
   }, [data?.submissions]);
@@ -222,13 +225,15 @@ const Submissions = () => {
       // If scores are equal, sort by submission time (earlier submissions rank higher)
       // Earlier date = smaller timestamp = should come first in the sort
       if (a.submittedAt && b.submittedAt) {
-        return new Date(a.submittedAt).getTime() - new Date(b.submittedAt).getTime();
+        return (
+          new Date(a.submittedAt).getTime() - new Date(b.submittedAt).getTime()
+        );
       }
-      
+
       // If one has submittedAt and the other doesn't, prioritize the submitted one
       if (a.submittedAt && !b.submittedAt) return -1;
       if (!a.submittedAt && b.submittedAt) return 1;
-      
+
       return 0;
     });
 
@@ -323,7 +328,7 @@ const Submissions = () => {
             </Tooltip>
           </TooltipProvider>
         </div>
-        <div className="flex items-center gap-2 w-full sm:w-auto">
+        <div className="flex items-center gap-3 w-full sm:w-auto">
           <Button
             variant="ghost"
             size="icon"
@@ -335,10 +340,7 @@ const Submissions = () => {
             />
             <span className="sr-only">Refresh</span>
           </Button>
-          
-          {/* Export Dialog Component */}
-          <ExportDialog data={dataWithRanks} testName={`Test ${testId}`} />
-          
+
           {sectionsWithAll.length > 1 && (
             <Select value={selectedSection} onValueChange={handleSectionChange}>
               <SelectTrigger className="w-[180px]">
@@ -369,6 +371,8 @@ const Submissions = () => {
               className="pl-9"
             />
           </div>
+          {/* Export Dialog Component */}
+          <ExportDialog data={dataWithRanks} testName={`Test ${testId}`} />
         </div>
       </div>
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Download, FileSpreadsheet, FileText, FileJson } from "lucide-react";
+import { FileSpreadsheet, FileText, FileJson } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -11,17 +11,20 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Submission } from "./types";
-import * as XLSX from 'xlsx';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-import { saveAs } from 'file-saver';
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import { saveAs } from "file-saver";
 
 interface ExportDialogProps {
   data: Submission[];
   testName?: string;
 }
 
-export const ExportDialog = ({ data, testName = "Test" }: ExportDialogProps) => {
+export const ExportDialog = ({
+  data,
+  testName = "Test",
+}: ExportDialogProps) => {
   const [open, setOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
@@ -36,10 +39,12 @@ export const ExportDialog = ({ data, testName = "Test" }: ExportDialogProps) => 
       Correct: `${submission.correct}/${submission.totalQuestions}`,
       Wrong: `${submission.wrong}/${submission.totalQuestions}`,
       Unanswered: submission.unanswered,
-      Status: submission.status === 'in-progress' ? 'In Progress' : 'Completed',
-      Submitted: submission.submittedAt 
-        ? new Date(submission.submittedAt).toLocaleString() 
-        : (submission.status === 'in-progress' ? 'In Progress' : 'Not Submitted'),
+      Status: submission.status === "in-progress" ? "In Progress" : "Completed",
+      Submitted: submission.submittedAt
+        ? new Date(submission.submittedAt).toLocaleString()
+        : submission.status === "in-progress"
+        ? "In Progress"
+        : "Not Submitted",
     }));
   };
 
@@ -51,13 +56,13 @@ export const ExportDialog = ({ data, testName = "Test" }: ExportDialogProps) => 
       const worksheet = XLSX.utils.json_to_sheet(exportData);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Submissions");
-      
+
       // Set column widths
       const colWidths = [
-        { wch: 5 },  // Rank
+        { wch: 5 }, // Rank
         { wch: 20 }, // Name
         { wch: 25 }, // Email
-        { wch: 8 },  // Score
+        { wch: 8 }, // Score
         { wch: 10 }, // Answered
         { wch: 10 }, // Correct
         { wch: 10 }, // Wrong
@@ -65,19 +70,29 @@ export const ExportDialog = ({ data, testName = "Test" }: ExportDialogProps) => 
         { wch: 12 }, // Status
         { wch: 20 }, // Submitted
       ];
-      worksheet['!cols'] = colWidths;
-      
+      worksheet["!cols"] = colWidths;
+
       // Generate Excel file
-      const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-      const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      
+      const excelBuffer = XLSX.write(workbook, {
+        bookType: "xlsx",
+        type: "array",
+      });
+      const blob = new Blob([excelBuffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
       // Save file
-      saveAs(blob, `${testName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_submissions_${new Date().toISOString().split('T')[0]}.xlsx`);
-      
-      toast.success('Submissions exported as Excel successfully');
+      saveAs(
+        blob,
+        `${testName.replace(/[^a-z0-9]/gi, "_").toLowerCase()}_submissions_${
+          new Date().toISOString().split("T")[0]
+        }.xlsx`
+      );
+
+      toast.success("Submissions exported as Excel successfully");
     } catch (error) {
-      console.error('Excel export error:', error);
-      toast.error('Failed to export as Excel. Please try again.');
+      console.error("Excel export error:", error);
+      toast.error("Failed to export as Excel. Please try again.");
     } finally {
       setIsExporting(false);
       setOpen(false);
@@ -89,21 +104,32 @@ export const ExportDialog = ({ data, testName = "Test" }: ExportDialogProps) => 
     setIsExporting(true);
     try {
       const exportData = prepareData();
-      
+
       // Create PDF document
       const doc = new jsPDF();
-      
+
       // Add title
       doc.setFontSize(16);
       doc.text(`${testName} - Submissions Report`, 14, 15);
       doc.setFontSize(10);
       doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 22);
       doc.text(`Total Submissions: ${exportData.length}`, 14, 28);
-      
+
       // Use autoTable directly as a function
       autoTable(doc, {
-        head: [['Rank', 'Name', 'Email', 'Score', 'Answered', 'Correct', 'Wrong', 'Status']],
-        body: exportData.map(item => [
+        head: [
+          [
+            "Rank",
+            "Name",
+            "Email",
+            "Score",
+            "Answered",
+            "Correct",
+            "Wrong",
+            "Status",
+          ],
+        ],
+        body: exportData.map((item) => [
           item.Rank,
           item.Name,
           item.Email,
@@ -111,7 +137,7 @@ export const ExportDialog = ({ data, testName = "Test" }: ExportDialogProps) => 
           item.Answered,
           item.Correct,
           item.Wrong,
-          item.Status
+          item.Status,
         ]),
         startY: 35,
         styles: { fontSize: 8, cellPadding: 2 },
@@ -126,14 +152,18 @@ export const ExportDialog = ({ data, testName = "Test" }: ExportDialogProps) => 
           7: { cellWidth: 20 },
         },
       });
-      
+
       // Save PDF
-      doc.save(`${testName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_submissions_${new Date().toISOString().split('T')[0]}.pdf`);
-      
-      toast.success('Submissions exported as PDF successfully');
+      doc.save(
+        `${testName.replace(/[^a-z0-9]/gi, "_").toLowerCase()}_submissions_${
+          new Date().toISOString().split("T")[0]
+        }.pdf`
+      );
+
+      toast.success("Submissions exported as PDF successfully");
     } catch (error) {
-      console.error('PDF export error:', error);
-      toast.error('Failed to export as PDF. Please try again.');
+      console.error("PDF export error:", error);
+      toast.error("Failed to export as PDF. Please try again.");
     } finally {
       setIsExporting(false);
       setOpen(false);
@@ -145,28 +175,33 @@ export const ExportDialog = ({ data, testName = "Test" }: ExportDialogProps) => 
     setIsExporting(true);
     try {
       const exportData = prepareData();
-      
+
       // Create CSV headers
-      const headers = Object.keys(exportData[0]).join(',');
-      
+      const headers = Object.keys(exportData[0]).join(",");
+
       // Create CSV rows
-      const rows = exportData.map(item => 
+      const rows = exportData.map((item) =>
         Object.values(item)
-          .map(value => `"${value}"`) // Wrap values in quotes to handle commas
-          .join(',')
+          .map((value) => `"${value}"`) // Wrap values in quotes to handle commas
+          .join(",")
       );
-      
+
       // Combine headers and rows
-      const csvContent = [headers, ...rows].join('\n');
-      
+      const csvContent = [headers, ...rows].join("\n");
+
       // Create blob and save
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
-      saveAs(blob, `${testName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_submissions_${new Date().toISOString().split('T')[0]}.csv`);
-      
-      toast.success('Submissions exported as CSV successfully');
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
+      saveAs(
+        blob,
+        `${testName.replace(/[^a-z0-9]/gi, "_").toLowerCase()}_submissions_${
+          new Date().toISOString().split("T")[0]
+        }.csv`
+      );
+
+      toast.success("Submissions exported as CSV successfully");
     } catch (error) {
-      console.error('CSV export error:', error);
-      toast.error('Failed to export as CSV. Please try again.');
+      console.error("CSV export error:", error);
+      toast.error("Failed to export as CSV. Please try again.");
     } finally {
       setIsExporting(false);
       setOpen(false);
@@ -176,8 +211,8 @@ export const ExportDialog = ({ data, testName = "Test" }: ExportDialogProps) => 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <Download className="size-4 mr-2" />
+        <Button>
+          <FileJson />
           Export
         </Button>
       </DialogTrigger>
@@ -218,9 +253,10 @@ export const ExportDialog = ({ data, testName = "Test" }: ExportDialogProps) => 
           </Button>
         </div>
         <div className="text-xs text-muted-foreground">
-          Note: The export will include all {data.length} submissions with the current filters applied.
+          Note: The export will include all {data.length} submissions with the
+          current filters applied.
         </div>
       </DialogContent>
     </Dialog>
   );
-}; 
+};
