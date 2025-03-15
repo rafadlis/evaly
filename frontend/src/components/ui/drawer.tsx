@@ -122,10 +122,12 @@ function DrawerNavbar({
   className,
   onBack,
   title,
+  titleComponent,
   ...props
 }: React.ComponentProps<"div"> & {
   onBack: () => void;
-  title?: string;
+  title?: string
+  titleComponent?: React.ReactNode
 }) {
   return (
     <header
@@ -140,10 +142,16 @@ function DrawerNavbar({
         >
           <ChevronLeft className="text-muted-foreground" size={20} />
         </button>
-        <DrawerTitle className="ml-3 font-medium text-foreground">
-          {title}
-        </DrawerTitle>
-        <DrawerDescription className="hidden"></DrawerDescription>
+        {titleComponent ? (
+          titleComponent
+        ) : (
+          <>
+            <DrawerTitle className="ml-3 font-medium text-foreground">
+              {title}
+            </DrawerTitle>
+            <DrawerDescription className="hidden"></DrawerDescription>
+          </>
+        )}
       </div>
     </header>
   );

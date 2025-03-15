@@ -8,7 +8,7 @@ import Submissions from "./_components/submissions"
 import Share from "./_components/share"
 
 const Page = () => {
-  const [tab, setTab] = useTabsState("summary");
+  const [tab, setTab] = useTabsState("submissions");
 
   return (
     <Tabs className="container min-h-dvh pb-10" defaultValue="submissions" value={tab} onValueChange={setTab}>
