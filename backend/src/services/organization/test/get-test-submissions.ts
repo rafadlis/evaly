@@ -48,8 +48,6 @@ type TestAnswer = {
 };
 
 export const getTestSubmissions = async (testId: string) => {
-    console.log("Getting submissions for test:", testId);
-    
     // 1. Fetch all active sections for this test
     const sectionsRaw = await db.select({
         id: testSection.id,
@@ -63,8 +61,6 @@ export const getTestSubmissions = async (testId: string) => {
         )
     )
     .orderBy(testSection.order);
-
-    console.log("Active sections found:", sectionsRaw.length);
 
     // 2. Fetch all active questions for these sections
     const sectionIds = sectionsRaw.map(section => section.id);
@@ -83,8 +79,6 @@ export const getTestSubmissions = async (testId: string) => {
         )
     );
 
-    console.log("Active questions found:", questionsRaw.length);
-
     // Group questions by section and count
     const questionsBySectionId: Record<string, TestQuestion[]> = {};
     for (const q of questionsRaw) {
@@ -100,8 +94,6 @@ export const getTestSubmissions = async (testId: string) => {
         title: section.title,
         questionsCount: questionsBySectionId[section.id]?.length || 0
     }));
-
-    console.log("Sections with question counts:", sections.map(s => `${s.title}: ${s.questionsCount}`));
 
     // 3. Get all completed attempts for this test
     const attemptsRaw = await db.select({
@@ -120,8 +112,6 @@ export const getTestSubmissions = async (testId: string) => {
         )
     );
 
-    console.log("Completed attempts found:", attemptsRaw.length);
-
     // Convert to our expected type
     const attempts: TestAttempt[] = attemptsRaw.map(attempt => ({
         id: attempt.id,
@@ -133,7 +123,6 @@ export const getTestSubmissions = async (testId: string) => {
 
     // 4. Get user information for each attempt
     const participantEmails = [...new Set(attempts.map(attempt => attempt.participantEmail))];
-    console.log("Unique participant emails:", participantEmails.length);
     
     const userInfoRaw = await db.select({
         id: user.id,
@@ -143,14 +132,11 @@ export const getTestSubmissions = async (testId: string) => {
     .from(user)
     .where(sql`${user.email} IN (${participantEmails.length > 0 ? participantEmails.map(email => `'${email}'`).join(',') : "''"})`);
 
-    console.log("User records found:", userInfoRaw.length);
-
     // Create a map of email to user info for quick lookup
     const userMap = new Map(userInfoRaw.map(u => [u.email, u]));
 
     // 5. Get all answers for these attempts
     const attemptIds = attempts.map(attempt => attempt.id);
-    console.log("Attempt IDs:", attemptIds);
     
     const answersRaw = await db.select({
         attemptId: testAttemptAnswer.attemptId,
@@ -166,20 +152,6 @@ export const getTestSubmissions = async (testId: string) => {
             isNull(testAttemptAnswer.deletedAt)
         )
     );
-    
-    console.log("Answers found:", answersRaw.length);
-    if (answersRaw.length > 0) {
-        console.log("Sample answer:", answersRaw[0]);
-        
-        // Count answers with isCorrect set
-        const correctAnswers = answersRaw.filter(a => a.isCorrect === true).length;
-        const incorrectAnswers = answersRaw.filter(a => a.isCorrect === false).length;
-        const nullCorrectAnswers = answersRaw.filter(a => a.isCorrect === null).length;
-        
-        console.log("Correct answers:", correctAnswers);
-        console.log("Incorrect answers:", incorrectAnswers);
-        console.log("Null isCorrect answers:", nullCorrectAnswers);
-    }
 
     // Filter out any null attemptIds or questionIds
     const validAnswers: TestAnswer[] = answersRaw
@@ -191,15 +163,12 @@ export const getTestSubmissions = async (testId: string) => {
             answerOptions: a.answerOptions,
             isCorrect: a.isCorrect
         }));
-    
-    console.log("Valid answers count:", validAnswers.length);
 
     // Create a map of questionId to sectionId for quick lookup
     const questionSectionMap = new Map(questionsRaw.map(q => [q.id, q.sectionId]));
 
     // Create a map of all question IDs for quick lookup
     const allQuestionIds = new Set(questionsRaw.map(q => q.id));
-    console.log("Total unique questions:", allQuestionIds.size);
 
     // Group attempts by participant email
     const attemptsByParticipant: Record<string, TestAttempt[]> = {};
@@ -209,8 +178,6 @@ export const getTestSubmissions = async (testId: string) => {
         }
         attemptsByParticipant[attempt.participantEmail].push(attempt);
     }
-    
-    console.log("Participant count:", Object.keys(attemptsByParticipant).length);
 
     // Group answers by attempt
     const answersByAttempt: Record<string, TestAnswer[]> = {};
@@ -220,12 +187,9 @@ export const getTestSubmissions = async (testId: string) => {
         }
         answersByAttempt[answer.attemptId].push(answer);
     }
-    
-    console.log("Attempts with answers:", Object.keys(answersByAttempt).length);
 
     // Calculate total questions count
     const totalQuestions = questionsRaw.length;
-    console.log("Total questions count:", totalQuestions);
 
     // Process the data to create submissions (one per participant)
     const submissions: Submission[] = [];
@@ -255,8 +219,6 @@ export const getTestSubmissions = async (testId: string) => {
         let totalWrong = 0;
         let latestCompletedAt = "";
 
-        console.log(`Participant ${participantEmail} has ${participantAttempts.length} attempts`);
-
         // Process each attempt by this participant
         for (const attempt of participantAttempts) {
             // Track the latest completion time
@@ -265,12 +227,6 @@ export const getTestSubmissions = async (testId: string) => {
             }
 
             const attemptAnswers = answersByAttempt[attempt.id] || [];
-            console.log(`Attempt ${attempt.id} has ${attemptAnswers.length} answers`);
-            
-            // Count correct and incorrect answers for this attempt
-            const correctAttemptAnswers = attemptAnswers.filter(a => a.isCorrect === true).length;
-            const incorrectAttemptAnswers = attemptAnswers.filter(a => a.isCorrect === false).length;
-            console.log(`Attempt ${attempt.id} has ${correctAttemptAnswers} correct and ${incorrectAttemptAnswers} incorrect answers`);
             
             for (const answer of attemptAnswers) {
                 // Skip if we've already counted this question for this participant
@@ -281,7 +237,6 @@ export const getTestSubmissions = async (testId: string) => {
                 // Get the section ID for this question
                 const sectionId = questionSectionMap.get(answer.questionId);
                 if (!sectionId) {
-                    console.log(`Warning: Question ${answer.questionId} has no section mapping`);
                     continue;
                 }
                 
@@ -306,13 +261,6 @@ export const getTestSubmissions = async (testId: string) => {
                 }
             }
         }
-
-        console.log(`Participant ${participantEmail} stats:`, {
-            totalAnswered,
-            totalCorrect,
-            totalWrong,
-            unanswered: totalQuestions - totalAnswered
-        });
 
         const score = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
 
@@ -340,20 +288,6 @@ export const getTestSubmissions = async (testId: string) => {
     submissions.forEach((submission, index) => {
         submission.rank = index + 1;
     });
-
-    console.log("Final submissions count:", submissions.length);
-    if (submissions.length > 0) {
-        console.log("Sample submission:", {
-            name: submissions[0].name,
-            email: submissions[0].email,
-            answered: submissions[0].answered,
-            correct: submissions[0].correct,
-            wrong: submissions[0].wrong,
-            unanswered: submissions[0].unanswered,
-            score: submissions[0].score,
-            rank: submissions[0].rank
-        });
-    }
 
     return {
         submissions,

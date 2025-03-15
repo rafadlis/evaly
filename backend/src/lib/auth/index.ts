@@ -6,6 +6,11 @@ import { env } from "../env";
 
 export const auth = betterAuth({
   secret: env.BETTER_AUTH_SECRET!,
+  // plugins: [
+  //   magicLink({
+  //     sendMagicLink({ email, token, url }, request) {},
+  //   }),
+  // ],
   database: drizzleAdapter(db, {
     // We're using Drizzle as our database
     provider: "pg",

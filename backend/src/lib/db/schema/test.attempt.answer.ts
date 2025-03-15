@@ -53,8 +53,11 @@ export const testAttemptAnswer = pgTable("test_attempt_answer", {
     t.attemptId,
     t.questionId
   ),
-  attemptIdIndex: index("attempt_id_index").on(
+  testAttemptAnswerAttemptIdIndex: index("test_attempt_answer_attempt_id_index").on(
     t.attemptId
+  ),
+  testAttemptAnswerQuestionIdIndex: index("test_attempt_answer_question_id_index").on(
+    t.questionId
   ),
 }));
 

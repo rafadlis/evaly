@@ -276,8 +276,8 @@ export const testRouter = new Elysia().group("/test", (app) => {
         const testId = params.id;
 
         await checkTestOwner(testId, organizationId);
-
         const res = await getTestSubmissions(testId);
+
         return res;
       })
   );

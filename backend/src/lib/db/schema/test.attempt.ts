@@ -1,6 +1,6 @@
 import { relations } from "drizzle-orm";
 import { testSection } from "./test.section";
-import { pgTable, varchar, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import { pgTable, varchar, timestamp, uniqueIndex, index } from "drizzle-orm/pg-core";
 import { ulid } from "ulidx";
 import { user } from "./user";
 import { test } from "./test";
@@ -43,6 +43,12 @@ export const testAttempt = pgTable(
     uniqueTestSection: uniqueIndex("unique_test_section_attempt").on(
       t.testSectionId,
       t.testId,
+      t.participantEmail
+    ),
+    testAttemptTestIdIndex: index("test_attempt_test_id_index").on(
+      t.testId
+    ),
+    testAttemptParticipantEmailIndex: index("test_attempt_participant_email_index").on(
       t.participantEmail
     ),
   })
