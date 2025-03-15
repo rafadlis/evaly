@@ -1,21 +1,46 @@
-import { $api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
+import { $api } from "@/lib/api";
+
+export interface TestSubmission {
+  id: string;
+  name: string;
+  email: string;
+  totalQuestions: number;
+  answered: number;
+  correct: number;
+  wrong: number;
+  unanswered: number;
+  submittedAt: string | null;
+  startedAt: string | null;
+  score: number;
+  rank: number;
+  sectionAnswers: Record<string, number>;
+  sectionCorrect: Record<string, number>;
+  sectionWrong: Record<string, number>;
+  status: 'completed' | 'in-progress' | 'not-started';
+}
+
+export interface TestSection {
+  id: string;
+  name: string;
+  questionsCount: number;
+}
+
+export interface TestSubmissionsResponse {
+  submissions: TestSubmission[];
+  sections: TestSection[];
+  timestamp: string;
+}
 
 export const useTestSubmissionsById = (testId: string) => {
-  return useQuery({
-    queryKey: ["test-submissions-by-id", testId],
+  return useQuery<TestSubmissionsResponse>({
+    queryKey: ["test-submissions", testId],
     queryFn: async () => {
-      const res = await $api.organization.test({ id: testId }).submissions.get();
-      return res.data;
+      const response = await $api.organization.test({ id: testId }).submissions.get();
+      return response.data as TestSubmissionsResponse;
     },
     enabled: !!testId,
-    staleTime: 3000, // Data will be considered fresh for 3 seconds (debounce)
-    gcTime: 5 * 60 * 1000, // Keep the data in cache for 5 minutes after component unmounts
-    // refetchInterval: 10000, // Auto refetch every 10 seconds to ensure data stays relatively fresh
-    // refetchIntervalInBackground: false, // Only refetch when tab is in foreground
-    // refetchOnWindowFocus: true, // Refetch when user returns to the tab
-    // refetchOnMount: true, // Refetch when component mounts
-    // refetchOnReconnect: true, // Refetch when reconnecting after being offline
+    refetchInterval: 30000, // Refetch every 30 seconds
   });
 };
 

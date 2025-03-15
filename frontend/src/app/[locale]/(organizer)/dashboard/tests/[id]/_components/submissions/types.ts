@@ -1,5 +1,5 @@
-export type Submission = {
-    id: number;
+export interface Submission {
+    id: number | string;
     name: string;
     email: string;
     totalQuestions: number;
@@ -7,20 +7,22 @@ export type Submission = {
     correct: number;
     wrong: number;
     unanswered: number;
-    submittedAt: string;
+    submittedAt: string | null;
+    startedAt: string | null;
     score: number;
-    rank?: number; // Added for ranking
-    sectionId: string; // Changed to string for section filtering
-    sectionAnswers?: Record<string, number>; // Changed to string keys for section IDs
-    sectionCorrect?: Record<string, number>; // Changed to string keys for section IDs
-    sectionWrong?: Record<string, number>; // Changed to string keys for section IDs
-};
+    rank: number;
+    sectionId?: string;
+    sectionAnswers: Record<string, number>;
+    sectionCorrect: Record<string, number>;
+    sectionWrong: Record<string, number>;
+    status: 'completed' | 'in-progress' | 'not-started';
+}
 
-export type Section = {
-    id: string; // Changed to string to match API response
+export interface Section {
+    id: string;
     name: string;
-    questionsCount: number; // Number of questions in this section
-};
+    questionsCount: number;
+}
 
 export type Question = {
     id: string;

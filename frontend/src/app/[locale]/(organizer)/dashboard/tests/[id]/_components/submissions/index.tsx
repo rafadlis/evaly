@@ -5,17 +5,17 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { Search, Info, Filter, Loader2, RefreshCw } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -26,7 +26,7 @@ import { Submission, Section } from "./types";
 import { SubmissionDrawer } from "./submission-drawer";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
-import { useTestSubmissionsById } from "@/query/organization/test/use-test-submissions-byid";
+import { useTestSubmissionsById, TestSubmission } from "@/query/organization/test/use-test-submissions-byid";
 
 dayjs.extend(relativeTime);
 
@@ -85,7 +85,7 @@ const Submissions = () => {
   const submissions: Submission[] = useMemo(() => {
     if (!data?.submissions) return [];
 
-    return data.submissions.map((submission) => {
+    return data.submissions.map((submission: TestSubmission) => {
       // Use the original string ID but remove the prefix for display
       const numericId = parseInt(submission.id.replace(/^ta-/, ""), 36) || 0;
 
@@ -104,6 +104,7 @@ const Submissions = () => {
         wrong: submission.wrong,
         unanswered: submission.unanswered,
         submittedAt: submission.submittedAt,
+        startedAt: submission.startedAt,
         score: submission.score,
         rank: submission.rank || 0,
         // Use the first section with answers as the primary section
@@ -112,6 +113,7 @@ const Submissions = () => {
         sectionAnswers: submission.sectionAnswers || {},
         sectionCorrect: submission.sectionCorrect || {},
         sectionWrong: submission.sectionWrong || {},
+        status: submission.status
       };
     });
   }, [data?.submissions]);
@@ -218,9 +220,15 @@ const Submissions = () => {
 
       // If scores are equal, sort by submission time (earlier submissions rank higher)
       // Earlier date = smaller timestamp = should come first in the sort
-      return (
-        new Date(a.submittedAt).getTime() - new Date(b.submittedAt).getTime()
-      );
+      if (a.submittedAt && b.submittedAt) {
+        return new Date(a.submittedAt).getTime() - new Date(b.submittedAt).getTime();
+      }
+      
+      // If one has submittedAt and the other doesn't, prioritize the submitted one
+      if (a.submittedAt && !b.submittedAt) return -1;
+      if (!a.submittedAt && b.submittedAt) return 1;
+      
+      return 0;
     });
 
     return sortedData.map((item, index) => ({
@@ -341,7 +349,7 @@ const Submissions = () => {
               </SelectContent>
             </Select>
           )}
-          {sectionsWithAll.length === 1 && (
+          {sectionsWithAll.length === 1 && sectionsWithAll[0].name && (
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
               <Filter className="h-4 w-4" />
               {sectionsWithAll[0].name}

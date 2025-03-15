@@ -107,7 +107,6 @@ export const getTestSubmissions = async (testId: string) => {
     .where(
         and(
             eq(testAttempt.testId, testId),
-            sql`${testAttempt}.completed_at IS NOT NULL`,
             isNull(testAttempt.deletedAt)
         )
     );
@@ -217,11 +216,23 @@ export const getTestSubmissions = async (testId: string) => {
         let totalAnswered = 0;
         let totalCorrect = 0;
         let totalWrong = 0;
-        let latestCompletedAt = "";
+        let latestCompletedAt: string | null = null;
+        let latestStartedAt: string | null = null;
+        let isInProgress = false;
 
         // Process each attempt by this participant
         for (const attempt of participantAttempts) {
-            // Track the latest completion time
+            // Track if any attempt is in progress (started but not completed)
+            if (attempt.startedAt && !attempt.completedAt) {
+                isInProgress = true;
+                
+                // Track the latest start time for in-progress attempts
+                if (!latestStartedAt || attempt.startedAt > latestStartedAt) {
+                    latestStartedAt = attempt.startedAt;
+                }
+            }
+            
+            // Track the latest completion time for completed attempts
             if (attempt.completedAt && (!latestCompletedAt || attempt.completedAt > latestCompletedAt)) {
                 latestCompletedAt = attempt.completedAt;
             }
@@ -274,24 +285,39 @@ export const getTestSubmissions = async (testId: string) => {
             correct: totalCorrect,
             wrong: totalWrong,
             unanswered: totalQuestions - totalAnswered,
-            submittedAt: latestCompletedAt,
+            submittedAt: latestCompletedAt || null,
+            startedAt: latestStartedAt || null,
             score,
             rank: 0, // Will be calculated after sorting
             sectionAnswers,
             sectionCorrect,
             sectionWrong,
+            status: latestCompletedAt ? 'completed' : (isInProgress ? 'in-progress' : 'not-started')
         });
     }
 
     // Sort submissions by score (descending) and assign ranks
     submissions.sort((a, b) => {
-        // First sort by score (descending)
+        // First prioritize completed submissions
+        if (a.status === 'completed' && b.status !== 'completed') return -1;
+        if (a.status !== 'completed' && b.status === 'completed') return 1;
+        
+        // Then sort by score (descending)
         if (b.score !== a.score) {
             return b.score - a.score;
         }
         
-        // If scores are equal, sort by submission time (earlier submissions rank higher)
-        return new Date(a.submittedAt).getTime() - new Date(b.submittedAt).getTime();
+        // If scores are equal for completed submissions, sort by submission time
+        if (a.status === 'completed' && b.status === 'completed' && a.submittedAt && b.submittedAt) {
+            return new Date(a.submittedAt).getTime() - new Date(b.submittedAt).getTime();
+        }
+        
+        // For in-progress submissions with equal scores, sort by start time
+        if (a.status === 'in-progress' && b.status === 'in-progress' && a.startedAt && b.startedAt) {
+            return new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime();
+        }
+        
+        return 0;
     });
     
     submissions.forEach((submission, index) => {
@@ -319,7 +345,8 @@ export type Submission = {
     correct: number;
     wrong: number;
     unanswered: number;
-    submittedAt: string;
+    submittedAt: string | null;
+    startedAt: string | null;
     score: number;
     rank: number;
     sectionAnswers: {
@@ -331,6 +358,7 @@ export type Submission = {
     sectionWrong: {
         [key: string]: number; // sectionId: number of wrong answers
     };
+    status: 'completed' | 'in-progress' | 'not-started';
 }
 
 export type Section = {
