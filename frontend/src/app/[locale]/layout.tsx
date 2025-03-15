@@ -49,7 +49,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable}`}>
-      {/* {process.env.NODE_ENV === "development" && <ReactScan />} */}
+     {/* <ReactScan /> */}
       <body
         className={`antialiased min-h-svh flex flex-col font-sans`}
       >
