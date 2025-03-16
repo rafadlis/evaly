@@ -2,16 +2,16 @@ import { useState, useMemo } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import {
-  CheckCircle,
   XCircle,
   HelpCircle,
-  Loader2, Clock,
-  Award,
+  Loader2,
+  Clock,
   BarChart3,
   Calendar,
   Mail,
   Timer,
-  AlertCircle
+  AlertCircle,
+  CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -206,43 +206,38 @@ export const SubmissionDrawer = ({
                   </CardHeader>
                   <CardContent className="pt-6 border-t border-dashed">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-2">
-                      <div className="flex flex-col items-center justify-center p-4 rounded-xl bg-foreground/5">
-                        <div
-                          className={`text-3xl font-bold ${getScoreColor(
-                            submission.score
-                          )}`}
-                        >
+                      <div className="flex flex-col p-3 border border-dashed">
+                        <div className={`text-2xl font-medium`}>
                           {submission.score}%
                         </div>
-                        <div className="text-sm text-muted-foreground mt-1">
+                        <div className="text-sm text-muted-foreground">
                           Score
                         </div>
                       </div>
 
-                      <div className="flex flex-col items-center justify-center p-4 rounded-xl bg-amber-500/10">
-                        <div className="text-3xl font-bold flex items-center">
-                          <Award className="h-6 w-6 text-amber-500 mr-1" />
-                          {submission.rank || "-"}
+                      <div className="flex flex-col p-3 border border-dashed">
+                        <div className="text-3xl font-medium">
+                          #{submission.rank || "-"}
                         </div>
                         <div className="text-sm text-muted-foreground mt-1">
                           Rank
                         </div>
                       </div>
 
-                      <div className="flex flex-col items-center justify-center p-4 rounded-xl bg-green-500/10">
-                        <div className="text-3xl font-bold text-green-600">
+                      <div className="flex flex-col p-3 border border-dashed">
+                        <div className="text-3xl font-medium">
                           {submission.correct}
                         </div>
-                        <div className="text-sm text-muted-foreground mt-1">
+                        <div className="text-sm text-muted-foreground">
                           Correct
                         </div>
                       </div>
 
-                      <div className="flex flex-col items-center justify-center p-4 rounded-xl bg-red-500/10">
-                        <div className="text-3xl font-bold text-red-600">
+                      <div className="flex flex-col p-3 border border-dashed">
+                        <div className="text-3xl font-medium">
                           {submission.wrong}
                         </div>
-                        <div className="text-sm text-muted-foreground mt-1">
+                        <div className="text-sm text-muted-foreground">
                           Wrong
                         </div>
                       </div>
@@ -256,26 +251,25 @@ export const SubmissionDrawer = ({
                           questions
                         </span>
                       </div>
-                      <div className="h-3 w-full bg-secondary rounded-full overflow-hidden">
-                        <Progress
-                          value={
-                            (submission.answered / submission.totalQuestions) *
-                            100
-                          }
-                        />
-                      </div>
 
-                      <div className="flex justify-between text-xs text-muted-foreground mt-2 px-1">
+                      <Progress
+                        value={
+                          (submission.answered / submission.totalQuestions) *
+                          100
+                        }
+                      />
+
+                      <div className="flex justify-between text-sm text-muted-foreground mt-2 px-1">
                         <div className="flex items-center gap-1">
-                          <CheckCircle className="size-3 text-green-600" />
+                          <CheckCircle2 className="size-4 text-green-600" />
                           <span>{submission.correct} correct</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <XCircle className="size-3 text-red-600" />
+                          <XCircle className="size-4 text-red-600" />
                           <span>{submission.wrong} wrong</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <HelpCircle className="size-3 text-muted-foreground" />
+                          <HelpCircle className="size-4 text-muted-foreground" />
                           <span>{submission.unanswered} unanswered</span>
                         </div>
                       </div>
@@ -320,48 +314,37 @@ export const SubmissionDrawer = ({
                               <CardTitle className="text-base font-medium">
                                 {section.name || `Section ${index + 1}`}
                               </CardTitle>
-                              <Badge
-                                className={`${
-                                  performance.score >= 80
-                                    ? "bg-green-600"
-                                    : performance.score >= 60
-                                    ? "bg-amber-500"
-                                    : "bg-red-500"
-                                } 
-                                  text-white hover:opacity-90 shadow-sm`}
-                              >
-                                {performance.score}%
-                              </Badge>
+                              <Badge>{performance.score}%</Badge>
                             </div>
                           </CardHeader>
                           <CardContent className="pt-6 border-t border-dashed">
                             <div className="grid grid-cols-4 gap-4">
-                              <div className="flex flex-col items-center p-3 bg-primary/5">
-                                <span className="text-lg font-semibold">
+                              <div className="flex flex-col p-3 border border-dashed">
+                                <span className="text-lg">
                                   {performance.answered}/{performance.total}
                                 </span>
                                 <span className="text-xs text-muted-foreground">
                                   Answered
                                 </span>
                               </div>
-                              <div className="flex flex-col items-center p-3 bg-green-500/10">
-                                <span className="text-lg font-semibold text-green-600">
+                              <div className="flex flex-col p-3 border border-dashed">
+                                <span className="text-lg">
                                   {performance.correct}
                                 </span>
                                 <span className="text-xs text-muted-foreground">
                                   Correct
                                 </span>
                               </div>
-                              <div className="flex flex-col items-center p-3 bg-red-500/10">
-                                <span className="text-lg font-semibold text-red-600">
+                              <div className="flex flex-col p-3 border border-dashed">
+                                <span className="text-lg">
                                   {performance.wrong}
                                 </span>
                                 <span className="text-xs text-muted-foreground">
                                   Wrong
                                 </span>
                               </div>
-                              <div className="flex flex-col items-center p-3 bg-primary/5">
-                                <span className="text-lg font-semibold">
+                              <div className="flex flex-col p-3 border border-dashed">
+                                <span className="text-lg font-medium">
                                   {performance.unanswered}
                                 </span>
                                 <span className="text-xs text-muted-foreground">
@@ -400,19 +383,19 @@ export const SubmissionDrawer = ({
                       <div className="flex items-center gap-3 text-sm">
                         <div className="flex items-center gap-1">
                           <div className="h-4 w-4 rounded-full bg-green-100 flex items-center justify-center">
-                            <CheckCircle className="h-2.5 w-2.5 text-green-600" />
+                            <CheckCircle2 className="size-3 text-green-600" />
                           </div>
                           <span>Correct</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <div className="h-4 w-4 rounded-full bg-red-100 flex items-center justify-center">
-                            <XCircle className="h-2.5 w-2.5 text-red-600" />
+                            <XCircle className="size-3 text-red-600" />
                           </div>
                           <span>Wrong</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <div className="h-4 w-4 rounded-full bg-gray-100 flex items-center justify-center">
-                            <HelpCircle className="h-2.5 w-2.5 text-muted-foreground" />
+                            <HelpCircle className="size-3 text-muted-foreground" />
                           </div>
                           <span>Unanswered</span>
                         </div>
@@ -460,23 +443,14 @@ export const SubmissionDrawer = ({
                                   <span className="font-medium">
                                     {section.name || `Section ${i + 1}`}
                                   </span>
-                                  <Badge
-                                    className={`ml-2 ${
-                                      performance.score >= 80
-                                        ? "bg-green-500"
-                                        : performance.score >= 60
-                                        ? "bg-amber-500"
-                                        : "bg-red-500"
-                                    } 
-                                      text-white hover:opacity-90 shadow-sm`}
-                                  >
+                                  <Badge className={`ml-2`} variant={"outline"}>
                                     {performance.score}%
                                   </Badge>
                                 </div>
                                 <div className="flex items-center gap-2 text-sm mr-4">
                                   <span className="flex items-center gap-1">
                                     <div className="h-4 w-4 rounded-full bg-green-100 flex items-center justify-center">
-                                      <CheckCircle className="h-2.5 w-2.5 text-green-600" />
+                                      <CheckCircle2 className="size-3 text-green-600" />
                                     </div>
                                     {performance.correct}
                                   </span>
@@ -485,7 +459,7 @@ export const SubmissionDrawer = ({
                                   </span>
                                   <span className="flex items-center gap-1">
                                     <div className="h-4 w-4 rounded-full bg-red-100 flex items-center justify-center">
-                                      <XCircle className="h-2.5 w-2.5 text-red-600" />
+                                      <XCircle className="size-3 text-red-600" />
                                     </div>
                                     {performance.wrong}
                                   </span>
@@ -494,7 +468,7 @@ export const SubmissionDrawer = ({
                                   </span>
                                   <span className="flex items-center gap-1">
                                     <div className="h-4 w-4 rounded-full bg-gray-100 flex items-center justify-center">
-                                      <HelpCircle className="h-2.5 w-2.5 text-muted-foreground" />
+                                      <HelpCircle className="size-3 text-muted-foreground" />
                                     </div>
                                     {performance.unanswered}
                                   </span>
@@ -505,20 +479,12 @@ export const SubmissionDrawer = ({
                               <div className="space-y-4 px-4">
                                 {sectionQuestions.map((question, index) => (
                                   <div key={question.id} className="border">
-                                    <div
-                                      className={`p-4 ${
-                                        question.isCorrect === true
-                                          ? "bg-green-500/10"
-                                          : question.isCorrect === false
-                                          ? "bg-red-500/10"
-                                          : "bg-primary/10"
-                                      }`}
-                                    >
-                                      <div className="flex items-start gap-3">
+                                    <div className={`p-4 border-b border-dashed`}>
+                                      <div className="flex items-start gap-3 bgbl">
                                         <div className="mt-0.5 flex-shrink-0">
                                           {question.isCorrect === true ? (
                                             <div className="h-7 w-7 rounded-full bg-green-500/10 flex items-center justify-center">
-                                              <CheckCircle className="h-4 w-4 text-green-600" />
+                                              <CheckCircle2 className="h-4 w-4 text-green-600" />
                                             </div>
                                           ) : question.isCorrect === false ? (
                                             <div className="h-7 w-7 rounded-full bg-red-500/10 flex items-center justify-center">
@@ -546,7 +512,7 @@ export const SubmissionDrawer = ({
                                             </Badge>
                                           </div>
                                           <div
-                                            className="text-sm custom-prose"
+                                            className="text-sm custom-prose "
                                             dangerouslySetInnerHTML={{
                                               __html: question.text || "",
                                             }}
@@ -559,7 +525,7 @@ export const SubmissionDrawer = ({
                                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-2 p-3 rounded-lg bg-primary/10">
                                           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1">
-                                            <CheckCircle className="h-3 w-3 text-green-600" />
+                                            <CheckCircle2 className="h-3 w-3 text-green-600" />
                                             Correct Answer
                                           </p>
                                           <div
@@ -582,16 +548,16 @@ export const SubmissionDrawer = ({
                                         >
                                           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1">
                                             {question.isCorrect === true ? (
-                                              <CheckCircle className="h-3 w-3 text-green-600" />
+                                              <CheckCircle2 className="size-3 text-green-600" />
                                             ) : question.isCorrect === false ? (
-                                              <XCircle className="h-3 w-3 text-red-600" />
+                                              <XCircle className="size-3 text-red-600" />
                                             ) : (
-                                              <HelpCircle className="h-3 w-3 text-muted-foreground" />
+                                              <HelpCircle className="size-3 text-muted-foreground" />
                                             )}
                                             Participant&apos;s Answer
                                           </p>
                                           <div
-                                            className={`text-sm font-medium custom-prose ${
+                                            className={`text-sm font-medium ${
                                               question.isCorrect === true
                                                 ? "text-green-600"
                                                 : question.isCorrect === false
@@ -625,15 +591,13 @@ export const SubmissionDrawer = ({
         <DrawerFooter className="border-t py-3">
           <div className="container max-w-4xl flex justify-between items-center gap-2">
             <DrawerClose asChild>
-              <Button variant="outline" >
-                Close
-              </Button>
+              <Button variant="outline">Close</Button>
             </DrawerClose>
-            <ExportDialogDetails 
-              submission={submission} 
-              testName={testId} 
-              questions={questions} 
-              sections={sections} 
+            <ExportDialogDetails
+              submission={submission}
+              testName={testId}
+              questions={questions}
+              sections={sections}
             />
           </div>
         </DrawerFooter>

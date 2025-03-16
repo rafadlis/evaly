@@ -12,7 +12,7 @@ export const LogoType = ({ className, href = "/" }: Props) => {
       <div className="h-7 w-7 text-lg bg-background text-primary flex items-center justify-center font-bold mr-2.5 shadow-[3px_3px_0px_0px_var(--primary)] hover:shadow-[0px_0px_0px_0px_var(--primary)] border-2 border-primary transition-all">
         E
       </div>
-      <span className="text-2xl font-semibold hidden sm:block">evaly</span>
+      <span className="text-xl font-bold hidden sm:block">evaly</span>
     </Link>
   );
 };
