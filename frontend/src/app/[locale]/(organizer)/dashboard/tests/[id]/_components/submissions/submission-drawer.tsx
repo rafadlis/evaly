@@ -106,13 +106,6 @@ export const SubmissionDrawer = ({
     return { answered, correct, wrong, unanswered, total, score };
   };
 
-  // Get status color based on score
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-green-600";
-    if (score >= 60) return "text-amber-600";
-    return "text-red-600";
-  };
-
   // Get progress color based on score
   const getProgressColor = (score: number) => {
     if (score >= 80) return "bg-green-600";
