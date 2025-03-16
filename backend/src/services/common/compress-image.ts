@@ -121,3 +121,7 @@
 
 //   return compressedFile;
 // }
+
+export const compressImage = async (image: File) => {
+  return image;
+};
