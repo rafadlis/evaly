@@ -37,7 +37,7 @@ export const organizationMiddleware = async ({ request, error }: Context) => {
     }
 
     let organizer = await getSelectedOrganizerByUserId(session.user.id);
-    console.log(organizer);
+
     if (!organizer) {
       organizer = await createOrganizer(session.user.id);
     }
