@@ -2,9 +2,8 @@ FROM oven/bun AS build
 
 WORKDIR /app
 
-# Cache packages installation
+# Copy package.json files only (without lock files)
 COPY package.json package.json
-COPY bun.lock bun.lock
 # COPY .npmrc .npmrc
 
 COPY /backend/package.json ./backend/package.json
@@ -13,10 +12,8 @@ COPY /frontend/package.json ./frontend/package.json
 # Copy the backend code because we need to generate the types first
 COPY /backend ./backend
 
-RUN bun install
-
-# Install sharp for image processing for a specific platform
-RUN bun add --cpu=x64 --os=linux --libc=glibc sharp 
+# Force fresh install without using lock file
+RUN bun install --no-cache
 
 # Copy the backend code again
 COPY /backend ./backend
