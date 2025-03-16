@@ -176,6 +176,10 @@ const Profile = () => {
       mutationKey: ["update-organizer-profile"],
       mutationFn: async (data: { fullName: string; imageFile?: File }) => {
         const response = await $api.organization.profile.put(data);
+        if (response.error?.value){
+          toast.error(response.error.value.message)
+          return
+        }
         return response.data;
       },
       onSuccess(data) {

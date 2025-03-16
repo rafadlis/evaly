@@ -12,6 +12,10 @@ const envSchema = z.object({
   AWS_REGION: z.string(),
   AWS_BUCKET: z.string(),
   AWS_CDN_URL: z.string(),
+  SMTP_HOST: z.string(),
+  SMTP_PORT: z.string(),
+  SMTP_USER: z.string(),
+  SMTP_PASSWORD: z.string(),
   
   //development-backend
   WEB_PUBLIC_URL_DEVELOPMENT: z.string(),

@@ -1,16 +1,28 @@
+import * as React from "react";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { account, session, user, verification } from "../db/schema";
 import db from "../db";
 import { env } from "../env";
+import { emailOTP } from "better-auth/plugins";
+import { mailTransporter } from "../mail-transporter";
+import EmailLoginOTPEmail from "../../emails/email-login-otp";
+import { renderToStaticMarkup } from "react-dom/server";
 
 export const auth = betterAuth({
   secret: env.BETTER_AUTH_SECRET!,
-  // plugins: [
-  //   magicLink({
-  //     sendMagicLink({ email, token, url }, request) {},
-  //   }),
-  // ],
+  plugins: [
+    emailOTP({
+      async sendVerificationOTP({ email, otp, type }, request) {
+        await mailTransporter.sendMail({
+          from: "noreply@tetsu.app",
+          to: email,
+          subject: "Tetsu Login Verification",
+          html: renderToStaticMarkup(<EmailLoginOTPEmail otp={otp} />),
+        });
+      },
+    }),
+  ],
   database: drizzleAdapter(db, {
     // We're using Drizzle as our database
     provider: "pg",
@@ -39,8 +51,8 @@ export const auth = betterAuth({
         env.ENVIRONMENT === "development"
           ? "http://localhost:4000/api/auth/callback/google"
           : env.ENVIRONMENT === "staging"
-          ? "https://api-staging.tetsu.app/api/auth/callback/google"
-          : "https://tetsu.app/api/auth/callback/google",
+            ? "https://api-staging.tetsu.app/api/auth/callback/google"
+            : "https://tetsu.app/api/auth/callback/google",
     },
   },
   trustedOrigins: [env.WEB_PUBLIC_URL!],

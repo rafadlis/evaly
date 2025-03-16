@@ -3,25 +3,26 @@
 import LoadingScreen from "@/components/shared/loading/loading-screen";
 import { usePathname } from "@/i18n/navigation";
 import { useOrganizerProfile } from "@/query/organization/profile/use-organizer-profile";
-import { notFound, useParams } from "next/navigation";
+import { notFound, useParams, useRouter } from "next/navigation";
 import React, { useEffect, useTransition } from "react";
 
 const Provider = ({ children }: { children: React.ReactNode }) => {
   const pathName = usePathname();
   const [isRedirecting, startRedirecting] = useTransition();
   const { locale } = useParams();
+  const router = useRouter();
 
   const { isPending, data } = useOrganizerProfile();
 
   useEffect(() => {
-    if (!isPending && data?.status === 401 && pathName) {
+    if (data?.status === 401 && pathName) {
       startRedirecting(() => {
-        window.location.href = `/${locale}/login?callbackURL=${encodeURIComponent(
-          `${pathName}`
-        )}`;
+        router.replace(
+          `/${locale}/login?callbackURL=${encodeURIComponent(`${pathName}`)}`
+        );
       });
     }
-  }, [data?.status, pathName, isPending, locale]);
+  }, [data?.status, pathName, locale, router]);
 
   if (isPending || !pathName)
     return (

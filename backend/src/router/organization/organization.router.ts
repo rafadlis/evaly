@@ -7,6 +7,7 @@ import { uploadFileToS3 } from "../../services/common/upload-file-to-s3";
 import { getFileExtension } from "../../lib/utils";
 import { ulid } from "ulidx";
 import { deleteFileFromS3 } from "../../services/common/delete-file-from-s3";
+import { compressImage } from "../../services/common/compress-image";
 
 export const organizationRouter = new Elysia().group("/organization", (app) => {
   return (
@@ -32,9 +33,13 @@ export const organizationRouter = new Elysia().group("/organization", (app) => {
           // Check if user is trying to update their image profile
           let newImageUrl: string | undefined = undefined;
           if (body.imageFile) {
-            const extension = getFileExtension(body.imageFile.name);
+            const compressedImage = await compressImage(body.imageFile, {
+              width: 500,
+            });
+            const extension = getFileExtension(compressedImage.name);
+
             const imageUrl = await uploadFileToS3(
-              body.imageFile,
+              compressedImage,
               `user/${user.id}/profile-${ulid()}.${extension}`
             );
             if (imageUrl && user.image) {
