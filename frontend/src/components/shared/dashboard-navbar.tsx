@@ -64,7 +64,7 @@ export function DashboardNavbar({ className }: { className?: string }) {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "text-muted-foreground transition-colors  hover:text-primary font-medium",
+                    "text-muted-foreground transition-colors  hover:text-primary font-medium text-[15px]",
                     pathname === item.href && "text-primary",
                   )}
                 >
