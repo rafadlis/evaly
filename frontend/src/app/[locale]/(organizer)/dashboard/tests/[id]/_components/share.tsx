@@ -634,7 +634,7 @@ const Share = () => {
                     level="H"
                     includeMargin={true}
                     imageSettings={{
-                      src: "/images/logo-light.png", // Platform logo
+                      src: "/images/logo-light.webp", // Platform logo
                       x: undefined,
                       y: undefined,
                       height: logoSize,
@@ -644,7 +644,7 @@ const Share = () => {
                   />
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <Image 
-                      src="/images/logo-light.png" // Platform logo
+                      src="/images/logo-light.webp" // Platform logo
                       alt="Logo"
                       width={logoSize}
                       height={logoSize}

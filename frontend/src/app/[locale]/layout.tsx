@@ -19,8 +19,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Evaly: Innovative assessment solution | Design customized evaluations, knowledge checks, and certification tests",
-  description: "Evaly is an innovative assessment solution that allows you to design customized evaluations, knowledge checks, and certification tests.",
+  title: "Tetsu: Innovative assessment solution | Design customized evaluations, knowledge checks, and certification tests",
+  description: "Tetsu is an innovative assessment solution that allows you to design customized evaluations, knowledge checks, and certification tests.",
 };
 
 // Generate static params for all locales and for all pages
