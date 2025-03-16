@@ -19,7 +19,6 @@
     "frontend"
   ],
   "dependencies": {
-    "qrcode.react": "^4.2.0",
     "sst": "3.9.26"
   }
 }

@@ -31,8 +31,7 @@
     "postgres": "^3.4.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "zod": "^3.24.2",
-    "sharp": "0.33.5"
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@types/bun": "1.2.5",
@@ -41,9 +40,6 @@
     "react-email": "^3.0.7",
     "tsup": "^8.4.0"
   },
-  "trustedDependencies": [
-    "sharp"
-  ],
   "overrides": {
     "@sinclair/typebox": "^0.34.27"
   },
