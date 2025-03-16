@@ -17,6 +17,7 @@ const AdminAccount = () => {
   const router = useRouter();
 
   const name = data?.data?.user?.name;
+  const email = data?.data?.user?.email;
   const image = data?.data?.user?.image;
 
   return (
@@ -27,7 +28,7 @@ const AdminAccount = () => {
             {image ? (
               <AvatarImage src={image} alt="User" />
             ) : (
-              <AvatarFallback>{name?.charAt(0)}</AvatarFallback>
+              <AvatarFallback>{email?.charAt(0).toUpperCase()}</AvatarFallback>
             )}
           </Avatar>
         </Button>

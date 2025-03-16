@@ -12,23 +12,29 @@ import { useGetCallbackUrl } from "@/hooks/use-get-callback-url";
 import { authClient } from "@/lib/auth.client";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
+import { useOrganizerProfile } from "@/query/organization/profile/use-organizer-profile";
+import LoadingScreen from "./loading/loading-screen";
 
 const LogIn = () => {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
-  const [redirecting, setRedirecting] = useTransition();
+  const { data, isPending, refetch } = useOrganizerProfile();
 
   const callbackURL = useGetCallbackUrl();
 
-  if (redirecting) {
-    return <div className="text-lg font-medium">Redirecting...</div>;
+  useEffect(() => {
+    if (data?.data?.user) {
+      window.location.href = callbackURL || "/dashboard";
+    }
+  }, [data, callbackURL]);
+
+  if (isPending) {
+    return <LoadingScreen />;
   }
 
   if (otp !== null) {
@@ -50,17 +56,17 @@ const LogIn = () => {
                 email,
                 otp,
               });
-              setLoading(false);
 
               if (res.error) {
+                setLoading(false);
                 toast.error(res.error?.message || "Something went wrong");
                 return;
               }
 
               if (res.data?.user) {
-                setRedirecting(() => {
-                  router.replace(callbackURL || "/dashboard");
-                });
+                await refetch();
+                setLoading(false);
+                window.location.href = callbackURL || "/dashboard";
               }
 
               console.log(res.data);
@@ -89,17 +95,23 @@ const LogIn = () => {
                 Please enter the one-time password sent to your email.
               </Label>
             </div>
-            <Button
-              type="submit"
-              className="w-full mt-4"
-              disabled={loading || redirecting}
-            >
-              {loading || redirecting ? (
+            <Button type="submit" className="w-full mt-4" disabled={loading}>
+              {loading ? (
                 <Loader2 size={16} className="animate-spin" />
               ) : (
                 "Login"
               )}
             </Button>
+            <span className="text-sm text-muted-foreground">
+              Didn&apos;t receive the OTP?{" "}
+              <button
+                type="button"
+                className="text-sm w-max cursor-pointer text-blue-600"
+                onClick={() => setOtp(null)}
+              >
+                Resend OTP
+              </button>
+            </span>
           </form>
         </CardContent>
       </Card>
@@ -130,6 +142,7 @@ const LogIn = () => {
             }
 
             setOtp("");
+            toast.success("OTP sent to your email");
           }}
           className="grid gap-4"
         >
