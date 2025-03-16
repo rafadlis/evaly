@@ -1,6 +1,8 @@
+"use client";
+
 import { Link } from "./progress-bar";
 import { cn } from "@/lib/utils";
-import LogoLight from "../../../public/images/logo-light.webp";
+import LogoIcon from "../../../public/images/logo.svg";
 import Image from "next/image";
 
 interface Props {
@@ -11,8 +13,10 @@ interface Props {
 export const LogoType = ({ className, href = "/" }: Props) => {
   return (
     <Link href={href} className={cn("flex items-center gap-2", className)}>
-      <Image src={LogoLight} alt="Logo" width={32} height={32} />
-      <span className="text-xl font-semibold hidden sm:block tracking-tight">tetsu.app</span>
+      <Image src={LogoIcon} width={32} height={32} alt="Logo" />
+      <span className="text-xl font-semibold hidden sm:block tracking-tight">
+        tetsu.app
+      </span>
     </Link>
   );
 };

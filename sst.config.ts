@@ -3,7 +3,7 @@
 export default $config({
   app(input) {
     return {
-      name: "evaly",
+      name: "tetsu",
       removal: input?.stage === "production" ? "retain" : "remove",
       home: "aws",
       providers: {
