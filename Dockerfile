@@ -13,7 +13,7 @@ COPY /frontend/package.json ./frontend/package.json
 # Copy the backend code because we need to generate the types first
 COPY /backend ./backend
 
-RUN bun install --production
+RUN bun install --frozen-lockfile
 
 # Copy the backend code again
 COPY /backend ./backend
