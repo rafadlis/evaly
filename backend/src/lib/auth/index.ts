@@ -39,8 +39,8 @@ export const auth = betterAuth({
         env.ENVIRONMENT === "development"
           ? "http://localhost:4000/api/auth/callback/google"
           : env.ENVIRONMENT === "staging"
-          ? "https://api-staging.evaly.io/api/auth/callback/google"
-          : "https://evaly.io/api/auth/callback/google",
+          ? "https://api-staging.tetsu.app/api/auth/callback/google"
+          : "https://tetsu.app/api/auth/callback/google",
     },
   },
   trustedOrigins: [env.WEB_PUBLIC_URL!],
@@ -52,7 +52,7 @@ export const auth = betterAuth({
           useSecureCookies: true,
           crossSubDomainCookies: {
             enabled: true,
-            domain: ".evaly.io",
+            domain: ".tetsu.app",
           },
           defaultCookieAttributes: {
             secure: true,
