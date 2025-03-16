@@ -41,6 +41,9 @@
     "react-email": "^3.0.7",
     "tsup": "^8.4.0"
   },
+  "trustedDependencies": [
+    "sharp"
+  ],
   "overrides": {
     "@sinclair/typebox": "^0.34.27"
   },

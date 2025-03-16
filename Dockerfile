@@ -1,51 +1,41 @@
-FROM oven/bun:debian AS build
+FROM oven/bun AS build
 
 WORKDIR /app
 
-# Install build dependencies for native modules
-RUN apt-get update && apt-get install -y \
-    python3 \
-    build-essential \
-    libvips-dev \
-    --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*
-
-# Set environment variables to ensure x64 architecture build
-ENV npm_config_arch=x64
-ENV npm_config_platform=linux
-ENV npm_config_target_platform=linux
-
-# Copy package.json files only (without lock files)
+# Cache packages installation
 COPY package.json package.json
+COPY bun.lock bun.lock
 # COPY .npmrc .npmrc
 
 COPY /backend/package.json ./backend/package.json
 COPY /frontend/package.json ./frontend/package.json
 
-# Copy the backend code
+# Copy the backend code because we need to generate the types first
 COPY /backend ./backend
 
-# Force fresh install with all dependencies
-RUN bun install --no-cache
+RUN bun install
+
+# Copy the backend code again
+COPY /backend ./backend
 
 ENV NODE_ENV=production
 
-# Build the application
+# Run the build:tsup script to generate the dist folder
+RUN cd backend
+
 RUN bun build \
-    --compile \
-    --minify-whitespace \
-    --minify-syntax \
-    --target bun \
-    --outfile server \
-    ./backend/src/index.ts
+  --compile \
+  --minify-whitespace \
+  --minify-syntax \
+  --target bun \
+  --outfile server \
+  ./backend/src/index.ts
 
 FROM gcr.io/distroless/base
 
 WORKDIR /app
 
 COPY --from=build /app/server server
-# Copy the node_modules with sharp
-COPY --from=build /app/node_modules/sharp /app/node_modules/sharp
 
 CMD ["./server"]
 
