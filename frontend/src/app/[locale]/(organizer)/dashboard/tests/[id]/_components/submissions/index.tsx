@@ -363,7 +363,7 @@ const Submissions = () => {
             </div>
           )}
           <div className="relative w-full sm:w-[300px]">
-            <Search className="absolute left-2.5 top-3 size-4 text-muted-foreground" />
+            <Search className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
             <Input
               placeholder="Search participants..."
               value={searchQuery}

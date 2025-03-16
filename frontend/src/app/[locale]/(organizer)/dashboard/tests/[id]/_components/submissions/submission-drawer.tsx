@@ -5,12 +5,12 @@ import {
   CheckCircle,
   XCircle,
   HelpCircle,
-  Loader2,
-  FileJson,
-  Clock,
+  Loader2, Clock,
   Award,
   BarChart3,
-  Calendar, Mail, Timer,
+  Calendar,
+  Mail,
+  Timer,
   AlertCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -33,11 +33,18 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 import { Submission, Section } from "./types";
 import { useSubmissionDetails } from "@/query/organization/test/use-submission-details";
+import { ExportDialogDetails } from "./export-dialog-details";
 
 dayjs.extend(relativeTime);
 
@@ -116,16 +123,16 @@ export const SubmissionDrawer = ({
   // Get initials for avatar
   const getInitials = (name: string) => {
     return name
-      .split(' ')
-      .map(part => part[0])
-      .join('')
+      .split(" ")
+      .map((part) => part[0])
+      .join("")
       .toUpperCase()
       .substring(0, 2);
   };
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="h-dvh bg-gradient-to-b from-background to-background/95">
+      <DrawerContent className="h-dvh">
         <DrawerNavbar
           onBack={() => onOpenChange(false)}
           titleComponent={
@@ -141,11 +148,12 @@ export const SubmissionDrawer = ({
                     {submission.name}
                   </DrawerTitle>
                   <DrawerDescription className="text-sm text-muted-foreground leading-1 flex items-center gap-2">
-                    <Mail className="h-3 w-3" /> {submission.email} 
+                    <Mail className="h-3 w-3" /> {submission.email}
                     {submission.submittedAt && (
                       <>
                         <span className="mx-1">•</span>
-                        <Calendar className="h-3 w-3" /> {dayjs(submission.submittedAt).format('MMM D, YYYY')}
+                        <Calendar className="h-3 w-3" />{" "}
+                        {dayjs(submission.submittedAt).format("MMM D, YYYY")}
                       </>
                     )}
                   </DrawerDescription>
@@ -159,120 +167,137 @@ export const SubmissionDrawer = ({
           <Tabs
             value={activeTab}
             onValueChange={setActiveTab}
-            className="container max-w-4xl py-6"
+            className="container max-w-4xl py-6 "
           >
-            <TabsList className="grid w-full grid-cols-2 mb-8 p-1 bg-muted/50 rounded-full">
-              <TabsTrigger value="overview" className="rounded-full data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
-                Overview
-              </TabsTrigger>
-              <TabsTrigger value="questions" className="rounded-full data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
-                Questions
-              </TabsTrigger>
+            <TabsList className="mb-4">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="questions">Questions</TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview">
-              <div className="space-y-8">
+              <div className="space-y-8 ">
                 {/* Status Card */}
-                <Card className="border-none shadow-md overflow-hidden bg-white">
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/80 via-primary to-primary/80"></div>
-                  <CardHeader className="pb-2 pt-6">
+                <Card>
+                  <CardHeader>
                     <CardTitle className="text-lg font-medium flex items-center gap-2">
                       <BarChart3 className="h-5 w-5 text-primary" />
                       Test Performance
                     </CardTitle>
                     <CardDescription>
-                      {submission.status === 'in-progress' 
-                        ? (
-                          <div className="flex items-center gap-1 text-amber-500">
-                            <Timer className="h-4 w-4" />
-                            <span>This test is still in progress</span>
-                          </div>
-                        ) 
-                        : (
-                          <div className="flex items-center gap-1">
-                            <Calendar className="h-4 w-4 text-muted-foreground" />
-                            <span>Completed on {submission.submittedAt 
-                              ? dayjs(submission.submittedAt).format('MMMM D, YYYY [at] h:mm A')
-                              : 'Unknown date'}</span>
-                          </div>
-                        )}
+                      {submission.status === "in-progress" ? (
+                        <div className="flex items-center gap-1 text-amber-500">
+                          <Timer className="h-4 w-4" />
+                          <span>This test is still in progress</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1">
+                          <Calendar className="h-4 w-4 text-muted-foreground" />
+                          <span>
+                            Completed on{" "}
+                            {submission.submittedAt
+                              ? dayjs(submission.submittedAt).format(
+                                  "MMMM D, YYYY [at] h:mm A"
+                                )
+                              : "Unknown date"}
+                          </span>
+                        </div>
+                      )}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="pt-6 border-t border-dashed">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-2">
-                      <div className="flex flex-col items-center justify-center p-4 rounded-xl bg-gradient-to-b from-primary/5 to-primary/10 backdrop-blur-sm">
-                        <div className={`text-3xl font-bold ${getScoreColor(submission.score)}`}>
+                      <div className="flex flex-col items-center justify-center p-4 rounded-xl bg-foreground/5">
+                        <div
+                          className={`text-3xl font-bold ${getScoreColor(
+                            submission.score
+                          )}`}
+                        >
                           {submission.score}%
                         </div>
-                        <div className="text-sm text-muted-foreground mt-1">Score</div>
+                        <div className="text-sm text-muted-foreground mt-1">
+                          Score
+                        </div>
                       </div>
-                      
-                      <div className="flex flex-col items-center justify-center p-4 rounded-xl bg-gradient-to-b from-amber-500/5 to-amber-500/10 backdrop-blur-sm">
+
+                      <div className="flex flex-col items-center justify-center p-4 rounded-xl bg-amber-500/10">
                         <div className="text-3xl font-bold flex items-center">
                           <Award className="h-6 w-6 text-amber-500 mr-1" />
                           {submission.rank || "-"}
                         </div>
-                        <div className="text-sm text-muted-foreground mt-1">Rank</div>
+                        <div className="text-sm text-muted-foreground mt-1">
+                          Rank
+                        </div>
                       </div>
-                      
-                      <div className="flex flex-col items-center justify-center p-4 rounded-xl bg-gradient-to-b from-green-500/5 to-green-500/10 backdrop-blur-sm">
+
+                      <div className="flex flex-col items-center justify-center p-4 rounded-xl bg-green-500/10">
                         <div className="text-3xl font-bold text-green-600">
                           {submission.correct}
                         </div>
-                        <div className="text-sm text-muted-foreground mt-1">Correct</div>
+                        <div className="text-sm text-muted-foreground mt-1">
+                          Correct
+                        </div>
                       </div>
-                      
-                      <div className="flex flex-col items-center justify-center p-4 rounded-xl bg-gradient-to-b from-red-500/5 to-red-500/10 backdrop-blur-sm">
+
+                      <div className="flex flex-col items-center justify-center p-4 rounded-xl bg-red-500/10">
                         <div className="text-3xl font-bold text-red-600">
                           {submission.wrong}
                         </div>
-                        <div className="text-sm text-muted-foreground mt-1">Wrong</div>
+                        <div className="text-sm text-muted-foreground mt-1">
+                          Wrong
+                        </div>
                       </div>
                     </div>
-                    
+
                     <div className="mt-8 space-y-2">
                       <div className="flex justify-between text-sm">
                         <span className="font-medium">Progress</span>
-                        <span className="font-medium">{submission.answered}/{submission.totalQuestions} questions</span>
+                        <span className="font-medium">
+                          {submission.answered}/{submission.totalQuestions}{" "}
+                          questions
+                        </span>
                       </div>
                       <div className="h-3 w-full bg-secondary rounded-full overflow-hidden">
-                        <div 
-                          className={`h-full ${getProgressColor(submission.score)} transition-all duration-500 ease-in-out`} 
-                          style={{ width: `${(submission.answered / submission.totalQuestions) * 100}%` }}
+                        <Progress
+                          value={
+                            (submission.answered / submission.totalQuestions) *
+                            100
+                          }
                         />
                       </div>
-                      
+
                       <div className="flex justify-between text-xs text-muted-foreground mt-2 px-1">
                         <div className="flex items-center gap-1">
-                          <div className="h-3 w-3 rounded-full bg-green-100 flex items-center justify-center">
-                            <CheckCircle className="h-2 w-2 text-green-600" />
-                          </div>
+                          <CheckCircle className="size-3 text-green-600" />
                           <span>{submission.correct} correct</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <div className="h-3 w-3 rounded-full bg-red-100 flex items-center justify-center">
-                            <XCircle className="h-2 w-2 text-red-600" />
-                          </div>
+                          <XCircle className="size-3 text-red-600" />
                           <span>{submission.wrong} wrong</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <div className="h-3 w-3 rounded-full bg-gray-100 flex items-center justify-center">
-                            <HelpCircle className="h-2 w-2 text-muted-foreground" />
-                          </div>
+                          <HelpCircle className="size-3 text-muted-foreground" />
                           <span>{submission.unanswered} unanswered</span>
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="mt-8 flex items-center justify-between text-sm p-3 rounded-lg bg-muted/30">
                       <div className="flex items-center gap-1">
                         <Clock className="h-4 w-4 text-muted-foreground" />
-                        <span>Started: {submission.startedAt ? dayjs(submission.startedAt).format('h:mm A') : 'Unknown'}</span>
+                        <span>
+                          Started:{" "}
+                          {submission.startedAt
+                            ? dayjs(submission.startedAt).format("h:mm A")
+                            : "Unknown"}
+                        </span>
                       </div>
                       {submission.submittedAt && (
                         <div className="flex items-center gap-1">
                           <Clock className="h-4 w-4 text-muted-foreground" />
-                          <span>Submitted: {dayjs(submission.submittedAt).format('h:mm A')}</span>
+                          <span>
+                            Submitted:{" "}
+                            {dayjs(submission.submittedAt).format("h:mm A")}
+                          </span>
                         </div>
                       )}
                     </div>
@@ -289,58 +314,67 @@ export const SubmissionDrawer = ({
                     {sections.map((section, index) => {
                       const performance = getSectionPerformance(section.id);
                       return (
-                        <Card key={section.id} className="overflow-hidden border-none shadow-md bg-white hover:shadow-lg transition-shadow duration-200">
-                          <CardHeader className={`py-3 ${
-                            performance.score >= 80 
-                              ? 'bg-gradient-to-r from-green-500/20 to-green-500/5' 
-                              : performance.score >= 60 
-                              ? 'bg-gradient-to-r from-amber-500/20 to-amber-500/5' 
-                              : 'bg-gradient-to-r from-red-500/20 to-red-500/5'
-                          }`}>
+                        <Card key={section.id} className="overflow-hidden">
+                          <CardHeader className={`py-3`}>
                             <div className="flex justify-between items-center">
                               <CardTitle className="text-base font-medium">
                                 {section.name || `Section ${index + 1}`}
                               </CardTitle>
-                              <Badge 
-                                className={`${performance.score >= 80 ? 'bg-green-500' : 
-                                  performance.score >= 60 ? 'bg-amber-500' : 'bg-red-500'} 
+                              <Badge
+                                className={`${
+                                  performance.score >= 80
+                                    ? "bg-green-600"
+                                    : performance.score >= 60
+                                    ? "bg-amber-500"
+                                    : "bg-red-500"
+                                } 
                                   text-white hover:opacity-90 shadow-sm`}
                               >
                                 {performance.score}%
                               </Badge>
                             </div>
                           </CardHeader>
-                          <CardContent className="pt-4">
+                          <CardContent className="pt-6 border-t border-dashed">
                             <div className="grid grid-cols-4 gap-4">
-                              <div className="flex flex-col items-center p-3 rounded-lg bg-gradient-to-b from-primary/5 to-primary/10">
+                              <div className="flex flex-col items-center p-3 bg-primary/5">
                                 <span className="text-lg font-semibold">
                                   {performance.answered}/{performance.total}
                                 </span>
-                                <span className="text-xs text-muted-foreground">Answered</span>
+                                <span className="text-xs text-muted-foreground">
+                                  Answered
+                                </span>
                               </div>
-                              <div className="flex flex-col items-center p-3 rounded-lg bg-gradient-to-b from-green-500/5 to-green-500/10">
+                              <div className="flex flex-col items-center p-3 bg-green-500/10">
                                 <span className="text-lg font-semibold text-green-600">
                                   {performance.correct}
                                 </span>
-                                <span className="text-xs text-muted-foreground">Correct</span>
+                                <span className="text-xs text-muted-foreground">
+                                  Correct
+                                </span>
                               </div>
-                              <div className="flex flex-col items-center p-3 rounded-lg bg-gradient-to-b from-red-500/5 to-red-500/10">
+                              <div className="flex flex-col items-center p-3 bg-red-500/10">
                                 <span className="text-lg font-semibold text-red-600">
                                   {performance.wrong}
                                 </span>
-                                <span className="text-xs text-muted-foreground">Wrong</span>
+                                <span className="text-xs text-muted-foreground">
+                                  Wrong
+                                </span>
                               </div>
-                              <div className="flex flex-col items-center p-3 rounded-lg bg-gradient-to-b from-primary/5 to-primary/10">
+                              <div className="flex flex-col items-center p-3 bg-primary/5">
                                 <span className="text-lg font-semibold">
                                   {performance.unanswered}
                                 </span>
-                                <span className="text-xs text-muted-foreground">Unanswered</span>
+                                <span className="text-xs text-muted-foreground">
+                                  Unanswered
+                                </span>
                               </div>
                             </div>
                             <div className="mt-4">
                               <Progress
                                 value={performance.score}
-                                className={`h-2 ${getProgressColor(performance.score)}`}
+                                className={`h-2 ${getProgressColor(
+                                  performance.score
+                                )}`}
                               />
                             </div>
                           </CardContent>
@@ -357,11 +391,12 @@ export const SubmissionDrawer = ({
               className="focus-visible:outline-none focus-visible:ring-0"
             >
               <div className="space-y-6">
-                <Card className="border-none shadow-md overflow-hidden bg-white">
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/80 via-primary to-primary/80"></div>
-                  <CardHeader className="pb-2 pt-6">
+                <Card>
+                  <CardHeader>
                     <div className="flex justify-between items-center">
-                      <CardTitle className="text-lg font-medium">Questions</CardTitle>
+                      <CardTitle className="text-lg font-medium">
+                        Questions
+                      </CardTitle>
                       <div className="flex items-center gap-3 text-sm">
                         <div className="flex items-center gap-1">
                           <div className="h-4 w-4 rounded-full bg-green-100 flex items-center justify-center">
@@ -404,24 +439,35 @@ export const SubmissionDrawer = ({
                     </span>
                   </div>
                 ) : (
-                  <Accordion type="multiple" className="w-full min-h-dvh space-y-4">
+                  <Accordion
+                    type="multiple"
+                    className="w-full min-h-dvh space-y-4"
+                  >
                     {sections.map((section, i) => {
                       const sectionQuestions =
                         questionsBySection[section.id] || [];
                       const performance = getSectionPerformance(section.id);
 
                       return (
-                        <Card key={section.id} className="border-none shadow-md overflow-hidden bg-white hover:shadow-lg transition-shadow duration-200">
-                          <AccordionItem value={section.id} className="border-none">
+                        <Card key={section.id} className="">
+                          <AccordionItem
+                            value={section.id}
+                            className="border-none"
+                          >
                             <AccordionTrigger className="px-6 py-4 hover:bg-primary/5 transition-colors">
                               <div className="flex flex-1 justify-between items-center">
                                 <div className="flex items-center gap-2">
                                   <span className="font-medium">
                                     {section.name || `Section ${i + 1}`}
                                   </span>
-                                  <Badge 
-                                    className={`ml-2 ${performance.score >= 80 ? 'bg-green-500' : 
-                                      performance.score >= 60 ? 'bg-amber-500' : 'bg-red-500'} 
+                                  <Badge
+                                    className={`ml-2 ${
+                                      performance.score >= 80
+                                        ? "bg-green-500"
+                                        : performance.score >= 60
+                                        ? "bg-amber-500"
+                                        : "bg-red-500"
+                                    } 
                                       text-white hover:opacity-90 shadow-sm`}
                                   >
                                     {performance.score}%
@@ -455,32 +501,31 @@ export const SubmissionDrawer = ({
                                 </div>
                               </div>
                             </AccordionTrigger>
-                            <AccordionContent className="px-0">
-                              <div className="space-y-4 py-2">
+                            <AccordionContent className="px-0 pt-4 border-t border-dashed">
+                              <div className="space-y-4 px-4">
                                 {sectionQuestions.map((question, index) => (
-                                  <div
-                                    key={question.id}
-                                    className="mx-6 mb-4 rounded-xl overflow-hidden border shadow-sm hover:shadow-md transition-shadow duration-200"
-                                  >
-                                    <div className={`p-4 ${
-                                      question.isCorrect === true
-                                        ? "bg-gradient-to-r from-green-500/10 to-green-500/5"
-                                        : question.isCorrect === false
-                                        ? "bg-gradient-to-r from-red-500/10 to-red-500/5"
-                                        : "bg-gradient-to-r from-primary/10 to-primary/5"
-                                    }`}>
+                                  <div key={question.id} className="border">
+                                    <div
+                                      className={`p-4 ${
+                                        question.isCorrect === true
+                                          ? "bg-green-500/10"
+                                          : question.isCorrect === false
+                                          ? "bg-red-500/10"
+                                          : "bg-primary/10"
+                                      }`}
+                                    >
                                       <div className="flex items-start gap-3">
                                         <div className="mt-0.5 flex-shrink-0">
                                           {question.isCorrect === true ? (
-                                            <div className="h-7 w-7 rounded-full bg-green-100 flex items-center justify-center shadow-sm">
+                                            <div className="h-7 w-7 rounded-full bg-green-500/10 flex items-center justify-center">
                                               <CheckCircle className="h-4 w-4 text-green-600" />
                                             </div>
                                           ) : question.isCorrect === false ? (
-                                            <div className="h-7 w-7 rounded-full bg-red-100 flex items-center justify-center shadow-sm">
+                                            <div className="h-7 w-7 rounded-full bg-red-500/10 flex items-center justify-center">
                                               <XCircle className="h-4 w-4 text-red-600" />
                                             </div>
                                           ) : (
-                                            <div className="h-7 w-7 rounded-full bg-gray-100 flex items-center justify-center shadow-sm">
+                                            <div className="h-7 w-7 rounded-full bg-gray-500/10 flex items-center justify-center">
                                               <HelpCircle className="h-4 w-4 text-muted-foreground" />
                                             </div>
                                           )}
@@ -490,9 +535,14 @@ export const SubmissionDrawer = ({
                                             <h4 className="font-medium">
                                               Question {index + 1}
                                             </h4>
-                                            <Badge variant="outline" className="capitalize shadow-sm">
-                                              {question.type?.replace(/_/g, " ") ||
-                                                "Unknown"}
+                                            <Badge
+                                              variant="outline"
+                                              className="capitalize shadow-sm"
+                                            >
+                                              {question.type?.replace(
+                                                /_/g,
+                                                " "
+                                              ) || "Unknown"}
                                             </Badge>
                                           </div>
                                           <div
@@ -505,9 +555,9 @@ export const SubmissionDrawer = ({
                                       </div>
                                     </div>
 
-                                    <div className="p-4 bg-white">
+                                    <div className="p-4">
                                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="space-y-2 p-3 rounded-lg bg-gradient-to-b from-primary/5 to-primary/10">
+                                        <div className="space-y-2 p-3 rounded-lg bg-primary/10">
                                           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1">
                                             <CheckCircle className="h-3 w-3 text-green-600" />
                                             Correct Answer
@@ -521,13 +571,15 @@ export const SubmissionDrawer = ({
                                             }}
                                           />
                                         </div>
-                                        <div className={`space-y-2 p-3 rounded-lg ${
-                                          question.isCorrect === true
-                                            ? "bg-gradient-to-b from-green-500/10 to-green-500/5"
-                                            : question.isCorrect === false
-                                            ? "bg-gradient-to-b from-red-500/10 to-red-500/5"
-                                            : "bg-gradient-to-b from-gray-100 to-gray-50"
-                                        }`}>
+                                        <div
+                                          className={`space-y-2 p-3 rounded-lg ${
+                                            question.isCorrect === true
+                                              ? "bg-green-500/10"
+                                              : question.isCorrect === false
+                                              ? "bg-red-500/10"
+                                              : "bg-primary/10"
+                                          }`}
+                                        >
                                           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1">
                                             {question.isCorrect === true ? (
                                               <CheckCircle className="h-3 w-3 text-green-600" />
@@ -573,11 +625,16 @@ export const SubmissionDrawer = ({
         <DrawerFooter className="border-t py-3">
           <div className="container max-w-4xl flex justify-between items-center gap-2">
             <DrawerClose asChild>
-              <Button variant="outline" className="rounded-full">Close</Button>
+              <Button variant="outline" >
+                Close
+              </Button>
             </DrawerClose>
-            <Button variant="default" className="rounded-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary">
-              <FileJson className="mr-2 h-4 w-4" /> Export Details
-            </Button>
+            <ExportDialogDetails 
+              submission={submission} 
+              testName={testId} 
+              questions={questions} 
+              sections={sections} 
+            />
           </div>
         </DrawerFooter>
       </DrawerContent>

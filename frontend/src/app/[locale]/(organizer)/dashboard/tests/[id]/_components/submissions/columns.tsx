@@ -20,7 +20,7 @@ const SortableHeader = ({
     variant="ghost"
     size={"sm"}
     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-    className="font-medium w-max text-sm"
+    className="font-medium w-max text-sm h-8"
   >
     {title}
     <ArrowUpDown  />

@@ -2,12 +2,11 @@
 import { Button } from "@/components/ui/button";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  Check,
   LinkIcon,
-  Loader2,
-  LockIcon,
-  PencilLineIcon,
+  Loader2, PencilLineIcon,
   RotateCcw,
-  TimerOff,
+  TimerOff
 } from "lucide-react";
 import { redirect, useParams } from "next/navigation";
 import { useTestByIdQuery } from "@/query/organization/test/use-test-by-id.query";
@@ -169,8 +168,8 @@ const Header = () => {
           </div>
         ) : (
           <div className="flex flex-row items-center gap-2">
-            <Button variant={"ghost"}>
-              <LockIcon />
+            <Button variant={"success"}>
+              <Check />
               Finished
             </Button>
             <Dialog>

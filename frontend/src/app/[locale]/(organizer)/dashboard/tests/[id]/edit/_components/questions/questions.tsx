@@ -179,6 +179,7 @@ const Questions = () => {
 
   return (
     <div className="flex flex-row gap-8">
+      <SectionSidebar />
       <Card className="border overflow-clip flex-1 h-max">
         <CardHeader
           className={cn(
@@ -339,7 +340,6 @@ const Questions = () => {
           </CardContent>
         )}
       </Card>
-      <SectionSidebar />
 
       <DialogEditQuestion
         defaultValue={selectedQuestion}

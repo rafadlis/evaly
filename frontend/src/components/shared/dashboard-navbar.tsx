@@ -58,7 +58,7 @@ export function DashboardNavbar({ className }: { className?: string }) {
             <LogoType href="/dashboard" />
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center ml-16 gap-4">
+            <div className="hidden md:flex items-center ml-16 gap-5">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
