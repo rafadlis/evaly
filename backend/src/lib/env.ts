@@ -16,6 +16,8 @@ const envSchema = z.object({
   SMTP_PORT: z.string(),
   SMTP_USER: z.string(),
   SMTP_PASSWORD: z.string(),
+  TRIGGER_SECRET_KEY: z.string(),
+  TRIGGER_API_URL: z.string(),
   
   //development-backend
   WEB_PUBLIC_URL_DEVELOPMENT: z.string(),

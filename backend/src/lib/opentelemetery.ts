@@ -1,0 +1,22 @@
+import { opentelemetry as opentelemetryElysia } from "@elysiajs/opentelemetry";
+
+import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-node";
+import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-proto";
+import { env } from "./env";
+
+
+export const opentelemetry = () =>
+  opentelemetryElysia({
+    spanProcessors: [
+      // @ts-expect-error
+      new BatchSpanProcessor(
+        new OTLPTraceExporter({
+          url: "https://api.axiom.co/v1/traces",
+          headers: {
+            Authorization: `Bearer ${env.AXIOM_TOKEN}`,
+            "X-Axiom-Dataset": env.AXIOM_DATASET,
+          },
+        })
+      ),
+    ],
+  });

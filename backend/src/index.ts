@@ -4,33 +4,12 @@ import betterAuthView from "./lib/auth/auth-view";
 import { organizationRouter } from "./router/organization/organization.router";
 import { swagger } from "@elysiajs/swagger";
 import { participantRouter } from "./router/participant/participant.router";
-import { opentelemetry } from "@elysiajs/opentelemetry";
-import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-node";
-import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-proto";
-import { env } from "./lib/env";
+import { opentelemetry } from "./lib/opentelemetery";
 
 const app = new Elysia()
   .use(cors())
   .use(swagger())
-  .use(
-    opentelemetry({
-      spanProcessors: [
-        new BatchSpanProcessor(
-          new OTLPTraceExporter({
-            url: "https://api.axiom.co/v1/traces",
-            headers: {
-              Authorization: `Bearer ${env.AXIOM_TOKEN}`,
-              "X-Axiom-Dataset": env.AXIOM_DATASET,
-            },
-          })
-        ),
-      ],
-    })
-  )
-  .get("/", async () => {
-    // const res = await db.query.user.findMany()
-    return "Hello World"
-  })
+  .use(opentelemetry())
   .all("/api/auth/*", betterAuthView) // Handle auth routes
   .use(organizationRouter)
   .use(participantRouter)
