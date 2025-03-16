@@ -15,6 +15,9 @@ COPY /backend ./backend
 
 RUN bun install
 
+# Install sharp for image processing for a specific platform
+RUN bun add --cpu=x64 --os=linux --libc=glibc sharp 
+
 # Copy the backend code again
 COPY /backend ./backend
 
