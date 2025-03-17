@@ -68,7 +68,7 @@ const DialogPublishTest = ({
           {isPending ? (
               <Loader2 className="animate-spin mx-auto size-10 mt-10" />
           ) : (
-            <div className="flex-1 container max-w-2xl py-10">
+            <div className="flex-1 container max-w-3xl py-10">
             <div className="flex flex-row justify-between items-center">
               <h1 className="text-xl font-bold">
                 Review Test Before Publishing

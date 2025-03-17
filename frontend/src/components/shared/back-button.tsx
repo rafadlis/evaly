@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { MoveLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { useRouter } from "@/i18n/navigation";
 
 const BackButton = ({
@@ -33,12 +33,12 @@ const BackButton = ({
     <button
       type="button"
       className={cn(
-        "flex items-center gap-2 cursor-pointer hover:opacity-70",
+        "flex items-center gap-1 cursor-pointer hover:opacity-70 text-sm",
         className
       )}
       onClick={onBackClick}
     >
-      <MoveLeft className="size-5" />
+      <ChevronLeft className="size-4" />
       {label}
     </button>
   );

@@ -107,11 +107,11 @@ const Header = () => {
       <BackButton className="mb-2" href={`/dashboard/tests`} />
       <div className="flex flex-row items-center justify-between">
         {isPendingTest ? (
-          <h1 className="animate-pulse text-muted-foreground text-3xl font-medium">
+          <h1 className="animate-pulse text-muted-foreground text-xl font-medium">
             Loading...
           </h1>
         ) : (
-          <h1 className="text-3xl font-medium">{dataTest?.title}</h1>
+          <h1 className="text-xl font-medium">{dataTest?.title}</h1>
         )}
         {isPendingTest ? (
           <Button variant={"ghost"}>

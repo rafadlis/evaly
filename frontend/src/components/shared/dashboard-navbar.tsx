@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, Menu, X, Moon, Sun } from "lucide-react";
+import { Menu, X, Moon, Sun, Home, BookOpen, UserCircle, Cog } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 import { Link } from "./progress-bar";
@@ -37,10 +36,10 @@ export function DashboardNavbar({ className }: { className?: string }) {
   }, [pathname]);
 
   const navItems = [
-    { name: "Dashboard", href: "/dashboard" },
-    { name: "Question", href: "/dashboard/question" },
-    { name: "Participant", href: "/dashboard/participant" },
-    { name: "Settings", href: "/dashboard/settings" },
+    { name: "Dashboard", href: "/dashboard", icon: <Home className="h-4 w-4 mr-2" /> },
+    { name: "Question", href: "/dashboard/question", icon: <BookOpen className="h-4 w-4 mr-2" /> },
+    { name: "Participant", href: "/dashboard/participant", icon: <UserCircle className="h-4 w-4 mr-2" /> },
+    { name: "Settings", href: "/dashboard/settings", icon: <Cog className="h-4 w-4 mr-2" /> },
   ];
 
   return (
@@ -58,16 +57,17 @@ export function DashboardNavbar({ className }: { className?: string }) {
             <LogoType href="/dashboard" />
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center ml-16 gap-5">
+            <div className="hidden md:flex items-center ml-16 gap-2">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "text-muted-foreground transition-colors  hover:text-primary font-medium text-[15px]",
-                    pathname === item.href && "text-primary",
+                    "text-muted-foreground transition-colors rounded-md hover:text-primary px-3 py-1.5 font-medium text-[15px] flex items-center",
+                    pathname === item.href && "text-primary bg-secondary",
                   )}
                 >
+                  {item.icon}
                   {item.name}
                 </Link>
               ))}
@@ -103,26 +103,19 @@ export function DashboardNavbar({ className }: { className?: string }) {
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div className="md:hidden py-4 space-y-4">
-            <div className="flex items-center relative mb-4">
-              <Search className="absolute left-2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search..."
-                className="pl-8 w-full h-9 bg-muted/50"
-              />
-            </div>
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "block py-2 px-3 font-medium transition-colors relative rounded-md",
+                  "py-2 px-3 font-medium transition-colors relative rounded-md flex items-center",
                   item.href.includes(activeItem)
                     ? "text-primary"
                     : "hover:text-primary/80"
                 )}
                 onClick={() => setActiveItem(item.href)}
               >
+                {item.icon}
                 {item.name}
                 {activeItem === item.href && (
                   <motion.span

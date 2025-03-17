@@ -35,15 +35,15 @@ const Settings = () => {
   return (
     <div className="container">
       <div className="flex flex-col">
-        <h1 className="text-2xl font-medium">Settings</h1>
+        <h1 className="text-xl font-medium">Settings</h1>
         <p className="text-muted-foreground">
           Manage your account settings and preferences.
         </p>
       </div>
-      <div className="flex flex-row gap-20 mt-10">
-        <div className="w-[200px] flex flex-col gap-2 sticky top-24 h-max">
+      <div className="flex flex-row gap-10 mt-10">
+        <div className="w-[240px] flex flex-col gap-2 sticky top-24 h-max">
           <Button
-            variant={tab === "general" ? "outline" : "ghost"}
+            variant={tab === "general" ? "secondary" : "ghost"}
             className="w-full justify-start"
             onClick={() => setTab("general")}
           >
@@ -51,7 +51,7 @@ const Settings = () => {
             General
           </Button>
           <Button
-            variant={tab === "profile" ? "outline" : "ghost"}
+            variant={tab === "profile" ? "secondary" : "ghost"}
             className="w-full justify-start"
             onClick={() => setTab("profile")}
           >
@@ -59,7 +59,7 @@ const Settings = () => {
             Profile
           </Button>
           <Button
-            variant={tab === "organization" ? "outline" : "ghost"}
+            variant={tab === "organization" ? "secondary" : "ghost"}
             className="w-full justify-start"
             onClick={() => setTab("organization")}
           >

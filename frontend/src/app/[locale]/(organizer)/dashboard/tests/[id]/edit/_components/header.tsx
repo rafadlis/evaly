@@ -92,7 +92,7 @@ const Header = () => {
       />
       <input
         {...register("title")}
-        className="outline-none text-3xl font-medium"
+        className="outline-none text-xl font-medium"
         placeholder="Test title"
         disabled={isPendingTest}
       />

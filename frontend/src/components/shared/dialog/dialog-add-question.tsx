@@ -168,7 +168,7 @@ const DialogAddQuestion = ({
   );
 };
 
-const SectionCreateQuestion = ({
+export const SectionCreateQuestion = ({
   referenceId,
   order,
   referenceType,
@@ -260,7 +260,8 @@ const SectionCreateQuestion = ({
     </div>
   );
 };
-const SectionImportQuestions = () => {
+
+export const SectionImportQuestions = () => {
   return (
     <div className="h-full bg-background text-foreground flex flex-col overflow-y-auto">
       <main className="flex-1 flex justify-center w-full container max-w-6x">
@@ -291,10 +292,7 @@ const SectionImportQuestions = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Button
-                  variant="secondary-outline"
-                  className="w-full"
-                >
+                <Button variant="secondary-outline" className="w-full">
                   <UploadIcon />
                   Upload file
                 </Button>
@@ -346,10 +344,7 @@ d) Mars`}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Button
-                  variant="secondary-outline"
-                  className="w-full"
-                >
+                <Button variant="secondary-outline" className="w-full">
                   <UploadIcon />
                   Upload spreadsheet
                 </Button>
@@ -380,7 +375,7 @@ d) Mars`}
   );
 };
 
-const SectionGenerateWithAI = () => {
+export const SectionGenerateWithAI = () => {
   const isIdle = true;
 
   if (isIdle) {
@@ -389,7 +384,7 @@ const SectionGenerateWithAI = () => {
   return null;
 };
 
-const SectionSelectMethod = ({
+export const SectionSelectMethod = ({
   setSelectedMethod,
 }: {
   setSelectedMethod: (method: "import" | "generate" | "create") => void;
@@ -553,10 +548,9 @@ const SectionSelectMethod = ({
                     <button
                       onClick={() => setSelectedMethod("import")}
                       type="button"
-                      disabled={true}
                       className="w-full flex flex-row items-center justify-center gap-2 disabled:cursor-not-allowed py-3 rounded-xl bg-card hover:bg-emerald-500/20 border border-foreground/10 hover:border-emerald-500/50 transition-all duration-200 text-muted-foreground hover:text-emerald-400 font-medium cursor-pointer"
                     >
-                      <LockIcon size={16} /> Import questions
+                      Import questions
                     </button>
                   </div>
                 </div>
@@ -653,7 +647,7 @@ const SectionSelectMethod = ({
   );
 };
 
-const DialogFormattingGuide = () => {
+export const DialogFormattingGuide = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
