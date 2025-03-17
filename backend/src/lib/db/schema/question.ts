@@ -15,6 +15,7 @@ import { ulid } from "ulidx";
 import { QUESTION_TYPES } from "../../../types/question-types";
 import { MEDIA_TYPES, MediaType } from "../../../types/media";
 import { testSection } from "./test.section";
+import { questionTemplate } from "./question.template";
 
 // Main question table
 export const question = pgTable(
@@ -27,7 +28,7 @@ export const question = pgTable(
     referenceId: varchar("reference_id", { length: 255 }).notNull(),
     referenceType: varchar("reference_type", {
       length: 100,
-      enum: ["test-section", "template", "ai-generated"],
+      enum: ["test-section", "template"],
     })
       .notNull()
       .default("test-section"),
@@ -436,6 +437,11 @@ export const questionRelation = relations(question, ({ one, many }) => ({
   codeEditorConfig: one(codeEditorConfig),
   dateTimeConfig: one(dateTimeConfig),
   formulaConfig: one(formulaConfig),
+  questionTemplate: one(questionTemplate, {
+    fields: [question.referenceId],
+    references: [questionTemplate.id],
+    relationName: "question.questionTemplate",
+  }),
 }));
 
 export const textFieldConfigRelation = relations(

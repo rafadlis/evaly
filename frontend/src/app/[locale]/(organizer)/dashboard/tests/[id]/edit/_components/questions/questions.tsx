@@ -15,7 +15,7 @@ import DialogDeleteSection from "@/components/shared/dialog/dialog-delete-sectio
 import DialogEditSectionDuration from "@/components/shared/dialog/dialog-edit-section-duration";
 import DialogEditSection from "@/components/shared/dialog/dialog-edit-section";
 import DialogEditQuestion from "@/components/shared/dialog/dialog-edit-question";
-import { cn } from "@/lib/utils";
+import { cn, updateQuestionInArray } from "@/lib/utils";
 import { Reorder } from "motion/react";
 import DialogAddQuestion from "@/components/shared/dialog/dialog-add-question";
 import { Question } from "@evaly/backend/types/question";
@@ -69,31 +69,6 @@ const insertQuestionsAtCorrectPosition = (
     ...question,
     order: index + 1,
   }));
-};
-
-/**
- * Update a question in the questions array
- * @param prevQuestions - The existing questions array
- * @param updatedQuestion - The updated question
- * @returns The updated questions array with the question updated, or the original array if the question is not found
- */
-const updateQuestionInArray = (
-  prevQuestions: Question[],
-  updatedQuestion: Question
-): Question[] => {
-  const findIndex = prevQuestions.findIndex((q) => q.id === updatedQuestion.id);
-
-  // If the question is found, update it
-  if (findIndex >= 0) {
-    return [
-      ...prevQuestions.slice(0, findIndex),
-      updatedQuestion,
-      ...prevQuestions.slice(findIndex + 1),
-    ];
-  }
-
-  // If the question is not found, return the original array
-  return prevQuestions;
 };
 
 const Questions = () => {
@@ -178,7 +153,7 @@ const Questions = () => {
   };
 
   return (
-    <div className="flex flex-row gap-8">
+    <div className="flex flex-row gap-4">
       <SectionSidebar />
       <Card className="border overflow-clip flex-1 h-max">
         <CardHeader

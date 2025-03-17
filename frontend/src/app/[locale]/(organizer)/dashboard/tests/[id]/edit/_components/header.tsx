@@ -106,7 +106,7 @@ const Header = () => {
             className="w-max"
           >
             <Button
-              variant={"outline-solid"}
+              variant={"default"}
               disabled={isPendingUpdateTest}
               className="mt-2 w-max"
               size={"sm"}
@@ -119,7 +119,7 @@ const Header = () => {
               {isPendingUpdateTest ? (
                 <Loader2 className="animate-spin" />
               ) : (
-                <Save />
+                <Save className="size-3.5" />
               )}
               Save
             </Button>

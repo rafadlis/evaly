@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import {
   Card,
   CardContent,
@@ -17,91 +17,25 @@ import {
   Search,
   Star,
   ArrowRight,
-  FileText, Calendar,
-  WandSparkles
+  FileText,
+  Calendar,
+  WandSparkles,
+  Plus,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "@/components/shared/progress-bar";
-
-// Custom styles for animations
-const fadeInAnimation = "transition-all duration-500 opacity-0 translate-y-4";
-const fadeInVisible = "opacity-100 translate-y-0";
-
-// Dummy data for owned templates
-const ownedTemplates = [
-  {
-    id: "template-1",
-    title: "Weekly Assessment",
-    description:
-      "Standard weekly assessment with multiple choice and text questions",
-    questionCount: 15,
-    lastUsed: "2 days ago",
-    tags: ["Education", "Weekly"],
-    questions: [
-      {
-        id: "q1",
-        text: "What is the capital of France?",
-        type: "multiple-choice",
-      },
-      {
-        id: "q2",
-        text: "Explain the water cycle in your own words.",
-        type: "text-field",
-      },
-      { id: "q3", text: "Is the Earth flat?", type: "yes-or-no" },
-    ],
-  },
-  {
-    id: "template-2",
-    title: "Employee Onboarding",
-    description: "New employee knowledge assessment",
-    questionCount: 10,
-    lastUsed: "1 week ago",
-    tags: ["HR", "Onboarding"],
-    questions: [
-      {
-        id: "q1",
-        text: "Have you read the company handbook?",
-        type: "yes-or-no",
-      },
-      {
-        id: "q2",
-        text: "What department do you work in?",
-        type: "multiple-choice",
-      },
-      {
-        id: "q3",
-        text: "Describe your previous work experience.",
-        type: "text-field",
-      },
-    ],
-  },
-  {
-    id: "template-3",
-    title: "Customer Satisfaction",
-    description: "Survey for customer feedback and satisfaction rating",
-    questionCount: 8,
-    lastUsed: "3 days ago",
-    tags: ["Customer", "Feedback"],
-    questions: [
-      {
-        id: "q1",
-        text: "How would you rate our service?",
-        type: "multiple-choice",
-      },
-      {
-        id: "q2",
-        text: "Would you recommend us to others?",
-        type: "yes-or-no",
-      },
-      {
-        id: "q3",
-        text: "What improvements would you suggest?",
-        type: "text-field",
-      },
-    ],
-  },
-];
+import { useMutation } from "@tanstack/react-query";
+import { $api } from "@/lib/api";
+import { toast } from "sonner";
+import { useRouter } from "@/i18n/navigation";
+import { useAllQuestionTemplate } from "@/query/organization/question/use-all-question-template";
+import {
+  QuestionTemplateWithQuestions,
+  QuestionType,
+} from "@evaly/backend/types/question";
+import dayjs from "dayjs";
+import { questionTypes } from "@/constants/question-type";
 
 const Page = () => {
   return (
@@ -114,9 +48,10 @@ const Page = () => {
           </p>
         </div>
         <div className="flex gap-2">
-          <Link href="/dashboard/question/create">
+          <CreateQuestionTemplateButton />
+          <Link href="/dashboard/question/generate">
             <Button>
-              <WandSparkles /> Create question
+              <WandSparkles /> Generate
             </Button>
           </Link>
         </div>
@@ -126,27 +61,59 @@ const Page = () => {
   );
 };
 
+const CreateQuestionTemplateButton = () => {
+  const router = useRouter();
+  const [transitionReady, startTransition] = useTransition();
+
+  const { mutate: createQuestionTemplate, isPending: isLoading } = useMutation({
+    mutationKey: ["create-question-template"],
+    mutationFn: async () => {
+      const res = await $api.organization.question.template.create.post();
+
+      if (!res.data) {
+        toast.error("Failed to create question template");
+        return;
+      }
+
+      startTransition(() => {
+        router.push(`/dashboard/question/${res.data.id}`);
+      });
+    },
+  });
+
+  return (
+    <Button
+      variant={"outline-solid"}
+      onClick={() => createQuestionTemplate()}
+      disabled={transitionReady || isLoading}
+    >
+      {isLoading ? (
+        <>
+          <Loader2 className="w-4 h-4 animate-spin" />
+          <span>Creating...</span>
+        </>
+      ) : transitionReady ? (
+        <>
+          <Loader2 className="w-4 h-4 animate-spin" />
+          <span>Redirecting...</span>
+        </>
+      ) : (
+        <>
+          <Plus /> Question template
+        </>
+      )}
+    </Button>
+  );
+};
+
 const QuestionTemplateSection = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState("owned");
 
-  // Filter owned templates based on search
-  const filteredOwnedTemplates = ownedTemplates.filter(
-    (template) =>
-      template.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      template.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      template.tags.some((tag) =>
-        tag.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-  );
+  const { data: dataQuestionTemplate } = useAllQuestionTemplate();
 
   return (
     <div className="space-y-6">
-      <Tabs
-        defaultValue="owned"
-        className="w-full"
-        onValueChange={(value) => setActiveTab(value)}
-      >
+      <Tabs defaultValue="owned" className="w-full">
         <div className="flex flex-row justify-between mb-4">
           <TabsList className="p-1 bg-muted/50">
             <TabsTrigger value="owned" className="transition-all duration-300">
@@ -174,14 +141,12 @@ const QuestionTemplateSection = () => {
 
         {/* Owned Templates Tab */}
         <TabsContent value="owned" className="mt-0">
-          {filteredOwnedTemplates.length > 0 ? (
+          {dataQuestionTemplate && dataQuestionTemplate?.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredOwnedTemplates.map((template, index) => (
+              {dataQuestionTemplate?.map((template) => (
                 <OwnedTemplateCard
                   key={template.id}
-                  template={template}
-                  index={index}
-                  isActive={activeTab === "owned"}
+                  template={template as QuestionTemplateWithQuestions}
                 />
               ))}
             </div>
@@ -207,33 +172,24 @@ const QuestionTemplateSection = () => {
 
 const OwnedTemplateCard = ({
   template,
-  index,
-  isActive,
 }: {
-  template: (typeof ownedTemplates)[0];
-  index: number;
-  isActive: boolean;
+  template: QuestionTemplateWithQuestions;
 }) => {
-  const delay = (index % 9) * 0.05; // Stagger animation based on index
-
   return (
     <Card
       className={cn(
-        "overflow-hidden transition-all duration-500 hover:shadow-md group border-border",
-        "bg-card hover:bg-muted/20",
-        fadeInAnimation,
-        isActive && fadeInVisible
+        "overflow-hidden group border-border",
+        "bg-card hover:bg-muted/20"
       )}
-      style={{
-        transitionDelay: `${delay}s`,
-      }}
     >
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start">
           <div>
-            <CardTitle className="text-lg">{template.title}</CardTitle>
+            <CardTitle className="text-lg">
+              {template.title || "Untitled"}
+            </CardTitle>
             <CardDescription className="text-xs mt-1">
-              {template.description}
+              {template.title}
             </CardDescription>
           </div>
           <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -245,30 +201,38 @@ const OwnedTemplateCard = ({
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <div className="flex items-center">
             <FileText className="h-4 w-4 mr-1" />
-            {template.questionCount} questions
+            {0} questions
           </div>
           <div className="flex items-center">
             <Calendar className="h-4 w-4 mr-1" />
-            {template.lastUsed}
+            {dayjs(template.createdAt).format("DD MMM YYYY")}
           </div>
         </div>
 
         {/* Question Highlights */}
         <div className="space-y-1.5">
-          {template.questions.slice(0, 2).map((question) => (
-            <div
-              key={question.id}
-              className="flex items-center gap-1.5 text-xs"
-            >
-              <div className="flex-shrink-0 w-4 h-4 rounded-full bg-muted/50 flex items-center justify-center">
-                {getQuestionTypeIcon(question.type)}
+          {template.questions?.map((question) => {
+            const Icon = getQuestionTypeIcon(
+              question.type || "multiple-choice"
+            );
+            return (
+              <div
+                key={question.id}
+                className="flex items-center gap-1.5 text-xs"
+              >
+                <div className="flex-shrink-0 size-3 rounded-full bg-muted/50 flex items-center justify-center">
+                  <Icon className="size-3" />
+                </div>
+                <div
+                  className="flex-1 truncate text-muted-foreground"
+                  dangerouslySetInnerHTML={{
+                    __html: question.question || "No preview available",
+                  }}
+                />
               </div>
-              <div className="flex-1 truncate text-muted-foreground">
-                {question.text}
-              </div>
-            </div>
-          ))}
-          {template.questions.length > 2 && (
+            );
+          })}
+          {template.questions?.length && template.questions?.length > 2 && (
             <div className="text-xs text-muted-foreground/70 pl-5">
               +{template.questions.length - 2} more questions
             </div>
@@ -295,16 +259,16 @@ const OwnedTemplateCard = ({
 };
 
 // Helper function to get question type icon
-const getQuestionTypeIcon = (type: string) => {
+const getQuestionTypeIcon = (type: QuestionType) => {
   switch (type) {
     case "multiple-choice":
-      return <div className="w-2 h-2 rounded-full bg-primary" />;
+      return questionTypes["multiple-choice"].icon;
     case "yes-or-no":
-      return <div className="w-2.5 h-1.5 bg-primary rounded-sm" />;
+      return questionTypes["yes-or-no"].icon;
     case "text-field":
-      return <div className="w-2.5 h-2 border-b border-primary" />;
+      return questionTypes["text-field"].icon;
     default:
-      return <div className="w-2 h-2 rounded-sm bg-primary" />;
+      return questionTypes["multiple-choice"].icon;
   }
 };
 

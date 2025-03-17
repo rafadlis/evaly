@@ -26,8 +26,8 @@ const CardSection = ({
       className={cn(
         "flex flex-col group/section justify-start  cursor-pointer p-3 relative select-none",
         isSelected
-          ? "border-foreground/50"
-          : "hover:bg-secondary/50"
+          ? "border-dashed border-foreground/20"
+          : "hover:bg-secondary/50 border-border/50 border-dashed"
       )}
     >
       {isSelected ? (

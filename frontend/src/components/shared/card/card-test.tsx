@@ -5,9 +5,9 @@ import {
   Calendar,
   CheckIcon,
   CircleIcon,
+  CircleUserIcon,
   Clock,
-  PencilLine,
-  Users,
+  PencilLine
 } from "lucide-react";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
@@ -41,18 +41,16 @@ const CardTest = ({
               <Badge variant={"secondary"} className={testTypeColor(data.type)}>
                 {testTypeFormatter(data.type)}
               </Badge>
-              <Badge variant={"ghost"}>
-                <Clock size={14} />
-                <span>
-                  {Number(data.duration || "0") === 0
-                    ? "No time limit"
-                    : `${data.duration}m`}
-                </span>
-              </Badge>
+              {Number(data.duration || "0") > 0 ? (
+                <Badge variant={"secondary"}>
+                  <Clock size={14} />
+                  <span>{`${data.duration}m`}</span>
+                </Badge>
+              ) : null}
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div>
             {data.isPublished && !data.finishedAt ? (
               <Badge variant={"ghost"} className="text-muted-foreground">
                 <CircleIcon className="fill-success-foreground stroke-success-foreground size-3" />
@@ -73,9 +71,9 @@ const CardTest = ({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-4 text-sm px-4 py-2 border-dashed border-t text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-6 text-sm px-4 py-2 border-dashed border-t text-muted-foreground">
           <div className="flex items-center gap-1">
-            <Users size={16} />
+            <CircleUserIcon size={14}/>
             <span>
               {data.access === "public"
                 ? "Public"
@@ -83,7 +81,7 @@ const CardTest = ({
             </span>
           </div>
           <div className="flex items-center gap-1">
-            <Calendar size={16} />
+            <Calendar size={14}/>
             <span>
               Created on {dayjs(data.createdAt).format("DD MMM YYYY")}
             </span>

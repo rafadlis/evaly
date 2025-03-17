@@ -6,7 +6,13 @@ import { updateQuestion } from "../../services/organization/question/update-ques
 import { deleteQuestion } from "../../services/organization/question/delete-question";
 import { checkQuestionOwner } from "../../services/organization/question/check-question-owner";
 import { updateOrderBetweenQuestions } from "../../services/organization/question/update-order-between-questions";
-import { ValidatedInsertQuestion, ValidatedUpdateQuestion } from "../../types/question";
+import {
+  ValidatedInsertQuestion,
+  ValidatedUpdateQuestion,
+} from "../../types/question";
+import { createQuestionTemplate } from "../../services/organization/question/create-question-template";
+import { getAllQuestionTemplate } from "../../services/organization/question/get-all-question-template";
+import { getQuestionTemplateById } from "../../services/organization/question/get-question-template-by-id";
 
 export const questionRouter = new Elysia().group("/question", (app) => {
   return (
@@ -94,6 +100,30 @@ export const questionRouter = new Elysia().group("/question", (app) => {
               order: t.Number(),
             })
           ),
+        }
+      )
+
+      // Create new question template
+      .post(
+        "/template/create",
+        async ({ organizer: { organizationId, id }, error }) => {
+          return await createQuestionTemplate({
+            organizationId,
+            organizerId: id,
+          });
+        }
+      )
+
+      // Get all question template
+      .get("/template/all", async ({ organizer: { organizationId } }) => {
+        return await getAllQuestionTemplate(organizationId)
+      })
+
+      // Get question template by id
+      .get(
+        "/template/:id",
+        async ({ params, organizer: { organizationId } }) => {
+          return await getQuestionTemplateById(params.id, organizationId);
         }
       )
   );

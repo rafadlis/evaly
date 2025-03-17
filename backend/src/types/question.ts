@@ -1,6 +1,7 @@
 import { createInsertSchema, createUpdateSchema } from "drizzle-typebox";
 import { t } from "elysia";
 import { question } from "../lib/db/schema/question";
+import { questionTemplate } from "../lib/db/schema/question.template";
 export type { QuestionType } from "./question-types";
 
 export type Question = typeof question.$inferSelect;
@@ -55,3 +56,9 @@ export const ValidatedUpdateQuestion = createUpdateSchema(question, {
   ),
 });
 
+
+
+export type QuestionTemplate = typeof questionTemplate.$inferSelect
+export type QuestionTemplateWithQuestions = QuestionTemplate & {
+  questions?: Question[]
+}
