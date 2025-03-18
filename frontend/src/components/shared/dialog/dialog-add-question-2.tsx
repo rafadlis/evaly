@@ -1,13 +1,13 @@
 import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { questionTypes } from "@/constants/question-type";
 import { $api } from "@/lib/api";
@@ -23,11 +23,13 @@ const DialogAddQuestion = ({
   referenceId,
   referenceType,
   onSuccessCreateQuestion,
+  triggerButton
 }: {
   order?: number;
   referenceId: string;
   referenceType?: Question["referenceType"];
   onSuccessCreateQuestion?: (question: Question[]) => void;
+  triggerButton?: React.ReactNode;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [typeSelected, setTypeSelected] = useState<QuestionType>();
@@ -81,9 +83,11 @@ const DialogAddQuestion = ({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant={"outline-solid"}>
-          <Plus /> Add question
-        </Button>
+        {triggerButton ? triggerButton : (
+          <Button variant={"outline"} type="button">
+            <Plus /> Add question
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -92,7 +96,7 @@ const DialogAddQuestion = ({
             Select the question type you want to add
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-row flex-wrap gap-y-3 gap-x-2 w-full mt-2">
+        <div className="grid grid-cols-2 gap-y-3 gap-x-2 w-full mt-2">
           {Object.values(questionTypes)
             .filter((e) => !e.isHidden)
             .map((type) => (

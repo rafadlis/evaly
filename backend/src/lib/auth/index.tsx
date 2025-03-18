@@ -15,7 +15,10 @@ export const auth = betterAuth({
     emailOTP({
       async sendVerificationOTP({ email, otp, type }, request) {
         await mailTransporter.sendMail({
-          from: "noreply@evaly.io",
+          from: {
+            name: "Evaly",
+            address: "noreply@evaly.io",
+          },
           to: email,
           subject: "Evaly Login Verification",
           html: renderToStaticMarkup(<EmailLoginOTPEmail otp={otp} />),

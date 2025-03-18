@@ -21,16 +21,37 @@ export const questionTemplate = pgTable(
     organizerId: varchar("organizer_id", { length: 255 }).notNull(),
     tags: jsonb("tags").$type<string[]>().notNull().default([]),
     isAiGenerated: boolean("is_ai_generated").notNull().default(false),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
-    updatedAt: timestamp("updated_at").notNull().defaultNow(),
-    deletedAt: timestamp("deleted_at"),
+    createdAt: timestamp("created_at", {
+      mode: "string",
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      mode: "string",
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date().toISOString()),
+    deletedAt: timestamp("deleted_at", {
+      mode: "string",
+      withTimezone: true,
+    }),
   },
   (t) => ({
-    organizationIdIdx: index("question_template_organization_id_idx").on(t.organizationId),
-    organizerIdIdx: index("question_template_organizer_id_idx").on(t.organizerId),
+    organizationIdIdx: index("question_template_organization_id_idx").on(
+      t.organizationId
+    ),
+    organizerIdIdx: index("question_template_organizer_id_idx").on(
+      t.organizerId
+    ),
   })
 );
 
-export const questionTemplateRelations = relations(questionTemplate, ({ many }) => ({
-  questions: many(question),
-}));
+export const questionTemplateRelations = relations(
+  questionTemplate,
+  ({ many }) => ({
+    questions: many(question),
+  })
+);

@@ -1,4 +1,3 @@
-import { ChevronDownIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Label } from "../ui/label";
@@ -26,7 +25,6 @@ const QuestionTypeSelection = ({
         <Button size={size}  variant={variant}>
           <SelectedIcon size={16} className="mr-1" /> 
           {selectedType.label} 
-          <ChevronDownIcon className="ml-1" size={14} />
         </Button>
       </PopoverTrigger>
       <PopoverContent align="start" className="w-[240px] p-2">

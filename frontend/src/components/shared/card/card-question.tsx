@@ -8,7 +8,9 @@ import { Question } from "@evaly/backend/types/question";
 import {
   ArrowDown,
   ArrowUp,
-  CheckCircle2, Loader2
+  CheckCircle2,
+  Loader2,
+  MousePointerClick,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -92,16 +94,15 @@ const CardQuestion = ({
   return (
     <Card
       className={cn(
-        "transition-all hover:border-foreground/20 cursor-pointer ",
+        "transition-all rounded-none border-transparent cursor-pointer duration-100 group",
         className
       )}
       onClick={onClickEdit}
     >
-      <CardHeader className="border-b py-2 px-4 flex flex-row justify-between items-center ">
+      <CardHeader className="px-6 flex flex-row justify-between items-center ">
         <div className="flex flex-row gap-3">
           <Button variant={"secondary"} size={"xs"}>
-            #
-            Question {data.order}
+            # Question {data.order}
           </Button>
           {data.pointValue ? (
             <Button variant={"secondary"} size={"xs"}>
@@ -111,6 +112,15 @@ const CardQuestion = ({
           <QuestionTypeSelection value={data.type} />
         </div>
         <div className="flex flex-row h-5 justify-end items-center">
+          <Button
+            className="hidden group-hover:flex ml-4"
+            size={"xs"}
+            variant={"secondary"}
+          >
+            <MousePointerClick className="size-4" />
+            Click to edit
+          </Button>
+
           {previousQuestionId ? (
             <Button
               onClick={(e) => {
@@ -159,7 +169,7 @@ const CardQuestion = ({
           />
         </div>
       </CardHeader>
-      <CardContent className="pt-6 px-4">
+      <CardContent className="px-6">
         <div
           className="custom-prose max-w-full max-h-[220px] h-max overflow-y-auto"
           dangerouslySetInnerHTML={{
@@ -170,14 +180,14 @@ const CardQuestion = ({
           }}
         />
         {!hideOptions ? (
-          <div className="flex flex-col gap-4 text-sm mt-2">
+          <div className="flex flex-col gap-3 text-sm mt-2">
             {data.options?.map((option, i) => (
               <div
                 key={option.id}
                 className="flex flex-row flex-wrap items-start gap-3"
               >
                 <Button
-                  size={"icon-sm"}
+                  size={"icon-xs"}
                   variant={option.isCorrect ? "success" : "secondary"}
                 >
                   {option.isCorrect ? (

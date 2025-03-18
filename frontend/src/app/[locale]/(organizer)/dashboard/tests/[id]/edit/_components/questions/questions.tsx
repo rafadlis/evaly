@@ -15,66 +15,23 @@ import DialogDeleteSection from "@/components/shared/dialog/dialog-delete-sectio
 import DialogEditSectionDuration from "@/components/shared/dialog/dialog-edit-section-duration";
 import DialogEditSection from "@/components/shared/dialog/dialog-edit-section";
 import DialogEditQuestion from "@/components/shared/dialog/dialog-edit-question";
-import { cn, updateQuestionInArray } from "@/lib/utils";
+import {
+  cn,
+  insertQuestionsAtCorrectPosition,
+  updateQuestionInArray,
+} from "@/lib/utils";
 import { Reorder } from "motion/react";
-import DialogAddQuestion from "@/components/shared/dialog/dialog-add-question";
+import DialogAddQuestion from "@/components/shared/dialog/dialog-add-question-2";
 import { Question } from "@evaly/backend/types/question";
 import { useAllQuestionByReferenceIdQuery } from "@/query/organization/question/use-all-question-by-reference-id.query";
 import { useTestSectionByTestIdQuery } from "@/query/organization/test-section/use-test-section-by-test-id";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTestSectionByIdQuery } from "@/query/organization/test-section/use-test-section-by-id";
-
-/**
- * Insert questions at the correct position based on their order
- * @param prevQuestions - The existing questions array
- * @param newQuestions - The new questions to insert
- * @returns The updated questions array with new questions inserted at the correct position
- */
-const insertQuestionsAtCorrectPosition = (
-  prevQuestions: Question[],
-  newQuestions: Question[]
-): Question[] => {
-  if (newQuestions.length === 0) return prevQuestions;
-
-  // Find the first question's order (which is the insertion point)
-  const firstNewQuestionOrder = newQuestions[0].order;
-
-  if (!firstNewQuestionOrder) {
-    // If no order is defined, just append to the end (fallback)
-    return [...prevQuestions, ...newQuestions];
-  }
-
-  // Find the index where we should insert the new questions
-  // Order starts from 1, but array index starts from 0
-  const insertIndex = prevQuestions.findIndex(
-    (q) => q.order && q.order >= firstNewQuestionOrder
-  );
-
-  // Create a new array with updated questions
-  let result;
-  if (insertIndex === -1) {
-    // If no matching order found, append to the end
-    result = [...prevQuestions, ...newQuestions];
-  } else {
-    // Insert the new questions at the correct position
-    result = [
-      ...prevQuestions.slice(0, insertIndex),
-      ...newQuestions,
-      ...prevQuestions.slice(insertIndex),
-    ];
-  }
-
-  // Update the order field to ensure it starts from 1 and is sequential
-  return result.map((question, index) => ({
-    ...question,
-    order: index + 1,
-  }));
-};
+import { toast } from "sonner";
 
 const Questions = () => {
   const [selectedSection, setSelectedSection] = useSelectedSection();
   const [selectedQuestion, setSelectedQuestion] = useState<Question>();
-  const [addQuestionOnOrder, setAddQuestionOnOrder] = useState<number>();
 
   const {
     data: dataSection,
@@ -158,7 +115,8 @@ const Questions = () => {
       <Card className="border overflow-clip flex-1 h-max">
         <CardHeader
           className={cn(
-            `bg-background z-10 pb-4 mb-6 transition-all duration-300 border-b border-dashed`
+            `bg-background z-10 pb-4 transition-all duration-300 border-b`,
+            localQuestions.length === 0 ? "mb-4" : ""
           )}
         >
           <div className="flex flex-row items-start">
@@ -222,7 +180,7 @@ const Questions = () => {
           </CardDescription>
         </CardHeader>
         {localQuestions?.length ? (
-          <CardContent>
+          <CardContent className="p-0 py-0">
             <Reorder.Group
               onReorder={() => {}}
               values={localQuestions}
@@ -276,29 +234,40 @@ const Questions = () => {
                     <div
                       className={cn(
                         "h-8 flex items-center justify-center group/separator relative",
-                        index === localQuestions.length - 1 ? "mt-4" : ""
+                        index === localQuestions.length - 1 ? "mb-4" : ""
                       )}
                     >
-                      <Button
-                        size={"xxs"}
-                        variant={"default"}
-                        onClick={() => {
-                          if (data.order) {
-                            setAddQuestionOnOrder(data.order + 1);
+                      <DialogAddQuestion
+                        referenceId={selectedSection as string}
+                        referenceType="test-section"
+                        order={data.order + 1}
+                        onSuccessCreateQuestion={(questions) => {
+                          setLocalQuestions((prev) =>
+                            insertQuestionsAtCorrectPosition(prev, questions)
+                          );
+                          if (questions.length === 1) {
+                            setSelectedQuestion(questions[0]);
                           } else {
-                            setAddQuestionOnOrder(localQuestions.length + 1);
+                            toast.success("Questions added successfully");
                           }
+                          refetchSections();
                         }}
-                        className={cn(
-                          "absolute opacity-50 lg:opacity-0 group-hover/separator:opacity-100",
-                          index === localQuestions.length - 1
-                            ? "lg:opacity-100"
-                            : ""
-                        )}
-                      >
-                        <PlusIcon /> Add Question
-                      </Button>
-                      <div className="h-auto border-b border-border/50 w-full group-hover/separator:border-foreground/20" />
+                        triggerButton={
+                          <Button
+                            size={"xxs"}
+                            variant={"outline"}
+                            className={cn(
+                              "absolute opacity-50 group-hover/separator:opacity-100",
+                              index === localQuestions.length - 1
+                                ? "lg:opacity-100"
+                                : ""
+                            )}
+                          >
+                            <PlusIcon /> Add Question
+                          </Button>
+                        }
+                      />
+                      <div className="h-auto border-b border-border border-dashed w-full group-hover/separator:border-foreground/20" />
                     </div>
                   </Reorder.Item>
                 );
@@ -307,11 +276,19 @@ const Questions = () => {
           </CardContent>
         ) : (
           <CardContent>
-            <EmptyQuestion
-              onClickAddQuestion={() => {
-                setAddQuestionOnOrder(localQuestions.length + 1);
-              }}
-            />
+            <div className="border rounded-lg flex flex-col justify-center items-center py-16  gap-4">
+              <h1>No question found on this section</h1>
+              <DialogAddQuestion
+                referenceId={selectedSection as string}
+                referenceType="test-section"
+                order={localQuestions.length + 1}
+                onSuccessCreateQuestion={(questions) => {
+                  setLocalQuestions((prev) =>
+                    insertQuestionsAtCorrectPosition(prev, questions)
+                  );
+                }}
+              />
+            </div>
           </CardContent>
         )}
       </Card>
@@ -326,46 +303,8 @@ const Questions = () => {
           setSelectedQuestion(undefined);
         }}
       />
-
-      <DialogAddQuestion
-        order={addQuestionOnOrder}
-        referenceId={dataSection?.id}
-        referenceType="test-section"
-        onClose={() => {
-          setAddQuestionOnOrder(undefined);
-        }}
-        onSuccessCreateQuestion={(questions) => {
-          setLocalQuestions((prev) =>
-            insertQuestionsAtCorrectPosition(prev, questions)
-          );
-          setAddQuestionOnOrder(undefined);
-          if (questions.length === 1) {
-            setSelectedQuestion(questions[0]);
-          }
-          refetchSections();
-        }}
-      />
     </div>
   );
 };
 
-const EmptyQuestion = ({
-  onClickAddQuestion,
-}: {
-  onClickAddQuestion?: () => void;
-}) => {
-  return (
-    <div className="border rounded-lg flex flex-col justify-center items-center py-16  gap-4">
-      <h1>No question found on this section</h1>
-      <Button
-        size={"sm"}
-        variant={"outline"}
-        onClick={onClickAddQuestion}
-        className=""
-      >
-        <PlusIcon /> Add Question
-      </Button>
-    </div>
-  );
-};
 export default Questions;

@@ -177,7 +177,7 @@
 
 @layer components {
   .custom-prose {
-    @apply prose prose-base sm:prose-lg dark:prose-invert prose-neutral
+    @apply prose prose-base dark:prose-invert prose-neutral
        prose-li:leading-normal prose-li:m-0  
        prose-headings:mb-3 prose-headings:mt-0 
        prose-h1:text-3xl prose-h1:mt-14  prose-h1:mb-10

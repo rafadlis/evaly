@@ -1,7 +1,9 @@
 import db from "../../../lib/db";
+import { eq, and, isNull, count } from "drizzle-orm";
+import { question } from "../../../lib/db/schema";
 
 export const getAllQuestionTemplate = async (organizationId: string) => {
-  const data = await db.query.questionTemplate.findMany({
+  const templates = await db.query.questionTemplate.findMany({
     where(fields, { and, eq, isNull }) {
       return and(
         eq(fields.organizationId, organizationId),
@@ -18,6 +20,11 @@ export const getAllQuestionTemplate = async (organizationId: string) => {
           question: true,
         },
         limit: 2,
+        where(fields, {eq, and, isNull}) {
+          return and(
+            isNull(fields.deletedAt),
+          )
+        },
       },
     },
     orderBy(fields, {desc}) {
@@ -25,5 +32,25 @@ export const getAllQuestionTemplate = async (organizationId: string) => {
     },
   });
 
-  return data;
+  // Get count of non-deleted questions for each template
+  const templatesWithTotalQuestions = await Promise.all(
+    templates.map(async (template) => {
+      const questionCount = await db.select({ count: count() })
+        .from(question)
+        .where(
+          and(
+            eq(question.referenceId, template.id),
+            eq(question.referenceType, "template"),
+            isNull(question.deletedAt)
+          )
+        );
+      
+      return {
+        ...template,
+        totalQuestions: questionCount[0].count
+      };
+    })
+  );
+
+  return templatesWithTotalQuestions;
 };

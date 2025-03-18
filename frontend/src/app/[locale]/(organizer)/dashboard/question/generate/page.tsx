@@ -17,11 +17,15 @@ import { AnimatePresence, motion } from "motion/react";
 
 const Page = () => {
   const autoComplete: string[] = [];
+  // const searchParams = useSearchParams()
+
+  // const referenceId = searchParams.get("templateId");
+  // const showImportSection = searchParams.get("showImportSection");
 
   return (
-    <div className="container">
+    <div className="container flex-1 justify-center flex flex-col">
       {/* Prompt Section */}
-      <div className="flex-col flex items-center lg:mt-24">
+      <div className="flex-col flex items-center">
         <h1 className="text-4xl font-semibold mb-6 relative text-primary">
           Let&apos;s Craft Your Question
         </h1>
