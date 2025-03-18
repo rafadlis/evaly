@@ -48,7 +48,7 @@ export const columns: ColumnDef<Submission>[] = [
     header: ({ column }) => (
       <SortableHeader column={column} title="Rank" className="pl-2 w-[40px]" />
     ),
-    cell: ({ row }) => <div className="pl-2 text-base">#{row.original.rank}</div>,
+    cell: ({ row }) => <div className="pl-4 text-base">{row.original.rank}</div>,
   },
   {
     accessorKey: "name",
