@@ -25,7 +25,12 @@ const Page = () => {
   return (
     <div className="container flex-1 justify-center flex flex-col">
       {/* Prompt Section */}
-      <div className="flex-col flex items-center">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="flex-col flex items-center"
+      >
         <h1 className="text-4xl font-semibold mb-6 relative text-primary">
           Let&apos;s Craft Your Question
         </h1>
@@ -103,7 +108,7 @@ const Page = () => {
             </Button>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* <div className="flex flex-col gap-4 mt-28">
         <h1 className="font-medium">Latest</h1>

@@ -44,20 +44,10 @@ const navItems = [
   },
 ];
 export function DashboardNavbar({ className }: { className?: string }) {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const [activeItem, setActiveItem] = useState("/dashboard");
   const { setTheme, theme } = useTheme();
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   useEffect(() => {
     // Set active item based on pathname or keep it as state for demo
@@ -83,9 +73,8 @@ export function DashboardNavbar({ className }: { className?: string }) {
   return (
     <nav
       className={cn(
-        "sticky top-0 left-0 w-full z-50 transition-all border-b border-dashed  bg-background",
+        "sticky top-0 left-0 w-full z-50 transition-all py-1.5 border-b border-dashed  bg-background",
         className,
-        isScrolled ? "border-border py-1.5" : "border-transparent  py-3"
       )}
     >
       <div className="mx-auto px-6">
