@@ -190,6 +190,8 @@ const Submissions = () => {
             wrong: sectionWrong,
             unanswered: sectionUnanswered,
             score: sectionScore,
+            // Update totalQuestions to reflect the selected section's question count
+            totalQuestions: sectionQuestionsCount,
           };
         });
     }

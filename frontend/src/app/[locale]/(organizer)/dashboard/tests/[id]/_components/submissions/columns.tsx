@@ -1,8 +1,7 @@
 import { ColumnDef, Column } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { Submission } from "./types";
 import { cn } from "@/lib/utils";
 
@@ -12,28 +11,44 @@ dayjs.extend(relativeTime);
 const SortableHeader = ({
   column,
   title,
+  className,
 }: {
   column: Column<Submission, unknown>;
   title: string;
-}) => (
-  <Button
-    variant="ghost"
-    size={"sm"}
-    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-    className="font-medium w-max text-sm h-8"
-  >
-    {title}
-    <ArrowUpDown  />
-  </Button>
-);
+  className?: string;
+}) => {
+  const sortDirection = column.getIsSorted();
+  
+  return (
+    <button
+      type="button"
+      onClick={() => column.toggleSorting(sortDirection === "asc")}
+      className={cn(
+        "w-max cursor-pointer text-sm px-0 text-foreground font-normal flex items-center gap-1",
+        className
+      )}
+    >
+      {title}
+      {sortDirection === false && (
+        <ArrowUpDown className="size-3 invisible" />
+      )}
+      {sortDirection === "asc" && (
+        <ArrowUp className="size-3" />
+      )}
+      {sortDirection === "desc" && (
+        <ArrowDown className="size-3" />
+      )}
+    </button>
+  );
+};
 
 export const columns: ColumnDef<Submission>[] = [
   {
     accessorKey: "rank",
-    header: ({ column }) => <SortableHeader column={column} title="Rank" />,
-    cell: ({ row }) => (
-      <div className="text-center font-medium">#{row.original.rank}</div>
+    header: ({ column }) => (
+      <SortableHeader column={column} title="Rank" className="pl-2 w-[40px]" />
     ),
+    cell: ({ row }) => <div className="pl-2 text-base">#{row.original.rank}</div>,
   },
   {
     accessorKey: "name",
@@ -43,8 +58,8 @@ export const columns: ColumnDef<Submission>[] = [
     cell: ({ row }) => {
       return (
         <div>
-          <div className="font-medium">{row.original.name}</div>
-          <div className="text-sm text-muted-foreground">
+          <div>{row.original.name}</div>
+          <div className="text-xs text-muted-foreground">
             {row.original.email}
           </div>
         </div>
@@ -57,7 +72,7 @@ export const columns: ColumnDef<Submission>[] = [
     cell: ({ row }) => {
       const score = row.original.score as number;
 
-      return <div className={cn("text-center")}>{`${score}%`}</div>;
+      return <div className={cn("")}>{`${score}%`}</div>;
     },
   },
   {
@@ -67,7 +82,7 @@ export const columns: ColumnDef<Submission>[] = [
       const answered = row.original.answered as number;
       const totalQuestions = row.original.totalQuestions;
       return (
-        <div className="text-center">
+        <div className="">
           {answered}/{totalQuestions}
         </div>
       );
@@ -75,12 +90,12 @@ export const columns: ColumnDef<Submission>[] = [
   },
   {
     accessorKey: "correct",
-    header: ({ column }) => <SortableHeader column={column} title="Correct" />,
+    header: ({ column }) => <SortableHeader column={column} title="Correct / Wrong" />,
     cell: ({ row }) => {
       const correct = row.original.correct as number;
       const totalQuestions = row.original.totalQuestions;
       return (
-        <div className="text-center text-green-600">
+        <div className=" text-green-600">
           {correct}/{totalQuestions}
         </div>
       );
@@ -93,7 +108,7 @@ export const columns: ColumnDef<Submission>[] = [
       const wrong = row.original.wrong as number;
       const totalQuestions = row.original.totalQuestions;
       return (
-        <div className="text-center text-red-600">
+        <div className="text-red-600">
           {wrong}/{totalQuestions}
         </div>
       );
@@ -105,9 +120,7 @@ export const columns: ColumnDef<Submission>[] = [
       <SortableHeader column={column} title="Unanswered" />
     ),
     cell: ({ row }) => (
-      <div className="text-center text-muted-foreground">
-        {row.original.unanswered}
-      </div>
+      <div className="text-muted-foreground">{row.original.unanswered}</div>
     ),
   },
   {
@@ -122,7 +135,7 @@ export const columns: ColumnDef<Submission>[] = [
 
       if (status === "in-progress" && startedAt) {
         return (
-          <div className="flex flex-col items-end">
+          <div className="flex flex-col">
             <p className="text-amber-500 animate-pulse font-medium">
               In progress
             </p>
@@ -134,7 +147,7 @@ export const columns: ColumnDef<Submission>[] = [
       }
 
       return submittedAt ? (
-        <div className="text-end">
+        <div className="">
           <p className="font-medium">
             {dayjs(submittedAt).format("DD MMM YYYY HH:mm")}
           </p>
