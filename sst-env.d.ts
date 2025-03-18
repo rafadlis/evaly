@@ -5,26 +5,6 @@
 
 declare module "sst" {
   export interface Resource {
-    "Frontend": {
-      "type": "sst.aws.Nextjs"
-      "url": string
-    }
-    "NEXT_PUBLIC_API_URL_DEVELOPMENT": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-    "NEXT_PUBLIC_API_URL_STAGING": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-    "NEXT_PUBLIC_URL_DEVELOPMENT": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-    "NEXT_PUBLIC_URL_STAGING": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
   }
 }
 /// <reference path="sst-env.d.ts" />

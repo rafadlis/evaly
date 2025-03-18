@@ -16,11 +16,11 @@ export const frontend = new sst.aws.Nextjs("Frontend", {
   domain: {
     name:
       $app.stage === "production"
-        ? "tetsu.app"
+        ? "evaly.io"
         : $app.stage === "staging"
-        ? "staging.tetsu.app"
+        ? "staging.evaly.io"
         : undefined,
-    redirects: $app.stage === "production" ? ["www.tetsu.app"] : undefined,
+    redirects: $app.stage === "production" ? ["www.evaly.io"] : undefined,
     dns: sst.aws.dns(),
   },
   environment: environment,

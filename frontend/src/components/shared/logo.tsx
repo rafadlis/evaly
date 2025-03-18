@@ -15,7 +15,7 @@ export const LogoType = ({ className, href = "/" }: Props) => {
     <Link href={href} className={cn("flex items-center gap-2", className)}>
       <Image src={LogoIcon} width={32} height={32} alt="Logo" />
       <span className="text-xl font-bold hidden sm:block tracking-[-0.05em] font-mono text-primary">
-        tetsu
+        evaly
       </span>
     </Link>
   );

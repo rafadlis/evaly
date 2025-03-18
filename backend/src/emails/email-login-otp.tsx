@@ -10,7 +10,7 @@ export default function EmailLoginOTPEmail({ otp }: { otp: string | number }) {
             <Container className="font-sans">
                 <Section className="bg-white border border-gray-200 rounded-lg px-8 py-6 max-w-md mx-auto my-8">
                     <Text className="text-lg font-semibold text-gray-800 mb-2">
-                        Tetsu Login Verification
+                        Evaly Login Verification
                     </Text>
                     <Hr className="border-gray-200 my-4" />
                     <Text className="text-gray-700 mb-4">
@@ -27,7 +27,7 @@ export default function EmailLoginOTPEmail({ otp }: { otp: string | number }) {
                         If you did not request this code, please disregard this email or contact support.
                     </Text>
                     <Text className="text-gray-500 text-xs">
-                        © {new Date().getFullYear()} Tetsu. All rights reserved.
+                        © {new Date().getFullYear()} Evaly. All rights reserved.
                     </Text>
                 </Section>
             </Container>

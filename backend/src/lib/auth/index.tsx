@@ -15,9 +15,9 @@ export const auth = betterAuth({
     emailOTP({
       async sendVerificationOTP({ email, otp, type }, request) {
         await mailTransporter.sendMail({
-          from: "noreply@tetsu.app",
+          from: "noreply@evaly.io",
           to: email,
-          subject: "Tetsu Login Verification",
+          subject: "Evaly Login Verification",
           html: renderToStaticMarkup(<EmailLoginOTPEmail otp={otp} />),
         });
       },
@@ -51,8 +51,8 @@ export const auth = betterAuth({
         env.ENVIRONMENT === "development"
           ? "http://localhost:4000/api/auth/callback/google"
           : env.ENVIRONMENT === "staging"
-            ? "https://api-staging.tetsu.app/api/auth/callback/google"
-            : "https://tetsu.app/api/auth/callback/google",
+            ? "https://api-staging.evaly.io/api/auth/callback/google"
+            : "https://evaly.io/api/auth/callback/google",
     },
   },
   trustedOrigins: [env.WEB_PUBLIC_URL!],
@@ -64,7 +64,7 @@ export const auth = betterAuth({
           useSecureCookies: true,
           crossSubDomainCookies: {
             enabled: true,
-            domain: ".tetsu.app",
+            domain: ".evaly.io",
           },
           defaultCookieAttributes: {
             secure: true,
