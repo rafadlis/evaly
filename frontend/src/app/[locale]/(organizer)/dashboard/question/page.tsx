@@ -27,7 +27,6 @@ import { $api } from "@/lib/api";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/navigation";
 import { useAllQuestionTemplate } from "@/query/organization/question/use-all-question-template";
-import { QuestionTemplateWithQuestions } from "@evaly/backend/types/question";
 import dayjs from "dayjs";
 
 const Page = () => {
@@ -150,7 +149,7 @@ const QuestionTemplateSection = () => {
               {filteredDataQuestionTemplate?.map((template) => (
                 <OwnedTemplateCard
                   key={template.id}
-                  template={template as QuestionTemplateWithQuestions}
+                  template={template}
                 />
               ))}
             </div>
@@ -168,7 +167,21 @@ const QuestionTemplateSection = () => {
 const OwnedTemplateCard = ({
   template,
 }: {
-  template: QuestionTemplateWithQuestions;
+  template: {
+    id: string;
+    createdAt: string;
+    updatedAt: string;
+    organizationId: string;
+    deletedAt: string | null;
+    title: string | null;
+    organizerId: string;
+    tags: string[];
+    isAiGenerated: boolean;
+    questions: {
+        id: string;
+        question: string | null;
+    }[];
+};
 }) => {
   return (
     <Link href={`/dashboard/question/${template.id}`}>
