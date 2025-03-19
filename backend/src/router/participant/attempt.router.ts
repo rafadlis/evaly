@@ -5,42 +5,54 @@ import { checkAttemptAccess } from "../../services/participants/attempt/check-at
 import { postAttemptAnswer } from "../../services/participants/attempt/post-attempt-answer";
 import { ValidatedInsertTestAttemptAnswer } from "../../types/test.attempt";
 import { getAttemptAnswers } from "../../services/participants/attempt/get-attempt-answers";
-import { getOrCreateAttempt } from "../../services/participants/attempt/get-or-create-attempt";
 import { getTestById } from "../../services/participants/test/get-test-by-id";
 import { submitAttempt } from "../../services/participants/attempt/submit-attempt";
+import { startAttempt } from "../../services/participants/attempt/start-attempt";
 
 export const attemptRouter = new Elysia().group("/attempt", (app) =>
   app
     .derive(participantMiddleware)
 
     // Start Test
-    .post("/start/:testId", async ({ params, user, error }) => {
-      // Check if the test is published or not return error if not published
-      const test = await getTestById({
-        id: params.testId,
-        email: user?.email,
-      });
+    .post(
+      "/start/:testId",
+      async ({ params, user, error, body }) => {
+        // Check if the test is published or not return error if not published
+        const test = await getTestById({
+          id: params.testId,
+          email: user?.email,
+        });
 
-      if (test.error) {
-        return error(test.error.status, test.error.message);
+        if (test.error) {
+          return error(test.error.status, test.error.message);
+        }
+
+        // Get the list of test section
+        if (!test.testSections) {
+          return error(404, "Test section not found");
+        }
+
+        // Start the attempt
+        const attempt = await startAttempt({
+          testId: params.testId,
+          testSectionId: body.testSectionId,
+          email: user?.email,
+          testSections: test.testSections,
+        });
+
+        if (attempt.error) {
+          return error(attempt.error.code, attempt.error.message);
+        }
+
+        // Return the attempt
+        return attempt.data;
+      },
+      {
+        body: t.Object({
+          testSectionId: t.String(),
+        }),
       }
-
-      // Get the list of test section
-      if (!test.testSections) {
-        return error(404, "Test section not found");
-      }
-
-      // Check if there is an attempt already, return the attempt
-      // If there is no attempt, create a new attempt
-      const attempt = await getOrCreateAttempt({
-        testId: params.testId,
-        testSections: test.testSections,
-        email: user?.email,
-      });
-
-      // Return the attempt
-      return attempt;
-    })
+    )
 
     // Get Attempt By Id
     .get("/:id", async ({ params, user, error }) => {
@@ -124,22 +136,19 @@ export const attemptRouter = new Elysia().group("/attempt", (app) =>
     )
 
     // Submit Attempt
-    .post(
-      "/:id/submit",
-      async ({ params, user, error }) => {
-        const check = await checkAttemptAccess(params.id, user.email);
+    .post("/:id/submit", async ({ params, user, error }) => {
+      const check = await checkAttemptAccess(params.id, user.email);
 
-        if (!check) {
-          return error(404, "Attempt not found");
-        }
-
-        if (check.completedAt) {
-          return error(403, `You have already complete this test`);
-        }
-
-        const submittedAttempt = await submitAttempt(params.id);
-
-        return submittedAttempt;
+      if (!check) {
+        return error(404, "Attempt not found");
       }
-    )
+
+      if (check.completedAt) {
+        return error(403, `You have already complete this test`);
+      }
+
+      const submittedAttempt = await submitAttempt(params.id);
+
+      return submittedAttempt;
+    })
 );

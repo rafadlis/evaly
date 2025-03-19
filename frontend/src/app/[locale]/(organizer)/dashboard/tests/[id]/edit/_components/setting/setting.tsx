@@ -13,10 +13,9 @@ import { CheckCircle2, LockIcon } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Editor } from "@/components/shared/editor/editor";
-import DialogTestDescriptionTemplate from "@/components/shared/dialog/dialog-test-description-template";
 import InviteOnly from "./invite-only";
 import { AnimatePresence, motion } from "motion/react";
+import { Textarea } from "@/components/ui/textarea";
 
 const Setting = () => {
   const { id: testId } = useParams();
@@ -151,7 +150,13 @@ const Setting = () => {
               control={control}
               render={({ field }) => (
                 <div>
-                  <Editor
+                  <Textarea
+                    placeholder="Type test's description here...."
+                    value={field.value || ""}
+                    className="resize-none min-h-[140px] text-base lg:text-base p-4"
+                    onChange={field.onChange}
+                  />
+                  {/* <Editor
                     placeholder="Type test's description here...."
                     value={field.value || ""}
                     onChange={field.onChange}
@@ -159,7 +164,7 @@ const Setting = () => {
                   <DialogTestDescriptionTemplate
                     className="w-max mt-4"
                     onSelect={field.onChange}
-                  />
+                  /> */}
                 </div>
               )}
             />

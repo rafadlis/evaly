@@ -626,15 +626,15 @@ const Share = () => {
             )}
 
             <TabsContent value="qr" className="space-y-4">
-              <div className="flex flex-col md:flex-row items-center gap-6 p-4 bg-white rounded-md">
-                <div className="relative bg-white p-4 rounded-md border" ref={qrCodeRef}>
+              <div className="flex flex-col md:flex-row items-start gap-6 p-4 bg-background rounded-md">
+                <div className="relative bg-background p-4 rounded-md border" ref={qrCodeRef}>
                   <QRCodeSVG
                     value={shareUrl}
                     size={180}
                     level="H"
                     includeMargin={true}
                     imageSettings={{
-                      src: "/images/logo-light.webp", // Platform logo
+                      src: "/images/logo.svg", // Platform logo
                       x: undefined,
                       y: undefined,
                       height: logoSize,
@@ -644,7 +644,7 @@ const Share = () => {
                   />
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <Image 
-                      src="/images/logo-light.webp" // Platform logo
+                      src="/images/logo.svg" // Platform logo
                       alt="Logo"
                       width={logoSize}
                       height={logoSize}

@@ -11,8 +11,8 @@ export const testAttempt = pgTable(
     id: varchar("id")
       .primaryKey()
       .$defaultFn(() => "ta-" + ulid()),
-    testSectionId: varchar("test_section_id").references(() => testSection.id),
-    testId: varchar("test_id").references(() => test.id),
+    testSectionId: varchar("test_section_id").references(() => testSection.id).notNull(),
+    testId: varchar("test_id").references(() => test.id).notNull(),
     participantEmail: varchar("participant_email").notNull(),
     startedAt: timestamp("started_at", {
       mode: "string",
