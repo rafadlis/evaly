@@ -92,7 +92,7 @@ export const testRouter = new Elysia().group("/test", (app) => {
         async ({ params, body, organizer }) => {
           const organizationId = organizer.organizationId;
           const testId = params.id;
-
+          
           return await updateTest({
             organizationId,
             id: testId,

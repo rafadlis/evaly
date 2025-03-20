@@ -1,0 +1,1 @@
+ALTER TABLE "test" DROP COLUMN "result_visibility";

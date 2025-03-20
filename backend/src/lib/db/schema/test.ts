@@ -27,6 +27,10 @@ export const test = pgTable("test", {
     length: 20,
     enum: ["random", "sequential"],
   }).default("random"),
+  resultVisibility: varchar("result_visibility", {
+    length: 20,
+    enum: ["after_completion", "after_test_end", "never"],
+  }).default("after_completion"), // If never, participant will not be able to see their result
   requiresLogin: boolean("requires_login").default(true), // If false, system will not able to check participant's identity
   isPublished: boolean("is_published").default(false),
   description: text("description"),

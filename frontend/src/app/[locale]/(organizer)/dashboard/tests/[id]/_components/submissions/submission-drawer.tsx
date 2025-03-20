@@ -12,6 +12,7 @@ import {
   Timer,
   AlertCircle,
   CheckCircle2,
+  XIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -81,14 +82,17 @@ export const SubmissionDrawer = ({
   const questionsBySection = useMemo(() => {
     if (!questions.length) return {};
 
-    return questions.reduce((acc, question) => {
-      const sectionId = question.sectionId;
-      if (!acc[sectionId]) {
-        acc[sectionId] = [];
-      }
-      acc[sectionId].push(question);
-      return acc;
-    }, {} as Record<string, typeof questions>);
+    return questions.reduce(
+      (acc, question) => {
+        const sectionId = question.sectionId;
+        if (!acc[sectionId]) {
+          acc[sectionId] = [];
+        }
+        acc[sectionId].push(question);
+        return acc;
+      },
+      {} as Record<string, typeof questions>
+    );
   }, [questions]);
 
   if (!submission) return null;
@@ -375,21 +379,15 @@ export const SubmissionDrawer = ({
                       </CardTitle>
                       <div className="flex items-center gap-3 text-sm">
                         <div className="flex items-center gap-1">
-                          <div className="h-4 w-4 rounded-full bg-green-100 flex items-center justify-center">
-                            <CheckCircle2 className="size-3 text-green-600" />
-                          </div>
+                          <CheckCircle2 className="size-5 text-green-600" />
                           <span>Correct</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <div className="h-4 w-4 rounded-full bg-red-100 flex items-center justify-center">
-                            <XCircle className="size-3 text-red-600" />
-                          </div>
+                          <XIcon className="size-5 text-red-600" />
                           <span>Wrong</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <div className="h-4 w-4 rounded-full bg-gray-100 flex items-center justify-center">
-                            <HelpCircle className="size-3 text-muted-foreground" />
-                          </div>
+                          <HelpCircle className="size-4 text-muted-foreground" />
                           <span>Unanswered</span>
                         </div>
                       </div>
@@ -430,7 +428,7 @@ export const SubmissionDrawer = ({
                             value={section.id}
                             className="border-none"
                           >
-                            <AccordionTrigger className="px-6 py-4 hover:bg-primary/5 transition-colors">
+                            <AccordionTrigger className="px-6 py-4 hover:bg-primary/5 transition-colors cursor-pointer">
                               <div className="flex flex-1 justify-between items-center">
                                 <div className="flex items-center gap-2">
                                   <span className="font-medium">
@@ -442,27 +440,21 @@ export const SubmissionDrawer = ({
                                 </div>
                                 <div className="flex items-center gap-2 text-sm mr-4">
                                   <span className="flex items-center gap-1">
-                                    <div className="h-4 w-4 rounded-full bg-green-100 flex items-center justify-center">
-                                      <CheckCircle2 className="size-3 text-green-600" />
-                                    </div>
+                                    <CheckCircle2 className="size-4 text-green-600" />
                                     {performance.correct}
                                   </span>
                                   <span className="text-muted-foreground/50">
                                     /
                                   </span>
                                   <span className="flex items-center gap-1">
-                                    <div className="h-4 w-4 rounded-full bg-red-100 flex items-center justify-center">
-                                      <XCircle className="size-3 text-red-600" />
-                                    </div>
+                                    <XIcon className="size-4 text-red-600" />
                                     {performance.wrong}
                                   </span>
                                   <span className="text-muted-foreground/50">
                                     /
                                   </span>
                                   <span className="flex items-center gap-1">
-                                    <div className="h-4 w-4 rounded-full bg-gray-100 flex items-center justify-center">
-                                      <HelpCircle className="size-3 text-muted-foreground" />
-                                    </div>
+                                    <HelpCircle className="size-4 text-muted-foreground" />
                                     {performance.unanswered}
                                   </span>
                                 </div>
@@ -472,7 +464,9 @@ export const SubmissionDrawer = ({
                               <div className="space-y-4 px-4">
                                 {sectionQuestions.map((question, index) => (
                                   <div key={question.id} className="border">
-                                    <div className={`p-4 border-b border-dashed`}>
+                                    <div
+                                      className={`p-4 border-b border-dashed`}
+                                    >
                                       <div className="flex items-start gap-3 bgbl">
                                         <div className="mt-0.5 flex-shrink-0">
                                           {question.isCorrect === true ? (
@@ -535,8 +529,8 @@ export const SubmissionDrawer = ({
                                             question.isCorrect === true
                                               ? "bg-green-500/10"
                                               : question.isCorrect === false
-                                              ? "bg-red-500/10"
-                                              : "bg-primary/10"
+                                                ? "bg-red-500/10"
+                                                : "bg-primary/10"
                                           }`}
                                         >
                                           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1">
@@ -554,8 +548,8 @@ export const SubmissionDrawer = ({
                                               question.isCorrect === true
                                                 ? "text-green-600"
                                                 : question.isCorrect === false
-                                                ? "text-red-600"
-                                                : "text-muted-foreground italic"
+                                                  ? "text-red-600"
+                                                  : "text-muted-foreground italic"
                                             }`}
                                             dangerouslySetInnerHTML={{
                                               __html:

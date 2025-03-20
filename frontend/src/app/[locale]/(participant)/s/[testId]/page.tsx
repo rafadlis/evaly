@@ -21,6 +21,8 @@ import LoadingScreen from "@/components/shared/loading/loading-screen";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useAttemptStartMutation } from "@/query/participants/attempt/use-attempt-start.mutation";
+import { TestSection } from "@evaly/backend/types/test";
+import { Link } from "@/components/shared/progress-bar";
 
 const Page = () => {
   const router = useRouter();
@@ -32,7 +34,6 @@ const Page = () => {
     error,
   } = useTestById(testId as string);
 
-  const attempt = testData?.attempt;
   const completedAttempts =
     testData?.attempt.filter((attempt) => attempt.completedAt).length || 0;
   const totalAttempts = testData?.attempt.length || 0;
@@ -43,12 +44,8 @@ const Page = () => {
   //     ? (completedAttempts / totalAttempts) * 100
   //     : 0;
 
-  const getAttemptBySectionId = (sectionId: string) => {
-    return attempt?.find((attempt) => attempt.testSectionId === sectionId);
-  };
-
   const currentSection = useMemo(() => {
-    if (!testData?.testSections?.length) return null;
+    if (!testData?.testSections?.length) return undefined;
 
     // Find the first section that doesn't have a completed attempt
     const nextIncompleteSection = testData.testSections.find((section) => {
@@ -58,17 +55,8 @@ const Page = () => {
       return !sectionAttempt?.completedAt;
     });
 
-    return nextIncompleteSection || null;
+    return nextIncompleteSection || undefined;
   }, [testData?.testSections, testData?.attempt]);
-
-  const [isRedirecting, startTransitionRedirect] = useTransition();
-
-  const { mutate: mutateStartTest, isPending: isPendingStartTest } =
-    useAttemptStartMutation((data) => {
-      startTransitionRedirect(() => {
-        router.push(`/s/${testId}/${data.id}`);
-      });
-    });
 
   if (isPendingTestData) {
     return <LoadingScreen />;
@@ -137,180 +125,310 @@ const Page = () => {
         </div>
 
         {/* Start / Continue Button */}
-        {completedAttempts < totalSections ? (
-          <Button
-            onClick={() =>
-              currentSection &&
-              mutateStartTest({
-                testId: testId as string,
-                testSectionId: currentSection.id,
-              })
-            }
-            disabled={
-              isPendingStartTest ||
-              isRedirecting ||
-              (totalAttempts === completedAttempts &&
-                totalSections === completedAttempts)
-            }
-            className="w-full md:w-max mt-6"
-            variant={
-              totalAttempts === completedAttempts &&
-              totalSections === completedAttempts
-                ? "secondary"
-                : totalAttempts > 0
-                  ? "secondary"
-                  : "default"
-            }
-          >
-            {isPendingStartTest ? (
-              <span className="flex items-center gap-2">
-                <div className="h-4 w-4 border-2 border-background border-t-transparent rounded-full animate-spin"></div>
-                Preparing...
-              </span>
-            ) : isRedirecting ? (
-              <span className="flex items-center gap-2">
-                <Play className="h-4 w-4" />
-                Redirecting to section...
-              </span>
-            ) : totalAttempts > 0 ? (
-              <span className="flex items-center gap-2">
-                <Play className="h-4 w-4" />
-                Continue Assessment
-              </span>
-            ) : (
-              <span className="flex items-center gap-2">
-                <Play className="h-4 w-4" />
-                Start Assessment
-              </span>
-            )}
-          </Button>
-        ) : null}
-
-        {/* <p className="text-xs text-muted-foreground text-start mt-2">
-          By starting this test, you agree to our assessment terms and
-          conditions
-        </p> */}
-
-        <h1 className="font-medium mt-10">Sections</h1>
-
-        <div className="space-y-2 mt-3">
-          {testData.testSections?.map((section) => {
-            const attempt = getAttemptBySectionId(section.id);
-            return (
-              <Card
-                key={section.id}
-                className="p-3 border-dashed hover:border-foreground hover:border-solid flex flex-row items-center"
-              >
-                <div className="flex flex-col flex-1">
-                  <h1 className="font-medium text-sm">
-                    {section.order}.{" "}
-                    {section.title || `Section ${section.order}`}
-                  </h1>
-                  <span className="text-[13px] mt-1 text-muted-foreground">
-                    {section.totalQuestions} Questions
-                  </span>
-                </div>
-                <div>
-                  {attempt?.completedAt ? (
-                    <Badge variant="success">
-                      <CheckIcon /> Completed
-                    </Badge>
-                  ) : (
-                    <Button
-                      onClick={() => {
-                        mutateStartTest({
-                          testId: testId as string,
-                          testSectionId: section.id,
-                        });
-                      }}
-                      size={"xs"}
-                      disabled={isPendingStartTest || isRedirecting}
-                      variant={"outline"}
-                    >
-                      {isPendingStartTest ? (
-                        <span className="flex items-center gap-2">
-                          <div className="h-4 w-4 border-2 border-background border-t-transparent rounded-full animate-spin"></div>
-                          Preparing...
-                        </span>
-                      ) : isRedirecting ? (
-                        <span className="flex items-center gap-2">
-                          <Play className="h-4 w-4" />
-                          Redirecting to section...
-                        </span>
-                      ) : currentSection?.id === section.id && totalAttempts > 0 ? (
-                        <>
-                          Continue <ArrowRight className="size-3" />
-                        </>
-                      ) : (
-                        <>
-                          Start <ArrowRight className="size-3" />
-                        </>
-                      )}
-                    </Button>
-                  )}
-                </div>
-                {/* {section.description && (
-                  <p className="text-xs text-muted-foreground mt-2">
-                    {section.description}
-                  </p>
-                )} */}
-              </Card>
-            );
-          })}
-        </div>
-
-        {testData.access === "invite-only" && testData.invitations?.length ? (
-          <>
-            <h1 className="font-medium mt-10">Participants</h1>
-            <div className="flex flex-row flex-wrap gap-2 mt-3">
-              {testData.invitations?.map((invitation) => {
-                return (
-                  <Badge
-                    variant="secondary"
-                    key={invitation.id}
-                    className="text-sm px-3 py-1"
-                  >
-                    {invitation.email}
-                  </Badge>
-                );
-              })}
-            </div>
-          </>
-        ) : null}
-
-        <h1 className="font-medium mt-10">Description</h1>
-        <div
-          className="custom-prose max-w-none mt-3 whitespace-pre-line text-foreground"
-          dangerouslySetInnerHTML={{
-            __html: testData.description ?? "No description",
-          }}
+        <StartContinueButton
+          testId={testId as string}
+          currentSection={currentSection}
+          completedAttempts={completedAttempts}
+          totalAttempts={totalAttempts}
+          totalSections={totalSections}
         />
 
-        <div className="flex items-center gap-3 w-full bg-background mt-10 border-t border-dashed pt-5">
-          <Avatar className="h-9 w-9">
-            <AvatarImage src="/placeholder-avatar.jpg" alt="Avatar" />
-            <AvatarFallback>
-              {testData.createdByOrganizer?.user.email.charAt(0).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1">
-            <div className="text-sm font-medium">
-              Created by {testData.createdByOrganizer?.user.name}
-            </div>
-            <div className="text-xs text-muted-foreground">
-              Last updated:{" "}
-              {dayjs(testData.createdByOrganizer?.user.updatedAt).format(
-                "DD MMM YYYY"
-              )}
-            </div>
+        <Result testId={testId as string} />
+
+        <SectionList
+          testId={testId as string}
+          currentSection={currentSection}
+          totalAttempts={totalAttempts}
+        />
+
+        <ParticipantList testId={testId as string} />
+        <Description description={testData.description} />
+
+        <CreatedByOrganizer testId={testId as string} />
+      </div>
+    </div>
+  );
+};
+
+const StartContinueButton = ({
+  testId,
+  currentSection,
+  completedAttempts,
+  totalAttempts,
+  totalSections,
+}: {
+  testId: string;
+  currentSection?: TestSection;
+  completedAttempts: number;
+  totalAttempts: number;
+  totalSections: number;
+}) => {
+  const router = useRouter();
+  const [isRedirecting, startTransitionRedirect] = useTransition();
+
+  const { mutate: mutateStartTest, isPending: isPendingStartTest } =
+    useAttemptStartMutation((data) => {
+      startTransitionRedirect(() => {
+        router.push(`/s/${testId}/${data.id}`);
+      });
+    });
+
+  if (completedAttempts === totalSections) return null;
+  return (
+    <Button
+      onClick={() =>
+        currentSection &&
+        mutateStartTest({
+          testId: testId as string,
+          testSectionId: currentSection.id,
+        })
+      }
+      disabled={
+        isPendingStartTest ||
+        isRedirecting ||
+        (totalAttempts === completedAttempts &&
+          totalSections === completedAttempts)
+      }
+      className="w-full md:w-max mt-6"
+      variant={
+        totalAttempts === completedAttempts &&
+        totalSections === completedAttempts
+          ? "secondary"
+          : totalAttempts > 0
+            ? "secondary"
+            : "default"
+      }
+    >
+      {isPendingStartTest ? (
+        <span className="flex items-center gap-2">
+          <div className="h-4 w-4 border-2 border-background border-t-transparent rounded-full animate-spin"></div>
+          Preparing...
+        </span>
+      ) : isRedirecting ? (
+        <span className="flex items-center gap-2">
+          <Play className="h-4 w-4" />
+          Redirecting to section...
+        </span>
+      ) : totalAttempts > 0 ? (
+        <span className="flex items-center gap-2">
+          <Play className="h-4 w-4" />
+          Continue Assessment
+        </span>
+      ) : (
+        <span className="flex items-center gap-2">
+          <Play className="h-4 w-4" />
+          Start Assessment
+        </span>
+      )}
+    </Button>
+  );
+};
+
+const SectionList = ({
+  testId,
+  currentSection,
+  totalAttempts,
+}: {
+  testId: string;
+  currentSection?: TestSection;
+  totalAttempts: number;
+}) => {
+  const [isRedirecting, startTransitionRedirect] = useTransition();
+  const { data: testData } = useTestById(testId);
+  const router = useRouter();
+
+  const { mutate: mutateStartTest, isPending: isPendingStartTest } =
+    useAttemptStartMutation((data) => {
+      startTransitionRedirect(() => {
+        router.push(`/s/${testId}/${data.id}`);
+      });
+    });
+
+  const attempt = testData?.attempt;
+
+  const getAttemptBySectionId = (sectionId: string) => {
+    return attempt?.find((attempt) => attempt.testSectionId === sectionId);
+  };
+
+  if (!testData) {
+    return null;
+  }
+
+  return (
+    <>
+      <h1 className="font-medium mt-10">Sections</h1>
+      <div className="space-y-2 mt-3">
+        {testData.testSections?.map((section) => {
+          const attempt = getAttemptBySectionId(section.id);
+          return (
+            <Card
+              key={section.id}
+              className="p-3 border-dashed hover:border-foreground hover:border-solid flex flex-row items-center"
+            >
+              <div className="flex flex-col flex-1">
+                <h1 className="font-medium text-sm">
+                  {section.order}. {section.title || `Section ${section.order}`}
+                </h1>
+                <span className="text-[13px] mt-1 text-muted-foreground">
+                  {section.totalQuestions} Questions
+                </span>
+              </div>
+              <div>
+                {attempt?.completedAt ? (
+                  <Badge variant="success">
+                    <CheckIcon /> Completed
+                  </Badge>
+                ) : (
+                  <Button
+                    onClick={() => {
+                      mutateStartTest({
+                        testId: testId as string,
+                        testSectionId: section.id,
+                      });
+                    }}
+                    size={"xs"}
+                    disabled={isPendingStartTest || isRedirecting}
+                    variant={"outline"}
+                  >
+                    {isPendingStartTest ? (
+                      <span className="flex items-center gap-2">
+                        <div className="h-4 w-4 border-2 border-background border-t-transparent rounded-full animate-spin"></div>
+                        Preparing...
+                      </span>
+                    ) : isRedirecting ? (
+                      <span className="flex items-center gap-2">
+                        <Play className="h-4 w-4" />
+                        Redirecting to section...
+                      </span>
+                    ) : currentSection?.id === section.id &&
+                      totalAttempts > 0 ? (
+                      <>
+                        Continue <ArrowRight className="size-3" />
+                      </>
+                    ) : (
+                      <>
+                        Start <ArrowRight className="size-3" />
+                      </>
+                    )}
+                  </Button>
+                )}
+              </div>
+              {/* {section.description && (
+            <p className="text-xs text-muted-foreground mt-2">
+              {section.description}
+            </p>
+          )} */}
+            </Card>
+          );
+        })}
+      </div>
+    </>
+  );
+};
+
+const ParticipantList = ({ testId }: { testId: string }) => {
+  const { data: testData } = useTestById(testId);
+  if (!testData) {
+    return null;
+  }
+
+  if (testData.access !== "invite-only" || !testData.invitations?.length) {
+    return null;
+  }
+
+  return (
+    <>
+      <h1 className="font-medium mt-10">Participants</h1>
+      <div className="flex flex-row flex-wrap gap-2 mt-3">
+        {testData.invitations?.map((invitation) => {
+          return (
+            <Badge
+              variant="secondary"
+              key={invitation.id}
+              className="text-sm px-3 py-1"
+            >
+              {invitation.email}
+            </Badge>
+          );
+        })}
+      </div>
+    </>
+  );
+};
+
+const Description = ({ description }: { description?: string | null }) => {
+  return (
+    <>
+      <h1 className="font-medium mt-10">Description</h1>
+      <div
+        className="custom-prose max-w-none mt-3 whitespace-pre-line text-foreground"
+        dangerouslySetInnerHTML={{
+          __html: description ?? "No description",
+        }}
+      />
+    </>
+  );
+};
+
+const CreatedByOrganizer = ({ testId }: { testId: string }) => {
+  const { data: testData } = useTestById(testId);
+
+  if (!testData) {
+    return null;
+  }
+
+  return (
+    <>
+      <div className="flex items-center gap-3 w-full bg-background mt-10 border-t border-dashed pt-5">
+        <Avatar className="h-9 w-9">
+          <AvatarImage src="/placeholder-avatar.jpg" alt="Avatar" />
+          <AvatarFallback>
+            {testData.createdByOrganizer?.user.email.charAt(0).toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex-1">
+          <div className="text-sm font-medium">
+            Created by {testData.createdByOrganizer?.user.name}
           </div>
-          {/* <div className="flex items-center gap-1 text-sm text-muted-foreground">
+          <div className="text-xs text-muted-foreground">
+            Last updated:{" "}
+            {dayjs(testData.createdByOrganizer?.user.updatedAt).format(
+              "DD MMM YYYY"
+            )}
+          </div>
+        </div>
+        {/* <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <User className="h-4 w-4" />
                   <span>1,234 completions</span>
                 </div> */}
-        </div>
       </div>
-    </div>
+    </>
+  );
+};
+
+const Result = ({ testId }: { testId: string }) => {
+  const { data: testData } = useTestById(testId);
+
+  if (!testData) {
+    return null;
+  }
+
+  if (testData.resultVisibility === "never") return null;
+
+  if (testData.resultVisibility === "after_test_end" && !testData.finishedAt) {
+    return (
+      <Button variant="outline" className="mt-4 w-full">
+        You can view your result after the test ends.
+      </Button>
+    );
+  }
+
+  return (
+    <Link href={`/s/${testId}/result`}>
+      <Button variant="default" className="mt-6 w-max">
+        Track your result <ArrowRight className="size-4" />
+      </Button>
+    </Link>
   );
 };
 
