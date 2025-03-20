@@ -38,6 +38,7 @@ const Page = () => {
     testData?.attempt.filter((attempt) => attempt.completedAt).length || 0;
   const totalAttempts = testData?.attempt.length || 0;
   const totalSections = testData?.testSections?.length || 0;
+  const isCompleted = completedAttempts === totalSections;
 
   // const attemptProgress =
   //   testData?.attempt && testData?.testSections?.length
@@ -88,7 +89,7 @@ const Page = () => {
 
       <div className="pb-20 mt-[5vh] md:mt-[10vh] lg:mt-[12vh] container max-w-2xl">
         {/* Completed Attempts */}
-        {completedAttempts === totalSections && (
+        {isCompleted && (
           <span className="text-sm mb-2 flex flex-row items-center gap-2 text-success-foreground font-medium">
             <CheckIcon className="size-4" />
             You have completed all sections.
@@ -133,7 +134,7 @@ const Page = () => {
           totalSections={totalSections}
         />
 
-        <Result testId={testId as string} />
+        {isCompleted ? <Result testId={testId as string} /> : null}
 
         <SectionList
           testId={testId as string}
