@@ -1,21 +1,44 @@
 import { getAttempts } from "./get-attempts-by-test-id";
-import { TestSection } from "../../../types/test";
 import db from "../../../lib/db";
 import { testAttempt } from "../../../lib/db/schema";
+import { getTestById } from "../test/get-test-by-id";
 
 export async function startAttempt({
   testId,
   testSectionId,
   email,
-  testSections,
 }: {
   testId: string;
   testSectionId: string;
   email: string;
-  testSections: TestSection[];
 }) {
+  // Check if the test is published or not return error if not published
+  const test = await getTestById({
+    id: testId,
+    email: email,
+  });
+
+  if (test.error) {
+    return {
+      error: {
+        code: test.error.status,
+        message: test.error.message,
+      },
+    };
+  }
+
+  // Get the list of test section
+  if (!test.testSections) {
+    return {
+      error: {
+        code: 404,
+        message: "Test section not found",
+      },
+    };
+  }
+
   // Get the test section data that targetted
-  const testSection = testSections.find(
+  const testSection = test.testSections.find(
     (section) => section.id === testSectionId
   );
 
@@ -49,35 +72,44 @@ export async function startAttempt({
     };
   }
 
-  // Check if previous section is completed or not, test.testSection is ordered by '.order'
-  const previousSection = testSections.find(
-    (section) =>
-      section.order && testSection.order && section.order < testSection?.order
-  );
-
-  // If there is no previous section, return error
-  if (!previousSection) {
-    return {
-      error: {
-        code: 403,
-        message: "You must complete the previous section before starting this one",
-      },
-    };
-  }
-
-  // Check if the previous section is completed
+  // If the section is not the first section, check if the previous section is completed or not
   if (
-    !attempts.find(
-      (attempt) =>
-        attempt.testSectionId === previousSection.id && attempt.completedAt
-    )
+    test.sectionSelectionMode === "sequential" &&
+    testSection.order &&
+    testSection.order > 1
   ) {
-    return {
-      error: {
-        code: 403,
-        message: "You must complete the previous section before starting this one",
-      },
-    };
+    // Check if previous section is completed or not, test.testSection is ordered by '.order'
+    const previousSection = test.testSections.find(
+      (section) =>
+        section.order && testSection.order && section.order < testSection?.order
+    );
+
+    // If there is no previous section, return error
+    if (!previousSection) {
+      return {
+        error: {
+          code: 403,
+          message:
+            "You must complete the previous section before starting this one",
+        },
+      };
+    }
+
+    // Check if the previous section is completed
+    if (
+      !attempts.find(
+        (attempt) =>
+          attempt.testSectionId === previousSection.id && attempt.completedAt
+      )
+    ) {
+      return {
+        error: {
+          code: 403,
+          message:
+            "You must complete the previous section before starting this one",
+        },
+      };
+    }
   }
 
   // Create the attempt
@@ -102,6 +134,6 @@ export async function startAttempt({
     .returning();
 
   return {
-    data: attempt[0]
-  }
+    data: attempt[0],
+  };
 }

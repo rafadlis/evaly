@@ -2,7 +2,7 @@ import Elysia, { t } from "elysia";
 import { organizationMiddleware } from "../../middlewares/auth.middleware";
 import { testRouter } from "./test.router";
 import { questionRouter } from "./question.router";
-import { updateOrganizerProfile } from "../../services/organization/organizer/update-profile";
+import { updateProfile } from "../../services/common/update-profile";
 import { uploadFileToS3 } from "../../services/common/upload-file-to-s3";
 import { getFileExtension } from "../../lib/utils";
 import { ulid } from "ulidx";
@@ -44,7 +44,7 @@ export const organizationRouter = new Elysia().group("/organization", (app) => {
             }
           }
 
-          const updatedUser = await updateOrganizerProfile({
+          const updatedUser = await updateProfile({
             id: user.id,
             name: body.fullName,
             image: newImageUrl,

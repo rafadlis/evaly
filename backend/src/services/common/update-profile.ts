@@ -1,8 +1,8 @@
 import { eq } from "drizzle-orm";
-import db from "../../../lib/db";
-import { user } from "../../../lib/db/schema";
+import db from "../../lib/db";
+import { user } from "../../lib/db/schema";
 
-export async function updateOrganizerProfile(
+export async function updateProfile(
   data: Partial<typeof user.$inferInsert>
 ) {
   if (!data.id) {

@@ -1,0 +1,1 @@
+ALTER TABLE "test" ADD COLUMN "section_selection_mode" varchar(20) DEFAULT 'random';

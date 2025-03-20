@@ -15,14 +15,12 @@ import { notFound, useParams } from "next/navigation";
 import dayjs from "dayjs";
 import { testTypeFormatter } from "@/lib/test-type-formatter";
 import Navbar from "../../_components/navbar";
-import { useMutation } from "@tanstack/react-query";
-import { $api } from "@/lib/api";
-import { toast } from "sonner";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { useMemo, useTransition } from "react";
 import LoadingScreen from "@/components/shared/loading/loading-screen";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useAttemptStartMutation } from "@/query/participants/attempt/use-attempt-start.mutation";
 
 const Page = () => {
   const router = useRouter();
@@ -66,42 +64,10 @@ const Page = () => {
   const [isRedirecting, startTransitionRedirect] = useTransition();
 
   const { mutate: mutateStartTest, isPending: isPendingStartTest } =
-    useMutation({
-      mutationKey: ["start-test"],
-      mutationFn: async (testSectionId: string) => {
-        if (!testData) {
-          throw new Error("Test not found");
-        }
-
-        const res = await $api.participant.test.attempt
-          .start({ testId: testId as string })
-          .post({ testSectionId });
-
-        if (res.error?.value) {
-          throw new Error(res.error.value);
-        }
-
-        const data = res.data;
-
-        if (!data) {
-          throw new Error("Something went wrong");
-        }
-
-        return data;
-      },
-      onSuccess: (data) => {
-        if (!data) {
-          toast.error("Something went wrong, please try again.");
-          return;
-        }
-
-        startTransitionRedirect(() => {
-          router.push(`/s/${testId}/${data.id}`);
-        });
-      },
-      onError(error) {
-        toast.error(error.message);
-      },
+    useAttemptStartMutation((data) => {
+      startTransitionRedirect(() => {
+        router.push(`/s/${testId}/${data.id}`);
+      });
     });
 
   if (isPendingTestData) {
@@ -174,7 +140,11 @@ const Page = () => {
         {completedAttempts < totalSections ? (
           <Button
             onClick={() =>
-              currentSection && mutateStartTest(currentSection?.id)
+              currentSection &&
+              mutateStartTest({
+                testId: testId as string,
+                testSectionId: currentSection.id,
+              })
             }
             disabled={
               isPendingStartTest ||
@@ -246,9 +216,36 @@ const Page = () => {
                       <CheckIcon /> Completed
                     </Badge>
                   ) : (
-                    <Button size={"xs"} variant={"outline"}>
-                      Start
-                      <ArrowRight className="size-3" />
+                    <Button
+                      onClick={() => {
+                        mutateStartTest({
+                          testId: testId as string,
+                          testSectionId: section.id,
+                        });
+                      }}
+                      size={"xs"}
+                      disabled={isPendingStartTest || isRedirecting}
+                      variant={"outline"}
+                    >
+                      {isPendingStartTest ? (
+                        <span className="flex items-center gap-2">
+                          <div className="h-4 w-4 border-2 border-background border-t-transparent rounded-full animate-spin"></div>
+                          Preparing...
+                        </span>
+                      ) : isRedirecting ? (
+                        <span className="flex items-center gap-2">
+                          <Play className="h-4 w-4" />
+                          Redirecting to section...
+                        </span>
+                      ) : currentSection?.id === section.id && totalAttempts > 0 ? (
+                        <>
+                          Continue <ArrowRight className="size-3" />
+                        </>
+                      ) : (
+                        <>
+                          Start <ArrowRight className="size-3" />
+                        </>
+                      )}
                     </Button>
                   )}
                 </div>

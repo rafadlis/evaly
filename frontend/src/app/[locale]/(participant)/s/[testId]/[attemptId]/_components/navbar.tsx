@@ -1,24 +1,18 @@
 "use client";
 import ThemeToggle from "@/components/shared/theme-toggle";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 import { useState } from "react";
-import { TestAttemptWithSection } from "@evaly/backend/types/test.attempt";
+import {
+  TestAttempt,
+  TestAttemptWithSection,
+} from "@evaly/backend/types/test.attempt";
 import { useMutation, useMutationState } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
 import { useTransition } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { ChevronLeft } from "lucide-react";
+import { CheckIcon, ChevronLeft, CloudUpload } from "lucide-react";
 import { Link } from "@/components/shared/progress-bar";
 import {
   Dialog,
@@ -33,8 +27,6 @@ import {
 
 const Navbar = ({ attempt }: { attempt: TestAttemptWithSection }) => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isRedirecting, setIsRedirecting] = useTransition();
-  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -44,42 +36,6 @@ const Navbar = ({ attempt }: { attempt: TestAttemptWithSection }) => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const { mutate: submitAttempt, isPending: isSubmitting } = useMutation({
-    mutationKey: ["submit-attempt"],
-    mutationFn: async () => {
-      const res = await $api.participant.test
-        .attempt({ id: attempt.id })
-        .submit.post();
-
-      if (res.status !== 200) {
-        throw new Error(res.error?.value.toString());
-      }
-
-      if (!res.data?.testId) {
-        throw new Error("Something went wrong, please try again later");
-      }
-
-      setIsRedirecting(() => {
-        router.push(`/s/${res.data.testId}`);
-      });
-      return res.data;
-    },
-  });
-
-  // detect if user still updating the answer from card-question
-  const listUpdatingAnswer = useMutationState({
-    filters: {
-      predicate: (mutation) => {
-        return (
-          mutation.state.status === "pending" &&
-          mutation.options.mutationKey?.[0] === "post-answer"
-        );
-      },
-    },
-  });
-
-  const isStillUpdatingAnswer = listUpdatingAnswer.length > 0;
 
   return (
     <div
@@ -100,72 +56,142 @@ const Navbar = ({ attempt }: { attempt: TestAttemptWithSection }) => {
         </h1>
       </div>
       <div className="flex flex-row items-center gap-2">
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button
-              variant="outline"
-              className="mr-4"
-              disabled={isSubmitting || isRedirecting || isStillUpdatingAnswer}
-            >
-              {isSubmitting
-                ? "Submitting..."
-                : isRedirecting
-                ? "Redirecting..."
-                : "Submit this section"}
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
-                Are you sure you want to submit this section?
-              </DialogTitle>
-              <DialogDescription>
-                This action cannot be undone.
-              </DialogDescription>
-              <DialogFooter>
-                <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
-                </DialogClose>
-                <Button
-                  variant="default"
-                  onClick={() => submitAttempt()}
-                  disabled={isSubmitting || isRedirecting}
-                >
-                  {isSubmitting
-                    ? "Submitting..."
-                    : isRedirecting
-                    ? "Redirecting..."
-                    : "Yes, submit"}
-                </Button>
-              </DialogFooter>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
+        <DialogSubmitAttempt attemptId={attempt.id} />
         <ThemeToggle />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="rounded-full h-8 w-8 p-0">
-              <Avatar className="h-8 w-8">
-                <AvatarImage
-                  // src="/placeholder.svg?height=32&width=32"
-                  alt="User"
-                />
-                <AvatarFallback>FA</AvatarFallback>
-              </Avatar>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuItem>Billing</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Log out</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
     </div>
+  );
+};
+
+const DialogSubmitAttempt = ({ attemptId }: { attemptId: string }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  // detect if user still updating the answer from card-question
+  const listUpdatingAnswer = useMutationState({
+    filters: {
+      predicate: (mutation) => {
+        return (
+          mutation.state.status === "pending" &&
+          mutation.options.mutationKey?.[0] === "post-answer"
+        );
+      },
+    },
+  });
+
+  const isStillUpdatingAnswer = listUpdatingAnswer.length > 0;
+
+  const [isRedirecting, setIsRedirecting] = useTransition();
+  const router = useRouter();
+
+  const {
+    isPending: isSubmitting,
+    data: dataUpdatedAttempt,
+    mutate: submitAttempt,
+    isError,
+    error,
+  } = useMutation({
+    mutationKey: ["submit-attempt"],
+    mutationFn: async () => {
+      const res = await $api.participant.test
+        .attempt({ id: attemptId })
+        .submit.post();
+
+      if (res.status !== 200) {
+        throw new Error(res.error?.value.toString());
+      }
+
+      const data = res.data;
+
+      if (!data) {
+        throw new Error("Something went wrong, please try again later");
+      }
+
+      return res.data;
+    },
+  });
+
+  const onGoToLobby = (data: TestAttempt) => {
+    setIsRedirecting(() => {
+      router.push(`/s/${data.testId}`);
+    });
+  };
+
+  return (
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (dataUpdatedAttempt) {
+          return;
+        }
+        setIsOpen(open);
+      }}
+    >
+      <DialogTrigger asChild>
+        <Button
+          variant="default"
+          className="mr-4"
+          disabled={isStillUpdatingAnswer}
+        >
+          <CloudUpload /> {"Submit this section"}
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        {isError ? (
+          <DialogHeader>
+            <DialogTitle>Oops, something went wrong!</DialogTitle>
+            <DialogDescription>{(error as Error).message}</DialogDescription>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline">Close</Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogHeader>
+        ) : !dataUpdatedAttempt ? (
+          <DialogHeader>
+            <DialogTitle>
+              Are you sure you want to submit this section?
+            </DialogTitle>
+            <DialogDescription>This action cannot be undone.</DialogDescription>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline">Cancel</Button>
+              </DialogClose>
+              <Button
+                variant="default"
+                onClick={() => submitAttempt()}
+                disabled={isSubmitting || isRedirecting}
+              >
+                {isSubmitting
+                  ? "Submitting..."
+                  : isRedirecting
+                    ? "Redirecting..."
+                    : "Yes, submit"}
+              </Button>
+            </DialogFooter>
+          </DialogHeader>
+        ) : (
+          <DialogHeader>
+            <DialogTitle className="flex flex-row items-center gap-2">
+              <CheckIcon className="size-6 text-green-500" />
+              You have successfully submitted this section
+            </DialogTitle>
+            <DialogDescription>
+              {dataUpdatedAttempt.nextSection
+                ? "You can now go to the next section or go to the lobby to see the result of this section."
+                : "You can now go to the lobby to see the result."}
+            </DialogDescription>
+            <DialogFooter className="sm:justify-between">
+              <Button
+                variant="outline"
+                onClick={() => onGoToLobby(dataUpdatedAttempt)}
+              >
+                Go to lobby
+              </Button>
+            </DialogFooter>
+          </DialogHeader>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 };
 

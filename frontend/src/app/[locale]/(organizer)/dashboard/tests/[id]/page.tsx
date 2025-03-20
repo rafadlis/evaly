@@ -2,10 +2,10 @@
 
 import { Tabs, TabsContent } from "@/components/ui/tabs"
 import Header from "./_components/header"
-import Setting from "./_components/setting"
 import { useTabsState } from "./edit/_hooks/use-tabs-state"
 import Submissions from "./_components/submissions"
 import Share from "./_components/share"
+import Setting from "./edit/_components/setting/setting"
 
 const Page = () => {
   const [tab, setTab] = useTabsState("submissions");

@@ -17,27 +17,11 @@ export const attemptRouter = new Elysia().group("/attempt", (app) =>
     .post(
       "/start/:testId",
       async ({ params, user, error, body }) => {
-        // Check if the test is published or not return error if not published
-        const test = await getTestById({
-          id: params.testId,
-          email: user?.email,
-        });
-
-        if (test.error) {
-          return error(test.error.status, test.error.message);
-        }
-
-        // Get the list of test section
-        if (!test.testSections) {
-          return error(404, "Test section not found");
-        }
-
         // Start the attempt
         const attempt = await startAttempt({
           testId: params.testId,
           testSectionId: body.testSectionId,
           email: user?.email,
-          testSections: test.testSections,
         });
 
         if (attempt.error) {
@@ -104,6 +88,7 @@ export const attemptRouter = new Elysia().group("/attempt", (app) =>
           attemptId: params.id,
         });
 
+
         return answer;
       },
       {
@@ -147,8 +132,34 @@ export const attemptRouter = new Elysia().group("/attempt", (app) =>
         return error(403, `You have already complete this test`);
       }
 
+      // We are reusing this function just to check the next section is available or not, need to optimize this later
+      const test = await getTestById({
+        id: check.testId,
+        email: user?.email,
+      });
+
+      if (test.error) {
+        return error(test.error.status, test.error.message);
+      }
+
+      // Submit the attempt
       const submittedAttempt = await submitAttempt(params.id);
 
-      return submittedAttempt;
+      const currentSectionOrder = test.testSections?.find(
+        (section) => section.id === submittedAttempt.testSectionId
+      )?.order;
+
+      if (!currentSectionOrder) {
+        return error(404, "Current section not found");
+      }
+
+      const nextSection = test.testSections?.find(
+        (section) => section.order === currentSectionOrder + 1
+      );
+
+      return {
+        ...submittedAttempt,
+        nextSection,
+      };
     })
 );

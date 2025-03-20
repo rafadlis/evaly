@@ -23,6 +23,10 @@ export const test = pgTable("test", {
     length: 20,
     enum: ["public", "invite-only"],
   }).default("public"),
+  sectionSelectionMode: varchar("section_selection_mode", {
+    length: 20,
+    enum: ["random", "sequential"],
+  }).default("random"),
   requiresLogin: boolean("requires_login").default(true), // If false, system will not able to check participant's identity
   isPublished: boolean("is_published").default(false),
   description: text("description"),

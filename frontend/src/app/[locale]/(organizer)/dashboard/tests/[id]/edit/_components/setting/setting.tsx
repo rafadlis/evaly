@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -138,6 +138,45 @@ const Setting = () => {
 
         <div className="flex flex-row gap-10 py-8">
           <div className="w-2xs">
+            <h1 className="font-semibold">Section Selection Mode</h1>
+            <Label>
+              Control how candidates will navigate through the test sections.
+            </Label>
+          </div>
+          <Controller
+            name="sectionSelectionMode"
+            control={control}
+            defaultValue="random"
+            render={({ field }) => (
+              <Tabs
+                className="flex-1"
+                defaultValue="random"
+                value={field.value || "random"}
+                onValueChange={(value) => {
+                  field.onChange(value);
+                }}
+              >
+                <TabsList>
+                  <TabsTrigger value="random">Random</TabsTrigger>
+                  <TabsTrigger value="sequential">Sequential</TabsTrigger>
+                </TabsList>
+                <TabsContent value="random">
+                  <Label className="text-sm">
+                    Candidates will be able to choose any section to start with.
+                  </Label>
+                </TabsContent>
+                <TabsContent value="sequential">
+                  <Label className="text-sm">
+                    Candidates will be able to choose any section to start with.
+                  </Label>
+                </TabsContent>
+              </Tabs>
+            )}
+          />
+        </div>
+
+        <div className="flex flex-row gap-10 py-8">
+          <div className="w-2xs">
             <h1 className="font-semibold">Description</h1>
             <Label>
               Add a description to provide more information about your test to
@@ -180,9 +219,11 @@ const Setting = () => {
             transition={{ duration: 0.1, ease: "easeOut" }}
             className="fixed w-full bottom-0 left-0 flex flex-row items-center justify-end gap-4 px-8 py-4 border-t bg-background z-50"
           >
-            <Button disabled={!isDirty} type="submit" size={"lg"}>
-              {isPendingUpdateTest ? "Saving..." : "Save changes"}
-            </Button>
+            <div className="container">
+              <Button disabled={!isDirty} type="submit">
+                {isPendingUpdateTest ? "Saving..." : "Save changes"}
+              </Button>
+            </div>
           </motion.div>
         ) : null}
       </AnimatePresence>

@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { $api } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { Question } from "@evaly/backend/types/question";
@@ -6,6 +7,8 @@ import { UpdateTestAttemptAnswer } from "@evaly/backend/types/test.attempt";
 import { useMutation } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 const CardQuestion = ({
   question,
@@ -18,15 +21,26 @@ const CardQuestion = ({
   defaultAnswer?: UpdateTestAttemptAnswer;
   attemptId: string;
 }) => {
-  const [localAnswer, setLocalAnswer] = useState<
-    UpdateTestAttemptAnswer | undefined
-  >(defaultAnswer);
+  const [targetOptionId, setTargetOptionId] = useState<string | null>(null);
+
+  const {
+    reset,
+    control,
+    register,
+    formState: { isDirty },
+    handleSubmit,
+    watch,
+  } = useForm<UpdateTestAttemptAnswer>({
+    defaultValues: defaultAnswer,
+  });
+
+  const answerText = watch("answerText");
 
   useEffect(() => {
     if (defaultAnswer !== undefined) {
-      setLocalAnswer(defaultAnswer);
+      reset(defaultAnswer);
     }
-  }, [defaultAnswer]);
+  }, [defaultAnswer, reset]);
 
   const { mutate: postAnswer, isPending: isPendingAnswer } = useMutation({
     mutationKey: ["post-answer", question.id],
@@ -35,28 +49,31 @@ const CardQuestion = ({
         .attempt({ id: attemptId })
         .answer.post(body);
 
-      if (res.status !== 200) {
-        throw new Error(res.error?.value.toString());
-      }
-
       const data = res.data;
+      setTargetOptionId(null);
+
+      if (res.status !== 200) {
+        toast.error(res.error?.value.toString() ?? "Failed to save answer");
+        return;
+      }
 
       if (!data) {
-        throw new Error("Failed to save answer");
+        toast.error("Failed to save answer");
+        return;
       }
+
+      reset(data);
 
       return data;
     },
   });
 
   // Handle option select for option based question
-  const handleOptionSelect = (optionId: string) => {
-    setLocalAnswer({
-      ...localAnswer,
+  const handleSubmitAnswer = (data: UpdateTestAttemptAnswer) => {
+    postAnswer({
+      ...data,
       questionId: question.id,
-      answerOptions: [optionId],
     });
-    postAnswer({ questionId: question.id, answerOptions: [optionId] });
   };
 
   return (
@@ -79,37 +96,74 @@ const CardQuestion = ({
           }}
         />
 
-        <div className="flex flex-col gap-3 mt-8">
-          {question.options?.map((option, i) => (
-            <div
-              key={option.id}
-              className={cn(
-                "flex items-start gap-4 cursor-pointer transition-colors duration-100 border active:border-primary/30 p-2",
-                localAnswer?.answerOptions?.includes(option.id)
-                  ? "border-primary/50 bg-secondary"
-                  : "border-border bg-transparent hover:bg-secondary "
-              )}
-              onClick={() => handleOptionSelect(option.id)}
-            >
+        {/* Option-based question */}
+        {question.type === "multiple-choice" ||
+        question.type === "yes-or-no" ? (
+          <Controller
+            control={control}
+            name="answerOptions"
+            render={({ field }) => (
+              <div className="flex flex-col gap-3 mt-8">
+                {question.options?.map((option, i) => (
+                  <div
+                    key={option.id}
+                    className={cn(
+                      "flex items-start gap-4 cursor-pointer transition-colors duration-100 border p-1.5 rounded-lg",
+                      field.value?.includes(option.id)
+                        ? "border-primary/50 bg-secondary"
+                        : "border-border bg-transparent hover:bg-foreground/5 active:bg-foreground/10"
+                    )}
+                    onClick={() => {
+                      if (isPendingAnswer) return;
+                      setTargetOptionId(option.id);
+                      handleSubmitAnswer({
+                        // Synchronize the answer with the backend
+                        answerOptions: [option.id],
+                      });
+                    }}
+                  >
+                    <Button
+                      variant={
+                        field.value?.includes(option.id)
+                          ? "default"
+                          : "secondary"
+                      }
+                      size={"icon-xs"}
+                    >
+                      {option.id === targetOptionId && isPendingAnswer ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        String.fromCharCode(65 + i)
+                      )}
+                    </Button>
+                    <p className="flex-1 pt-0.5">{option.text}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          />
+        ) : null}
+
+        {/* Text-based question */}
+        {question.type === "text-field" ? (
+          <div className="flex flex-col gap-3 mt-8">
+            <Textarea
+              {...register("answerText")}
+              className="resize-none lg:text-base p-4"
+              placeholder="Type your answer here..."
+            />
+            {isDirty && answerText !== "" && (
               <Button
-                variant={
-                  localAnswer?.answerOptions?.includes(option.id)
-                    ? "default"
-                    : "secondary"
-                }
-                size={"icon-xs"}
+                variant="default"
+                size="sm"
+                className="w-max"
+                onClick={handleSubmit(handleSubmitAnswer)}
               >
-                {localAnswer?.answerOptions?.includes(option.id) &&
-                isPendingAnswer ? (
-                  <Loader2 className="size-4 animate-spin" />
-                ) : (
-                  String.fromCharCode(65 + i)
-                )}
+                Save
               </Button>
-              <p className="flex-1 pt-0.5">{option.text}</p>
-            </div>
-          ))}
-        </div>
+            )}
+          </div>
+        ) : null}
       </div>
     </div>
   );
