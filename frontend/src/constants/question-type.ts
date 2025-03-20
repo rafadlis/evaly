@@ -40,7 +40,7 @@ export const questionTypes = {
     value: "text-field",
     label: "Text Field",
     icon: AlignLeft,
-    isHidden: false
+    isHidden: true
   },
   "file-upload": {
     value: "file-upload",
