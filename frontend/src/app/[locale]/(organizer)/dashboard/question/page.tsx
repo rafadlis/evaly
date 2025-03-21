@@ -31,7 +31,7 @@ import dayjs from "dayjs";
 
 const Page = () => {
   return (
-    <div className="container">
+    <div className="container dashboard-margin">
       <div className="flex flex-row justify-between">
         <div className="flex flex-col mb-8">
           <h1 className="text-xl font-medium">Question Template</h1>

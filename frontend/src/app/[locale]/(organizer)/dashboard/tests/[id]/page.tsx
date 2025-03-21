@@ -11,7 +11,7 @@ const Page = () => {
   const [tab, setTab] = useTabsState("submissions");
 
   return (
-    <Tabs className="container min-h-dvh pb-10" defaultValue="submissions" value={tab} onValueChange={setTab}>
+    <Tabs className="container min-h-dvh pb-10 dashboard-margin" defaultValue="submissions" value={tab} onValueChange={setTab}>
       <Header />
       <TabsContent value="settings">
         <Setting />

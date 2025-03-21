@@ -24,12 +24,7 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [data?.status, pathName, locale, router]);
 
-  if (isPending || !pathName)
-    return (
-      <div className="flex-1 flex items-center justify-center text-3xl text-muted-foreground font-medium animate-pulse">
-        Loading...
-      </div>
-    );
+  if (isPending || !pathName) return <LoadingScreen />;
 
   if (data?.status !== 200 && data?.status !== 401) return notFound();
   if (isRedirecting) return <LoadingScreen />;

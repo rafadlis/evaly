@@ -5,9 +5,11 @@ import DashboardPageClient from "./page.client";
 
 const Page = () => {
   return (
-    <Suspense>
-      <DashboardPageClient />
-    </Suspense>
+    <div className="dashboard-margin">
+      <Suspense>
+        <DashboardPageClient />
+      </Suspense>
+    </div>
   );
 };
 export default Page;

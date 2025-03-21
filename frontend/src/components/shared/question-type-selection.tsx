@@ -9,11 +9,13 @@ const QuestionTypeSelection = ({
   onValueChange,
   size = "xs",
   variant = "outline",
+  className,
 }: {
   value?: QuestionType | null
   onValueChange?: (value: QuestionType) => void;
   size?: React.ComponentProps<typeof Button>["size"];
   variant?: React.ComponentProps<typeof Button>["variant"];
+  className?: string;
 }) => {
   // Get the current selected question type or default to "multiple-choice"
   const selectedType = value ? questionTypes[value] : questionTypes["multiple-choice"];
@@ -22,7 +24,7 @@ const QuestionTypeSelection = ({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button size={size}  variant={variant}>
+        <Button size={size}  variant={variant} className={className}>
           <SelectedIcon size={16} className="mr-1" /> 
           {selectedType.label} 
         </Button>

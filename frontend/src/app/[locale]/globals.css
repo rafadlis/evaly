@@ -176,6 +176,9 @@
 }
 
 @layer components {
+  .dashboard-margin {
+    @apply mt-4 md:mt-10
+  }
   .custom-prose {
     @apply prose prose-base dark:prose-invert prose-neutral
        prose-li:leading-normal prose-li:m-0  

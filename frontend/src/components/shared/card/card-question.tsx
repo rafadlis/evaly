@@ -109,9 +109,9 @@ const CardQuestion = ({
               Point: {data.pointValue}
             </Button>
           ) : null}
-          <QuestionTypeSelection value={data.type} />
+          <QuestionTypeSelection value={data.type} className="text-muted-foreground" variant={"ghost"} />
         </div>
-        <div className="flex flex-row h-5 justify-end items-center">
+        <div className="flex-row h-5 justify-end items-center hidden group-hover:flex">
           <Button
             className="hidden group-hover:flex ml-4"
             size={"xs"}

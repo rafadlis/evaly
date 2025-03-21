@@ -73,7 +73,7 @@ const Page = () => {
   }
 
   return (
-    <div className="container">
+    <div className="container dashboard-margin">
       <Header
         templateId={templateId}
         totalQuestions={localQuestions.length}

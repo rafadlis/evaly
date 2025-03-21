@@ -73,12 +73,12 @@ export function DashboardNavbar({ className }: { className?: string }) {
   return (
     <nav
       className={cn(
-        "sticky top-0 left-0 w-full z-50 transition-all py-2 border-b border-dashed  bg-background",
+        "sticky top-0 left-0 w-full z-50 transition-all border-b border-dashed bg-background",
         className,
       )}
     >
-      <div className="mx-auto px-6">
-        <div className="flex items-center justify-between">
+      <div className="mx-auto px-4 h-14">
+        <div className="flex items-center h-full justify-between">
           <div className="flex flex-row items-center">
             {/* Logo */}
             <LogoType href="/dashboard" />
@@ -105,7 +105,7 @@ export function DashboardNavbar({ className }: { className?: string }) {
           </div>
 
           {/* Search, Notifications, Profile */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center gap-3">
             {/* <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-5 w-5" />
               <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500"></span>
@@ -132,7 +132,7 @@ export function DashboardNavbar({ className }: { className?: string }) {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden py-4 space-y-4">
+          <div className="md:hidden py-4 space-y-4 z-50 bg-background border-b border-dashed">
             {navItems.map((item) => (
               <Link
                 key={item.href}

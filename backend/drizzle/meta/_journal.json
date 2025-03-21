@@ -232,6 +232,13 @@
       "when": 1742496344258,
       "tag": "0032_glossy_stryfe",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1742503855652,
+      "tag": "0033_secret_mandrill",
+      "breakpoints": true
     }
   ]
 }

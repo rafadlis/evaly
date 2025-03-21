@@ -27,7 +27,7 @@ const DetailTestPage = () => {
   }
 
   return (
-    <div className="container min-h-dvh pb-10">
+    <div className="container min-h-dvh pb-10 dashboard-margin">
       <Tabs defaultValue="questions" value={tabs} onValueChange={setTabs}>
         <Header />
         <TabsContent value="questions">

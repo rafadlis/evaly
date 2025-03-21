@@ -33,7 +33,7 @@ import { useLocalStorage } from "usehooks-ts";
 const Settings = () => {
   const [tab, setTab] = useQueryState("tab", { defaultValue: "general" });
   return (
-    <div className="container">
+    <div className="container dashboard-margin">
       <div className="flex flex-col">
         <h1 className="text-xl font-medium">Settings</h1>
         <p className="text-muted-foreground">
