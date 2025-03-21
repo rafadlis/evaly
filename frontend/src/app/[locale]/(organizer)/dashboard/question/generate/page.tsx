@@ -91,7 +91,7 @@ const Page = () => {
                   onClick={handleSubmit}
                   disabled={isPending || !inputValue.trim()}
                 >
-                  {isPending ? <Loader2 className="size-4 stroke-3 text-muted-foreground" /> : <ArrowRight className="size-4 stroke-3 text-muted-foreground" />}
+                  {isPending ? <Loader2 className="size-4 stroke-3 text-muted-foreground animate-spin" /> : <ArrowRight className="size-4 stroke-3 text-muted-foreground" />}
                 </Button>
               </div>
             </div>
