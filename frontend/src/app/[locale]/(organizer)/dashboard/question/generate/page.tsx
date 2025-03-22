@@ -3,7 +3,9 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "@/i18n/navigation";
+import { $api } from "@/lib/api";
 import { cn } from "@/lib/utils";
+import { useMutation } from "@tanstack/react-query";
 import {
   ArrowRight,
   FileSpreadsheet,
@@ -29,12 +31,27 @@ const Page = () => {
   // const referenceId = searchParams.get("templateId");
   // const showImportSection = searchParams.get("showImportSection");
 
+  const { mutate: startGeneration, isPending: isGenerating } = useMutation({
+    mutationKey: ["start-question-generation"],
+    mutationFn: async (message: string, files?: File[]) => {
+      const res = await $api.organization.question.llm.start.post({
+        message,
+        files,
+      });
+
+      if (res.data?.templateId) {
+        startTransition(() => {
+          router.push(`/dashboard/question/generate/${res.data.templateId}`);
+        });
+      }
+
+      return res.data;
+    },
+  });
+
   const handleSubmit = () => {
     if (!inputValue.trim()) return;
-    
-    startTransition(() => {
-      router.push(`/dashboard/question/generate/templateId`);
-    });
+    startGeneration(inputValue);
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -85,13 +102,17 @@ const Page = () => {
                 <Button size={"icon-sm"} variant={"ghost"}>
                   <Paperclip />
                 </Button>
-                <Button 
-                  size={"icon-sm"} 
+                <Button
+                  size={"icon-sm"}
                   variant={inputValue.trim() ? "default" : "secondary-outline"}
                   onClick={handleSubmit}
-                  disabled={isPending || !inputValue.trim()}
+                  disabled={isPending || !inputValue.trim() || isGenerating}
                 >
-                  {isPending ? <Loader2 className="size-4 stroke-3 text-muted-foreground animate-spin" /> : <ArrowRight className="size-4 stroke-3 text-muted-foreground" />}
+                  {isPending || isGenerating ? (
+                    <Loader2 className="size-4 stroke-3 text-muted-foreground animate-spin" />
+                  ) : (
+                    <ArrowRight className="size-4 stroke-3 text-muted-foreground" />
+                  )}
                 </Button>
               </div>
             </div>

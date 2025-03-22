@@ -23,11 +23,13 @@ const envSchema = z.object({
   WEB_PUBLIC_URL_DEVELOPMENT: z.string(),
   BETTER_AUTH_SECRET_DEVELOPMENT: z.string(),
   DATABASE_URL_DEVELOPMENT: z.string(),
+  API_URL_DEVELOPMENT: z.string(),
 
   //staging-backend
   WEB_PUBLIC_URL_STAGING: z.string(),
   BETTER_AUTH_SECRET_STAGING: z.string(),
   DATABASE_URL_STAGING: z.string(),
+  API_URL_STAGING: z.string(),
 });
 
 const envAllStage = envSchema.parse(process.env);
@@ -39,10 +41,12 @@ export const env =
         WEB_PUBLIC_URL: envAllStage.WEB_PUBLIC_URL_DEVELOPMENT,
         BETTER_AUTH_SECRET: envAllStage.BETTER_AUTH_SECRET_DEVELOPMENT,
         DATABASE_URL: envAllStage.DATABASE_URL_DEVELOPMENT,
+        API_URL: envAllStage.API_URL_DEVELOPMENT,
       }
     : {
         ...envAllStage,
         WEB_PUBLIC_URL: envAllStage.WEB_PUBLIC_URL_STAGING,
         BETTER_AUTH_SECRET: envAllStage.BETTER_AUTH_SECRET_STAGING,
         DATABASE_URL: envAllStage.DATABASE_URL_STAGING,
+        API_URL: envAllStage.API_URL_STAGING,
       };

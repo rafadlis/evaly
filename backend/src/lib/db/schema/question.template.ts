@@ -20,6 +20,7 @@ export const questionTemplate = pgTable(
     organizationId: varchar("organization_id", { length: 255 }).notNull(),
     organizerId: varchar("organizer_id", { length: 255 }).notNull(),
     tags: jsonb("tags").$type<string[]>().notNull().default([]),
+    latestRunId: varchar("latest_run_id", { length: 255 }),
     isAiGenerated: boolean("is_ai_generated").notNull().default(false),
     createdAt: timestamp("created_at", {
       mode: "string",

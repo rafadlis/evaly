@@ -12,7 +12,15 @@ import { useQueryState } from "nuqs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useOrganizerProfile } from "@/query/organization/profile/use-organizer-profile";
-import { Loader2, Save, Info, PencilLine, SettingsIcon, UserIcon, Building2Icon, SunIcon, MoonIcon } from "lucide-react";
+import {
+  Loader2,
+  Save,
+  Info,
+  PencilLine,
+  SettingsIcon,
+  UserIcon,
+  Building2Icon,
+} from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -80,7 +88,7 @@ const Settings = () => {
 const General = () => {
   const { theme, setTheme } = useTheme();
   const [fontMono, setFontMono] = useLocalStorage("font-mono", false);
-  
+
   return (
     <Card>
       <CardHeader className="border-b border-dashed">
@@ -92,44 +100,25 @@ const General = () => {
       </CardHeader>
       <CardContent className="pt-6">
         <div>
-          <h3 className="text-base font-medium mb-4">Appearance</h3>
           <div className="space-y-6">
-            {/* Theme Selection */}
-            <div className="flex flex-col space-y-2">
-              <Label htmlFor="theme-select" className="text-sm font-medium text-foreground">
-                Theme
+            <div className="flex items-center justify-between">
+              <Label className="text-base font-medium text-foreground">
+                Dark Mode
               </Label>
-              <div className="flex gap-4">
-                <Button 
-                  variant={theme === 'light' ? 'default' : 'outline'} 
-                  className="flex items-center gap-2 px-4 py-2 h-10"
-                  onClick={() => setTheme('light')}
-                >
-                  <SunIcon className="h-4 w-4" />
-                  <span>Light</span>
-                </Button>
-                
-                <Button 
-                  variant={theme === 'dark' ? 'default' : 'outline'} 
-                  className="flex items-center gap-2 px-4 py-2 h-10"
-                  onClick={() => setTheme('dark')}
-                >
-                  <MoonIcon className="h-4 w-4" />
-                  <span>Dark</span>
-                </Button>
-              </div>
+              <Switch
+                checked={theme === "dark"}
+                onCheckedChange={() =>
+                  setTheme(theme === "dark" ? "light" : "dark")
+                }
+                aria-label="Toggle dark mode"
+              />
             </div>
-            
+
             {/* Font Style */}
             <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label className="text-sm font-medium text-foreground">
-                  Classic Font
-                </Label>
-                <p className="text-sm">
-                  Use classic (monospace) font throughout the application
-                </p>
-              </div>
+              <Label className="text-base font-medium text-foreground">
+                Classic Font
+              </Label>
               <Switch
                 checked={fontMono}
                 onCheckedChange={setFontMono}
@@ -176,9 +165,9 @@ const Profile = () => {
       mutationKey: ["update-organizer-profile"],
       mutationFn: async (data: { fullName: string; imageFile?: File }) => {
         const response = await $api.organization.profile.put(data);
-        if (response.error?.value){
-          toast.error(response.error.value.message)
-          return
+        if (response.error?.value) {
+          toast.error(response.error.value.message);
+          return;
         }
         return response.data;
       },

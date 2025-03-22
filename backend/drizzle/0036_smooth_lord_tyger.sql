@@ -1,0 +1,1 @@
+ALTER TABLE "llm_message" ALTER COLUMN "created_at" SET NOT NULL;

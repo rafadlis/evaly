@@ -11,6 +11,7 @@ import {
   ValidatedUpdateQuestion,
 } from "../../types/question";
 import { questionTemplateRouter } from "./question.template.router";
+import { llmRouter } from "./llm.router";
 
 export const questionRouter = new Elysia().group("/question", (app) => {
   return (
@@ -102,5 +103,6 @@ export const questionRouter = new Elysia().group("/question", (app) => {
       )
 
       .use(questionTemplateRouter)
+      .use(llmRouter)
   );
 });

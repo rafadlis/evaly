@@ -11,9 +11,14 @@
     "db:migrate": "bun db:generate && bun run src/lib/db/migrate.ts && bun run prepare",
     "db:push": "bunx drizzle-kit push",
     "check-types": "tsc --noEmit",
-    "email": "email dev --dir src/emails"
+    "email": "email dev --dir src/emails",
+    "trigger:dev": "npx trigger.dev@latest dev",
+    "trigger:login": "npx trigger.dev@latest login --profile default -a https://trigger.evaly.io",
+    "trigger:logout": "npx trigger.dev@latest logout --profile default",
+    "trigger:deploy:staging": "npx trigger.dev deploy --env staging -a https://trigger.evaly.io --self-hosted"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^1.3.0",
     "@aws-sdk/client-rds-data": "^3.758.0",
     "@elysiajs/cors": "^1.2.0",
     "@elysiajs/eden": "^1.2.0",
@@ -22,7 +27,9 @@
     "@react-email/components": "^0.0.33",
     "@sinclair/typebox": "^0.34.28",
     "@trigger.dev/sdk": "^3.3.17",
+    "ai": "^4.2.0",
     "better-auth": "1.2.4",
+    "bun": "1.2.5",
     "dotenv": "^16.4.7",
     "drizzle-kit": "0.30.5",
     "drizzle-orm": "0.40.0",

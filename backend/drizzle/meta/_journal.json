@@ -239,6 +239,97 @@
       "when": 1742503855652,
       "tag": "0033_secret_mandrill",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1742576691494,
+      "tag": "0034_odd_hawkeye",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1742577074097,
+      "tag": "0035_tiny_ozymandias",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1742579199575,
+      "tag": "0036_smooth_lord_tyger",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1742581052608,
+      "tag": "0037_worthless_lord_tyger",
+      "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1742581076680,
+      "tag": "0038_complete_slapstick",
+      "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1742582948791,
+      "tag": "0039_common_maverick",
+      "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1742582964581,
+      "tag": "0040_gigantic_joshua_kane",
+      "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1742582977688,
+      "tag": "0041_clumsy_electro",
+      "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "7",
+      "when": 1742582999188,
+      "tag": "0042_premium_logan",
+      "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "7",
+      "when": 1742583057047,
+      "tag": "0043_mighty_vector",
+      "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1742583068026,
+      "tag": "0044_zippy_vindicator",
+      "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "7",
+      "when": 1742583090027,
+      "tag": "0045_many_union_jack",
+      "breakpoints": true
+    },
+    {
+      "idx": 46,
+      "version": "7",
+      "when": 1742583478906,
+      "tag": "0046_romantic_sunfire",
+      "breakpoints": true
     }
   ]
 }

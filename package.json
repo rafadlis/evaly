@@ -9,7 +9,10 @@
     "dev:be": "bun --filter @evaly/backend dev",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "deploy:staging": "bunx sst deploy --stage staging --verbose",
-    "deploy:production": "bunx sst deploy --stage production --verbose"
+    "deploy:production": "bunx sst deploy --stage production --verbose",
+    "trigger:dev": "bun --filter @evaly/backend trigger:dev",
+    "trigger:login": "bun --filter @evaly/backend trigger:login",
+    "trigger:logout": "bun --filter @evaly/backend trigger:logout"
   },
   "keywords": [],
   "author": "",
