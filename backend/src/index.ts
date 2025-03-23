@@ -15,7 +15,7 @@ const app = new Elysia()
   .use(participantRouter)
   .listen({
     port: 4000,
-    reusePort: true,
+    idleTimeout: 30,
   });
 
 export type App = typeof app;

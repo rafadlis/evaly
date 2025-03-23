@@ -7,14 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "check-types": "tsc --noEmit",
-    "trigger:dev": "npx trigger.dev@latest dev",
-    "trigger:build": "npx trigger.dev@latest deploy --self-hosted --push",
-    "trigger:login": "npx trigger.dev@latest login --profile default -a https://trigger.x86.fahrezi.fyi",
-    "trigger:logout": "npx trigger.dev@latest logout"
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.2.7",
+    "@ai-sdk/react": "^1.2.0",
     "@elysiajs/eden": "^1.2.0",
     "@evaly/backend": "workspace:*",
     "@libsql/client": "^0.14.0",
@@ -50,11 +47,10 @@
     "@tiptap/extension-underline": "^2.11.5",
     "@tiptap/react": "^2.11.5",
     "@tiptap/starter-kit": "^2.11.5",
-    "@trigger.dev/sdk": "^3.3.16",
     "@trpc/client": "^11.0.0-rc.768",
     "@trpc/react-query": "^11.0.0-rc.768",
     "@trpc/server": "^11.0.0-rc.768",
-    "ai": "^4.1.66",
+    "ai": "^4.2.0",
     "better-auth": "1.2.4",
     "class-variance-authority": "^0.7.1",
     "client-only": "^0.0.1",
@@ -96,7 +92,6 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/typography": "^0.5.16",
-    "@trigger.dev/build": "^3.3.16",
     "@types/bun": "1.2.5",
     "@types/file-saver": "^2.0.7",
     "@types/node": "^20",

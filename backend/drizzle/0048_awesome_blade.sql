@@ -1,0 +1,1 @@
+ALTER TABLE "llm_message" DROP COLUMN "message";

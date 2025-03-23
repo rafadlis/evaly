@@ -20,6 +20,7 @@ import {
 import { AnimatePresence, motion } from "motion/react";
 import { useTransition } from "react";
 import { useState, KeyboardEvent } from "react";
+import { toast } from "sonner";
 
 const Page = () => {
   const autoComplete: string[] = [];
@@ -34,16 +35,24 @@ const Page = () => {
   const { mutate: startGeneration, isPending: isGenerating } = useMutation({
     mutationKey: ["start-question-generation"],
     mutationFn: async (message: string, files?: File[]) => {
-      const res = await $api.organization.question.llm.start.post({
+      const res = await $api.organization.question.llm.create.post({
         message,
         files,
       });
 
-      if (res.data?.templateId) {
-        startTransition(() => {
-          router.push(`/dashboard/question/generate/${res.data.templateId}`);
-        });
+      const data = res.data;
+
+      if (!data) {
+        toast.error("Failed to generate questions, please try again.");
+        return;
       }
+      const templateId = data.templateId;
+
+      startTransition(() => {
+        router.push(
+          `/dashboard/question/generate/${templateId}?message=${message}`
+        );
+      });
 
       return res.data;
     },

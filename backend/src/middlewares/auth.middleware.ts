@@ -47,7 +47,7 @@ export const organizationMiddleware = async ({ request, error }: Context) => {
       session: session.session,
       organizer: organizer,
     };
-  } catch (errorBody:any) {
+  } catch (errorBody: any) {
     return error("Internal Server Error", errorBody.message);
   }
 };
