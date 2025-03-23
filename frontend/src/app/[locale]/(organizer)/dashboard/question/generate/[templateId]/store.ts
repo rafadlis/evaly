@@ -1,50 +1,18 @@
-import { Question } from "@evaly/backend/types/question";
+import { UIMessage } from "ai";
 import { create } from "zustand";
 
-export interface Message {
-  id: string;
-  role: "user" | "assistant";
-  preMessage: string;
-  questions?: Question[];
-  postMessage?: string;
+interface MessageStore {
+  messages: UIMessage[];
+  setMessages: (messages: UIMessage[]) => void;
 }
 
-interface MessageState {
-  messages: Message[];
-  upsertMessage: (message: Message) => void;
-  removeAllMessages: () => void;
-}
-
-const useMessageStore = create<MessageState>((set) => ({
+const useMessageStore = create<MessageStore>((set) => ({
   messages: [],
-  upsertMessage: (message: Message) => set((state: MessageState) => {
-    const existingIndex = state.messages.findIndex((m) => m.id === message.id);
-    
-    if (existingIndex >= 0) {
-      // Update existing message
-      const updatedMessages = [...state.messages];
-      updatedMessages[existingIndex] = message;
-      return { messages: updatedMessages };
-    } else {
-      // Add new message
-      return { messages: [...state.messages, message] };
-    }
-  }),
-  removeAllMessages: () => set(() => {
-    return { messages: [] };
-  }),
+  setMessages: (messages: UIMessage[]) => set({ messages }),
 }));
 
-export function useMessages() {
+export const useMessages = () => {
   const messages = useMessageStore((state) => state.messages);
-  const upsertMessage = useMessageStore((state) => state.upsertMessage);
-  const removeAllMessages = useMessageStore((state) => state.removeAllMessages);
-  return { messages, upsertMessage, removeAllMessages };
-}
-
-export function useMessageQuestions(){
-  const messages = useMessageStore((state) => state.messages);
-  // find the last message with questions
-  const lastMessageWithQuestions = messages.findLast((message) => message.questions);
-  return lastMessageWithQuestions?.questions;
-}
+  const setMessages = useMessageStore((state) => state.setMessages);
+  return { messages, setMessages };
+};

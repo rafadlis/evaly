@@ -35,13 +35,12 @@ const Page = () => {
   const { mutate: startGeneration, isPending: isGenerating } = useMutation({
     mutationKey: ["start-question-generation"],
     mutationFn: async (message: string, files?: File[]) => {
-      if (message.length <= 10) {
-        toast.error("Message must be at least 10 characters long");
+      if (message.length <= 0) {
+        toast.error("Message is required");
         return;
       }
-      
+
       const res = await $api.organization.question.llm.create.post({
-        message,
         files,
       });
 
@@ -51,11 +50,9 @@ const Page = () => {
         toast.error("Failed to generate questions, please try again.");
         return;
       }
-      const templateId = data.templateId;
-
       startTransition(() => {
         router.push(
-          `/dashboard/question/generate/${templateId}?initialMessage=${message}`
+          `/dashboard/question/generate/${data.id}?initialMessage=${message}`
         );
       });
 

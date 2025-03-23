@@ -1,79 +1,49 @@
 import Elysia, { t } from "elysia";
 import { organizationMiddleware } from "../../middlewares/auth.middleware";
-import { createQuestionTemplate } from "../../services/organization/question/create-question-template";
-import { CoreMessage, streamText, tool } from "ai";
+import { appendResponseMessages, streamText, tool } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { z } from "zod";
 import db from "../../lib/db";
 import { llmMessage } from "../../lib/db/schema";
+import { and, eq } from "drizzle-orm";
 
 export const llmRouter = new Elysia().group("/llm", (app) => {
   return app
     .derive(organizationMiddleware)
     .post(
       "/create",
-      async ({ organizer, body }) => {
-        const createdTemplate = await createQuestionTemplate(
-          {
+      async ({ organizer, error }) => {
+        const createdMessage = await db
+          .insert(llmMessage)
+          .values({
             organizationId: organizer.organizationId,
-            organizerId: organizer.id,
-            isAiGenerated: true,
-          },
-          false
-        );
+          })
+          .returning();
 
-        // upload the files to the database
+        if (!createdMessage || createdMessage.length === 0) {
+          return error("Bad Request", "Failed to create chat");
+        }
 
         return {
-          templateId: createdTemplate.id,
-          message: body.message,
+          id: createdMessage[0].id,
           // attachments: body.files,
         };
       },
       {
         body: t.Object({
-          files: t.Optional(t.Array(t.File())),
-          message: t.String(),
+          files: t.Optional(t.Array(t.File()))
         }),
       }
     )
     .post(
       "/chat",
-      async function* ({ organizer, body, request, set }) {
+      async function ({ organizer, body, request, set }) {
         const organizationId = organizer.organizationId;
-        const templateId = body.id; // or chatId
+        const templateId = body.templateId; // or chatId
 
         const userPersona = body.userPersona;
 
-        // Get existing messages from the database
-        const existingMessagesRes = await db.query.llmMessage.findMany({
-          where(fields, { eq }) {
-            return eq(fields.referenceId, templateId);
-          },
-          orderBy(fields, { asc }) {
-            return asc(fields.createdAt);
-          },
-        });
-
-        // Convert database messages to Message format
-        const existingMessages: CoreMessage[] = existingMessagesRes
-          .filter((msg) => msg.message !== null)
-          .map((msg) => msg.message as CoreMessage);
-
-        const message: CoreMessage = {
-          role: "user",
-          content: body.message,
-        };
-
-        await db.insert(llmMessage).values({
-          referenceId: templateId,
-          message: message,
-          organizationId,
-        });
-
-        const systemMessage: CoreMessage = {
-          role: "system",
-          content: `You are Evaly, an educational AI assistant that generates questions based on user requests. The current user's role is: ${userPersona}.
+        const systemMessage = `You are Evaly, an educational AI assistant that generates questions based on user requests. The current user's role is: ${userPersona}.
 
 IMPORTANT INSTRUCTIONS FOR QUESTION GENERATION:
 1. ALWAYS generate multiple-choice questions by default unless the user EXPLICITLY requests text-field questions
@@ -84,32 +54,27 @@ IMPORTANT INSTRUCTIONS FOR QUESTION GENERATION:
    - If user doesn't specify a number, generate EXACTLY 5 questions
 5. Ensure all question IDs are unique strings (e.g., "q1", "q2", etc.) and option IDs follow pattern (e.g., "q1_opt1", "q1_opt2")
 6. Be conversational and natural in your responses, tailoring to the ${userPersona} role
-7. Respond as if in a direct conversation while strictly following the question format and count requirements.`,
-        };
-
-        // Combine existing messages with new message
-        const messages: CoreMessage[] = [
-          systemMessage,
-          ...existingMessages,
-          message,
-        ];
-
-        console.log(JSON.stringify(messages, null, 2));
+7. When user asks to edit or modify specific questions:
+   - ALWAYS regenerate the ENTIRE set of questions, not just the modified ones
+   - Maintain the same total number of questions as before
+   - Apply the requested changes to the specified question(s)
+   - Make sure the edited questions fit cohesively with the rest
+8. ONLY USE THE TOOL to generate questions - DO NOT include the questions in your text response
+9. Your response should ONLY contain a brief greeting and closing message - the actual questions will be handled by the tool
+10. DO NOT repeat or summarize the questions after using the tool - this creates duplicate content
+11. Respond as if in a direct conversation while strictly following these requirements`;
 
         const result = streamText({
-          model: openai("o3-mini"),
+          model: openai("gpt-4o-mini"),
           toolCallStreaming: true,
-          messages,
+          messages: body.messages,
+          maxSteps: 5,
+          system: systemMessage,
           tools: {
             generateQuestion: tool({
               description:
                 "Generate high-quality, engaging questions based on the user's input and persona",
               parameters: z.object({
-                preMessage: z
-                  .string()
-                  .describe(
-                    "A brief, natural greeting that acknowledges the user's specific request. Keep it conversational but concise."
-                  ),
                 questions: z
                   .array(
                     z.object({
@@ -159,23 +124,34 @@ IMPORTANT INSTRUCTIONS FOR QUESTION GENERATION:
                   .describe(
                     "An array of questions. The number of questions MUST match exactly what the user requested. If the user didn't specify a count, generate EXACTLY 5 questions. DEFAULT to multiple-choice type unless explicitly requested otherwise."
                   ),
-                postMessage: z
-                  .string()
-                  .describe(
-                    "A brief, natural closing that relates to the questions provided. Keep it conversational but concise."
-                  ),
               }),
+              execute: async function ({ questions }) {
+                console.log(questions);
+                return {
+                  questions,
+                };
+              },
             }),
           },
           onFinish: async ({ response }) => {
-            if (response.messages.length > 0) {
-              const message = response.messages[0];
-              await db.insert(llmMessage).values({
-                referenceId: templateId,
-                message: message,
+            const messages = appendResponseMessages({
+              messages: body.messages,
+              responseMessages: response.messages,
+            });
+            console.log(messages);
+            await db
+              .insert(llmMessage)
+              .values({
+                messages,
                 organizationId,
+                id: templateId,
+              })
+              .onConflictDoUpdate({
+                target: llmMessage.id,
+                set: {
+                  messages,
+                },
               });
-            }
           },
           onError: (error) => {
             console.error(error);
@@ -184,16 +160,12 @@ IMPORTANT INSTRUCTIONS FOR QUESTION GENERATION:
 
         result.consumeStream();
 
-        for await (const chunk of result.fullStream) {
-          if (chunk.type === "tool-call-delta") {
-            yield chunk.argsTextDelta;
-          }
-        }
+        return result.toDataStreamResponse();
       },
       {
         body: t.Object({
-          message: t.String(),
-          id: t.String(),
+          messages: t.Any(),
+          templateId: t.String(),
           userPersona: t.Enum(
             {
               student: "student",
@@ -206,5 +178,15 @@ IMPORTANT INSTRUCTIONS FOR QUESTION GENERATION:
           ),
         }),
       }
-    );
+    )
+    .get("/chat/:id", async ({ organizer, params }) => {
+      const messages = await db.query.llmMessage.findFirst({
+        where: and(
+          eq(llmMessage.id, params.id),
+          eq(llmMessage.organizationId, organizer.organizationId)
+        ),
+      });
+
+      return messages;
+    });
 });
