@@ -37,7 +37,7 @@ export const llmRouter = new Elysia().group("/llm", (app) => {
     )
     .post(
       "/chat",
-      async function* ({ organizer, body, request }) {
+      async function* ({ organizer, body, request, set }) {
         const organizationId = organizer.organizationId;
         const templateId = body.id; // or chatId
 
@@ -50,9 +50,9 @@ export const llmRouter = new Elysia().group("/llm", (app) => {
         // };
 
         const result = streamText({
-          model: openai("o3-mini-2025-01-31"),
+          model: openai("gpt-4o-mini"),
           toolCallStreaming: true,
-          prompt: `${body.message}\n\nUser role: ${userPersona}. Please tailor your response appropriately for this user type.`,
+          prompt: `${body.message}\n\nUser role: ${userPersona}. You are an educational AI chatbot assistant named Evaly. Respond professionally but conversationally as if in a natural chat. Vary your greetings and closings to sound human-like and less predictable. Adapt your tone to match the specific context and user's query rather than using generic templates.`,
           tools: {
             generateQuestion: tool({
               description:
@@ -60,8 +60,9 @@ export const llmRouter = new Elysia().group("/llm", (app) => {
               parameters: z.object({
                 preMessage: z
                   .string()
+                  .max(150)
                   .describe(
-                    "A warm, personalized introduction that acknowledges the user's request and sets the context for the questions that follow. Should be friendly, professional, and tailored to the user's role (student, teacher, HR, parent, etc.)."
+                    "A natural, varied greeting (max 20 words) that sounds like a real conversation. Avoid always introducing yourself the same way. Instead, respond contextually to the user's specific request in a way that feels spontaneous and personalized."
                   ),
                 questions: z
                   .array(
@@ -88,24 +89,24 @@ export const llmRouter = new Elysia().group("/llm", (app) => {
                   ),
                 postMessage: z
                   .string()
+                  .max(150)
                   .describe(
-                    "A concluding message that wraps up the question generation process, encourages the user to engage with the questions, and offers guidance appropriate for their role (student, teacher, HR, parent, etc.)."
+                    "A natural, conversational closing (max 20 words) that varies based on the context of the interaction. Should feel like a real person wrapping up a conversation rather than a template. Occasionally ask questions or personalize the closing to the specific task completed."
                   ),
               }),
             }),
           },
-          onFinish: ({response}) => {
-            console.log(response.messages)
+          onFinish: ({ response }) => {
+            console.log(response.messages);
           },
-          onError: (error) => {
-          },
+          onError: (error) => {},
         });
-        
+
         result.consumeStream();
 
         for await (const chunk of result.fullStream) {
           if (chunk.type === "tool-call-delta") {
-            yield chunk.argsTextDelta;
+            yield chunk.argsTextDelta
           }
         }
       },

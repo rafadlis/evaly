@@ -1,23 +1,72 @@
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
+import { $api } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { useOrganizerProfile } from "@/query/organization/profile/use-organizer-profile";
+import { useMutation } from "@tanstack/react-query";
 import { ArrowUp, Loader2, Paperclip, UserIcon, Wand2Icon } from "lucide-react";
 import Image from "next/image";
+import { useParams } from "next/navigation";
+import { useEffect } from "react";
+import { Message, useMessages } from "./store";
+import { useQueryState } from "nuqs";
+import { parsePartialJson } from "@ai-sdk/ui-utils";
+import { ulid } from "ulidx";
 
 const SectionChat = () => {
   const { data } = useOrganizerProfile();
   const userProfile = data?.data?.user.image;
+  const { templateId } = useParams();
+  const [initialMessage, setInitialMessage] = useQueryState("initialMessage");
+
+  const { messages, upsertMessage } = useMessages();
+
+  const { mutate: generateQuestions } = useMutation({
+    mutationKey: ["generate-questions", templateId],
+    mutationFn: async (message: string) => {
+      upsertMessage({
+        id: `llm_${ulid()}`,
+        role: "user",
+        preMessage: message,
+      });
+
+      const res = await $api.organization.question.llm.chat.post({
+        message,
+        id: templateId as string,
+        userPersona: "teacher",
+      });
+
+      if (!res.data) return null;
+
+      let result = "";
+      const assistantMessageId = `llm_${ulid()}`;
+
+      for await (const chunk of res.data) {
+        result += chunk;
+        const parsed = parsePartialJson(result).value as unknown as Message;
+        upsertMessage({ ...parsed, role: "assistant", id: assistantMessageId });
+      }
+
+      return result;
+    },
+  });
+
+  useEffect(() => {
+    if (initialMessage) {
+      generateQuestions(initialMessage);
+      // setInitialMessage(null);
+    }
+  }, [generateQuestions, initialMessage, setInitialMessage]);
 
   return (
     <>
       <ScrollArea className="h-[calc(100vh-220px)] flex flex-col">
-        {Array.from({ length: 20 }).map((_, index) =>
-          index % 2 === 0 ? (
-            <UserMessage key={index} image={userProfile} />
+        {messages.map((message) =>
+          message.role === "user" ? (
+            <UserMessage key={message.id} image={userProfile} message={message} />
           ) : (
-            <AIMessage key={index} />
+            <AIMessage key={message.id} message={message} />
           )
         )}
       </ScrollArea>
@@ -56,7 +105,13 @@ const SectionChat = () => {
 
 export default SectionChat;
 
-const UserMessage = ({ image }: { image: string | null | undefined }) => {
+const UserMessage = ({
+  image,
+  message,
+}: {
+  message: Message;
+  image: string | null | undefined;
+}) => {
   return (
     <div className="flex items-start gap-3 p-4 hover:bg-secondary">
       {image ? (
@@ -73,18 +128,13 @@ const UserMessage = ({ image }: { image: string | null | undefined }) => {
         </div>
       )}
       <div className="flex-1">
-        <p className="text-sm">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe quam
-          eveniet est vitae, corporis repellendus repudiandae aut, inventore in,
-          commodi pariatur. Tempore nostrum nihil quis a aspernatur quisquam
-          cumque facere!
-        </p>
+        <p className="text-sm">{message.preMessage}</p>
       </div>
     </div>
   );
 };
 
-const AIMessage = () => {
+const AIMessage = ({ message }: { message: Message }) => {
   return (
     <div className="flex items-start gap-3 p-4 hover:bg-secondary">
       <Image
@@ -94,13 +144,17 @@ const AIMessage = () => {
         height={28}
         className="rounded-lg object-scale-down"
       />
-      <div className="flex-1">
-        <p className="text-sm">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe quam
-          eveniet est vitae, corporis repellendus repudiandae aut, inventore in,
-          commodi pariatur. Tempore nostrum nihil quis a aspernatur quisquam
-          cumque facere!
-        </p>
+       <div className="flex-1">
+        <p className="text-sm">{message.preMessage}</p>
+        {message.questions?.length && message.questions.length > 0 ? (
+          <Button variant={"secondary"} size={"xs"} className="mt-2">
+            See {message.questions.length} questions
+          </Button>
+        ) : null}
+
+        {message.postMessage ? (
+          <p className="text-sm mt-2">{message.postMessage}</p>
+        ) : null}
       </div>
     </div>
   );

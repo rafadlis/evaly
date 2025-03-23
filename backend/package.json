@@ -30,6 +30,7 @@
     "drizzle-orm": "0.40.0",
     "drizzle-typebox": "^0.3.0",
     "elysia": "1.2.25",
+    "elysia-compress": "^1.2.1",
     "nodemailer": "^6.10.0",
     "openai": "4.89.0",
     "postgres": "^3.4.5",

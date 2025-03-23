@@ -50,7 +50,7 @@ const Page = () => {
 
       startTransition(() => {
         router.push(
-          `/dashboard/question/generate/${templateId}?message=${message}`
+          `/dashboard/question/generate/${templateId}?initialMessage=${message}`
         );
       });
 
