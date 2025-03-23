@@ -52,16 +52,16 @@ export const llmRouter = new Elysia().group("/llm", (app) => {
         const result = streamText({
           model: openai("o3-mini-2025-01-31"),
           toolCallStreaming: true,
-          prompt: body.message,
+          prompt: `${body.message}\n\nUser role: ${userPersona}. Please tailor your response appropriately for this user type.`,
           tools: {
             generateQuestion: tool({
               description:
-                "Generate high-quality, engaging multiple-choice questions based on the user's input",
+                "Generate high-quality, engaging multiple-choice questions based on the user's input and persona",
               parameters: z.object({
                 preMessage: z
                   .string()
                   .describe(
-                    "A warm, personalized introduction that acknowledges the user's request and sets the context for the questions that follow. Should be friendly, professional, and build anticipation for the learning experience."
+                    "A warm, personalized introduction that acknowledges the user's request and sets the context for the questions that follow. Should be friendly, professional, and tailored to the user's role (student, teacher, HR, parent, etc.)."
                   ),
                 questions: z
                   .array(
@@ -89,18 +89,19 @@ export const llmRouter = new Elysia().group("/llm", (app) => {
                 postMessage: z
                   .string()
                   .describe(
-                    "A concluding message that wraps up the question generation process, encourages the user to engage with the questions, and offers any additional guidance or next steps"
+                    "A concluding message that wraps up the question generation process, encourages the user to engage with the questions, and offers guidance appropriate for their role (student, teacher, HR, parent, etc.)."
                   ),
               }),
             }),
           },
-          onFinish: (result) => {
-            console.log(result);
+          onFinish: ({response}) => {
+            console.log(response.messages)
           },
           onError: (error) => {
-            console.log(error);
           },
         });
+        
+        result.consumeStream();
 
         for await (const chunk of result.fullStream) {
           if (chunk.type === "tool-call-delta") {
