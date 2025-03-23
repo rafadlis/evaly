@@ -18,23 +18,27 @@ const QuestionTypeSelection = ({
   className?: string;
 }) => {
   // Get the current selected question type or default to "multiple-choice"
-  const selectedType = value ? questionTypes[value] : questionTypes["multiple-choice"];
-  const SelectedIcon = selectedType.icon;
+  const selectedType = value && questionTypes[value] ? questionTypes[value] : questionTypes["multiple-choice"];
+  
+  // Ensure we have a valid icon component before trying to use it
+  const SelectedIcon = selectedType?.icon || (() => null);
 
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button size={size}  variant={variant} className={className}>
-          <SelectedIcon size={16} className="mr-1" /> 
-          {selectedType.label} 
+          {SelectedIcon && <SelectedIcon size={16} className="mr-1" />}
+          {selectedType?.label || "Multiple Choice"} 
         </Button>
       </PopoverTrigger>
       <PopoverContent align="start" className="w-[240px] p-2">
         <Label className="px-2 mb-2 block">Question Type</Label>
           <div className="flex flex-col gap-1">
             {Object.values(questionTypes).map((type) => {
-              const TypeIcon = type.icon;
+              // Ensure each type has an icon or use a fallback
+              const TypeIcon = type.icon || (() => null);
               if (type.isHidden) return null;
+              
               return (
                 <Button
                   onClick={(e) => {
@@ -47,7 +51,7 @@ const QuestionTypeSelection = ({
                   className="w-full justify-start gap-2"
                   variant={value === type.value ? "default" : "ghost"}
                 >
-                  <TypeIcon size={16} />
+                  {TypeIcon && <TypeIcon size={16} />}
                   {type.label}
                 </Button>
               );

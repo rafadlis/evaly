@@ -10,7 +10,7 @@ const SectionCanvas = () => {
       <div className="flex flex-col gap-4 pt-10 px-6 max-w-[800px] mx-auto">
         {questions?.map((question, index) => (
           <div key={index}>
-            <CardQuestion key={index} className="" data={question}/>
+            <CardQuestion key={index} className="" data={{...question, order: index + 1}}/>
             <div className="h-px w-full border-b border-dashed" />
           </div>
         ))}

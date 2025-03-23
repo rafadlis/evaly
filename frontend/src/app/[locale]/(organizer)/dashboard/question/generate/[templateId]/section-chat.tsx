@@ -8,23 +8,30 @@ import { useMutation } from "@tanstack/react-query";
 import { ArrowUp, Loader2, Paperclip, UserIcon, Wand2Icon } from "lucide-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Message, useMessages } from "./store";
 import { useQueryState } from "nuqs";
 import { parsePartialJson } from "@ai-sdk/ui-utils";
 import { ulid } from "ulidx";
+import { toast } from "sonner";
 
 const SectionChat = () => {
   const { data } = useOrganizerProfile();
   const userProfile = data?.data?.user.image;
   const { templateId } = useParams();
   const [initialMessage, setInitialMessage] = useQueryState("initialMessage");
+  const [messageInput, setMessageInput] = useState("");
 
   const { messages, upsertMessage } = useMessages();
 
   const { mutate: generateQuestions } = useMutation({
     mutationKey: ["generate-questions", templateId],
     mutationFn: async (message: string) => {
+      if (message.length <= 10) {
+        toast.error("Message must be at least 10 characters long");
+        return;
+      }
+      setMessageInput("");
       upsertMessage({
         id: `llm_${ulid()}`,
         role: "user",
@@ -40,7 +47,7 @@ const SectionChat = () => {
       if (!res.data) return null;
 
       let result = "";
-      const assistantMessageId = `llm_${ulid()}`;
+      const assistantMessageId = `msg_${ulid()}`;
 
       for await (const chunk of res.data) {
         result += chunk;
@@ -55,7 +62,7 @@ const SectionChat = () => {
   useEffect(() => {
     if (initialMessage) {
       generateQuestions(initialMessage);
-      // setInitialMessage(null);
+      setInitialMessage(null);
     }
   }, [generateQuestions, initialMessage, setInitialMessage]);
 
@@ -64,7 +71,11 @@ const SectionChat = () => {
       <ScrollArea className="h-[calc(100vh-220px)] flex flex-col">
         {messages.map((message) =>
           message.role === "user" ? (
-            <UserMessage key={message.id} image={userProfile} message={message} />
+            <UserMessage
+              key={message.id}
+              image={userProfile}
+              message={message}
+            />
           ) : (
             <AIMessage key={message.id} message={message} />
           )
@@ -72,7 +83,15 @@ const SectionChat = () => {
       </ScrollArea>
       <div className="relative mb-2 mx-4 mt-2">
         <Textarea
+          value={messageInput}
+          onChange={(e) => setMessageInput(e.target.value)}
           autoFocus
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              generateQuestions(messageInput);
+            }
+          }}
           placeholder="Add a follow up..."
           className={cn(
             "w-full h-[120px] overflow-clip  p-3 rounded-xl [&::placeholder]:whitespace-pre-wrap resize-none focus-visible:ring-0 focus-visible:outline-0 focus-visible:ring-offset-0 focus-visible:border-foreground/20 shadow-none transition-all duration-200"
@@ -86,7 +105,15 @@ const SectionChat = () => {
             <Button size={"icon-sm"} variant={"ghost"}>
               <Paperclip />
             </Button>
-            <Button size={"icon-sm"} variant={"outline"}>
+            <Button
+              size={"icon-sm"}
+              variant={
+                messageInput.length > 10 ? "default" : "secondary-outline"
+              }
+              onClick={() => {
+                generateQuestions(messageInput);
+              }}
+            >
               {false ? (
                 <Loader2 className="size-4 stroke-3 text-muted-foreground" />
               ) : (
@@ -144,7 +171,7 @@ const AIMessage = ({ message }: { message: Message }) => {
         height={28}
         className="rounded-lg object-scale-down"
       />
-       <div className="flex-1">
+      <div className="flex-1">
         <p className="text-sm">{message.preMessage}</p>
         {message.questions?.length && message.questions.length > 0 ? (
           <Button variant={"secondary"} size={"xs"} className="mt-2">

@@ -12,6 +12,7 @@ export interface Message {
 interface MessageState {
   messages: Message[];
   upsertMessage: (message: Message) => void;
+  removeAllMessages: () => void;
 }
 
 const useMessageStore = create<MessageState>((set) => ({
@@ -29,12 +30,16 @@ const useMessageStore = create<MessageState>((set) => ({
       return { messages: [...state.messages, message] };
     }
   }),
+  removeAllMessages: () => set(() => {
+    return { messages: [] };
+  }),
 }));
 
 export function useMessages() {
   const messages = useMessageStore((state) => state.messages);
   const upsertMessage = useMessageStore((state) => state.upsertMessage);
-  return { messages, upsertMessage };
+  const removeAllMessages = useMessageStore((state) => state.removeAllMessages);
+  return { messages, upsertMessage, removeAllMessages };
 }
 
 export function useMessageQuestions(){

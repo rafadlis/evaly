@@ -35,6 +35,11 @@ const Page = () => {
   const { mutate: startGeneration, isPending: isGenerating } = useMutation({
     mutationKey: ["start-question-generation"],
     mutationFn: async (message: string, files?: File[]) => {
+      if (message.length <= 10) {
+        toast.error("Message must be at least 10 characters long");
+        return;
+      }
+      
       const res = await $api.organization.question.llm.create.post({
         message,
         files,

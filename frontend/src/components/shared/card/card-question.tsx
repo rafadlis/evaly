@@ -171,7 +171,7 @@ const CardQuestion = ({
       </CardHeader>
       <CardContent className="px-6">
         <div
-          className="custom-prose max-w-full max-h-[220px] h-max overflow-y-auto"
+          className="custom-prose max-w-full max-h-[220px] min-h-[50px] h-max overflow-y-auto"
           dangerouslySetInnerHTML={{
             __html:
               !data.question || data.question === "<p></p>"
@@ -183,7 +183,7 @@ const CardQuestion = ({
           <div className="flex flex-col gap-3 text-sm mt-2">
             {data.options?.map((option, i) => (
               <div
-                key={option.id}
+                key={option.id || `option-${i}`}
                 className="flex flex-row flex-wrap items-start gap-3"
               >
                 <Button

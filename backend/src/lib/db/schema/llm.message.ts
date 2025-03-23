@@ -1,12 +1,12 @@
-import { Message } from "ai";
+import { CoreMessage } from "ai";
 import { jsonb, pgTable, timestamp, varchar } from "drizzle-orm/pg-core";
 import { ulid } from "ulidx";
 
 export const llmMessage = pgTable("llm_message", {
   id: varchar("id", { length: 100 })
-    .$defaultFn(() => `llm_${ulid()}`)
+    .$defaultFn(() => `msg_${ulid()}`)
     .primaryKey(),
-  message: jsonb("message").$type<Message>(),
+  message: jsonb("message").$type<CoreMessage>(),
   referenceId: varchar("reference_id", { length: 255 }).notNull(),
   organizationId: varchar("organization_id", { length: 255 }).notNull(),
   createdAt: timestamp("created_at", {
