@@ -5,7 +5,7 @@ import { ulid } from "ulidx";
 export const llmMessage = pgTable(
   "llm_message",
   {
-    id: varchar("id", { length: 100 }).default(`llm-${ulid()}`).primaryKey(),
+    id: varchar("id", { length: 100 }).$default(() => `llm-${ulid()}`).primaryKey(),
     messages: jsonb("messages").$type<Message[]>(),
     organizationId: varchar("organization_id", { length: 255 }).notNull(),
     createdAt: timestamp("created_at", {
