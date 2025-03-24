@@ -6,7 +6,7 @@ import { useOrganizerProfile } from "@/query/organization/profile/use-organizer-
 import { ArrowUp, Loader2, Paperclip, UserIcon, Wand2Icon } from "lucide-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQueryState } from "nuqs";
 import { useChat } from "@ai-sdk/react";
 import { env } from "@/lib/env";
@@ -18,8 +18,11 @@ const SectionChat = ({ initialMessages }: { initialMessages: Message[] }) => {
   const userProfile = data?.data?.user.image;
   const { templateId } = useParams();
   const [initialMessage, setInitialMessage] = useQueryState("initialMessage");
-  const { setMessages } = useMessages();
-  const { messages, input, handleInputChange, handleSubmit, setInput } =
+  const { setMessages, setStatus } = useMessages();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [userHasScrolled, setUserHasScrolled] = useState(false);
+  const { messages, input, handleInputChange, handleSubmit, setInput, status } =
     useChat({
       id: templateId as string,
       key: templateId as string,
@@ -36,7 +39,46 @@ const SectionChat = ({ initialMessages }: { initialMessages: Message[] }) => {
 
   useEffect(() => {
     setMessages(messages);
-  }, [messages, setMessages]);
+    setStatus(status);
+  }, [messages, setMessages, status, setStatus]);
+
+  // Scroll to bottom on initial load with a slight delay to ensure DOM is ready
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollIntoView({ block: "end", behavior: "smooth" });
+      }
+    }, 300); // longer delay to ensure everything is rendered
+    
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  // Track user scroll manually
+  useEffect(() => {
+    const chatContainer = document.querySelector('.scroll-area-viewport') as HTMLDivElement;
+    if (!chatContainer) return;
+    
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = chatContainer;
+      const isAtBottom = scrollHeight - scrollTop <= clientHeight + 20; // 20px threshold
+      
+      if (!isAtBottom) {
+        setUserHasScrolled(true);
+      } else {
+        setUserHasScrolled(false);
+      }
+    };
+    
+    chatContainer.addEventListener('scroll', handleScroll);
+    return () => chatContainer.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Auto scroll to the bottom when messages change and status is "streaming"
+  useEffect(() => {
+    if (scrollRef.current && status === "streaming" && !userHasScrolled) {
+      scrollRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
+  }, [messages, status, userHasScrolled]);
 
   // This is only works if previously user coming from the landing page of chatbot
   useEffect(() => {
@@ -51,7 +93,7 @@ const SectionChat = ({ initialMessages }: { initialMessages: Message[] }) => {
   return (
     <>
       <ScrollArea className="h-[calc(100vh-190px)]">
-        <div className="flex flex-col mx-auto py-6 max-w-xl ">
+        <div ref={chatContainerRef} className="flex flex-col mx-auto py-6 max-w-xl">
           {messages.map((message) =>
             message.role === "user" ? (
               <UserMessage
@@ -63,6 +105,7 @@ const SectionChat = ({ initialMessages }: { initialMessages: Message[] }) => {
               <AIMessage key={message.id} message={message} />
             )
           )}
+          <div ref={scrollRef} />
         </div>
       </ScrollArea>
       <form onSubmit={handleSubmit} className="max-w-xl mx-auto px-4">
@@ -75,6 +118,7 @@ const SectionChat = ({ initialMessages }: { initialMessages: Message[] }) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
                 handleSubmit();
+                setUserHasScrolled(false);
               }
             }}
             placeholder="Add a follow up..."
@@ -95,10 +139,12 @@ const SectionChat = ({ initialMessages }: { initialMessages: Message[] }) => {
                 variant={input.length > 0 ? "default" : "secondary-outline"}
                 onClick={() => {
                   handleSubmit();
+                  setUserHasScrolled(false);
                 }}
+                disabled={status !== "ready"}
               >
-                {false ? (
-                  <Loader2 className="size-4 stroke-3 text-muted-foreground" />
+                {status === "streaming" ? (
+                  <Loader2 className="size-4 stroke-3 text-muted-foreground animate-spin" />
                 ) : (
                   <ArrowUp className="size-4 stroke-3 text-muted-foreground" />
                 )}
@@ -139,7 +185,7 @@ const UserMessage = ({
         </div>
       )}
       <div className="flex-1 mt-0.5">
-        <p className="text-base">{message.content}</p>
+        <p className="text-sm">{message.content}</p>
       </div>
     </div>
   );
@@ -156,7 +202,7 @@ const AIMessage = ({ message }: { message: Message }) => {
         className="rounded-sm"
       />
       <div className="flex-1 mt-0.5">
-        <p className="text-base">{message.content}</p>
+        <p className="text-sm">{message.content}</p>
       </div>
     </div>
   );

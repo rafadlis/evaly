@@ -50,6 +50,7 @@
     "@trpc/react-query": "^11.0.0-rc.768",
     "@trpc/server": "^11.0.0-rc.768",
     "ai": "^4.2.0",
+    "babel-plugin-react-compiler": "^19.0.0-beta-3229e95-20250315",
     "better-auth": "1.2.4",
     "class-variance-authority": "^0.7.1",
     "client-only": "^0.0.1",
