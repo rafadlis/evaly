@@ -1,5 +1,6 @@
 import DialogDeleteQuestion from "@/components/shared/dialog/dialog-delete-question";
 import QuestionTypeSelection from "@/components/shared/question-type-selection";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -101,13 +102,13 @@ const CardQuestion = ({
     >
       <CardHeader className="px-6 flex flex-row justify-between items-center ">
         <div className="flex flex-row gap-3">
-          <Button variant={"secondary"} size={"xs"}>
+          <Badge variant={"secondary"} className="text-xs px-3 text-muted-foreground">
             # Question {data.order}
-          </Button>
+          </Badge>
           {data.pointValue ? (
-            <Button variant={"secondary"} size={"xs"}>
+            <Badge variant={"secondary"} className="text-xs px-3 text-muted-foreground">
               Point: {data.pointValue}
-            </Button>
+            </Badge>
           ) : null}
           <QuestionTypeSelection value={data.type} className="text-muted-foreground" variant={"ghost"} />
         </div>

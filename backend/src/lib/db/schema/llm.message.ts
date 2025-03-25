@@ -1,5 +1,5 @@
 import { Message } from "ai";
-import { index, jsonb, pgTable, timestamp, varchar } from "drizzle-orm/pg-core";
+import { index, integer, jsonb, pgTable, timestamp, varchar } from "drizzle-orm/pg-core";
 import { ulid } from "ulidx";
 
 export const llmMessage = pgTable(
@@ -14,6 +14,9 @@ export const llmMessage = pgTable(
     })
       .defaultNow()
       .notNull(),
+    completitionTokens: integer("completition_tokens").notNull().default(0),
+    promptTokens: integer("prompt_tokens").notNull().default(0),
+    totalTokens: integer("total_tokens").notNull().default(0),
   },
   (t) => ({
     organizationIdIndex: index("message_organization_id_index").on(

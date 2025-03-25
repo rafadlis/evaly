@@ -5,7 +5,7 @@ import { openai } from "@ai-sdk/openai";
 import { z } from "zod";
 import db from "../../lib/db";
 import { llmMessage } from "../../lib/db/schema";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 
 export const llmRouter = new Elysia().group("/llm", (app) => {
   return app
@@ -40,8 +40,19 @@ export const llmRouter = new Elysia().group("/llm", (app) => {
       async function ({ organizer, body, request, set }) {
         const organizationId = organizer.organizationId;
         const templateId = body.templateId; // or chatId
-
         const userPersona = body.userPersona;
+
+        // Save the messages to the database
+        await db.insert(llmMessage).values({
+          messages: body.messages,
+          organizationId,
+          id: templateId,
+        }).onConflictDoUpdate({
+          target: llmMessage.id,
+          set: {
+            messages: body.messages,
+          },
+        });
 
         const systemMessage = `You are Evaly, an educational AI assistant that generates questions based on user requests. The current user's role is: ${userPersona}.
 
@@ -133,23 +144,29 @@ IMPORTANT INSTRUCTIONS FOR QUESTION GENERATION:
               },
             }),
           },
-          onFinish: async ({ response }) => {
+          onFinish: async ({ response, usage: {completionTokens, promptTokens,totalTokens} }) => {
             const messages = appendResponseMessages({
               messages: body.messages,
               responseMessages: response.messages,
             });
-            console.log(messages);
+
             await db
               .insert(llmMessage)
               .values({
                 messages,
                 organizationId,
                 id: templateId,
+                completitionTokens: completionTokens,
+                promptTokens: promptTokens,
+                totalTokens: totalTokens,
               })
               .onConflictDoUpdate({
                 target: llmMessage.id,
                 set: {
                   messages,
+                  completitionTokens: sql`${llmMessage.completitionTokens} + ${completionTokens}`,
+                  promptTokens: sql`${llmMessage.promptTokens} + ${promptTokens}`,
+                  totalTokens: sql`${llmMessage.totalTokens} + ${totalTokens}`,
                 },
               });
           },

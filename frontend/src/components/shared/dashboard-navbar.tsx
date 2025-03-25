@@ -25,22 +25,22 @@ const navItems = [
   {
     name: "Dashboard",
     href: "/dashboard",
-    icon: <Home className="h-4 w-4 mr-2" />,
+    icon: <Home className="size-3.5 mr-1.5" />,
   },
   {
     name: "Question",
     href: "/dashboard/question",
-    icon: <BookOpen className="h-4 w-4 mr-2" />,
+    icon: <BookOpen className="size-3.5 mr-1.5" />,
   },
   {
     name: "Participant",
     href: "/dashboard/participant",
-    icon: <UserCircle className="h-4 w-4 mr-2" />,
+    icon: <UserCircle className="size-3.5 mr-1.5" />,
   },
   {
     name: "Settings",
     href: "/dashboard/settings",
-    icon: <Cog className="h-4 w-4 mr-2" />,
+    icon: <Cog className="size-3.5 mr-1.5" />,
   },
 ];
 export function DashboardNavbar({ className }: { className?: string }) {
@@ -73,7 +73,7 @@ export function DashboardNavbar({ className }: { className?: string }) {
   return (
     <nav
       className={cn(
-        "sticky top-0 left-0 w-full z-50 transition-all border-b border-dashed bg-background",
+        "sticky top-0 left-0 w-full z-50 transition-all bg-background",
         className,
       )}
     >
@@ -93,11 +93,11 @@ export function DashboardNavbar({ className }: { className?: string }) {
                     "text-muted-foreground transition-colors rounded-md hover:text-primary px-3 py-1.5 font-medium text-[15px] flex items-center",
                     // Special case for dashboard
                     item.href === "/dashboard" 
-                      ? (pathname === "/dashboard" || pathname.startsWith("/dashboard/test")) && "text-primary bg-secondary"
-                      : pathname.startsWith(item.href) && "text-primary bg-secondary"
+                      ? (pathname === "/dashboard" || pathname.startsWith("/dashboard/test")) && "text-primary"
+                      : pathname.startsWith(item.href) && "text-primary"
                   )}
                 >
-                  {item.icon}
+                  {/* {item.icon} */}
                   {item.name}
                 </Link>
               ))}
@@ -132,7 +132,7 @@ export function DashboardNavbar({ className }: { className?: string }) {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden py-4 space-y-4 z-50 bg-background border-b border-dashed">
+          <div className="md:hidden py-4 space-y-4 z-50 bg-background">
             {navItems.map((item) => (
               <Link
                 key={item.href}

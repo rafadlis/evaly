@@ -74,7 +74,7 @@ const Page = () => {
   };
 
   return (
-    <div className="container flex-1 justify-center flex flex-col">
+    <div className="container flex-1 -mt-14 justify-center flex flex-col">
       {/* Prompt Section */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
@@ -94,7 +94,7 @@ const Page = () => {
               onKeyDown={handleKeyDown}
               placeholder="Enter prompt or paste content to generate questions..."
               className={cn(
-                "w-full h-[120px] overflow-clip text-sm md:text-base p-3 rounded-xl [&::placeholder]:whitespace-pre-wrap resize-none focus-visible:ring-0 focus-visible:outline-0 focus-visible:ring-offset-0 focus-visible:border-foreground/20 shadow-none transition-all duration-200",
+                "w-full h-[120px] overflow-clip text-sm md:text-base p-4 rounded-xl [&::placeholder]:whitespace-pre-wrap resize-none focus-visible:ring-0 focus-visible:outline-0 focus-visible:ring-offset-0 focus-visible:border-foreground/20 shadow-none transition-all duration-200",
                 autoComplete.length > 0
                   ? "focus-visible:border-b-transparent rounded-b-none"
                   : ""
@@ -102,9 +102,7 @@ const Page = () => {
             />
             <div className="absolute bottom-0 left-0 p-2 flex flex-row gap-2 items-center justify-between w-full">
               <div className="flex flex-row gap-2 items-center justify-center">
-                <Button size={"xs"} variant={"outline"}>
-                  Total: 10
-                </Button>
+               
               </div>
               <div className="flex flex-row items-center justify-center gap-1">
                 <Button size={"icon-sm"} variant={"ghost"} disabled>
