@@ -10,7 +10,7 @@ import {
 import { DropdownMenu } from "@/components/ui/dropdown-menu";
 import { useRouter } from "@/i18n/navigation";
 import { useOrganizerProfile } from "@/query/organization/profile/use-organizer-profile";
-import { Building2, Settings, User } from "lucide-react";
+import { Building2, Home, LogOut, Settings, User } from "lucide-react";
 
 const AdminAccount = () => {
   const { data } = useOrganizerProfile();
@@ -39,27 +39,34 @@ const AdminAccount = () => {
         <DropdownMenuItem
           onClick={() => router.push("/dashboard/settings?tab=profile")}
         >
-          <User className="size-4 mr-2" />
+          <User className="size-3.5 mr-1" />
           Profile
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => router.push("/dashboard/settings?tab=organization")}
         >
-          <Building2 className="size-4 mr-2" />
+          <Building2 className="size-3.5 mr-1" />
           Organization
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => router.push("/dashboard/settings?tab=general")}
         >
-          <Settings className="size-4 mr-2" />
+          <Settings className="size-3.5 mr-1" />
           Settings
         </DropdownMenuItem>
         <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={() => router.push("/")}
+        >
+          <Home className="size-3.5 mr-1" />
+          Home
+        </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {
             router.push("/logout");
           }}
         >
+          <LogOut className="size-3.5 mr-1" />
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>

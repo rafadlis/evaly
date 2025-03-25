@@ -77,7 +77,7 @@ export function DashboardNavbar({ className }: { className?: string }) {
         className,
       )}
     >
-      <div className="mx-auto px-4 h-14">
+      <div className="mx-auto px-3 md:px-6 h-14">
         <div className="flex items-center h-full justify-between">
           <div className="flex flex-row items-center">
             {/* Logo */}
@@ -90,11 +90,11 @@ export function DashboardNavbar({ className }: { className?: string }) {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "text-muted-foreground transition-colors rounded-md hover:text-primary px-3 py-1.5 font-medium text-[15px] flex items-center",
+                    "text-muted-foreground transition-colors rounded-lg hover:text-primary px-3 py-1.5 font-medium text-sm flex items-center",
                     // Special case for dashboard
                     item.href === "/dashboard" 
-                      ? (pathname === "/dashboard" || pathname.startsWith("/dashboard/test")) && "text-primary"
-                      : pathname.startsWith(item.href) && "text-primary"
+                      ? (pathname === "/dashboard" || pathname.startsWith("/dashboard/test")) && "text-primary bg-secondary"
+                      : pathname.startsWith(item.href) && "text-primary bg-secondary"
                   )}
                 >
                   {/* {item.icon} */}
