@@ -7,4 +7,7 @@ const envSchema = z.object({
 });
 
 // Parse the environment variables
-export const env = envSchema.parse(process.env);
+export const env = envSchema.parse({
+  NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL,
+  NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+});
