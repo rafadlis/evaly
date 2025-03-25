@@ -10,8 +10,4 @@ const envSchema = z.object({
 });
 
 // Parse the environment variables
-export const env = envSchema.parse({
-  NEXT_PUBLIC_ENVIRONMENT: process.env.NEXT_PUBLIC_ENVIRONMENT,
-  NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_ENVIRONMENT === "development" ? process.env.NEXT_PUBLIC_URL_DEVELOPMENT : process.env.NEXT_PUBLIC_URL_STAGING,
-  NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_ENVIRONMENT === "development" ? process.env.NEXT_PUBLIC_API_URL_DEVELOPMENT : process.env.NEXT_PUBLIC_API_URL_STAGING,
-});
+export const env = envSchema.parse(process.env);
