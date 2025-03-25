@@ -73,7 +73,8 @@ IMPORTANT INSTRUCTIONS FOR QUESTION GENERATION:
 8. ONLY USE THE TOOL to generate questions - DO NOT include the questions in your text response
 9. Your response should ONLY contain a brief greeting and closing message - the actual questions will be handled by the tool
 10. DO NOT repeat or summarize the questions after using the tool - this creates duplicate content
-11. Respond as if in a direct conversation while strictly following these requirements`;
+11. Respond as if in a direct conversation while strictly following these requirements
+12. IMPORTANT: You must handle tool calls one at a time. While you can make multiple tool calls in a conversation, you must wait for each tool call to complete before making another one. Do not attempt to make multiple simultaneous tool calls.`;
 
         const result = streamText({
           model: openai("gpt-4o-mini"),

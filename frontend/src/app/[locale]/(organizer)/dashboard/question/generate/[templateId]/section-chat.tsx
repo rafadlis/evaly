@@ -12,6 +12,7 @@ import { useChat } from "@ai-sdk/react";
 import { env } from "@/lib/env";
 import { Message } from "ai";
 import { useMessages } from "./store";
+import Markdown from "react-markdown";
 
 const SectionChat = ({ initialMessages }: { initialMessages: Message[] }) => {
   const { data } = useOrganizerProfile();
@@ -46,9 +47,9 @@ const SectionChat = ({ initialMessages }: { initialMessages: Message[] }) => {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (scrollRef.current) {
-        scrollRef.current.scrollIntoView({ block: "end", behavior: "smooth" });
+        scrollRef.current.scrollIntoView({ block: "end", behavior: "instant" });
       }
-    }, 300); // longer delay to ensure everything is rendered
+    }, 10); // longer delay to ensure everything is rendered
     
     return () => clearTimeout(timeoutId);
   }, []);
@@ -153,7 +154,7 @@ const SectionChat = ({ initialMessages }: { initialMessages: Message[] }) => {
           </div>
         </div>
         <p className="text-xs text-muted-foreground w-full text-center mt-2 line-clamp-1">
-          Evaly may make mistakes. Please use with discretion.
+          Verify content before use. Evaly is still learning.
         </p>
       </form>
     </>
@@ -201,8 +202,8 @@ const AIMessage = ({ message }: { message: Message }) => {
         height={28}
         className="rounded-sm"
       />
-      <div className="flex-1 mt-0.5">
-        <p className="text-sm">{message.content}</p>
+      <div className="flex-1 mt-0.5 custom-prose lg:prose-sm prose-sm text-sm ">
+        <Markdown>{message.content}</Markdown>
       </div>
     </div>
   );
