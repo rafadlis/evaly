@@ -6,11 +6,9 @@
     "check-types": "tsc --noEmit",
     "db:migrate": "bun --filter @evaly/backend db:migrate",
     "db:studio": "bun --filter @evaly/backend db:studio",
-    "dev:fe": "bunx sst dev --stage=development --verbose",
     "dev:be": "bun --filter @evaly/backend dev",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "deploy:staging": "bunx sst deploy --stage staging --verbose",
-    "deploy:production": "bunx sst deploy --stage production --verbose"
+    "dev:fe": "bun --filter @evaly/frontend dev",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "keywords": [],
   "author": "",
@@ -18,8 +16,5 @@
   "workspaces": [
     "backend",
     "frontend"
-  ],
-  "dependencies": {
-    "sst": "3.9.26"
-  }
+  ]
 }
