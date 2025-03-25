@@ -4,7 +4,6 @@ import { z } from "zod";
 
 // Define the environment schema
 const envSchema = z.object({
-  NEXT_PUBLIC_ENVIRONMENT: z.string(),
   NEXT_PUBLIC_URL: z.string(),
   NEXT_PUBLIC_API_URL: z.string(),
 });
