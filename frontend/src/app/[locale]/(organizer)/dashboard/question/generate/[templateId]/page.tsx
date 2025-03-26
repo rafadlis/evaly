@@ -22,13 +22,15 @@ import { useEffect, useState } from "react";
 const Page = () => {
   const [canvasMessageId] = useQueryState("canvasMessageId");
   const [openSidebar, setOpenSidebar] = useState(true);
-  const [openCanvas, setOpenCanvas] = useState(canvasMessageId !== null);
+  const [openCanvas, setOpenCanvas] = useState(
+    canvasMessageId && canvasMessageId.length > 5
+  );
 
   const { templateId } = useParams();
   const { isPending, data } = useGetInitialMessages(templateId as string);
 
   useEffect(() => {
-    setOpenCanvas(canvasMessageId !== null);
+    setOpenCanvas(canvasMessageId && canvasMessageId.length > 5);
   }, [canvasMessageId]);
 
   if (isPending) return <LoadingScreen />;

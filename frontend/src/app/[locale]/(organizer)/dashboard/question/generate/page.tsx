@@ -59,7 +59,8 @@ const Page = () => {
       }
       startTransition(() => {
         router.push(
-          `/dashboard/question/generate/${data.id}?initialMessage=${message}`
+          `/dashboard/question/generate/${data.id}?initialMessage=${message}&canvasMessageId=`,
+          { scroll: true }
         );
       });
 
@@ -119,12 +120,27 @@ const Page = () => {
           }}
           className="relative text-primary font-mono mb-4 w-full max-w-2xl text-sm"
         >
-          <span><WandSparkles className="size-3 inline" /> Let&apos;s Craft Your Question</span>
-          <span><Lightbulb className="size-3 inline" /> Turn Ideas into Inquiries</span>
-          <span><Brain className="size-3 inline" /> Design Thought-Provoking Questions</span>
-          <span><Rocket className="size-3 inline" /> Create Engaging Challenges</span>
-          <span><Search className="size-3 inline" /> Spark Curiosity with Questions</span>
-          <span><RefreshCw className="size-3 inline" /> Transform Concepts into Queries</span>
+          <span>
+            <WandSparkles className="size-3 inline" /> Let&apos;s Craft Your
+            Question
+          </span>
+          <span>
+            <Lightbulb className="size-3 inline" /> Turn Ideas into Inquiries
+          </span>
+          <span>
+            <Brain className="size-3 inline" /> Design Thought-Provoking
+            Questions
+          </span>
+          <span>
+            <Rocket className="size-3 inline" /> Create Engaging Challenges
+          </span>
+          <span>
+            <Search className="size-3 inline" /> Spark Curiosity with Questions
+          </span>
+          <span>
+            <RefreshCw className="size-3 inline" /> Transform Concepts into
+            Queries
+          </span>
         </TextLoop>
         <div className="max-w-2xl w-full">
           <div className="relative">

@@ -58,6 +58,11 @@ const SectionChat = ({
   useEffect(() => {
     setMessages(messages);
     setStatus(status);
+
+    // Scroll to bottom whenever messages update or status changes
+    if (scrollRef.current && status === "ready") {
+      scrollRef.current.scrollIntoView({ block: "end", behavior: "smooth" });
+    }
   }, [messages, setMessages, status, setStatus]);
 
   // Scroll to bottom on initial load with a slight delay to ensure DOM is ready
@@ -81,6 +86,16 @@ const SectionChat = ({
       }
       handleSubmit();
       setInput("");
+
+      // Scroll to bottom after submitting
+      setTimeout(() => {
+        if (scrollRef.current) {
+          scrollRef.current.scrollIntoView({
+            block: "end",
+            behavior: "smooth",
+          });
+        }
+      }, 100);
     },
     [handleSubmit, setInput, input, status]
   );
@@ -128,8 +143,8 @@ const SectionChat = ({
           {status === "streaming" ? (
             <LoadingMessage message={"Generating..."} />
           ) : null}
-          <div ref={scrollRef} />
         </div>
+        <div ref={scrollRef} />
       </ScrollArea>
       <form onSubmit={submit} className="max-w-xl mx-auto px-4 h-[130px]">
         <div className="relative">
