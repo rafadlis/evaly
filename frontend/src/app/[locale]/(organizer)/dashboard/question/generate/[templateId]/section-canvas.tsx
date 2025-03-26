@@ -4,7 +4,7 @@ import { useEffect, useMemo } from "react";
 import { useQueryState } from "nuqs";
 import GenerateQuestion from "./components/generate-question";
 import { ToolInvocation } from "ai";
-
+import { motion } from "motion/react";
 
 const ToolComponent = ({
   toolInvocation,
@@ -28,12 +28,13 @@ const ToolComponent = ({
 };
 
 const SectionCanvas = () => {
-  const { messages } = useMessages();
+  const { messages, status } = useMessages();
   const [canvasMessageId, setCanvasMessageId] =
     useQueryState("canvasMessageId");
 
   // Handle message ID updates
   useEffect(() => {
+    if (status === "ready" && canvasMessageId) return;
     if (messages.length > 0) {
       const lastToolMessage = messages.findLast((message) =>
         message.parts.some((part) => part.type === "tool-invocation")
@@ -42,7 +43,7 @@ const SectionCanvas = () => {
         setCanvasMessageId(lastToolMessage.id);
       }
     }
-  }, [messages, canvasMessageId, setCanvasMessageId]);
+  }, [messages, canvasMessageId, setCanvasMessageId, status]);
 
   const selectedToolInvocationMessage = useMemo(() => {
     return messages.find((message) => message.id === canvasMessageId);
@@ -55,10 +56,17 @@ const SectionCanvas = () => {
           {selectedToolInvocationMessage?.parts?.map((part) => {
             if (part.type === "tool-invocation") {
               return (
-                <ToolComponent
+                <motion.div
                   key={part.toolInvocation.toolCallId}
-                  toolInvocation={part.toolInvocation}
-                />
+                  initial={{ opacity: 0.5,  filter: "blur(5px)", }}
+                  animate={{ opacity: 1, filter: "blur(0px)", }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <ToolComponent
+                    key={part.toolInvocation.toolCallId}
+                    toolInvocation={part.toolInvocation}
+                  />
+                </motion.div>
               );
             }
             return null;

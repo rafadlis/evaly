@@ -69,7 +69,7 @@ const Page = () => {
         }}
         onClick={() => setOpenSidebar(!openSidebar)}
         type="button"
-        className="h-[calc(100vh-56px)] w-4 bg-transparent hover:bg-secondary cursor-pointer group"
+        className="h-[calc(100vh-56px)] w-4 bg-secondary/50 hover:bg-secondary cursor-pointer group"
       >
         <div className="w-1 h-10 bg-muted-foreground rounded-full ml-1.5 group-hover:bg-foreground transition-all duration-200" />
       </motion.button>

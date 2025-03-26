@@ -3,10 +3,16 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useOrganizerProfile } from "@/query/organization/profile/use-organizer-profile";
-import { Paperclip, UserIcon, Wand2Icon } from "lucide-react";
+import {
+  ArrowRight,
+  Loader2,
+  Paperclip,
+  UserIcon,
+  Wand2Icon,
+} from "lucide-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useQueryState } from "nuqs";
 import { useChat } from "@ai-sdk/react";
 import { env } from "@/lib/env";
@@ -14,6 +20,8 @@ import { Message } from "ai";
 import { useMessages } from "./store";
 import Markdown from "react-markdown";
 import { GenerateQuestionQuestionChat } from "./components/generate-question";
+import { TextShimmer } from "@/components/ui/text-shimmer";
+import { toast } from "sonner";
 
 const SectionChat = ({
   initialMessages,
@@ -60,15 +68,29 @@ const SectionChat = ({
     return () => clearTimeout(timeoutId);
   }, []);
 
+  const submit = useCallback(
+    (e?: React.FormEvent<HTMLFormElement>) => {
+      e?.preventDefault();
+      if (input.trim() === "") return;
+      if (status === "submitted" || status === "streaming") {
+        toast.error("Please wait for the previous message to be generated.");
+        return;
+      }
+      handleSubmit();
+      setInput("");
+    },
+    [handleSubmit, setInput, input, status]
+  );
+
   // This is only works if previously user coming from the landing page of chatbot
   useEffect(() => {
     if (initialMessage) {
       setTimeout(() => {
         setInitialMessage(null);
-        handleSubmit();
+        submit();
       }, 100);
     }
-  }, [initialMessage, setInput, setInitialMessage, handleSubmit]);
+  }, [initialMessage, setInput, setInitialMessage, submit]);
 
   return (
     <div className={cn(className)}>
@@ -88,10 +110,11 @@ const SectionChat = ({
               <AIMessage key={message.id} message={message} />
             )
           )}
+          {status === "submitted" ? <LoadingMessage /> : null}
           <div ref={scrollRef} />
         </div>
       </ScrollArea>
-      <form onSubmit={handleSubmit} className="max-w-xl mx-auto px-4 h-[130px]">
+      <form onSubmit={submit} className="max-w-xl mx-auto px-4 h-[130px]">
         <div className="relative">
           <Textarea
             value={input}
@@ -100,7 +123,7 @@ const SectionChat = ({
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
-                handleSubmit();
+                submit();
               }
             }}
             placeholder="Add a follow up..."
@@ -115,6 +138,18 @@ const SectionChat = ({
               </Button>
               <Button size={"icon-sm"} variant={"ghost"}>
                 <Paperclip />
+              </Button>
+              <Button
+                size={"icon-sm"}
+                type="submit"
+                variant={input.trim() ? "default" : "secondary-outline"}
+                disabled={status === "submitted" || status === "streaming"}
+              >
+                {status === "submitted" || status === "streaming" ? (
+                  <Loader2 className="size-4 stroke-3 text-muted-foreground animate-spin" />
+                ) : (
+                  <ArrowRight className="size-4 stroke-3" />
+                )}
               </Button>
             </div>
           </div>
@@ -175,6 +210,7 @@ const AIMessage = ({ message }: { message: Message }) => {
               <GenerateQuestionQuestionChat
                 key={part.toolInvocation.toolCallId}
                 toolInvocation={part.toolInvocation}
+                messageId={message.id}
               />
             );
           }
@@ -187,6 +223,21 @@ const AIMessage = ({ message }: { message: Message }) => {
           </div>
         )}
       </div>
+    </div>
+  );
+};
+
+const LoadingMessage = () => {
+  return (
+    <div className="flex items-start gap-3 px-6 py-3">
+      <Image
+        src={"/images/logo.svg"}
+        alt="User"
+        width={28}
+        height={28}
+        className="rounded-full"
+      />
+      <TextShimmer className="flex-1 mt-0.5 text-sm">Thinking...</TextShimmer>
     </div>
   );
 };

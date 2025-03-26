@@ -6,13 +6,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useUpdateBetweenQuestionMutation } from "@/query/organization/question/use-update-between-question.mutation";
 import { Question } from "@evaly/backend/types/question";
-import {
-  ArrowDown,
-  ArrowUp,
-  CheckCircle2,
-  Loader2,
-  MousePointerClick,
-} from "lucide-react";
+import { ArrowDown, ArrowUp, CheckIcon, Loader2, MousePointerClick } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -102,15 +96,25 @@ const CardQuestion = ({
     >
       <CardHeader className="px-6 flex flex-row justify-between items-center ">
         <div className="flex flex-row gap-3">
-          <Badge variant={"secondary"} className="text-xs px-3 text-muted-foreground">
+          <Badge
+            variant={"secondary"}
+            className="text-xs px-3 text-muted-foreground"
+          >
             # Question {data.order}
           </Badge>
           {data.pointValue ? (
-            <Badge variant={"secondary"} className="text-xs px-3 text-muted-foreground">
+            <Badge
+              variant={"secondary"}
+              className="text-xs px-3 text-muted-foreground"
+            >
               Point: {data.pointValue}
             </Badge>
           ) : null}
-          <QuestionTypeSelection value={data.type} className="text-muted-foreground" variant={"ghost"} />
+          <QuestionTypeSelection
+            value={data.type}
+            className="text-muted-foreground"
+            variant={"ghost"}
+          />
         </div>
         <div className="flex-row h-5 justify-end items-center hidden group-hover:flex">
           <Button
@@ -181,30 +185,34 @@ const CardQuestion = ({
           }}
         />
         {!hideOptions ? (
-          <div className="flex flex-col gap-3 text-sm mt-2">
+          <div className="flex flex-row flex-wrap gap-y-3 gap-x-10 text-sm mt-2">
             {data.options?.map((option, i) => (
               <div
                 key={option.id || `option-${i}`}
-                className="flex flex-row flex-wrap items-start gap-3"
+                className={cn(
+                  "flex flex-row flex-wrap items-center gap-2",
+                  option.isCorrect
+                    ? "text-emerald-600 font-medium"
+                    : "text-muted-foreground"
+                )}
               >
-                <Button
-                  size={"icon-xs"}
-                  variant={option.isCorrect ? "success" : "secondary"}
-                >
-                  {option.isCorrect ? (
-                    <CheckCircle2 />
-                  ) : (
-                    String.fromCharCode(65 + i)
-                  )}
-                </Button>
-                <span
-                  className={cn(
-                    "flex-1 mt-1",
-                    option.isCorrect ? "text-foreground" : ""
-                  )}
-                >
+                {option.isCorrect ? (
+                  <span className="lowercase">
+                    {String.fromCharCode(65 + i)}.
+                  </span>
+                ) : (
+                  <span className="text-muted-foreground lowercase">
+                    {String.fromCharCode(65 + i)}.
+                  </span>
+                )}
+                <span className={cn("flex-1")}>
                   {option.text || "Option " + (i + 1)}
                 </span>
+                {
+                  option.isCorrect ? (
+                    <CheckIcon size={13} />
+                  ) : null
+                }
               </div>
             ))}
           </div>

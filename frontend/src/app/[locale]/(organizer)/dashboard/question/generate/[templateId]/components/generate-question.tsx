@@ -1,12 +1,13 @@
 import CardQuestion from "@/components/shared/card/card-question";
 import { Button } from "@/components/ui/button";
-import { Loader2, SaveIcon } from "lucide-react";
+import { ArrowRight, Loader2, SaveIcon } from "lucide-react";
 import { ToolInvocation } from "ai";
 import { Question } from "@evaly/backend/types/question";
 import { useThrottle } from "@/hooks/use-throttle";
 import Markdown from "react-markdown";
 import { Badge } from "@/components/ui/badge";
 import { TextShimmer } from "@/components/ui/text-shimmer";
+import { useQueryState } from "nuqs";
 
 interface GenerateQuestionProps {
   toolInvocation: ToolInvocation;
@@ -49,9 +50,14 @@ const GenerateQuestion = ({ toolInvocation }: GenerateQuestionProps) => {
 
 export const GenerateQuestionQuestionChat = ({
   toolInvocation,
+  messageId,
 }: {
   toolInvocation: ToolInvocation;
+  messageId: string;
 }) => {
+  const [canvasMessageId, setCanvasMessageId] =
+    useQueryState("canvasMessageId");
+
   if (
     toolInvocation.state === "call" ||
     toolInvocation.state === "partial-call"
@@ -61,7 +67,7 @@ export const GenerateQuestionQuestionChat = ({
         <TextShimmer className="text-sm">Generating question...</TextShimmer>
         <div
           key={toolInvocation.toolCallId + "-call"}
-          className="p-3 border border-foreground/20 border-dashed bg-secondary text-sm font-medium flex flex-row gap-2 items-center"
+          className="p-3 border border-foreground/30 border-dashed text-sm font-medium flex flex-row gap-2 items-center"
         >
           <Loader2 className="size-4 animate-spin stroke-foreground/50" />
           {toolInvocation.args?.questions?.length} questions generated...
@@ -75,14 +81,24 @@ export const GenerateQuestionQuestionChat = ({
       <div className="custom-prose lg:prose-sm prose-sm text-sm">
         <Markdown>{toolInvocation.args?.preMessage || ""}</Markdown>
       </div>
-      <div className="p-3 border border-foreground/20 border-dashed bg-secondary text-sm font-medium flex flex-col gap-2 items-start">
+      <div className="p-3 border border-foreground/30 border-dashed text-sm font-medium flex flex-col gap-2 items-start">
         <p className="flex-1">
-          {toolInvocation.args?.summary || "Generating Questions..."}
+          {toolInvocation.args?.templateTitle || `${toolInvocation.args?.questions?.length} Questions generated`}
         </p>
         <div className="flex flex-row gap-2">
-          <Button variant={"default"} size={"xs"}>
-            <SaveIcon /> Save Questions
-          </Button>
+          {canvasMessageId === messageId ? (
+            <Button variant={"outline-solid"} size={"xs"}>
+              <SaveIcon /> Save Questions
+            </Button>
+          ) : (
+            <Button
+              variant={"default"}
+              size={"xs"}
+              onClick={() => setCanvasMessageId(messageId)}
+            >
+              Check Questions <ArrowRight />
+            </Button>
+          )}
 
           <Badge variant={"secondary"}>
             {toolInvocation.args?.questions?.length} questions
