@@ -4,7 +4,6 @@ import { ArrowRight, Loader2, SaveIcon } from "lucide-react";
 import { ToolInvocation } from "ai";
 import { Question } from "@evaly/backend/types/question";
 import { useThrottle } from "@/hooks/use-throttle";
-import Markdown from "react-markdown";
 import { Badge } from "@/components/ui/badge";
 import { TextShimmer } from "@/components/ui/text-shimmer";
 import { useQueryState } from "nuqs";
@@ -78,12 +77,9 @@ export const GenerateQuestionQuestionChat = ({
 
   return (
     <>
-      <div className="custom-prose lg:prose-sm prose-sm text-sm">
-        <Markdown>{toolInvocation.args?.preMessage || ""}</Markdown>
-      </div>
       <div className="p-3 border border-foreground/30 border-dashed text-sm font-medium flex flex-col gap-2 items-start">
         <p className="flex-1">
-          {toolInvocation.args?.templateTitle || `${toolInvocation.args?.questions?.length} Questions generated`}
+          {toolInvocation.args?.title || `${toolInvocation.args?.questions?.length} Questions generated`}
         </p>
         <div className="flex flex-row gap-2">
           {canvasMessageId === messageId ? (

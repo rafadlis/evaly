@@ -6,7 +6,7 @@ import { z } from "zod";
 import db from "../../lib/db";
 import { llmMessage } from "../../lib/db/schema";
 import { and, eq, sql } from "drizzle-orm";
-import { openai } from "@ai-sdk/openai";
+import { google } from "@ai-sdk/google";
 
 export const llmRouter = new Elysia().group("/llm", (app) => {
   return app
@@ -68,49 +68,109 @@ IMPORTANT INSTRUCTIONS FOR QUESTION GENERATION:
    - If user specifically requests "X questions" or "X MCQs" etc., generate EXACTLY X questions
    - If user doesn't specify a number, generate EXACTLY 5 questions
    - If user requests more than 50 questions, REJECT the request immediately and explain the 50-question limit
-   - ONLY mention the 50-question limit when users request more than 50 questions
+   - ONLY mention the 50-question limit when users request more than 50 questions, please don't mention it in other cases, it will break the conversation and the user will be angry
 5. Ensure all question IDs are unique strings (e.g., "q1", "q2", etc.) and option IDs follow pattern (e.g., "q1_opt1", "q1_opt2")
 6. Be conversational and natural in your responses, tailoring to the ${userPersona} role
 7. When user asks to edit or modify specific questions:
    - ALWAYS regenerate the ENTIRE set of questions, not just the modified ones
    - Maintain the same total number of questions as before
+   - If the user asks to edit or modify specific questions, you must regenerate the ENTIRE set of questions, not just the modified ones
+   - If the user asks to add more questions, you must regenerate the ENTIRE set of questions, and add the new questions to the end of the set
    - Apply the requested changes to the specified question(s)
    - Make sure the edited questions fit cohesively with the rest
 8. IMPORTANT: If the user asks to elaborate on already generated questions WITHOUT specifying a new topic, audience, or question count:
    - Use the SAME topic, audience, and number of questions from the previous generation
    - DO NOT ask for these details again
-   - Just proceed with generating improved/elaborated questions based on the previous context
-9. Only ask for these critical details if not provided AND there are no previous questions generated:
+   - Just proceed with generating improved/elaborated questions based on the previous context.
+9. User might ask to generate another topics variants, you need to remember the previous topics and generate the questions for the new topic.
+10. Only ask for these critical details if not provided AND there are no previous questions generated:
    - The TOPIC of the questions (subject matter, concept, skill being tested)
    - The TARGET AUDIENCE (grade level, student age, candidates for interview, etc.)
    - The NUMBER of questions
-10. ONLY USE THE TOOL to generate questions - DO NOT include the questions in your text response
-11. Your response should ONLY contain a brief greeting and closing message - the actual questions will be handled by the tool
-12. DO NOT repeat or summarize the questions after using the tool - this creates duplicate content
+11. ONLY USE TOOLS for generating content - NEVER include questions or topic recommendations in your text response
+12. CRITICAL: NEVER DUPLICATE ANY CONTENT from the tools in your text response - this creates confusion
 13. Respond as if in a direct conversation while strictly following these requirements
 14. IMPORTANT: You must handle tool calls one at a time. While you can make multiple tool calls in a conversation, you must wait for each tool call to complete before making another one. Do not attempt to make multiple simultaneous tool calls.
 15. CRITICAL: When using the generateQuestion tool, you MUST always include all three required fields:
    - 'questions': The array of question objects with their details
    - 'preMessage': A brief message to the user (keep it under 150 characters)
    - 'templateTitle': A concise title for the question set (keep it under 60 characters)
-   If any of these fields are missing, the tool will fail and the questions won't be delivered to the user.`;
+   If any of these fields are missing, the tool will fail and the questions won't be delivered to the user.
+16. TOPIC SPECIFICITY REQUIREMENT:
+   - If the user provides ONLY a broad subject area (e.g., "Math", "Science", "Chemistry", "History") WITHOUT specific topics
+   - OR if the topic is too vague or general
+   - THEN use the topicRecommendations tool FIRST to suggest specific topics before generating questions
+   - After topic recommendations appear through the tool, simply ask the user to select a topic (don't repeat the topics)
+   - ONLY proceed with question generation after you have a sufficiently specific topic
+17. NO LISTS IN TEXT RESPONSES: Never include numbered lists, bullet points, or any structured data in your text responses - all structured data must come from tool calls
+18. EXTREME BREVITY: Keep your text responses extremely brief - no longer than 1-2 short sentences
+19. ZERO DUPLICATION: If you use the topicRecommendations tool, your text response should NEVER mention any of the specific topics - they are already displayed through the tool`
+
+
 
         const result = streamText({
-          model: openai("gpt-4o-mini"),
+          model: google("gemini-2.0-flash-001"),
           toolCallStreaming: true,
           messages: body.messages,
-          maxSteps: 5,
           system: systemMessage,
+          maxSteps: 5,
           tools: {
-            generateQuestion: tool({
+            topicRecommendations: tool({
               description:
-                "Generate complete question sets including questions, a pre-message to the user, and a template title based on the user's input and persona. The tool handles the generation and formatting of the entire question package.",
+                "Generates specific topic recommendations when the user provides only a broad subject area or vague topic. Use this tool before generating questions when more specificity is needed.",
               parameters: z.object({
-                preMessage: z
+                subject: z
                   .string()
                   .describe(
-                    "A brief pre-message to the user, you can summarize the questions generated and the user's input"
+                    "The broad subject area provided by the user (e.g., Math, Science, Chemistry)"
                   ),
+                gradeLevel: z
+                  .string()
+                  .describe(
+                    "The grade level or target audience if specified by the user"
+                  ),
+                recommendations: z
+                  .array(
+                    z.object({
+                      topic: z
+                        .string()
+                        .describe(
+                          "A specific topic or concept within the subject area"
+                        ),
+                      description: z
+                        .string()
+                        .describe(
+                          "Brief description of what this topic covers"
+                        ),
+                    })
+                  )
+                  .describe(
+                    "3-5 specific topic recommendations within the broad subject area"
+                  ),
+                explanationMessage: z
+                  .string()
+                  .describe(
+                    "A brief message explaining why more specificity is needed and asking the user to select a topic"
+                  ),
+              }),
+              execute: async function ({
+                subject,
+                gradeLevel,
+                recommendations,
+                explanationMessage,
+              }) {
+                return {
+                  subject,
+                  gradeLevel,
+                  recommendations,
+                  explanationMessage,
+                };
+              },
+            }),
+            generateQuestion: tool({
+              description:
+                "Generate complete question sets including questions, and a template title based on the user's input and persona. The tool handles the generation and formatting of the entire question package.",
+              parameters: z.object({
                 questions: z
                   .array(
                     z.object({
@@ -153,23 +213,21 @@ IMPORTANT INSTRUCTIONS FOR QUESTION GENERATION:
                     })
                   )
                   .describe(
-                    "An array of questions. The number of questions MUST match exactly what the user requested. If the user didn't specify a count, generate EXACTLY 5 questions. DEFAULT to multiple-choice type unless explicitly requested otherwise."
+                    "An array of questions. The number of questions MUST match exactly what the user requested. Each question should be thoughtfully crafted to test understanding rather than just recall. Ensure questions are clear, unambiguous, and appropriate for the specified subject area. DEFAULT to multiple-choice type with 4 options (one correct) unless explicitly requested otherwise by the user."
                   ),
-                templateTitle: z
+                title: z
                   .string()
-                  .optional()
                   .describe(
                     "A descriptive title for this group of questions that clearly identifies its subject matter and purpose. Keep it concise (under 60 characters) but specific. This will be displayed as the chat title and used for navigation."
                   ),
               }),
-              execute: async function ({ questions, preMessage, templateTitle }) {
+              execute: async function ({ questions, title }) {
                 // Provide default title if not provided
                 const defaultTitle = "Generated Question Set";
-                
+
                 return {
                   questions,
-                  preMessage,
-                  templateTitle: templateTitle || defaultTitle,
+                  title: title || defaultTitle,
                 };
               },
             }),

@@ -22,6 +22,7 @@ import Markdown from "react-markdown";
 import { GenerateQuestionQuestionChat } from "./components/generate-question";
 import { TextShimmer } from "@/components/ui/text-shimmer";
 import { toast } from "sonner";
+import TopicsRecommendationChat from "./components/topics-recommendation";
 
 const SectionChat = ({
   initialMessages,
@@ -37,6 +38,8 @@ const SectionChat = ({
   const { setMessages, setStatus } = useMessages();
   const scrollRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const submitButtonRef = useRef<HTMLButtonElement>(null);
+
   const { messages, input, handleInputChange, handleSubmit, setInput, status } =
     useChat({
       id: templateId as string,
@@ -107,16 +110,31 @@ const SectionChat = ({
                 message={message}
               />
             ) : (
-              <AIMessage key={message.id} message={message} />
+              <AIMessage
+                key={message.id}
+                message={message}
+                submitNextMessage={(topic) => {
+                  setInput(topic);
+                  setTimeout(() => {
+                    submitButtonRef.current?.click();
+                  }, 100);
+                }}
+              />
             )
           )}
-          {status === "submitted" ? <LoadingMessage /> : null}
+          {status === "submitted" ? (
+            <LoadingMessage message={"Thinking..."} />
+          ) : null}
+          {status === "streaming" ? (
+            <LoadingMessage message={"Generating..."} />
+          ) : null}
           <div ref={scrollRef} />
         </div>
       </ScrollArea>
       <form onSubmit={submit} className="max-w-xl mx-auto px-4 h-[130px]">
         <div className="relative">
           <Textarea
+            disabled={status === "submitted" || status === "streaming"}
             value={input}
             onChange={handleInputChange}
             autoFocus
@@ -142,6 +160,7 @@ const SectionChat = ({
               <Button
                 size={"icon-sm"}
                 type="submit"
+                ref={submitButtonRef}
                 variant={input.trim() ? "default" : "secondary-outline"}
                 disabled={status === "submitted" || status === "streaming"}
               >
@@ -193,7 +212,13 @@ const UserMessage = ({
   );
 };
 
-const AIMessage = ({ message }: { message: Message }) => {
+const AIMessage = ({
+  message,
+  submitNextMessage,
+}: {
+  message: Message;
+  submitNextMessage: (topic: string) => void;
+}) => {
   return (
     <div className="flex items-start gap-3 px-6 py-3">
       <Image
@@ -204,30 +229,45 @@ const AIMessage = ({ message }: { message: Message }) => {
         className="rounded-full"
       />
       <div className="flex-1 mt-0.5 flex flex-col gap-4">
-        {message.parts?.map((part) => {
-          if (part.type === "tool-invocation") {
-            return (
-              <GenerateQuestionQuestionChat
-                key={part.toolInvocation.toolCallId}
-                toolInvocation={part.toolInvocation}
-                messageId={message.id}
-              />
-            );
-          }
-          return null;
-        })}
-
         {message.content && (
           <div className="custom-prose lg:prose-sm prose-sm text-sm">
             <Markdown>{message.content}</Markdown>
           </div>
         )}
+
+        {message.parts?.map((part) => {
+          if (part.type === "tool-invocation") {
+            switch (part.toolInvocation.toolName) {
+              case "generateQuestion":
+                return (
+                  <GenerateQuestionQuestionChat
+                    key={part.toolInvocation.toolCallId}
+                    toolInvocation={part.toolInvocation}
+                    messageId={message.id}
+                  />
+                );
+              case "topicRecommendations":
+                return (
+                  <TopicsRecommendationChat
+                    key={part.toolInvocation.toolCallId}
+                    toolInvocation={part.toolInvocation}
+                    onSelect={(topic) => {
+                      submitNextMessage(topic);
+                    }}
+                  />
+                );
+              default:
+                return null;
+            }
+          }
+          return null;
+        })}
       </div>
     </div>
   );
 };
 
-const LoadingMessage = () => {
+const LoadingMessage = ({ message = "Thinking..." }: { message?: string }) => {
   return (
     <div className="flex items-start gap-3 px-6 py-3">
       <Image
@@ -237,7 +277,7 @@ const LoadingMessage = () => {
         height={28}
         className="rounded-full"
       />
-      <TextShimmer className="flex-1 mt-0.5 text-sm">Thinking...</TextShimmer>
+      <TextShimmer className="flex-1 mt-0.5 text-sm">{message}</TextShimmer>
     </div>
   );
 };

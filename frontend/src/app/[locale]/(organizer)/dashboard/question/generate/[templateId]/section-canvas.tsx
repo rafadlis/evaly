@@ -40,7 +40,13 @@ const SectionCanvas = () => {
         message.parts.some((part) => part.type === "tool-invocation")
       );
       if (lastToolMessage && lastToolMessage.id !== canvasMessageId) {
-        setCanvasMessageId(lastToolMessage.id);
+        // Only set canvas message ID for generateQuestion tool invocations
+        const hasGenerateQuestionTool = lastToolMessage.parts.some(
+          part => part.type === "tool-invocation" && part.toolInvocation.toolName === "generateQuestion"
+        );
+        if (hasGenerateQuestionTool) {
+          setCanvasMessageId(lastToolMessage.id);
+        }
       }
     }
   }, [messages, canvasMessageId, setCanvasMessageId, status]);
