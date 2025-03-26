@@ -1,10 +1,5 @@
 "use client";
 
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
 import { motion } from "motion/react";
 import SectionCanvas from "./section-canvas";
 import SectionChat from "./section-chat";
@@ -13,44 +8,28 @@ import { useGetInitialMessages } from "@/query/organization/llm/get-initial-mess
 import { notFound, useParams } from "next/navigation";
 import LoadingScreen from "@/components/shared/loading/loading-screen";
 import { cn } from "@/lib/utils";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+// TODO: There is 3 states:
+/* 
+ Default:
+  - If no canvasId: Sidebar is fullwidth, canvas is 0 width
+  - If canvasId: Sidebar is 400px, canvas is full width
+ Reactive:
+  - If no canvasId: Sidebar is 400px, canvas is full width
+  - If canvasId: Sidebar is 400px, canvas is full width
+*/
 
 const Page = () => {
   const [canvasMessageId] = useQueryState("canvasMessageId");
+  const [openSidebar, setOpenSidebar] = useState(true);
+  const [openCanvas, setOpenCanvas] = useState(canvasMessageId !== null);
+
   const { templateId } = useParams();
   const { isPending, data } = useGetInitialMessages(templateId as string);
-  const [chatPanelSize, setChatPanelSize] = useState<{
-    min: number;
-    max: number;
-    default: number;
-  }>({
-    min: 20,
-    max: 50,
-    default: 100,
-  });
-
-  const getPanelSizePercentage = useCallback((targetWidth: number) => {
-    if (typeof window === "undefined") return 0;
-    return (targetWidth / window.innerWidth) * 100;
-  }, []);
 
   useEffect(() => {
-    const windowWidth = window.innerWidth;
-
-    if (canvasMessageId) {
-      setChatPanelSize({
-        min: getPanelSizePercentage(300),
-        max: getPanelSizePercentage(400),
-        default: getPanelSizePercentage(400),
-      });
-    } else {
-      setChatPanelSize({
-        min: getPanelSizePercentage(windowWidth),
-        max: getPanelSizePercentage(windowWidth),
-        default: getPanelSizePercentage(windowWidth),
-      });
-    }
-  }, [canvasMessageId, getPanelSizePercentage]);
+    setOpenCanvas(canvasMessageId !== null);
+  }, [canvasMessageId]);
 
   if (isPending) return <LoadingScreen />;
   if (!data) return notFound();
@@ -61,31 +40,62 @@ const Page = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
+      className="flex flex-row"
     >
-      <ResizablePanelGroup direction="horizontal" className="flex-1">
-        <ResizablePanel
-          minSize={chatPanelSize.min}
-          defaultSize={chatPanelSize.default}
-          maxSize={chatPanelSize.max}
-        >
-          <SectionChat initialMessages={data.messages ?? []} />
-        </ResizablePanel>
-        <ResizableHandle className="border-none" withHandle>
-          <div className="w-2 h-2 bg-secondary rounded-full"></div>
-        </ResizableHandle>
-        <ResizablePanel className="flex-1 bg-secondary/50 relative">
-          <div
-            className={cn(
-              "absolute inset-0",
-              "[background-size:20px_20px]",
-              "[background-image:radial-gradient(#d4d4d4_1px,transparent_1px)]",
-              "dark:[background-image:radial-gradient(#262626_1px,transparent_1px)]"
-            )}
-          />
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] dark:bg-transparent"></div>
-          <SectionCanvas />
-        </ResizablePanel>
-      </ResizablePanelGroup>
+      <motion.div
+        initial={{
+          width: !openCanvas ? "100%" : openSidebar ? "400px" : "0px",
+          opacity: openSidebar ? 1 : 0,
+          zIndex: openSidebar ? 1 : -1,
+        }}
+        animate={{
+          width: !openCanvas ? "100%" : openSidebar ? "400px" : "0px",
+          opacity: openSidebar ? 1 : 0,
+          zIndex: openSidebar ? 1 : -1,
+        }}
+        transition={{ duration: 0.15 }}
+      >
+        <SectionChat
+          initialMessages={data.messages ?? []}
+          className="min-w-[400px]"
+        />
+      </motion.div>
+      <motion.button
+        initial={{
+          display: !openCanvas ? "none" : "block",
+        }}
+        animate={{
+          display: !openCanvas ? "none" : "block",
+        }}
+        onClick={() => setOpenSidebar(!openSidebar)}
+        type="button"
+        className="h-[calc(100vh-56px)] w-4 bg-transparent hover:bg-secondary cursor-pointer group"
+      >
+        <div className="w-1 h-10 bg-muted-foreground rounded-full ml-1.5 group-hover:bg-foreground transition-all duration-200" />
+      </motion.button>
+      <motion.div
+        initial={{
+          width: openCanvas ? "100%" : "0px",
+          opacity: openCanvas ? 1 : 0,
+          zIndex: openCanvas ? 1 : -1,
+        }}
+        animate={{
+          width: openCanvas ? "100%" : "0px",
+          opacity: openCanvas ? 1 : 0,
+          zIndex: openCanvas ? 1 : -1,
+        }}
+        className="flex-1 relative bg-secondary/50"
+      >
+        <div
+          className={cn(
+            "absolute inset-0",
+            "[background-size:20px_20px]",
+            "[background-image:radial-gradient(#d4d4d4_1px,transparent_1px)]",
+            "dark:[background-image:radial-gradient(#262626_1px,transparent_1px)]"
+          )}
+        />
+        <SectionCanvas />
+      </motion.div>
     </motion.div>
   );
 };

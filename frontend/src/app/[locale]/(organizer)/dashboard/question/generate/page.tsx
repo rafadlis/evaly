@@ -77,12 +77,12 @@ const Page = () => {
     <div className="container flex-1 -mt-14 justify-center flex flex-col">
       {/* Prompt Section */}
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1}}
         transition={{ duration: 0.3 }}
         className="flex-col flex items-center"
       >
-        <h1 className="text-4xl font-semibold mb-6 relative text-primary">
+        <h1 className="text-4xl font-bold mb-8 relative text-primary">
           Let&apos;s Craft Your Question
         </h1>
         <div className="max-w-2xl w-full">

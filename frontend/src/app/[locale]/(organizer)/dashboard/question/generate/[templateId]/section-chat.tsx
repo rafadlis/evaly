@@ -3,18 +3,25 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useOrganizerProfile } from "@/query/organization/profile/use-organizer-profile";
-import { ArrowUp, Loader2, Paperclip, UserIcon, Wand2Icon } from "lucide-react";
+import { Paperclip, UserIcon, Wand2Icon } from "lucide-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useQueryState } from "nuqs";
 import { useChat } from "@ai-sdk/react";
 import { env } from "@/lib/env";
 import { Message } from "ai";
 import { useMessages } from "./store";
 import Markdown from "react-markdown";
+import { GenerateQuestionQuestionChat } from "./components/generate-question";
 
-const SectionChat = ({ initialMessages }: { initialMessages: Message[] }) => {
+const SectionChat = ({
+  initialMessages,
+  className,
+}: {
+  initialMessages: Message[];
+  className?: string;
+}) => {
   const { data } = useOrganizerProfile();
   const userProfile = data?.data?.user.image;
   const { templateId } = useParams();
@@ -22,7 +29,6 @@ const SectionChat = ({ initialMessages }: { initialMessages: Message[] }) => {
   const { setMessages, setStatus } = useMessages();
   const scrollRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  const [userHasScrolled, setUserHasScrolled] = useState(false);
   const { messages, input, handleInputChange, handleSubmit, setInput, status } =
     useChat({
       id: templateId as string,
@@ -50,36 +56,9 @@ const SectionChat = ({ initialMessages }: { initialMessages: Message[] }) => {
         scrollRef.current.scrollIntoView({ block: "end", behavior: "instant" });
       }
     }, 10); // longer delay to ensure everything is rendered
-    
+
     return () => clearTimeout(timeoutId);
   }, []);
-
-  // Track user scroll manually
-  useEffect(() => {
-    const chatContainer = document.querySelector('.scroll-area-viewport') as HTMLDivElement;
-    if (!chatContainer) return;
-    
-    const handleScroll = () => {
-      const { scrollTop, scrollHeight, clientHeight } = chatContainer;
-      const isAtBottom = scrollHeight - scrollTop <= clientHeight + 20; // 20px threshold
-      
-      if (!isAtBottom) {
-        setUserHasScrolled(true);
-      } else {
-        setUserHasScrolled(false);
-      }
-    };
-    
-    chatContainer.addEventListener('scroll', handleScroll);
-    return () => chatContainer.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Auto scroll to the bottom when messages change and status is "streaming"
-  useEffect(() => {
-    if (scrollRef.current && status === "streaming" && !userHasScrolled) {
-      scrollRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
-    }
-  }, [messages, status, userHasScrolled]);
 
   // This is only works if previously user coming from the landing page of chatbot
   useEffect(() => {
@@ -92,9 +71,12 @@ const SectionChat = ({ initialMessages }: { initialMessages: Message[] }) => {
   }, [initialMessage, setInput, setInitialMessage, handleSubmit]);
 
   return (
-    <>
-      <ScrollArea className="h-[calc(100vh-190px)]">
-        <div ref={chatContainerRef} className="flex flex-col mx-auto py-6 max-w-xl">
+    <div className={cn(className)}>
+      <ScrollArea className="h-[calc(100vh-186px)]">
+        <div
+          ref={chatContainerRef}
+          className="flex flex-col mx-auto max-w-xl pt-5 pb-10"
+        >
           {messages.map((message) =>
             message.role === "user" ? (
               <UserMessage
@@ -109,7 +91,7 @@ const SectionChat = ({ initialMessages }: { initialMessages: Message[] }) => {
           <div ref={scrollRef} />
         </div>
       </ScrollArea>
-      <form onSubmit={handleSubmit} className="max-w-xl mx-auto px-4">
+      <form onSubmit={handleSubmit} className="max-w-xl mx-auto px-4 h-[130px]">
         <div className="relative">
           <Textarea
             value={input}
@@ -119,7 +101,6 @@ const SectionChat = ({ initialMessages }: { initialMessages: Message[] }) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
                 handleSubmit();
-                setUserHasScrolled(false);
               }
             }}
             placeholder="Add a follow up..."
@@ -135,29 +116,14 @@ const SectionChat = ({ initialMessages }: { initialMessages: Message[] }) => {
               <Button size={"icon-sm"} variant={"ghost"}>
                 <Paperclip />
               </Button>
-              <Button
-                size={"icon-sm"}
-                variant={input.length > 0 ? "default" : "secondary-outline"}
-                onClick={() => {
-                  handleSubmit();
-                  setUserHasScrolled(false);
-                }}
-                disabled={status !== "ready"}
-              >
-                {status === "streaming" ? (
-                  <Loader2 className="size-4 stroke-3 text-muted-foreground animate-spin" />
-                ) : (
-                  <ArrowUp className="size-4 stroke-3 text-muted-foreground" />
-                )}
-              </Button>
             </div>
           </div>
         </div>
-        <p className="text-xs text-muted-foreground w-full text-center mt-2 line-clamp-1">
+        <p className="text-xs text-muted-foreground w-full text-center mt-1 line-clamp-1">
           Verify content before use. Evaly is still learning.
         </p>
       </form>
-    </>
+    </div>
   );
 };
 
@@ -178,7 +144,7 @@ const UserMessage = ({
           alt="User"
           width={28}
           height={28}
-          className="rounded-lg"
+          className="rounded-full"
         />
       ) : (
         <div className="rounded-lg bg-muted-foreground/20 size-7 flex items-center justify-center">
@@ -200,10 +166,26 @@ const AIMessage = ({ message }: { message: Message }) => {
         alt="User"
         width={28}
         height={28}
-        className="rounded-sm"
+        className="rounded-full"
       />
-      <div className="flex-1 mt-0.5 custom-prose lg:prose-sm prose-sm text-sm ">
-        <Markdown>{message.content}</Markdown>
+      <div className="flex-1 mt-0.5 flex flex-col gap-4">
+        {message.parts?.map((part) => {
+          if (part.type === "tool-invocation") {
+            return (
+              <GenerateQuestionQuestionChat
+                key={part.toolInvocation.toolCallId}
+                toolInvocation={part.toolInvocation}
+              />
+            );
+          }
+          return null;
+        })}
+
+        {message.content && (
+          <div className="custom-prose lg:prose-sm prose-sm text-sm">
+            <Markdown>{message.content}</Markdown>
+          </div>
+        )}
       </div>
     </div>
   );

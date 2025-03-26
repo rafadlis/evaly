@@ -1,8 +1,12 @@
 import CardQuestion from "@/components/shared/card/card-question";
 import { Button } from "@/components/ui/button";
-import { SaveIcon } from "lucide-react";
+import { Loader2, SaveIcon } from "lucide-react";
 import { ToolInvocation } from "ai";
 import { Question } from "@evaly/backend/types/question";
+import { useThrottle } from "@/hooks/use-throttle";
+import Markdown from "react-markdown";
+import { Badge } from "@/components/ui/badge";
+import { TextShimmer } from "@/components/ui/text-shimmer";
 
 interface GenerateQuestionProps {
   toolInvocation: ToolInvocation;
@@ -10,25 +14,26 @@ interface GenerateQuestionProps {
 
 const GenerateQuestion = ({ toolInvocation }: GenerateQuestionProps) => {
   const { args, state, toolCallId } = toolInvocation;
+  const argsQuestions = useThrottle<Question[]>(args?.questions, 200);
+
   if (state === "call") {
     return <p key={toolCallId + "-call"}>Generating question...</p>;
   }
 
-  const questions = args?.questions as Question[];
-  if (!questions) return null;
+  if (!argsQuestions) return null;
 
   return (
-    <div key={toolCallId}>
+    <div key={toolCallId} className="pb-4">
       <div className="flex justify-between items-end mb-4">
         <p className="text-sm text-muted-foreground">
-          {questions.length} questions generated
+          {argsQuestions.length} questions generated
         </p>
         <Button variant={"default"} size={"sm"}>
           <SaveIcon /> Save Questions
         </Button>
       </div>
       <div className="flex flex-col border border-dashed">
-        {questions.map((question, index) => (
+        {argsQuestions.map((question, index) => (
           <div key={question.id || index}>
             <CardQuestion
               className=""
@@ -42,4 +47,50 @@ const GenerateQuestion = ({ toolInvocation }: GenerateQuestionProps) => {
   );
 };
 
-  export default GenerateQuestion; 
+export const GenerateQuestionQuestionChat = ({
+  toolInvocation,
+}: {
+  toolInvocation: ToolInvocation;
+}) => {
+  if (
+    toolInvocation.state === "call" ||
+    toolInvocation.state === "partial-call"
+  ) {
+    return (
+      <>
+        <TextShimmer className="text-sm">Generating question...</TextShimmer>
+        <div
+          key={toolInvocation.toolCallId + "-call"}
+          className="p-3 border border-foreground/20 border-dashed bg-secondary text-sm font-medium flex flex-row gap-2 items-center"
+        >
+          <Loader2 className="size-4 animate-spin stroke-foreground/50" />
+          {toolInvocation.args?.questions?.length} questions generated...
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <div className="custom-prose lg:prose-sm prose-sm text-sm">
+        <Markdown>{toolInvocation.args?.preMessage || ""}</Markdown>
+      </div>
+      <div className="p-3 border border-foreground/20 border-dashed bg-secondary text-sm font-medium flex flex-col gap-2 items-start">
+        <p className="flex-1">
+          {toolInvocation.args?.summary || "Generating Questions..."}
+        </p>
+        <div className="flex flex-row gap-2">
+          <Button variant={"default"} size={"xs"}>
+            <SaveIcon /> Save Questions
+          </Button>
+
+          <Badge variant={"secondary"}>
+            {toolInvocation.args?.questions?.length} questions
+          </Badge>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default GenerateQuestion;
