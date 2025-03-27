@@ -191,7 +191,7 @@ const CardQuestion = ({
               <div
                 key={option.id || `option-${i}`}
                 className={cn(
-                  "flex flex-row flex-wrap items-center gap-2",
+                  "flex flex-row flex-wrap items-start gap-2",
                   option.isCorrect
                     ? "text-emerald-600 font-medium"
                     : "text-muted-foreground"
