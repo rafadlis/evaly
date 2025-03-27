@@ -3,19 +3,21 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Label } from "../ui/label";
 import { questionTypes } from "@/constants/question-type";
 import { QuestionType } from "@evaly/backend/types/question";
-
+import { cn } from "@/lib/utils";
 const QuestionTypeSelection = ({
   value,
   onValueChange,
   size = "xs",
   variant = "outline",
   className,
+  readonly = false,
 }: {
   value?: QuestionType | null
   onValueChange?: (value: QuestionType) => void;
   size?: React.ComponentProps<typeof Button>["size"];
   variant?: React.ComponentProps<typeof Button>["variant"];
   className?: string;
+  readonly?: boolean;
 }) => {
   // Get the current selected question type or default to "multiple-choice"
   const selectedType = value && questionTypes[value] ? questionTypes[value] : questionTypes["multiple-choice"];
@@ -26,7 +28,7 @@ const QuestionTypeSelection = ({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button size={size}  variant={variant} className={className}>
+        <Button size={size} disabled={readonly} variant={variant} className={cn("cursor-default disabled:opacity-100", className)}>
           {SelectedIcon && <SelectedIcon size={16} className="mr-1" />}
           {selectedType?.label || "Multiple Choice"} 
         </Button>

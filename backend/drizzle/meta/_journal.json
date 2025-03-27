@@ -421,6 +421,13 @@
       "when": 1742860237858,
       "tag": "0059_cheerful_changeling",
       "breakpoints": true
+    },
+    {
+      "idx": 60,
+      "version": "7",
+      "when": 1743034031090,
+      "tag": "0060_flimsy_winter_soldier",
+      "breakpoints": true
     }
   ]
 }

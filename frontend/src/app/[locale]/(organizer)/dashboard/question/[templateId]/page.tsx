@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import CardQuestion from "@/components/shared/card/card-question";
-import { PlusIcon } from "lucide-react";
+import { EyeIcon, EyeOffIcon, PlusIcon } from "lucide-react";
 import DialogEditQuestion from "@/components/shared/dialog/dialog-edit-question";
 import { Question } from "@evaly/backend/types/question";
 import { useEffect, useMemo, useState } from "react";
@@ -74,12 +74,7 @@ const Page = () => {
 
   return (
     <div className="container dashboard-margin">
-      <Header
-        templateId={templateId}
-        totalQuestions={localQuestions.length}
-        setLocalQuestions={setLocalQuestions}
-        setSelectedEditQuestion={setSelectedEditQuestion}
-      />
+      <Header templateId={templateId} />
 
       <div className="flex flex-row justify-between items-center mt-10">
         <h1>
@@ -88,15 +83,32 @@ const Page = () => {
             Total: {localQuestions.length}
           </Badge>
         </h1>
-        {isHavingOptions ? (
-          <Button
-            variant={"outline"}
-            size={"sm"}
-            onClick={() => setHideOptions(!hideOptions)}
-          >
-            {hideOptions ? "Show options" : "Hide options"}
-          </Button>
-        ) : null}
+
+        <div className="flex flex-row items-center gap-2">
+          {isHavingOptions ? (
+            <Button
+              variant={"ghost"}
+              size={"sm"}
+              onClick={() => setHideOptions(!hideOptions)}
+            >
+              {hideOptions ? <EyeOffIcon /> : <EyeIcon />} Options
+            </Button>
+          ) : null}
+          <DialogAddQuestion
+            referenceId={templateId}
+            onSuccessCreateQuestion={(questions) => {
+              setSelectedEditQuestion(questions[0]);
+              setLocalQuestions((prev) => [...prev, ...questions]);
+            }}
+            order={localQuestions.length + 1}
+            referenceType="template"
+            triggerButton={
+              <Button size={"sm"} variant={"outline"}>
+                <PlusIcon /> Add Question
+              </Button>
+            }
+          />
+        </div>
       </div>
 
       <Reorder.Group
@@ -104,7 +116,7 @@ const Page = () => {
         values={localQuestions}
         as="div"
         className={cn(
-          "mt-2 flex flex-col border rounded-lg overflow-clip",
+          "mt-2 flex flex-col border rounded-lg border-dashed overflow-clip",
           localQuestions.length > 0 ? "pb-6" : ""
         )}
       >
@@ -147,7 +159,7 @@ const Page = () => {
             />
             <div
               className={cn(
-                "h-8 flex items-center justify-center group/separator relative",
+                "h-6 flex items-center justify-center group/separator relative",
                 index === localQuestions.length - 1 ? "mt-4" : ""
               )}
             >

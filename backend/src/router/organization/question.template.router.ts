@@ -1,4 +1,4 @@
-import Elysia from "elysia";
+import Elysia, { t } from "elysia";
 import { organizationMiddleware } from "../../middlewares/auth.middleware";
 import { createQuestionTemplate } from "../../services/organization/question/create-question-template";
 import { getAllQuestionTemplate } from "../../services/organization/question/get-all-question-template";
@@ -13,12 +13,27 @@ export const questionTemplateRouter = new Elysia().group("/template", (app) =>
     .derive(organizationMiddleware)
 
     // Create new question template
-    .post("/create", async ({ organizer: { organizationId, id }, error }) => {
-      return await createQuestionTemplate({
-        organizationId,
-        organizerId: id,
-      });
-    })
+    .post(
+      "/create",
+      async ({ organizer: { organizationId, id }, body, error }) => {
+        return await createQuestionTemplate(
+          {
+            organizationId,
+            organizerId: id,
+            title: body.title,
+          },
+          body.withInitialQuestion
+        );
+      },
+      {
+        body: t.Object({
+          withInitialQuestion: t.Boolean({
+            default: true,
+          }),
+          title: t.Optional(t.String()),
+        }),
+      }
+    )
 
     // Get all question template
     .get("/all", async ({ organizer: { organizationId } }) => {

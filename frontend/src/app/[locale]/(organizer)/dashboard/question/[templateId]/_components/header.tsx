@@ -1,12 +1,10 @@
 import BackButton from "@/components/shared/back-button";
-import DialogAddQuestion from "@/components/shared/dialog/dialog-add-question-2";
 import { Button } from "@/components/ui/button";
 import { $api } from "@/lib/api";
 import { useQuestionTemplateById } from "@/query/organization/question/use-question-template-by-id";
-import { Question, QuestionTemplate } from "@evaly/backend/types/question";
+import { QuestionTemplate } from "@evaly/backend/types/question";
 import { useMutation } from "@tanstack/react-query";
-import { SetStateAction, useEffect } from "react";
-import { Dispatch } from "react";
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import TagsInput from "@/components/ui/tags-input";
@@ -19,18 +17,10 @@ import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import DialogDeleteQuestionTemplate from "@/components/shared/dialog/dialog-delete-question-template";
 import { useRouter } from "@/i18n/navigation";
+import { InfoIcon } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
-const Header = ({
-  templateId,
-  setLocalQuestions,
-  setSelectedEditQuestion,
-  totalQuestions,
-}: {
-  templateId: string;
-  totalQuestions: number;
-  setLocalQuestions: Dispatch<SetStateAction<Question[]>>;
-  setSelectedEditQuestion: Dispatch<SetStateAction<Question | undefined>>;
-}) => {
+const Header = ({ templateId }: { templateId: string }) => {
   const { data: questionTemplate, isLoading: isLoadingQuestionTemplate } =
     useQuestionTemplateById(templateId);
 
@@ -54,7 +44,6 @@ const Header = ({
   });
 
   const {
-    register,
     formState: { isDirty },
     control,
     handleSubmit,
@@ -76,23 +65,54 @@ const Header = ({
       className="flex flex-row justify-between items-start"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <div>
-        <BackButton className="mb-2" href={`/dashboard/question`} />
-        <input
-          {...register("title")}
-          disabled={isLoadingQuestionTemplate || isUpdatingQuestionTemplate}
-          className="outline-none text-xl font-medium max-w-xl w-full md:w-xl"
-          placeholder="Add question template title"
+      <div className="flex flex-col gap-2">
+        <BackButton href={`/dashboard/question`} className="w-max"/>
+        <Controller
+          control={control}
+          name="title"
+          render={({ field }) => (
+            <input
+              value={field.value || ""}
+              onChange={field.onChange}
+              disabled={isLoadingQuestionTemplate || isUpdatingQuestionTemplate}
+              className="outline-none text-xl font-medium max-w-xl w-full md:w-xl"
+              placeholder="Add question template title"
+            />
+          )}
         />
+        {isDirty ? (
+          <Button
+            disabled={
+              !isDirty ||
+              isLoadingQuestionTemplate ||
+              isUpdatingQuestionTemplate
+            }
+            className="w-max"
+            type="submit"
+            size={"sm"}
+          >
+            {isUpdatingQuestionTemplate ? "Saving..." : "Save"}
+          </Button>
+        ) : null}
       </div>
       <div className="flex flex-row gap-2">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant={"ghost"} size={"icon-sm"}>
+              <InfoIcon />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            You can use this template on a test detail page
+          </TooltipContent>
+        </Tooltip>
         <Controller
           control={control}
           name="tags"
           render={({ field }) => (
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" className="gap-1">
+                <Button variant="ghost" className="gap-1" size={"sm"}>
                   {field.value && field.value.length ? (
                     <span>Tags: </span>
                   ) : (
@@ -131,23 +151,7 @@ const Header = ({
             </Popover>
           )}
         />
-        <DialogAddQuestion
-          referenceId={templateId}
-          onSuccessCreateQuestion={(questions) => {
-            setSelectedEditQuestion(questions[0]);
-            setLocalQuestions((prev) => [...prev, ...questions]);
-          }}
-          order={totalQuestions + 1}
-          referenceType="template"
-        />
-        <Button
-          disabled={
-            !isDirty || isLoadingQuestionTemplate || isUpdatingQuestionTemplate
-          }
-          type="submit"
-        >
-          {isUpdatingQuestionTemplate ? "Saving..." : "Save"}
-        </Button>
+
         <DialogDeleteQuestionTemplate
           templateId={templateId}
           onSuccess={() => {

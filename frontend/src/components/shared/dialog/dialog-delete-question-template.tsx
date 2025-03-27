@@ -49,7 +49,7 @@ const DialogDeleteQuestionTemplate = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant={"ghost"} size={"icon"} className={cn("", className)}>
+        <Button variant={"secondary"} size={"icon-sm"} className={cn("", className)}>
           <Trash2Icon />
         </Button>
       </DialogTrigger>

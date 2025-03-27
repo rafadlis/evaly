@@ -60,7 +60,7 @@ const CreateQuestionTemplateButton = () => {
   const { mutate: createQuestionTemplate, isPending: isLoading } = useMutation({
     mutationKey: ["create-question-template"],
     mutationFn: async () => {
-      const res = await $api.organization.question.template.create.post();
+      const res = await $api.organization.question.template.create.post({withInitialQuestion: true});
 
       if (!res.data) {
         toast.error("Failed to create question template");

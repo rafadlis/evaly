@@ -111,6 +111,7 @@ const CardQuestion = ({
             </Badge>
           ) : null}
           <QuestionTypeSelection
+            readonly={true}
             value={data.type}
             className="text-muted-foreground"
             variant={"ghost"}
@@ -118,7 +119,7 @@ const CardQuestion = ({
         </div>
         <div className="flex-row h-5 justify-end items-center hidden group-hover:flex">
           <Button
-            className="hidden group-hover:flex ml-4"
+            className="hidden group-hover:flex mr-2"
             size={"xs"}
             variant={"secondary"}
           >

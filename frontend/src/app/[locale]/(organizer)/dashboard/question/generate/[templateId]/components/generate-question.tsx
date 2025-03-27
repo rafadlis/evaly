@@ -1,12 +1,13 @@
 import CardQuestion from "@/components/shared/card/card-question";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Loader2, SaveIcon } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { ToolInvocation } from "ai";
 import { Question } from "@evaly/backend/types/question";
 import { useThrottle } from "@/hooks/use-throttle";
 import { Badge } from "@/components/ui/badge";
 import { TextShimmer } from "@/components/ui/text-shimmer";
 import { useQueryState } from "nuqs";
+import DialogSaveQuestionsFromLLM from "@/components/shared/dialog/dialog-save-questions-from-llm";
 
 interface GenerateQuestionProps {
   toolInvocation: ToolInvocation;
@@ -28,9 +29,7 @@ const GenerateQuestion = ({ toolInvocation }: GenerateQuestionProps) => {
         <p className="text-sm text-muted-foreground">
           {argsQuestions.length} questions generated
         </p>
-        <Button variant={"default"} size={"sm"}>
-          <SaveIcon /> Save Questions
-        </Button>
+        <DialogSaveQuestionsFromLLM variant={"default"} size={"sm"} questions={argsQuestions} title={args?.title || "Questions"}/>
       </div>
       <div className="flex flex-col border border-dashed">
         {argsQuestions.map((question, index) => (
@@ -79,13 +78,12 @@ export const GenerateQuestionQuestionChat = ({
     <>
       <div className="p-3 border border-foreground/30 border-dashed text-sm font-medium flex flex-col gap-2 items-start">
         <p className="flex-1">
-          {toolInvocation.args?.title || `${toolInvocation.args?.questions?.length} Questions generated`}
+          {toolInvocation.args?.title ||
+            `${toolInvocation.args?.questions?.length} Questions generated`}
         </p>
         <div className="flex flex-row gap-2">
           {canvasMessageId === messageId ? (
-            <Button variant={"outline-solid"} size={"xs"}>
-              <SaveIcon /> Save Questions
-            </Button>
+            <DialogSaveQuestionsFromLLM size={"xs"} variant={"outline-solid"} questions={toolInvocation.args?.questions || []} title={toolInvocation.args?.title || "Questions"}/>
           ) : (
             <Button
               variant={"default"}

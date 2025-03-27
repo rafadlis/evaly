@@ -6,9 +6,16 @@ export const llmMessage = pgTable(
   "llm_message",
   {
     id: varchar("id", { length: 100 }).$default(() => `llm-${ulid()}`).primaryKey(),
+    title: varchar("title", { length: 255 }),
     messages: jsonb("messages").$type<Message[]>(),
     organizationId: varchar("organization_id", { length: 255 }).notNull(),
     createdAt: timestamp("created_at", {
+      mode: "string",
+      withTimezone: true,
+    })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", {
       mode: "string",
       withTimezone: true,
     })

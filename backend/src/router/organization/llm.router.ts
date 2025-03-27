@@ -5,7 +5,7 @@ import { appendResponseMessages, streamText, tool } from "ai";
 import { z } from "zod";
 import db from "../../lib/db";
 import { llmMessage } from "../../lib/db/schema";
-import { and, eq, sql } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { google } from "@ai-sdk/google";
 
 export const llmRouter = new Elysia().group("/llm", (app) => {
@@ -90,22 +90,21 @@ IMPORTANT INSTRUCTIONS FOR QUESTION GENERATION:
 11. ONLY USE TOOLS for generating content - NEVER include questions or topic recommendations in your text response
 12. CRITICAL: NEVER DUPLICATE ANY CONTENT from the tools in your text response - this creates confusion
 13. Respond as if in a direct conversation while strictly following these requirements
-14. IMPORTANT: You must handle tool calls one at a time. While you can make multiple tool calls in a conversation, you must wait for each tool call to complete before making another one. Do not attempt to make multiple simultaneous tool calls.
-15. CRITICAL: When using the generateQuestion tool, you MUST always include all three required fields:
+14. CRITICAL: When using the generateQuestion tool, you MUST always include all three required fields:
    - 'questions': The array of question objects with their details
    - 'preMessage': A brief message to the user (keep it under 150 characters)
    - 'templateTitle': A concise title for the question set (keep it under 60 characters)
    If any of these fields are missing, the tool will fail and the questions won't be delivered to the user.
-16. TOPIC SPECIFICITY REQUIREMENT:
+15. TOPIC SPECIFICITY REQUIREMENT:
    - If the user provides ONLY a broad subject area (e.g., "Math", "Science", "Chemistry", "History") WITHOUT specific topics
    - OR if the topic is too vague or general
    - THEN use the topicRecommendations tool FIRST to suggest specific topics before generating questions
    - After topic recommendations appear through the tool, simply ask the user to select a topic (don't repeat the topics)
    - ONLY proceed with question generation after you have a sufficiently specific topic
-17. NO LISTS IN TEXT RESPONSES: Never include numbered lists, bullet points, or any structured data in your text responses - all structured data must come from tool calls
-18. EXTREME BREVITY: Keep your text responses extremely brief - no longer than 1-2 short sentences
-19. ZERO DUPLICATION: If you use the topicRecommendations tool, your text response should NEVER mention any of the specific topics - they are already displayed through the tool`
-
+16. NO LISTS IN TEXT RESPONSES: Never include numbered lists, bullet points, or any structured data in your text responses - all structured data must come from tool calls
+17. EXTREME BREVITY: Keep your text responses extremely brief - no longer than 1-2 short sentences
+18. ZERO DUPLICATION: If you use the topicRecommendations tool, your text response should NEVER mention any of the specific topics - they are already displayed through the tool
+`
 
 
         const result = streamText({
@@ -234,22 +233,38 @@ IMPORTANT INSTRUCTIONS FOR QUESTION GENERATION:
           },
           onFinish: async ({
             response,
+            toolResults,
             usage: { completionTokens, promptTokens, totalTokens },
           }) => {
+            
             const messages = appendResponseMessages({
               messages: body.messages,
               responseMessages: response.messages,
             });
+            let latestTitle = "";
+
+            for (const message of messages) {
+              if (message.parts?.some((part) => part.type === "tool-invocation" && part.toolInvocation.toolName === "generateQuestion")) {
+                const generateQuestionPart = message.parts.find(
+                  (part) => part.type === "tool-invocation" && part.toolInvocation.toolName === "generateQuestion"
+                );
+                if (generateQuestionPart?.type === "tool-invocation" && generateQuestionPart?.toolInvocation?.args?.title) {
+                  latestTitle = generateQuestionPart.toolInvocation.args.title;
+                }
+              }
+            }
 
             await db
               .insert(llmMessage)
               .values({
                 messages,
                 organizationId,
+                title: latestTitle,
                 id: templateId,
                 completitionTokens: completionTokens,
                 promptTokens: promptTokens,
                 totalTokens: totalTokens,
+                updatedAt: new Date().toISOString(),
               })
               .onConflictDoUpdate({
                 target: llmMessage.id,
@@ -258,6 +273,7 @@ IMPORTANT INSTRUCTIONS FOR QUESTION GENERATION:
                   completitionTokens: sql`${llmMessage.completitionTokens} + ${completionTokens}`,
                   promptTokens: sql`${llmMessage.promptTokens} + ${promptTokens}`,
                   totalTokens: sql`${llmMessage.totalTokens} + ${totalTokens}`,
+                  title: latestTitle,
                 },
               });
           },
@@ -293,6 +309,14 @@ IMPORTANT INSTRUCTIONS FOR QUESTION GENERATION:
           eq(llmMessage.id, params.id),
           eq(llmMessage.organizationId, organizer.organizationId)
         ),
+      });
+
+      return messages;
+    })
+    .get("/chat", async ({ organizer }) => {
+      const messages = await db.query.llmMessage.findMany({
+        where: eq(llmMessage.organizationId, organizer.organizationId),
+        orderBy: desc(llmMessage.updatedAt),
       });
 
       return messages;
