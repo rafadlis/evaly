@@ -1,12 +1,12 @@
 import Elysia, { t } from "elysia";
 import { organizationMiddleware } from "../../middlewares/auth.middleware";
 import { appendResponseMessages, streamText, tool } from "ai";
-// import { openai } from "@ai-sdk/openai";
 import { z } from "zod";
 import db from "../../lib/db";
 import { llmMessage } from "../../lib/db/schema";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { google } from "@ai-sdk/google";
+// import { openai } from "@ai-sdk/openai";
 
 export const llmRouter = new Elysia().group("/llm", (app) => {
   return app
@@ -120,221 +120,219 @@ IMPORTANT INSTRUCTIONS FOR QUESTION GENERATION:
    - For humanities, include interpretation of quotes, passages, or historical perspectives
    - For language learning, include grammar, vocabulary, and practical usage questions
    - For professional topics, include scenario-based questions that simulate real-world situations
-`
+`;
 
-        // Maximum number of retries for generation
-        const MAX_RETRIES = 2;
-        let retryCount = 0;
-        let lastError = null;
-
-        while (retryCount <= MAX_RETRIES) {
-          try {
-            const result = streamText({
-              model: google("gemini-2.0-flash-001"),
-              temperature: 0.7,
-              toolCallStreaming: true,
-              messages: body.messages,
-              system: systemMessage,
-              maxSteps: 5,
-              tools: {
-                topicRecommendations: tool({
-                  description:
-                    "Generates specific topic recommendations when the user provides only a broad subject area or vague topic. Use this tool before generating questions when more specificity is needed.",
-                  parameters: z.object({
-                    subject: z
-                      .string()
-                      .describe(
-                        "The broad subject area provided by the user (e.g., Math, Science, Chemistry)"
-                      ),
-                    gradeLevel: z
-                      .string()
-                      .describe(
-                        "The grade level or target audience if specified by the user"
-                      ),
-                    recommendations: z
-                      .array(
-                        z.object({
-                          topic: z
-                            .string()
-                            .describe(
-                              "A specific topic or concept within the subject area"
-                            ),
-                          description: z
-                            .string()
-                            .describe(
-                              "Brief description of what this topic covers"
-                            ),
-                        })
-                      )
-                      .describe(
-                        "3-5 specific topic recommendations within the broad subject area"
-                      ),
-                    explanationMessage: z
-                      .string()
-                      .describe(
-                        "A brief message explaining why more specificity is needed and asking the user to select a topic"
-                      ),
-                  }),
-                  execute: async function ({
+        try {
+          const result = streamText({
+            model: google("gemini-2.0-flash-001"),
+            temperature: 0.6,
+            toolCallStreaming: true,
+            messages: body.messages,
+            system: systemMessage,
+            maxSteps: 5,
+            tools: {
+              topicRecommendations: tool({
+                description:
+                  "Generates specific topic recommendations when the user provides only a broad subject area or vague topic. Use this tool before generating questions when more specificity is needed.",
+                parameters: z.object({
+                  subject: z
+                    .string()
+                    .describe(
+                      "The broad subject area provided by the user (e.g., Math, Science, Chemistry)"
+                    ),
+                  gradeLevel: z
+                    .string()
+                    .describe(
+                      "The grade level or target audience if specified by the user"
+                    ),
+                  recommendations: z
+                    .array(
+                      z.object({
+                        topic: z
+                          .string()
+                          .describe(
+                            "A specific topic or concept within the subject area"
+                          ),
+                        description: z
+                          .string()
+                          .describe(
+                            "Brief description of what this topic covers"
+                          ),
+                      })
+                    )
+                    .describe(
+                      "3-5 specific topic recommendations within the broad subject area"
+                    ),
+                  explanationMessage: z
+                    .string()
+                    .describe(
+                      "A brief message explaining why more specificity is needed and asking the user to select a topic"
+                    ),
+                }),
+                execute: async function ({
+                  subject,
+                  gradeLevel,
+                  recommendations,
+                  explanationMessage,
+                }) {
+                  return {
                     subject,
                     gradeLevel,
                     recommendations,
                     explanationMessage,
-                  }) {
-                    return {
-                      subject,
-                      gradeLevel,
-                      recommendations,
-                      explanationMessage,
-                    };
-                  },
+                  };
+                },
+              }),
+              generateQuestion: tool({
+                description:
+                  "Generate complete question sets including questions, and a template title based on the user's input and persona. The tool handles the generation and formatting of the entire question package.",
+                parameters: z.object({
+                  questions: z
+                    .array(
+                      z.object({
+                        id: z
+                          .string()
+                          .describe(
+                            "The unique identifier for this question, e.g. 'q1', 'q2', etc."
+                          ),
+                        question: z
+                          .string()
+                          .describe(
+                            "The text of the question that tests knowledge or understanding"
+                          ),
+                        type: z
+                          .enum(["multiple-choice", "text-field"])
+                          .describe(
+                            "The type of question. IMPORTANT: Use 'multiple-choice' as the default type unless explicitly requested otherwise by the user. If user mentions specific types for specific questions, follow those instructions exactly."
+                          ),
+                        options: z
+                          .array(
+                            z.object({
+                              id: z
+                                .string()
+                                .describe(
+                                  "Unique identifier for this option (e.g., 'q1_opt1', 'q1_opt2')"
+                                ),
+                              text: z
+                                .string()
+                                .describe("The text content of this option"),
+                              isCorrect: z
+                                .boolean()
+                                .describe(
+                                  "Whether this option is correct (exactly ONE option should be true for multiple-choice)"
+                                ),
+                            })
+                          )
+                          .describe(
+                            "REQUIRED for multiple-choice questions: array of 4 options with exactly one marked as correct. MUST be omitted for text-field questions."
+                          ),
+                      })
+                    )
+                    .describe(
+                      "An array of questions. The number of questions MUST match exactly what the user requested. Each question should be thoughtfully crafted to test understanding rather than just recall. Ensure questions are clear, unambiguous, and appropriate for the specified subject area. DEFAULT to multiple-choice type with 4 options (one correct) unless explicitly requested otherwise by the user."
+                    ),
+                  title: z
+                    .string()
+                    .describe(
+                      "A descriptive title for this group of questions that clearly identifies its subject matter and purpose. Keep it concise (under 60 characters) but specific. This will be displayed as the chat title and used for navigation."
+                    ),
                 }),
-                generateQuestion: tool({
-                  description:
-                    "Generate complete question sets including questions, and a template title based on the user's input and persona. The tool handles the generation and formatting of the entire question package.",
-                  parameters: z.object({
-                    questions: z
-                      .array(
-                        z.object({
-                          id: z
-                            .string()
-                            .describe(
-                              "The unique identifier for this question, e.g. 'q1', 'q2', etc."
-                            ),
-                          question: z
-                            .string()
-                            .describe(
-                              "The text of the question that tests knowledge or understanding"
-                            ),
-                          type: z
-                            .enum(["multiple-choice", "text-field"])
-                            .describe(
-                              "The type of question. IMPORTANT: Use 'multiple-choice' as the default type unless explicitly requested otherwise by the user. If user mentions specific types for specific questions, follow those instructions exactly."
-                            ),
-                          options: z
-                            .array(
-                              z.object({
-                                id: z
-                                  .string()
-                                  .describe(
-                                    "Unique identifier for this option (e.g., 'q1_opt1', 'q1_opt2')"
-                                  ),
-                                text: z
-                                  .string()
-                                  .describe("The text content of this option"),
-                                isCorrect: z
-                                  .boolean()
-                                  .describe(
-                                    "Whether this option is correct (exactly ONE option should be true for multiple-choice)"
-                                  ),
-                              })
-                            )
-                            .describe(
-                              "REQUIRED for multiple-choice questions: array of 4 options with exactly one marked as correct. MUST be omitted for text-field questions."
-                            ),
-                        })
-                      )
-                      .describe(
-                        "An array of questions. The number of questions MUST match exactly what the user requested. Each question should be thoughtfully crafted to test understanding rather than just recall. Ensure questions are clear, unambiguous, and appropriate for the specified subject area. DEFAULT to multiple-choice type with 4 options (one correct) unless explicitly requested otherwise by the user."
-                      ),
-                    title: z
-                      .string()
-                      .describe(
-                        "A descriptive title for this group of questions that clearly identifies its subject matter and purpose. Keep it concise (under 60 characters) but specific. This will be displayed as the chat title and used for navigation."
-                      ),
-                  }),
-                  execute: async function ({ questions, title }) {
-                    // Provide default title if not provided
-                    const defaultTitle = "Generated Question Set";
+                execute: async function ({ questions, title }) {
+                  // Provide default title if not provided
+                  const defaultTitle = "Generated Question Set";
 
-                    // Validation
-                    if (!questions || questions.length === 0) {
-                      throw new Error("No questions provided in the response");
-                    }
+                  // Validation
+                  if (!questions || questions.length === 0) {
+                    throw new Error("No questions provided in the response");
+                  }
 
-                    // Validate that each multiple-choice question has options
-                    for (const question of questions) {
-                      if (question.type === "multiple-choice" && (!question.options || question.options.length !== 4)) {
-                        throw new Error(`Question ${question.id} is missing options or doesn't have exactly 4 options`);
-                      }
-                    }
-
-                    return {
-                      questions,
-                      title: title || defaultTitle,
-                    };
-                  },
-                }),
-              },
-              onFinish: async ({
-                response,
-                toolResults,
-                usage: { completionTokens, promptTokens, totalTokens },
-              }) => {
-                
-                const messages = appendResponseMessages({
-                  messages: body.messages,
-                  responseMessages: response.messages,
-                });
-                let latestTitle = "";
-
-                for (const message of messages) {
-                  if (message.parts?.some((part) => part.type === "tool-invocation" && part.toolInvocation.toolName === "generateQuestion")) {
-                    const generateQuestionPart = message.parts.find(
-                      (part) => part.type === "tool-invocation" && part.toolInvocation.toolName === "generateQuestion"
-                    );
-                    if (generateQuestionPart?.type === "tool-invocation" && generateQuestionPart?.toolInvocation?.args?.title) {
-                      latestTitle = generateQuestionPart.toolInvocation.args.title;
+                  // Validate that each multiple-choice question has options
+                  for (const question of questions) {
+                    if (
+                      question.type === "multiple-choice" &&
+                      (!question.options || question.options.length !== 4)
+                    ) {
+                      throw new Error(
+                        `Question ${question.id} is missing options or doesn't have exactly 4 options`
+                      );
                     }
                   }
+
+                  return {
+                    questions,
+                    title: title || defaultTitle,
+                  };
+                },
+              }),
+            },
+            onFinish: async ({
+              response,
+              usage: { completionTokens, promptTokens, totalTokens },
+            }) => {
+              const messages = appendResponseMessages({
+                messages: body.messages,
+                responseMessages: response.messages,
+              });
+              let latestTitle = "";
+
+              for (const message of messages) {
+                if (
+                  message.parts?.some(
+                    (part) =>
+                      part.type === "tool-invocation" &&
+                      part.toolInvocation.toolName === "generateQuestion"
+                  )
+                ) {
+                  const generateQuestionPart = message.parts.find(
+                    (part) =>
+                      part.type === "tool-invocation" &&
+                      part.toolInvocation.toolName === "generateQuestion"
+                  );
+                  if (
+                    generateQuestionPart?.type === "tool-invocation" &&
+                    generateQuestionPart?.toolInvocation?.args?.title
+                  ) {
+                    latestTitle =
+                      generateQuestionPart.toolInvocation.args.title;
+                  }
                 }
+              }
 
-                await db
-                  .insert(llmMessage)
-                  .values({
+              await db
+                .insert(llmMessage)
+                .values({
+                  messages,
+                  organizationId,
+                  title: latestTitle,
+                  id: templateId,
+                  completitionTokens: completionTokens,
+                  promptTokens: promptTokens,
+                  totalTokens: totalTokens,
+                  updatedAt: new Date().toISOString(),
+                })
+                .onConflictDoUpdate({
+                  target: llmMessage.id,
+                  set: {
                     messages,
-                    organizationId,
+                    completitionTokens: sql`${llmMessage.completitionTokens} + ${completionTokens}`,
+                    promptTokens: sql`${llmMessage.promptTokens} + ${promptTokens}`,
+                    totalTokens: sql`${llmMessage.totalTokens} + ${totalTokens}`,
                     title: latestTitle,
-                    id: templateId,
-                    completitionTokens: completionTokens,
-                    promptTokens: promptTokens,
-                    totalTokens: totalTokens,
-                    updatedAt: new Date().toISOString(),
-                  })
-                  .onConflictDoUpdate({
-                    target: llmMessage.id,
-                    set: {
-                      messages,
-                      completitionTokens: sql`${llmMessage.completitionTokens} + ${completionTokens}`,
-                      promptTokens: sql`${llmMessage.promptTokens} + ${promptTokens}`,
-                      totalTokens: sql`${llmMessage.totalTokens} + ${totalTokens}`,
-                      title: latestTitle,
-                    },
-                  });
-              },
-              onError: (error) => {
-                console.error("Generation error:", error);
-                lastError = error;
-              },
-            });
-
-            result.consumeStream();
-            return result.toDataStreamResponse();
-          } catch (error) {
-            console.error(`Generation attempt ${retryCount + 1} failed:`, error);
-            lastError = error;
-            retryCount++;
-            
-            // If we've reached max retries, throw the last error
-            if (retryCount > MAX_RETRIES) {
-              console.error("All retry attempts failed");
+                  },
+                });
+            },
+            onError: (error) => {
+              console.error("Generation error:", error);
               set.status = 500;
-              return { error: "Failed to generate questions after multiple attempts" };
-            }
-            
-            // Wait before retrying (exponential backoff)
-            await new Promise((resolve) => setTimeout(resolve, 1000 * Math.pow(2, retryCount)));
-          }
+            },
+          });
+
+          result.consumeStream();
+          return result.toDataStreamResponse();
+        } catch (error) {
+          console.error("Generation failed:", error);
+          set.status = 500;
+          return { error: "Failed to generate questions" };
         }
       },
       {

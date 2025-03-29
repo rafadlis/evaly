@@ -200,11 +200,11 @@ export function DataTable<TData, TValue>({
   };
 
   return (
-    <div className="space-y-4">
-      <div className="relative rounded-md border">
+    <div className="space-y-4 mt-4">
+      <div className="relative rounded-md min-h-[500px]">
         <ScrollArea className="w-full whitespace-nowrap rounded-md">
           <Table>
-            <TableHeader>
+            <TableHeader className="h-16">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
@@ -227,7 +227,7 @@ export function DataTable<TData, TValue>({
                     key={row.id}
                     className={
                       onRowClick
-                        ? "cursor-pointer hover:bg-muted/50 transition-colors"
+                        ? "cursor-pointer hover:opacity-80"
                         : ""
                     }
                     onClick={() => onRowClick && onRowClick(row.original)}
@@ -260,7 +260,7 @@ export function DataTable<TData, TValue>({
 
       {/* Pagination */}
       <div className="flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">
+        <div className="text-xs text-muted-foreground">
           Showing{" "}
           {table.getState().pagination.pageIndex *
             table.getState().pagination.pageSize +

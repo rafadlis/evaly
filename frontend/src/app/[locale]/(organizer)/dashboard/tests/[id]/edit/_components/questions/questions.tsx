@@ -2,11 +2,9 @@ import { Button } from "@/components/ui/button";
 import { ListTreeIcon, ListXIcon, PlusIcon } from "lucide-react";
 import CardQuestion from "../../../../../../../../../components/shared/card/card-question";
 import {
-  Card,
-  CardContent,
-  CardDescription,
+  Card, CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "@/components/ui/card";
 import SectionSidebar from "./section-sidebar";
 import { useEffect, useState } from "react";
@@ -21,7 +19,7 @@ import {
   updateQuestionInArray,
 } from "@/lib/utils";
 import { Reorder } from "motion/react";
-import DialogAddQuestion from "@/components/shared/dialog/dialog-add-question-2";
+import DialogAddQuestion from "@/components/shared/dialog/dialog-add-question";
 import { Question } from "@evaly/backend/types/question";
 import { useAllQuestionByReferenceIdQuery } from "@/query/organization/question/use-all-question-by-reference-id.query";
 import { useTestSectionByTestIdQuery } from "@/query/organization/test-section/use-test-section-by-test-id";
@@ -115,8 +113,7 @@ const Questions = () => {
       <Card className="border overflow-clip flex-1 h-max">
         <CardHeader
           className={cn(
-            `bg-background z-10 pb-4 transition-all duration-300 border-b`,
-            localQuestions.length === 0 ? "mb-4" : ""
+            `bg-background z-10 pb-4 transition-all duration-300 border-b mb-2`,
           )}
         >
           <div className="flex flex-row items-start">
@@ -180,116 +177,116 @@ const Questions = () => {
           </CardDescription>
         </CardHeader>
         {localQuestions?.length ? (
-          <CardContent className="p-0 py-0">
-            <Reorder.Group
-              onReorder={() => {}}
-              values={localQuestions}
-              as="div"
-              className={cn(
-                "w-full",
-                isRefetchingQuestions ? "animate-pulse" : ""
-              )}
-            >
-              {localQuestions.map((data, index) => {
-                return (
-                  <Reorder.Item
-                    value={data}
-                    as="div"
-                    key={data.id}
-                    data-index={index}
-                    dragListener={false}
+          <Reorder.Group
+            onReorder={() => {}}
+            values={localQuestions}
+            as="div"
+            className={cn(
+              "w-full",
+              isRefetchingQuestions ? "animate-pulse" : ""
+            )}
+          >
+            {localQuestions.map((data, index) => {
+              return (
+                <Reorder.Item
+                  value={data}
+                  as="div"
+                  key={data.id}
+                  data-index={index}
+                  dragListener={false}
+                >
+                  <CardQuestion
+                    onChangeOrder={onHandleChangeOrder}
+                    hideOptions={hideOptions}
+                    data={data}
+                    onClickEdit={() => setSelectedQuestion(data)}
+                    className={cn(
+                      isRefetchingQuestions ? "cursor-progress" : ""
+                    )}
+                    onDeleteSuccess={() => {
+                      refetchSections();
+                      const findIndex = localQuestions.findIndex(
+                        (q) => q.id === data.id
+                      );
+                      if (findIndex >= 0) {
+                        // Update the order of questions after deletion
+                        setLocalQuestions((prev) => {
+                          const filtered = prev.filter((q) => q.id !== data.id);
+                          return filtered.map((q, index) => ({
+                            ...q,
+                            order:
+                              q.order && data.order && q.order > data.order
+                                ? q.order - 1
+                                : index + 1,
+                          }));
+                        });
+                      }
+                    }}
+                    previousQuestionId={localQuestions[index - 1]?.id}
+                    nextQuestionId={localQuestions[index + 1]?.id}
+                  />
+                  <div
+                    className={cn(
+                      "h-8 flex items-center justify-center group/separator relative",
+                      index === localQuestions.length - 1 ? "mb-4" : ""
+                    )}
                   >
-                    <CardQuestion
-                      onChangeOrder={onHandleChangeOrder}
-                      hideOptions={hideOptions}
-                      data={data}
-                      onClickEdit={() => setSelectedQuestion(data)}
-                      className={cn(
-                        isRefetchingQuestions ? "cursor-progress" : ""
-                      )}
-                      onDeleteSuccess={() => {
-                        refetchSections();
-                        const findIndex = localQuestions.findIndex(
-                          (q) => q.id === data.id
+                    <DialogAddQuestion
+                      referenceId={selectedSection as string}
+                      referenceType="test-section"
+                      order={data.order + 1}
+                      onSuccessCreateQuestion={(questions) => {
+                        setLocalQuestions((prev) =>
+                          insertQuestionsAtCorrectPosition(prev, questions)
                         );
-                        if (findIndex >= 0) {
-                          // Update the order of questions after deletion
-                          setLocalQuestions((prev) => {
-                            const filtered = prev.filter(
-                              (q) => q.id !== data.id
-                            );
-                            return filtered.map((q, index) => ({
-                              ...q,
-                              order:
-                                q.order && data.order && q.order > data.order
-                                  ? q.order - 1
-                                  : index + 1,
-                            }));
-                          });
+                        if (questions.length === 1) {
+                          setSelectedQuestion(questions[0]);
+                        } else {
+                          toast.success("Questions added successfully");
                         }
+                        refetchSections();
                       }}
-                      previousQuestionId={localQuestions[index - 1]?.id}
-                      nextQuestionId={localQuestions[index + 1]?.id}
+                      triggerButton={
+                        <Button
+                          size={"xxs"}
+                          variant={"outline"}
+                          className={cn(
+                            "absolute opacity-50 group-hover/separator:opacity-100",
+                            index === localQuestions.length - 1
+                              ? "lg:opacity-100"
+                              : ""
+                          )}
+                        >
+                          <PlusIcon /> Add Question
+                        </Button>
+                      }
                     />
-                    <div
-                      className={cn(
-                        "h-8 flex items-center justify-center group/separator relative",
-                        index === localQuestions.length - 1 ? "mb-4" : ""
-                      )}
-                    >
-                      <DialogAddQuestion
-                        referenceId={selectedSection as string}
-                        referenceType="test-section"
-                        order={data.order + 1}
-                        onSuccessCreateQuestion={(questions) => {
-                          setLocalQuestions((prev) =>
-                            insertQuestionsAtCorrectPosition(prev, questions)
-                          );
-                          if (questions.length === 1) {
-                            setSelectedQuestion(questions[0]);
-                          } else {
-                            toast.success("Questions added successfully");
-                          }
-                          refetchSections();
-                        }}
-                        triggerButton={
-                          <Button
-                            size={"xxs"}
-                            variant={"outline"}
-                            className={cn(
-                              "absolute opacity-50 group-hover/separator:opacity-100",
-                              index === localQuestions.length - 1
-                                ? "lg:opacity-100"
-                                : ""
-                            )}
-                          >
-                            <PlusIcon /> Add Question
-                          </Button>
-                        }
-                      />
-                      <div className="h-auto border-b border-border border-dashed w-full group-hover/separator:border-foreground/20" />
-                    </div>
-                  </Reorder.Item>
-                );
-              })}
-            </Reorder.Group>
-          </CardContent>
+                    <div className="h-auto border-b border-border border-dashed w-full group-hover/separator:border-foreground/20" />
+                  </div>
+                </Reorder.Item>
+              );
+            })}
+          </Reorder.Group>
         ) : (
-          <CardContent>
-            <div className="border rounded-lg flex flex-col justify-center items-center py-16  gap-4">
-              <h1>No question found on this section</h1>
-              <DialogAddQuestion
-                referenceId={selectedSection as string}
-                referenceType="test-section"
-                order={localQuestions.length + 1}
-                onSuccessCreateQuestion={(questions) => {
-                  setLocalQuestions((prev) =>
-                    insertQuestionsAtCorrectPosition(prev, questions)
-                  );
-                }}
-              />
-            </div>
-          </CardContent>
+          <div className="flex flex-col justify-center items-center py-16 gap-4">
+            <h1>No question found on this section</h1>
+            <DialogAddQuestion
+              referenceId={selectedSection as string}
+              referenceType="test-section"
+              order={localQuestions.length + 1}
+              onSuccessCreateQuestion={(questions) => {
+                setLocalQuestions((prev) =>
+                  insertQuestionsAtCorrectPosition(prev, questions)
+                );
+                if (questions.length === 1) {
+                  setSelectedQuestion(questions[0]);
+                } else {
+                  toast.success("Questions added successfully");
+                }
+                refetchSections();
+              }}
+            />
+          </div>
         )}
       </Card>
 

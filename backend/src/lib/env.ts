@@ -16,6 +16,9 @@ const envSchema = z.object({
   SMTP_PORT: z.string(),
   SMTP_USER: z.string(),
   SMTP_PASSWORD: z.string(),
+  OPENAI_API_KEY: z.string(),
+  MEM0_API_KEY: z.string(),
+  GOOGLE_GENERATIVE_AI_API_KEY: z.string(),
   
   //development-backend
   WEB_PUBLIC_URL_DEVELOPMENT: z.string(),

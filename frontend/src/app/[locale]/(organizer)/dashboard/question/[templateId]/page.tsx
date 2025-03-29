@@ -17,7 +17,7 @@ import {
 import Header from "./_components/header";
 import { Badge } from "@/components/ui/badge";
 import { Reorder } from "motion/react";
-import DialogAddQuestion from "@/components/shared/dialog/dialog-add-question-2";
+import DialogAddQuestion from "@/components/shared/dialog/dialog-add-question";
 
 const Page = () => {
   const { templateId } = useParams<{ templateId: string }>();
