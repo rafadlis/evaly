@@ -116,7 +116,7 @@ const Page = () => {
         values={localQuestions}
         as="div"
         className={cn(
-          "mt-2 flex flex-col border rounded-lg border-dashed overflow-clip",
+          "mt-4 flex flex-col border border-dashed overflow-clip",
           localQuestions.length > 0 ? "pb-6" : ""
         )}
       >

@@ -132,13 +132,13 @@ function DrawerNavbar({
   return (
     <header
       data-slot="drawer-navbar"
-      className={cn("px-6 py-4 border-b border-border", className)}
+      className={cn("px-6 py-4", className)}
       {...props}
     >
       <div className="mx-auto flex items-center">
         <button
           onClick={onBack}
-          className="p-2 rounded-full hover:bg-muted transition-all duration-200 cursor-pointer"
+          className="p-2 rounded-full hover:bg-muted transition-all duration-100 cursor-pointer"
         >
           <ChevronLeft className="text-muted-foreground" size={20} />
         </button>

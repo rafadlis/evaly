@@ -151,7 +151,7 @@ const LogIn = () => {
             <Input
               id="email"
               type="email"
-              placeholder="m@example.com"
+              placeholder="your-email@gmail.com"
               required
               disabled={loading}
               onChange={(e) => {

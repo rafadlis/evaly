@@ -1,7 +1,6 @@
 "use client";
 import LoadingScreen from "@/components/shared/loading/loading-screen";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { TextLoop } from "@/components/ui/text-loop";
 import { Textarea } from "@/components/ui/textarea";
@@ -11,9 +10,7 @@ import { cn } from "@/lib/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   ArrowRight,
-  ArrowUpRight,
   Brain,
-  ClockIcon,
   FileSpreadsheet,
   FileText,
   ImageIcon,
@@ -99,7 +96,7 @@ const Page = () => {
     <div
       className={cn(
         "container flex-1 flex flex-col",
-        messages && messages.length > 0 ? "mt-28" : "-mt-14 justify-center "
+        messages && messages.length > 0 ? "mt-[25vh]" : "-mt-14 justify-center "
       )}
     >
       {/* Prompt Section */}
@@ -244,39 +241,37 @@ const Page = () => {
           </div>
         </div>
       </motion.div>
-      
+
       {messages?.length ? (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3, delay: 0.1 }}
-          className="flex flex-col gap-4 my-28"
+          className="flex flex-col my-28"
         >
-          <h1 className="font-medium text-xl">Recent Question Sets</h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <h1 className="font-medium">Recent</h1>
+          <p className="text-muted-foreground text-sm">
+            Here are some of your recent question sets.
+          </p>
+          <div className="grid grid-cols-3 gap-4 mt-6">
             {messages?.map((message) => (
-              <Link key={message.id} href={`/dashboard/question/generate/${message.id}`}>
-                <Card className="p-4 relative group">
-                  <ArrowUpRight className="absolute top-2 right-2 size-4 text-muted-foreground/20 group-hover:text-foreground" />
-                  <div className="flex flex-col gap-2">
-                    <h3 className="font-medium line-clamp-1">
-                      {message.title || "Untitled Question Set"}
-                    </h3>
-                    <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                      <ClockIcon className="h-4 w-4" />
-                      <span>
-                        {new Date(message.updatedAt).toLocaleDateString(
-                          undefined,
-                          {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                          }
-                        )}
-                      </span>
-                    </div>
-                  </div>
-                </Card>
+              <Link
+                key={message.id}
+                href={`/dashboard/question/generate/${message.id}`}
+                className="p-4 border"
+              >
+                <h3 className="font-medium line-clamp-1 text-sm">
+                  {message.title || "Untitled Question Set"}
+                </h3>
+                <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                  <span>
+                    {new Date(message.updatedAt).toLocaleDateString(undefined, {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </span>
+                </div>
               </Link>
             ))}
           </div>

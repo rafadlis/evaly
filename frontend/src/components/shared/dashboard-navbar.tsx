@@ -90,7 +90,7 @@ export function DashboardNavbar({ className }: { className?: string }) {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "text-muted-foreground transition-colors rounded-lg hover:text-primary px-3 py-1.5 font-medium text-sm flex items-center",
+                    "text-muted-foreground transition-colors hover:text-primary px-3 py-1.5 font-medium text-sm flex items-center",
                     // Special case for dashboard
                     item.href === "/dashboard" 
                       ? (pathname === "/dashboard" || pathname.startsWith("/dashboard/test")) && "text-primary bg-secondary"
@@ -138,7 +138,7 @@ export function DashboardNavbar({ className }: { className?: string }) {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "py-2 px-3 font-medium transition-colors relative rounded-md flex items-center",
+                  "py-2 px-3 font-medium transition-colors relative  flex items-center",
                   // Special case for dashboard
                   item.href === "/dashboard"
                     ? (pathname === "/dashboard" || pathname.startsWith("/dashboard/test"))
@@ -155,7 +155,7 @@ export function DashboardNavbar({ className }: { className?: string }) {
                 {activeItem === item.href && (
                   <motion.span
                     layoutId="navbar-active-indicator-mobile"
-                    className="absolute inset-0 bg-muted/80 rounded-md z-[-1]"
+                    className="absolute inset-0 bg-muted/80 z-[-1]"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.2 }}

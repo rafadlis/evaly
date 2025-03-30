@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { CircleCheck, CircleHelp, ClockIcon, Trash2Icon } from "lucide-react";
+import { CheckIcon, CircleHelp, ClockIcon, Trash2Icon } from "lucide-react";
 import DialogDeleteSection from "../dialog/dialog-delete-section";
 import { Button } from "@/components/ui/button";
 import { TestSection } from "@evaly/backend/types/test";
@@ -24,15 +24,15 @@ const CardSection = ({
       key={data.id}
       onClick={onClick}
       className={cn(
-        "flex flex-col group/section justify-start  cursor-pointer p-3 relative select-none",
+        "flex flex-col group/section justify-start  cursor-pointer p-3 relative select-none  border-dashed",
         isSelected
-          ? "border-dashed border-foreground/20"
-          : "hover:bg-secondary/50 border-border/50 border-dashed"
+          ? ""
+          : ""
       )}
     >
       {isSelected ? (
-        <div className="absolute top-2 right-2 text-muted-foreground">
-          <CircleCheck size={16} strokeWidth={2.5} />
+        <div className="absolute top-2 right-2">
+          <CheckIcon size={16}/>
         </div>
       ) : null}
       <span className="text-sm font-medium">

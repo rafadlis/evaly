@@ -53,7 +53,6 @@ const Header = () => {
     getValues,
   } = useForm<UpdateTest>();
 
-  const testId = watch("id");
   const isPublished = watch("isPublished");
 
   useEffect(() => {
@@ -91,24 +90,27 @@ const Header = () => {
         href={isPublished ? `/dashboard/tests/${id}` : `/dashboard`}
       />
       <input
+        type="text"
         {...register("title")}
         className="outline-none text-xl font-medium"
         placeholder="Test title"
         disabled={isPendingTest}
       />
+
       <AnimatePresence>
-        {isDirty && !isPendingTest && testId ? (
+        {isDirty && isPendingTest === false ? (
           <motion.div
+            key={"save-button"}
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.1 }}
             className="w-max"
           >
             <Button
               variant={"default"}
               disabled={isPendingUpdateTest}
-              className="mt-2 w-max"
+              className="w-max"
               size={"sm"}
               onClick={() =>
                 updateTest({
