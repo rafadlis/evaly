@@ -1,8 +1,7 @@
 import DialogDeleteQuestion from "@/components/shared/dialog/dialog-delete-question";
-import QuestionTypeSelection from "@/components/shared/question-type-selection";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { questionTypes } from "@/constants/question-type";
 import { cn } from "@/lib/utils";
 import { useUpdateBetweenQuestionMutation } from "@/query/organization/question/use-update-between-question.mutation";
 import { Question } from "@evaly/backend/types/question";
@@ -83,41 +82,37 @@ const CardQuestion = ({
         onChangeOrder?.(questions);
       });
   };
+  const selectedType = data?.type && questionTypes[data.type] ? questionTypes[data.type] : questionTypes["multiple-choice"];
 
   if (!data) return null;
 
   return (
     <Card
       className={cn(
-        "transition-all rounded-none border-transparent cursor-pointer duration-100 group",
+        "transition-all rounded-none border-transparent cursor-pointer duration-100 group px-6",
+        data.order === 1 ? "mt-6" : "",
         className
       )}
       onClick={onClickEdit}
     >
-      <CardHeader className="px-6 flex flex-row justify-between items-center ">
-        <div className="flex flex-row gap-3">
-          <Badge
-            variant={"secondary"}
-            className="text-xs px-3 text-muted-foreground"
+      <CardHeader className="flex flex-row justify-between items-center p-0">
+        <div className="flex flex-row gap-4">
+          <span
+            className="text-xs text-muted-foreground bg-secondary px-2 py-0.5"
           >
             # Question {data.order}
-          </Badge>
+          </span>
           {data.pointValue ? (
-            <Badge
-              variant={"secondary"}
-              className="text-xs px-3 text-muted-foreground"
-            >
+            <span className="text-xs text-muted-foreground bg-secondary px-1 py-0.5">
               Point: {data.pointValue}
-            </Badge>
+            </span>
           ) : null}
-          <QuestionTypeSelection
-            readonly={true}
-            value={data.type}
-            className="text-muted-foreground"
-            variant={"ghost"}
-          />
+          <span className="text-xs text-muted-foreground px-1 py-0.5 flex flex-row items-center gap-1">
+          {selectedType.icon && <selectedType.icon size={12} />}
+            {selectedType.label}
+          </span>
         </div>
-        <div className="flex-row h-5 justify-end items-center hidden group-hover:flex">
+        <div className="flex-row h-5 justify-end items-center invisible group-hover:visible flex">
           <Button
             className="hidden group-hover:flex mr-2"
             size={"xs"}
@@ -175,9 +170,9 @@ const CardQuestion = ({
           />
         </div>
       </CardHeader>
-      <CardContent className="px-6">
+      <CardContent className="p-0 pt-4">
         <div
-          className="custom-prose max-w-full max-h-[220px] min-h-[50px] h-max overflow-y-auto"
+          className="custom-prose max-w-full max-h-[220px] min-h-[40px] h-max overflow-y-auto"
           dangerouslySetInnerHTML={{
             __html:
               !data.question || data.question === "<p></p>"
@@ -186,7 +181,7 @@ const CardQuestion = ({
           }}
         />
         {!hideOptions ? (
-          <div className="flex flex-row flex-wrap gap-y-3 gap-x-10 text-sm mt-2">
+          <div className="flex flex-row flex-wrap gap-y-3 gap-x-10 text-sm mt-2 mb-2">
             {data.options?.map((option, i) => (
               <div
                 key={option.id || `option-${i}`}

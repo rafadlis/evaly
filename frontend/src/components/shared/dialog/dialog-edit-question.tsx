@@ -25,7 +25,13 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { nanoid } from "nanoid";
-import { Dialog, DialogContent, DialogHeader, DialogNavbar, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogNavbar,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 dayjs.extend(relativeTime);
 
@@ -110,8 +116,8 @@ const DialogEditQuestion = ({
       reset(defaultValue);
       setOpen(true);
     } else {
-      setOpen(false);
       onClose?.();
+      setOpen(false);
     }
   }, [defaultValue, reset, onClose]);
 
@@ -216,7 +222,7 @@ const DialogEditQuestion = ({
                   name="type"
                   render={({ field }) => (
                     <QuestionTypeSelection
-                      size={"default"}
+                      size={"sm"}
                       value={field.value || undefined}
                       onValueChange={(value) => {
                         field.onChange(value);

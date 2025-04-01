@@ -211,7 +211,9 @@ const Page = () => {
 
       <DialogEditQuestion
         defaultValue={selectedEditQuestion}
-        onClose={() => setSelectedEditQuestion(undefined)}
+        onClose={() => {
+          setSelectedEditQuestion(undefined);
+        }}
         onSuccess={(data) => {
           setSelectedEditQuestion(data);
           setLocalQuestions((prev) => updateQuestionInArray(prev, data));

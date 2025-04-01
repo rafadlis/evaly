@@ -41,7 +41,7 @@ const GenerateQuestionInputPrompt = () => {
         }
         startTransition(() => {
           router.push(
-            `/dashboard/question/generate/${data.id}?initialMessage=${message}&canvasMessageId=`,
+            `/dashboard/question/generate/${data.id}?initialMessage=${message}`,
             { scroll: true }
           );
         });
