@@ -7,6 +7,11 @@ import { llmMessage } from "../../lib/db/schema";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { google } from "@ai-sdk/google";
 // import { openai } from "@ai-sdk/openai";
+import { createOpenRouter } from '@openrouter/ai-sdk-provider';
+
+const openRouter = createOpenRouter({
+  apiKey: process.env.OPENROUTER_API_KEY,
+});
 
 export const llmRouter = new Elysia().group("/llm", (app) => {
   return app
