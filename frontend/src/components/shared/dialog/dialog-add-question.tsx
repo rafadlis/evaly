@@ -12,30 +12,21 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
 import { questionTypes } from "@/constants/question-type";
 import { $api } from "@/lib/api";
 import { getDefaultOptions } from "@/lib/get-default-options";
-import { cn } from "@/lib/utils";
 import { InsertQuestion } from "@evaly/backend/types/question";
 import { Question, QuestionType } from "@evaly/backend/types/question";
 import { useMutation } from "@tanstack/react-query";
 import {
-  FileSpreadsheet,
-  FileText,
-  FileTextIcon,
-  ImageIcon,
-  Loader2,
-  LockIcon,
-  Paperclip,
-  PencilIcon,
+  FileTextIcon, Loader2,
+  LockIcon, PencilIcon,
   Plus,
   SparklesIcon,
-  UploadIcon,
-  VideoIcon,
-  Wand2Icon,
+  UploadIcon
 } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import GenerateQuestionInputPrompt from "../generate-question-input-prompt";
 
 const DialogAddQuestion = ({
   order = 1,
@@ -99,6 +90,17 @@ const DialogAddQuestion = ({
     mutateCreateQuestion();
   };
 
+  const groupedQuestionTypes = useMemo(() => {
+    return Object.values(questionTypes).reduce((acc, type) => {
+      const group = type.group || "Other"; // Default group if missing
+      if (!acc[group]) {
+        acc[group] = [];
+      }
+      acc[group].push(type);
+      return acc;
+    }, {} as Record<string, typeof questionTypes[keyof typeof questionTypes][]>);
+  }, []);
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -110,16 +112,16 @@ const DialogAddQuestion = ({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-none h-dvh flex flex-col pt-[30vh]">
-        <div className="container max-w-2xl">
+      <DialogContent className="sm:max-w-none h-dvh flex flex-col p-0">
+        <div className="container max-w-2xl overflow-y-auto pt-[20vh] pb-20">
           <DialogHeader>
             <DialogTitle>Add Question</DialogTitle>
             <DialogDescription>
               Select the question type you want to add
             </DialogDescription>
           </DialogHeader>
-          <Tabs defaultValue="manual" className="mt-4">
-            <TabsList className="mb-4 w-full grid grid-cols-4 divide-x gap-0 divide-dashed divide-foreground/10">
+          <Tabs defaultValue="manual" className="mt-4 space-y-6">
+            <TabsList className="divide-x gap-0 divide-dashed divide-foreground/5">
               <TabsTrigger value="manual">
                 <PencilIcon className="size-4" /> Manual
               </TabsTrigger>
@@ -133,43 +135,53 @@ const DialogAddQuestion = ({
                 <SparklesIcon className="size-4" /> AI
               </TabsTrigger>
             </TabsList>
+
             <TabsContent value="manual">
-              <div className="flex flex-row flex-wrap gap-2 w-full">
-                {Object.values(questionTypes)
-                  .filter((e) => !e.isHidden)
-                  .map((type) => (
-                    <Button
-                      key={type.value}
-                      variant={"outline"}
-                      className="group"
-                      disabled={
-                        type.isHidden ||
-                        (isPendingCreateQuestion && typeSelected === type.value)
-                      }
-                      onClick={() =>
-                        handleCreateQuestion(type.value as QuestionType)
-                      }
-                    >
-                      {type.isHidden ? (
-                        <LockIcon size={14} />
-                      ) : isPendingCreateQuestion &&
-                        typeSelected === type.value ? (
-                        <Loader2 className="animate-spin" size={14} />
-                      ) : (
-                        <type.icon className="size-4" />
-                      )}
-                      {type.label}
-                      {/* <ArrowRight className="size-4 ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 scale-0 group-hover:scale-100" /> */}
-                    </Button>
-                  ))}
+              <div className="space-y-6">
+                {Object.entries(groupedQuestionTypes).map(([group, types]) => (
+                  <div key={group} className="">
+                    <Label>
+                      {group}
+                    </Label>
+                    <div className="flex flex-wrap gap-3 w-full mt-2">
+                      {types.map((type) => (
+                        <Button
+                          key={type.value}
+                          variant={"secondary"}
+                          size={"sm"}
+                          className="group justify-start"
+                          disabled={
+                            type.isHidden ||
+                            (isPendingCreateQuestion &&
+                              typeSelected === type.value)
+                          }
+                          onClick={() =>
+                            handleCreateQuestion(type.value as QuestionType)
+                          }
+                        >
+                          {type.isHidden ? (
+                            <LockIcon className="size-3.5"/>
+                          ) : isPendingCreateQuestion &&
+                            typeSelected === type.value ? (
+                            <Loader2 className="animate-spin size-4" />
+                          ) : (
+                            <type.icon className="size-4" />
+                          )}
+                          {type.label}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
             </TabsContent>
+       
             <TabsContent value="import">
-              <div className="border border-dashed p-4">
-                <Label className="font-medium text-md">Import Questions</Label>
-                <p className="text-muted-foreground text-sm mb-2">
+              <div className="border border-dashed p-4 flex flex-col">
+                <Label className="font-semibold mb-2">Import Questions</Label>
+                <Label className="mb-4">
                   Upload a document file with questions
-                </p>
+                </Label>
                 <div className="flex flex-row gap-2">
                   <Input
                     type="file"
@@ -184,12 +196,13 @@ const DialogAddQuestion = ({
                 </div>
               </div>
             </TabsContent>
+  
             <TabsContent value="template">
-              <div className="border border-dashed p-4">
-                <Label className="font-medium text-md">Use Template</Label>
-                <p className="text-muted-foreground text-sm mb-2">
+              <div className="border border-dashed p-4 flex flex-col">
+                <Label className="font-semibold mb-2">Use Template</Label>
+                <Label className="mb-4">
                   Upload a template Excel file with questions
-                </p>
+                </Label>
                 <div className="flex flex-row gap-2">
                   <Input type="file" className="mt-2" accept=".xlsx,.xls" />
                   <Button className="mt-2">Upload</Button>
@@ -205,105 +218,10 @@ const DialogAddQuestion = ({
                 </div>
               </div>
             </TabsContent>
+      
             <TabsContent value="ai">
               <div className="max-w-2xl w-full">
-                <div className="relative">
-                  <Textarea
-                    autoFocus
-                    // value={inputValue}
-                    // onChange={(e) => setInputValue(e.target.value)}
-                    // onKeyDown={handleKeyDown}
-                    placeholder="Enter prompt or paste content to generate questions..."
-                    className={cn(
-                      "w-full h-[120px] overflow-clip text-sm md:text-base p-4 [&::placeholder]:whitespace-pre-wrap resize-none focus-visible:ring-0 focus-visible:outline-0 focus-visible:ring-offset-0 focus-visible:border-foreground/20 shadow-none transition-all duration-200"
-                    )}
-                  />
-                  <div className="absolute bottom-0 left-0 p-2 flex flex-row gap-2 items-center justify-between w-full">
-                    <div className="flex flex-row gap-2 items-center justify-center"></div>
-                    <div className="flex flex-row items-center justify-center gap-1">
-                      <Button size={"icon-sm"} variant={"ghost"} disabled>
-                        <Wand2Icon />
-                      </Button>
-                      <Button size={"icon-sm"} variant={"ghost"}>
-                        <Paperclip />
-                      </Button>
-                      <Button
-                        size={"icon-sm"}
-                        // variant={inputValue.trim() ? "default" : "secondary-outline"}
-                        // onClick={handleSubmit}
-                        // disabled={isPending || !inputValue.trim() || isGenerating}
-                      >
-                        {/* {isPending || isGenerating ? (
-                    <Loader2 className="size-4 stroke-3 text-muted-foreground animate-spin" />
-                  ) : (
-                    <ArrowRight className="size-4 stroke-3" />
-                  )} */}
-                      </Button>
-                    </div>
-                  </div>
-                  {/* <AnimatePresence>
-              {autoComplete.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="z-10 absolute top-[120px] bg-background w-full border border-foreground/20 border-t-border rounded-b-2xl p-2"
-                >
-                  <ScrollArea className="h-[200px] flex flex-col gap-2">
-                    {autoComplete.map((item, index) => (
-                      <Button
-                        key={index}
-                        variant={"ghost"}
-                        className="w-full justify-start gap-3"
-                      >
-                        <SearchIcon className="text-muted-foreground size-4" />
-                        <span>{item}</span>
-                      </Button>
-                    ))}
-                  </ScrollArea>
-                </motion.div>
-              )}
-            </AnimatePresence> */}
-                </div>
-                <div className="flex flex-row gap-x-2 gap-y-4 flex-wrap justify-start mt-4">
-                  <Button
-                    variant={"outline"}
-                    size={"sm"}
-                    rounded
-                    className="px-4"
-                  >
-                    <FileSpreadsheet />
-                    <span>Spreadsheet</span>
-                  </Button>
-                  <Button
-                    variant={"outline"}
-                    size={"sm"}
-                    rounded
-                    className="px-4"
-                  >
-                    <FileText />
-                    <span>Import Document</span>
-                  </Button>
-                  <Button
-                    variant={"outline"}
-                    size={"sm"}
-                    rounded
-                    className="px-4"
-                  >
-                    <ImageIcon />
-                    <span>Import Image</span>
-                  </Button>
-                  <Button
-                    variant={"outline"}
-                    size={"sm"}
-                    rounded
-                    className="px-4"
-                  >
-                    <VideoIcon />
-                    <span>Youtube</span>
-                  </Button>
-                </div>
+                <GenerateQuestionInputPrompt />
               </div>
             </TabsContent>
           </Tabs>

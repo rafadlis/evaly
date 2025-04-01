@@ -34,7 +34,7 @@ const Page = () => {
     <div className="container dashboard-margin">
       <div className="flex flex-row justify-between">
         <div className="flex flex-col mb-8">
-          <h1 className="text-lg font-medium">Question Bank</h1>
+          <h1 className="font-semibold">Question Bank</h1>
           <p className="text-muted-foreground"> 
             Create and manage your question templates.
           </p>
