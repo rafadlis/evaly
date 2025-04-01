@@ -7,7 +7,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { user } from "./user";
 import { relations, sql } from "drizzle-orm";
-import { ulid } from "ulidx";
+
 
 // Organization
 export const organization = pgTable(
@@ -15,7 +15,7 @@ export const organization = pgTable(
   {
     id: varchar("id", { length: 255 })
       .primaryKey()
-      .$defaultFn(() => "orgs-" + ulid()),
+      .$defaultFn(() => "orgs-" + Bun.randomUUIDv7()),
     name: varchar("name", { length: 255 }).notNull(),
     logoUrl: varchar("logo_url", { length: 255 }),
     type: varchar("type", {
@@ -51,7 +51,7 @@ export const organizer = pgTable(
   {
     id: varchar("id", { length: 255 })
       .primaryKey()
-      .$defaultFn(() => "org-" + ulid()),
+      .$defaultFn(() => "org-" + Bun.randomUUIDv7()),
     userId: varchar("user_id", { length: 255 }).notNull(),
     organizationId: varchar("organization_id", { length: 255 }).notNull(),
     level: varchar("level", { length: 10, enum: ["owner", "admin"] }).notNull(),

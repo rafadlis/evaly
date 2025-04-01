@@ -1,11 +1,11 @@
 import { Message } from "ai";
+import { randomUUIDv7 } from "bun";
 import { index, integer, jsonb, pgTable, timestamp, varchar } from "drizzle-orm/pg-core";
-import { ulid } from "ulidx";
 
 export const llmMessage = pgTable(
   "llm_message",
   {
-    id: varchar("id", { length: 100 }).$default(() => `llm-${ulid()}`).primaryKey(),
+    id: varchar("id", { length: 100 }).$default(() => `llm-${randomUUIDv7()}`).primaryKey(),
     title: varchar("title", { length: 255 }),
     messages: jsonb("messages").$type<Message[]>(),
     organizationId: varchar("organization_id", { length: 255 }).notNull(),

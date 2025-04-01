@@ -30,7 +30,7 @@ const CardTest = ({
     <Link href={redirectLink}>
       <div
         key={data.id}
-        className="border border-dashed transition-all bg-background w-full hover:shadow-2xl shadow-black/5 hover:border-primary active:opacity-50"
+        className="border border-dashed transition-all duration-100 bg-background w-full hover:border-primary/30 active:opacity-80"
       >
         <div className="flex justify-between items-start p-4">
           <div>

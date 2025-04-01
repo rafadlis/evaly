@@ -9,15 +9,8 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import {
-  Drawer,
-  DrawerHeader,
-  DrawerNavbar,
-  DrawerTitle,
-} from "@/components/ui/drawer";
-import { DrawerContent } from "@/components/ui/drawer";
-import { DrawerClose } from "@/components/ui/drawer";
-import { DrawerFooter } from "@/components/ui/drawer";
+import { DialogClose } from "@/components/ui/dialog";
+import { DialogFooter } from "@/components/ui/dialog";
 import QuestionTypeSelection from "@/components/shared/question-type-selection";
 import { Editor } from "@/components/shared/editor/editor";
 import { Separator } from "@/components/ui/separator";
@@ -32,6 +25,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { nanoid } from "nanoid";
+import { Dialog, DialogContent, DialogHeader, DialogNavbar, DialogTitle } from "@/components/ui/dialog";
 
 dayjs.extend(relativeTime);
 
@@ -196,7 +190,7 @@ const DialogEditQuestion = ({
   };
 
   return (
-    <Drawer
+    <Dialog
       open={open}
       onOpenChange={(e) => {
         if (!e) {
@@ -205,17 +199,17 @@ const DialogEditQuestion = ({
           setOpen(true);
         }
       }}
-      handleOnly
     >
-      <DrawerContent className="h-dvh">
-        <DrawerNavbar
+      <DialogContent className="sm:max-w-none h-dvh flex flex-col p-0 gap-0">
+        <DialogNavbar
           onBack={() => closeDialog(isDirty)}
           title={`Edit Question #${defaultValue?.order}`}
+          className="mb-10"
         />
 
-        <div className="flex flex-col overflow-y-auto">
-          <DrawerHeader className="pt-10 container max-w-4xl px-6">
-            <DrawerTitle className="flex justify-between items-center">
+        <div className="flex flex-col overflow-y-auto pb-10">
+          <DialogHeader className="container max-w-4xl px-6">
+            <DialogTitle className="flex justify-between items-center">
               <div className="flex flex-row gap-2 items-center">
                 <Controller
                   control={control}
@@ -311,10 +305,10 @@ const DialogEditQuestion = ({
               <div className="flex flex-row gap-2 text-muted-foreground font-normal text-sm">
                 Last updated: {dayjs(updatedAt).fromNow()}
               </div>
-            </DrawerTitle>
-          </DrawerHeader>
+            </DialogTitle>
+          </DialogHeader>
 
-          <div className="container max-w-4xl pb-10">
+          <div className="container max-w-4xl pb-10 pt-2">
             <Controller
               control={control}
               name="question"
@@ -337,15 +331,11 @@ const DialogEditQuestion = ({
                     onChange={field.onChange}
                     placeholder="Type your question here..."
                     editorClassName={cn(
-                      errors.question
-                        ? "border-destructive"
-                        : ""
+                      errors.question ? "border-destructive" : ""
                     )}
                     toolbarClassName={cn(
                       "sticky top-0",
-                      errors.question
-                        ? "border-destructive"
-                        : ""
+                      errors.question ? "border-destructive" : ""
                     )}
                   />
                   <span
@@ -429,12 +419,12 @@ const DialogEditQuestion = ({
           </div>
         </div>
 
-        <DrawerFooter className="border-t px-0">
+        <DialogFooter className="border-t px-0 py-3 border-dashed fixed bottom-0 left-0 right-0 bg-background">
           <div className="flex flex-row justify-between w-full z-50 container max-w-4xl">
             <div className="flex flex-row gap-2">
-              <DrawerClose asChild>
+              <DialogClose asChild>
                 <Button variant={"secondary"}>Back</Button>
-              </DrawerClose>
+              </DialogClose>
               {isDirty ? (
                 <Button
                   variant={"ghost"}
@@ -472,9 +462,9 @@ const DialogEditQuestion = ({
               </Button>
             </div>
           </div>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 

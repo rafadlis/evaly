@@ -1,15 +1,15 @@
 import {
-  boolean,
-  index,
-  integer,
-  jsonb,
-  pgTable,
-  text,
-  timestamp,
-  uniqueIndex,
-  varchar,
+    boolean,
+    index,
+    integer,
+    jsonb,
+    pgTable,
+    text,
+    timestamp,
+    uniqueIndex,
+    varchar,
 } from "drizzle-orm/pg-core";
-import { ulid } from "ulidx";
+
 import { testAttempt } from "./test.attempt";
 import { question } from "./question";
 import { relations } from "drizzle-orm";
@@ -18,7 +18,7 @@ import { MEDIA_TYPES } from "../../../types/media";
 export const testAttemptAnswer = pgTable("test_attempt_answer", {
   id: varchar("id")
     .primaryKey()
-    .$defaultFn(() => "taa-" + ulid()),
+    .$defaultFn(() => "taa-" + Bun.randomUUIDv7()),
   attemptId: varchar("attempt_id").references(() => testAttempt.id),
   questionId: varchar("question_id").references(() => question.id),
   answerText: text("answer_text"),

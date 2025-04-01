@@ -1,17 +1,17 @@
 import { relations, sql } from "drizzle-orm";
 import {
-  index,
-  pgTable,
-  smallint,
-  text,
-  timestamp,
-  varchar,
-  integer,
-  boolean,
-  jsonb,
-  unique
+    index,
+    pgTable,
+    smallint,
+    text,
+    timestamp,
+    varchar,
+    integer,
+    boolean,
+    jsonb,
+    unique
 } from "drizzle-orm/pg-core";
-import { ulid } from "ulidx";
+
 import { QUESTION_TYPES } from "../../../types/question-types";
 import { MEDIA_TYPES, MediaType } from "../../../types/media";
 import { testSection } from "./test.section";
@@ -23,7 +23,7 @@ export const question = pgTable(
   {
     id: varchar("id", { length: 255 })
       .primaryKey()
-      .$defaultFn(() => "qst-" + ulid()),
+      .$defaultFn(() => "qst-" + Bun.randomUUIDv7()),
     question: text("question"),
     referenceId: varchar("reference_id", { length: 255 }).notNull(),
     referenceType: varchar("reference_type", {
@@ -79,7 +79,7 @@ export const textFieldConfig = pgTable(
   {
     id: varchar("id", { length: 255 })
       .primaryKey()
-      .$defaultFn(() => "txt-" + ulid()),
+      .$defaultFn(() => "txt-" + Bun.randomUUIDv7()),
     questionId: varchar("question_id", { length: 255 })
       .notNull()
       .references(() => question.id, { onDelete: "cascade" }),
@@ -113,7 +113,7 @@ export const fillBlankSegment = pgTable(
   {
     id: varchar("id", { length: 255 })
       .primaryKey()
-      .$defaultFn(() => "blk-" + ulid()),
+      .$defaultFn(() => "blk-" + Bun.randomUUIDv7()),
     questionId: varchar("question_id", { length: 255 })
       .notNull()
       .references(() => question.id, { onDelete: "cascade" }),
@@ -150,7 +150,7 @@ export const mediaConfig = pgTable(
   {
     id: varchar("id", { length: 255 })
       .primaryKey()
-      .$defaultFn(() => "med-" + ulid()),
+      .$defaultFn(() => "med-" + Bun.randomUUIDv7()),
     questionId: varchar("question_id", { length: 255 })
       .notNull()
       .references(() => question.id, { onDelete: "cascade" }),
@@ -187,7 +187,7 @@ export const sliderConfig = pgTable(
   {
     id: varchar("id", { length: 255 })
       .primaryKey()
-      .$defaultFn(() => "sld-" + ulid()),
+      .$defaultFn(() => "sld-" + Bun.randomUUIDv7()),
     questionId: varchar("question_id", { length: 255 })
       .notNull()
       .references(() => question.id, { onDelete: "cascade" }),
@@ -223,7 +223,7 @@ export const matchingPair = pgTable(
   {
     id: varchar("id", { length: 255 })
       .primaryKey()
-      .$defaultFn(() => "mpr-" + ulid()),
+      .$defaultFn(() => "mpr-" + Bun.randomUUIDv7()),
     questionId: varchar("question_id", { length: 255 })
       .notNull()
       .references(() => question.id, { onDelete: "cascade" }),
@@ -255,7 +255,7 @@ export const matrixConfig = pgTable(
   {
     id: varchar("id", { length: 255 })
       .primaryKey()
-      .$defaultFn(() => "mtx-" + ulid()),
+      .$defaultFn(() => "mtx-" + Bun.randomUUIDv7()),
     questionId: varchar("question_id", { length: 255 })
       .notNull()
       .references(() => question.id, { onDelete: "cascade" }),
@@ -288,7 +288,7 @@ export const hotspotConfig = pgTable(
   {
     id: varchar("id", { length: 255 })
       .primaryKey()
-      .$defaultFn(() => "hsp-" + ulid()),
+      .$defaultFn(() => "hsp-" + Bun.randomUUIDv7()),
     questionId: varchar("question_id", { length: 255 })
       .notNull()
       .references(() => question.id, { onDelete: "cascade" }),
@@ -320,7 +320,7 @@ export const codeEditorConfig = pgTable(
   {
     id: varchar("id", { length: 255 })
       .primaryKey()
-      .$defaultFn(() => "code-" + ulid()),
+      .$defaultFn(() => "code-" + Bun.randomUUIDv7()),
     questionId: varchar("question_id", { length: 255 })
       .notNull()
       .references(() => question.id, { onDelete: "cascade" }),
@@ -354,7 +354,7 @@ export const dateTimeConfig = pgTable(
   {
     id: varchar("id", { length: 255 })
       .primaryKey()
-      .$defaultFn(() => "dt-" + ulid()),
+      .$defaultFn(() => "dt-" + Bun.randomUUIDv7()),
     questionId: varchar("question_id", { length: 255 })
       .notNull()
       .references(() => question.id, { onDelete: "cascade" }),
@@ -392,7 +392,7 @@ export const formulaConfig = pgTable(
   {
     id: varchar("id", { length: 255 })
       .primaryKey()
-      .$defaultFn(() => "frm-" + ulid()),
+      .$defaultFn(() => "frm-" + Bun.randomUUIDv7()),
     questionId: varchar("question_id", { length: 255 })
       .notNull()
       .references(() => question.id, { onDelete: "cascade" }),

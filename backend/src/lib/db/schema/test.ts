@@ -1,12 +1,12 @@
 import { relations, sql } from "drizzle-orm";
 import {
-  boolean,
-  pgTable,
-  text,
-  timestamp,
-  varchar,
+    boolean,
+    pgTable,
+    text,
+    timestamp,
+    varchar,
 } from "drizzle-orm/pg-core";
-import { ulid } from "ulidx";
+
 import { testInvitation } from "./test.invitation";
 import { testSection } from "./test.section";
 import { organization, organizer } from "./organization";
@@ -14,7 +14,7 @@ import { organization, organizer } from "./organization";
 export const test = pgTable("test", {
   id: varchar("id", { length: 255 })
     .primaryKey()
-    .$defaultFn(() => "ts-" + ulid()),
+    .$defaultFn(() => "ts-" + Bun.randomUUIDv7()),
   title: varchar("title", { length: 255 }),
   type: varchar("type", { length: 20, enum: ["live", "self-paced"] })
     .default("self-paced")

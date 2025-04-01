@@ -5,7 +5,7 @@ import { getFileExtension } from "../../lib/utils";
 import { uploadFileToS3 } from "../../services/common/upload-file-to-s3";
 import { participantMiddleware } from "../../middlewares/auth.middleware";
 import { updateProfile } from "../../services/common/update-profile";
-import { ulid } from "ulidx";
+
 import { deleteFileFromS3 } from "../../services/common/delete-file-from-s3";
 
 export const participantRouter = new Elysia().group("/participant", (app) => {
@@ -29,7 +29,7 @@ export const participantRouter = new Elysia().group("/participant", (app) => {
             const extension = getFileExtension(body.imageFile.name);
             const imageUrl = await uploadFileToS3(
               body.imageFile,
-              `user/${user.id}/profile-${ulid()}.${extension}`
+              `user/${user.id}/profile-${Bun.randomUUIDv7()}.${extension}`
             );
             if (imageUrl && user.image) {
               // Delete old image from S3

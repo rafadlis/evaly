@@ -39,7 +39,7 @@ export const Editor = ({
     editorProps: {
       attributes: {
         class: cn(
-          "custom-prose focus:outline-none outline-none border px-8 py-6 rounded-lg relative w-full min-h-[140px] rounded-t-none border-t-0 min-w-full",
+          "custom-prose focus:outline-none outline-none border px-8 py-6  relative w-full min-h-[140px]  border-t-0 min-w-full",
           editorClassName
         ),
       },

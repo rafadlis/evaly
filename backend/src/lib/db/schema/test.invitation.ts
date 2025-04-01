@@ -1,6 +1,6 @@
 import { boolean, pgTable, timestamp, varchar, uniqueIndex } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm/relations";
-import { ulid } from "ulidx";
+
 import { test } from "./test";
 import { user } from "./user";
 
@@ -9,7 +9,7 @@ export const testInvitation = pgTable(
   {
     id: varchar("id", { length: 255 })
       .primaryKey()
-      .$defaultFn(() => "ti" + ulid()),
+      .$defaultFn(() => "ti" + Bun.randomUUIDv7()),
     testId: varchar("test_id", { length: 255 }).notNull(),
     email: varchar("email", { length: 255 }).notNull(),
     isEmailSent: boolean("is_email_sent").notNull().default(false),

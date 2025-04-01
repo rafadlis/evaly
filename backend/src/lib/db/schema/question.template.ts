@@ -1,13 +1,13 @@
 import {
-  jsonb,
-  pgTable,
-  timestamp,
-  varchar,
-  boolean,
-  index,
+    jsonb,
+    pgTable,
+    timestamp,
+    varchar,
+    boolean,
+    index,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm/relations";
-import { ulid } from "ulidx";
+
 import { question } from "./question";
 
 export const questionTemplate = pgTable(
@@ -15,7 +15,7 @@ export const questionTemplate = pgTable(
   {
     id: varchar("id", { length: 255 })
       .primaryKey()
-      .$defaultFn(() => "qst-tpl-" + ulid()),
+      .$defaultFn(() => "qst-tpl-" + Bun.randomUUIDv7()),
     title: varchar("title", { length: 255 }),
     organizationId: varchar("organization_id", { length: 255 }).notNull(),
     organizerId: varchar("organizer_id", { length: 255 }).notNull(),

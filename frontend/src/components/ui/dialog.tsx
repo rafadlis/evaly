@@ -4,6 +4,7 @@ import * as React from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 
 import { cn } from "@/lib/utils"
+import { ChevronLeft } from "lucide-react"
 
 function Dialog({
   ...props
@@ -41,7 +42,7 @@ function DialogOverlay({
         e.preventDefault();
       }}
       className={cn(
-        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/80",
+        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/10 backdrop-blur-xs",
         className
       )}
       {...props}
@@ -60,7 +61,7 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 border p-6 duration-200 sm:max-w-lg",
+          "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-100 data-[state=open]:zoom-in-100 fixed top-[50%] left-[50%] z-50 grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 border p-6 duration-100 sm:max-w-lg",
           className
         )}
         {...props}
@@ -134,4 +135,45 @@ export {
   DialogPortal,
   DialogTitle,
   DialogTrigger,
+}
+
+
+
+export function DialogNavbar({
+  className,
+  onBack,
+  title,
+  titleComponent,
+  ...props
+}: React.ComponentProps<"div"> & {
+  onBack: () => void;
+  title?: string
+  titleComponent?: React.ReactNode
+}) {
+  return (
+    <header
+      data-slot="drawer-navbar"
+      className={cn("px-6 py-4", className)}
+      {...props}
+    >
+      <div className="mx-auto flex items-center">
+        <button
+          onClick={onBack}
+          className="p-2 rounded-full hover:bg-muted transition-all duration-100 cursor-pointer"
+        >
+          <ChevronLeft className="text-muted-foreground" size={16} />
+        </button>
+        {titleComponent ? (
+          titleComponent
+        ) : (
+          <>
+            <DialogTitle className="ml-3 font-medium text-foreground text-sm">
+              {title}
+            </DialogTitle>
+            <DialogDescription className="hidden"></DialogDescription>
+          </>
+        )}
+      </div>
+    </header>
+  );
 }

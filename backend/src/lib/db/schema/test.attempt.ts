@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 import { testSection } from "./test.section";
 import { pgTable, varchar, timestamp, uniqueIndex, index } from "drizzle-orm/pg-core";
-import { ulid } from "ulidx";
+
 import { user } from "./user";
 import { test } from "./test";
 
@@ -10,7 +10,7 @@ export const testAttempt = pgTable(
   {
     id: varchar("id")
       .primaryKey()
-      .$defaultFn(() => "ta-" + ulid()),
+      .$defaultFn(() => "ta-" + Bun.randomUUIDv7()),
     testSectionId: varchar("test_section_id").references(() => testSection.id).notNull(),
     testId: varchar("test_id").references(() => test.id).notNull(),
     participantEmail: varchar("participant_email").notNull(),

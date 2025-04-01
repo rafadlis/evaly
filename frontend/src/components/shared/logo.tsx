@@ -22,8 +22,8 @@ export const LogoType = ({ className, href = "/" }: Props) => {
 
 export const Logo = ({ className, }: { className?: string, }) => {
   return (
-    <div className={cn("size-[24px] rounded-[4px] bg-primary flex items-center justify-center", className)}>
-      <EqualApproximatelyIcon size={18} className="stroke-background" />
+    <div className={cn("size-[20px] bg-foreground flex items-center justify-center", className)}>
+      <EqualApproximatelyIcon size={16} className="stroke-background" />
     </div>
   );
 };

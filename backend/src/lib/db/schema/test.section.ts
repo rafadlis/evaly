@@ -1,6 +1,6 @@
 import { relations, sql } from "drizzle-orm";
 import { smallint, pgTable, varchar, timestamp } from "drizzle-orm/pg-core";
-import { ulid } from "ulidx";
+
 import { question } from "./question";
 import { test } from "./test";
 import { testAttempt } from "./test.attempt";
@@ -8,7 +8,7 @@ import { testAttempt } from "./test.attempt";
 export const testSection = pgTable("test_section", {
   id: varchar("id", { length: 255 })
     .primaryKey()
-    .$defaultFn(() => "ss-" + ulid()),
+    .$defaultFn(() => "ss-" + Bun.randomUUIDv7()),
   title: varchar("title", { length: 255 }),
   duration: smallint("duration").default(0),
   order: smallint("order"),
