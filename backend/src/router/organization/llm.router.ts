@@ -369,5 +369,49 @@ IMPORTANT INSTRUCTIONS FOR QUESTION GENERATION:
       });
 
       return messages;
+    })
+    .get("/chat/2/:topic", async function* ({ organizer, params }) {
+      const message = await streamText({
+        model: google("gemini-2.0-flash-001"),
+        prompt: `You are a helpful assistant that can generate questions for given topic and audience.
+          the topic is: ${params.topic}
+          the type of question is: multiple-choice
+          generate the questions with the following format:
+
+          q: question
+          type: type of question (multiple-choice, text-field)
+          a: option 1
+          b: option 2
+          c: option 3
+          d: option 4
+          correctOption: correct option (a, b, c, d)
+          ===
+          q: question
+          type: type of question
+          a: option 1
+          b: option 2
+          c: option 3
+          d: option 4
+          correctOption: correct option (a, b, c, d)
+          ===
+
+          IMPORTANT:
+          - Use the following format for the questions
+          - Do not include any other text in your response except the questions and options
+          - if the type of question is text-field, do not include options
+          - if the type of question is text-field, fill the correctOption with the suggested answer
+          - if the type of question is multiple-choice, include 4 options
+          - Generate total based on the requested number of questions
+        `,
+        maxRetries: 3,
+        onFinish: async ({ response, usage }) => {
+          console.log(response);
+          console.log(usage);
+        },
+      });
+
+      for await (const chunk of message.textStream) {
+        yield chunk;
+      }
     });
 });

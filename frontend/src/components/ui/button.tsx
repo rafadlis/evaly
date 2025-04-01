@@ -27,7 +27,7 @@ const buttonVariants = cva(
         accent: "bg-accent text-accent-foreground hover:bg-accent/90",
       },
       size: {
-        default: "h-9 px-5 has-[>svg]:pl-3 gap-2 ",
+        default: "h-9 px-6 has-[>svg]:pl-5 gap-2 ",
         sm: "h-8 px-4 has-[>svg]:pl-2.5 gap-1.5 text-sm ",
         xs: "h-7 px-4 has-[>svg]:pl-2 text-xs gap-1 text-xs ",
         xxs: "h-6 px-3 has-[>svg]:pl-2 text-xs gap-1 text-xs ",
