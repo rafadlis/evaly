@@ -140,7 +140,7 @@ function DrawerNavbar({
           onClick={onBack}
           className="p-2 rounded-full hover:bg-muted transition-all duration-100 cursor-pointer"
         >
-          <ChevronLeft className="text-muted-foreground" size={16} />
+          <ChevronLeft className="text-muted-foreground" size={20} />
         </button>
         {titleComponent ? (
           titleComponent

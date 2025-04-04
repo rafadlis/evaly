@@ -14,11 +14,9 @@ import { Test } from "@evaly/backend/types/test";
 import { useMutation } from "@tanstack/react-query";
 import {
   CheckIcon,
-  Loader2,
-  Rocket,
-  RocketIcon,
-  TriangleAlert,
-  XIcon,
+  CircleAlert,
+  Loader2, LockIcon, TriangleAlert,
+  XIcon
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -54,7 +52,7 @@ const DialogPublishTest = ({
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
         <Button disabled={isPublishing}>
-          <Rocket /> Publish
+          Publish
         </Button>
       </DrawerTrigger>
       <DrawerContent className="h-dvh">
@@ -82,12 +80,11 @@ const DialogPublishTest = ({
                   publishTest();
                 }}
               >
+                {!data?.isPublishable ? <LockIcon /> :null}
                 {isPublishing ? (
                   <Loader2 className="animate-spin" />
-                ) : (
-                  <RocketIcon />
-                )}{" "}
-                Publish Test
+                ) : "Publish Test"}
+                
               </Button>
             </div>
             <div className="grid grid-cols-2 mt-6 border divide-y divide-x">
@@ -109,7 +106,7 @@ const DialogPublishTest = ({
                     <span className="text-sm text-muted-foreground">
                       {e.title}
                     </span>
-                    <p>{e.message}</p>
+                    <p className="text-sm">{e.message}</p>
                   </div>
                 </div>
               ))}
@@ -121,14 +118,15 @@ const DialogPublishTest = ({
                   Your test is ready to be published.
                 </p>
               ) : (
-                <p className="bg-destructive/10 text-destructive p-2">
+                <span className="bg-destructive/10 text-destructive px-4 py-2 flex items-center gap-2 border border-destructive/10">
+                  <CircleAlert size={16}/>
                   Your test is not ready to be published. Please fix the issues
                   above.
-                </p>
+                </span>
               )}
             </div>
             <h1 className="text-xl font-bold mt-12 mb-4">Summary</h1>
-            <div className="grid grid-cols-4 divide-x divide-y border">
+            <div className="grid grid-cols-4 divide-x divide-y border text-sm">
               <div className="p-4 col-span-2">
                 <Label>Title</Label>
                 <p>{data?.summary?.title || "No title"}</p>

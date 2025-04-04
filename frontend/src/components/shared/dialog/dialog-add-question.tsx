@@ -113,7 +113,7 @@ const DialogAddQuestion = ({
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-none h-dvh flex flex-col p-0">
-        <div className="container max-w-2xl overflow-y-auto pt-[20vh] pb-20">
+        <div className="container max-w-2xl overflow-y-auto pt-[14vh] pb-20">
           <DialogHeader>
             <DialogTitle>Add Question</DialogTitle>
             <DialogDescription>
@@ -180,7 +180,7 @@ const DialogAddQuestion = ({
               <div className="border border-dashed p-4 flex flex-col">
                 <Label className="font-semibold mb-2">Import Questions</Label>
                 <Label className="mb-4">
-                  Upload a document file with questions
+                  Upload document to generate questions
                 </Label>
                 <div className="flex flex-row gap-2">
                   <Input

@@ -64,12 +64,8 @@ const DialogEditQuestion = ({
   } = useForm<UpdateQuestion>({
     reValidateMode: "onChange",
   });
-
-  const type = watch("type");
-  const updatedAt = watch("updatedAt");
+  const [type, updatedAt, allowMultipleAnswers, options] = watch(["type", "updatedAt", "allowMultipleAnswers", "options"])
   const isOptionsType = type === "multiple-choice" || type === "yes-or-no";
-  const allowMultipleAnswers = watch("allowMultipleAnswers");
-  const options = watch("options");
 
   // Validate options
   const validateOptions = () => {
@@ -396,7 +392,7 @@ const DialogEditQuestion = ({
                 ) : null}
               </div>
             ) : null}
-
+            
             {isOptionsType ? (
               <Controller
                 control={control}
@@ -411,6 +407,7 @@ const DialogEditQuestion = ({
                       onChange={(value) => {
                         field.onChange(value);
                       }}
+                      type={type}
                       allowMultipleAnswers={allowMultipleAnswers === true}
                     />
                     {errors.options && (
@@ -478,10 +475,12 @@ const Options = ({
   value,
   onChange,
   allowMultipleAnswers,
+  type
 }: {
   value: UpdateQuestion["options"];
   onChange: (options: UpdateQuestion["options"]) => void;
   allowMultipleAnswers: boolean;
+  type: UpdateQuestion["type"]
 }) => {
   const onChangeOption = (
     option: NonNullable<UpdateQuestion["options"]>[number]
@@ -511,7 +510,10 @@ const Options = ({
     return uniqueOptionTexts.size < optionTexts.length;
   })();
 
+  const maxOptions = type === "multiple-choice" ? 5 : type === "yes-or-no" ? 2 : 0
+
   if (!value) return null;
+
   return (
     <div className="flex flex-col gap-2">
       <Reorder.Group
@@ -572,48 +574,30 @@ const Options = ({
       </Reorder.Group>
 
       {/* Add Option Button */}
-      {value && (
-        <div className="mt-4">
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => {
-              // Determine max options based on question type
-              const maxOptions =
-                value[0]?.text === "Yes" && value[1]?.text === "No" ? 2 : 5;
+      {value && value.length < maxOptions && (
+          <div className="mt-4">
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => {
+                // Determine max options based on question type
 
-              // Only add if we haven't reached the maximum
-              if (value.length < maxOptions) {
-                const newOption = {
-                  id: nanoid(5),
-                  text: "",
-                  isCorrect: false,
-                };
-                onChange([...value, newOption]);
-              }
-            }}
-            disabled={
-              // Disable if we've reached the maximum options
-              // For yes-or-no questions, max is 2
-              // For other option-based questions, max is 5
-              (value[0]?.text === "Yes" &&
-                value[1]?.text === "No" &&
-                value.length >= 2) ||
-              value.length >= 5
-            }
-          >
-            {value.length >=
-            (value[0]?.text === "Yes" && value[1]?.text === "No" ? 2 : 5) ? (
-              <span>Maximum options reached</span>
-            ) : (
-              <>
-                <PlusCircle className="h-4 w-4 mr-2" />
-                Add Option
-              </>
-            )}
-          </Button>
-        </div>
-      )}
+                // Only add if we haven't reached the maximum
+                if (value.length < maxOptions) {
+                  const newOption = {
+                    id: nanoid(5),
+                    text: "",
+                    isCorrect: false,
+                  };
+                  onChange([...value, newOption]);
+                }
+              }}
+            >
+              <PlusCircle className="h-4 w-4 mr-2" />
+              Add Option
+            </Button>
+          </div>
+        )}
 
       {/* Validation warnings */}
       {hasNoCorrectOption && (

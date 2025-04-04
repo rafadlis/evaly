@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
-import { ArrowRight, ArrowUpRight, Wand2 } from "lucide-react";
+import { Wand2 } from "lucide-react";
 import { motion } from "motion/react";
 import { Badge } from "../ui/badge";
 
@@ -23,7 +23,7 @@ export const Hero = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="max-w-4xl"
+          className="max-w-4xl text-center mx-auto flex flex-col items-center"
         >
           <Button
             variant={"outline"}
@@ -49,12 +49,12 @@ export const Hero = () => {
           <div className="flex flex-wrap gap-4">
             <Link href="/auth/register">
               <Button size="lg">
-                Start Free Trial <ArrowRight className="ml-2 h-4 w-4" />
+                Start Free Trial
               </Button>
             </Link>
             <Link href="#">
               <Button variant="outline" size="lg">
-                Watch Demo <ArrowUpRight className="ml-2 h-4 w-4" />
+                Watch Demo
               </Button>
             </Link>
           </div>
