@@ -23,14 +23,14 @@ const GenerateQuestionInputPrompt = () => {
   
     const { mutate: startGeneration, isPending: isGenerating } = useMutation({
       mutationKey: ["start-question-generation"],
-      mutationFn: async (message: string, files?: File[]) => {
-        if (message.length <= 0) {
-          toast.error("Message is required");
+      mutationFn: async (prompt: string) => {
+        if (prompt.length <= 0) {
+          toast.error("Prompt is required");
           return;
         }
   
-        const res = await $api.organization.question.llm.create.post({
-          files,
+        const res = await $api.organization.question.llm.validate.post({
+          prompt
         });
   
         const data = res.data;
@@ -39,14 +39,16 @@ const GenerateQuestionInputPrompt = () => {
           toast.error("Failed to generate questions, please try again.");
           return;
         }
-        startTransition(() => {
-          router.push(
-            `/dashboard/question/generate/${data.id}?initialMessage=${message}`,
-            { scroll: true }
-          );
-        });
+        // startTransition(() => {
+        //   router.push(
+        //     `/dashboard/question/generate/${data.id}`,
+        //     { scroll: true }
+        //   );
+        // });
+
+        console.log(data)
   
-        return res.data;
+        // return res.data;
       },
     });
   

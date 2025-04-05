@@ -24,7 +24,7 @@ const CardSection = ({
       key={data.id}
       onClick={onClick}
       className={cn(
-        "flex flex-col group/section justify-start  cursor-pointer p-3 relative select-none  border-dashed",
+        "flex flex-col group/section justify-start  cursor-pointer p-3 relative select-none",
         isSelected
           ? ""
           : ""

@@ -110,10 +110,10 @@ const Questions = () => {
   return (
     <div className="flex flex-row gap-6">
       <SectionSidebar />
-      <Card className="border border-dashed overflow-clip flex-1 h-max">
+      <Card className="border overflow-clip flex-1 h-max">
         <CardHeader
           className={cn(
-            `bg-background z-10 pb-4 transition-all duration-300 border-b border-dashed mb-2`,
+            `bg-background z-10 pb-4 transition-all duration-300 border-b mb-2`,
           )}
         >
           <div className="flex flex-row items-start">

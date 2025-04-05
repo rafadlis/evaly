@@ -3,9 +3,7 @@ import {
   CheckCircle2,
   GripVertical,
   Loader2,
-  Trash2,
-  PlusCircle,
-  XIcon,
+  Trash2, XIcon
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -26,12 +24,13 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { nanoid } from "nanoid";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogNavbar,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerNavbar,
+  DrawerTitle,
+} from "@/components/ui/drawer";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 dayjs.extend(relativeTime);
 
@@ -192,7 +191,7 @@ const DialogEditQuestion = ({
   };
 
   return (
-    <Dialog
+    <Drawer
       open={open}
       onOpenChange={(e) => {
         if (!e) {
@@ -202,16 +201,16 @@ const DialogEditQuestion = ({
         }
       }}
     >
-      <DialogContent className="sm:max-w-none h-dvh flex flex-col p-0 gap-0">
-        <DialogNavbar
+      <DrawerContent className="sm:max-w-none h-dvh flex flex-col p-0 gap-0">
+        <DrawerNavbar
           onBack={() => closeDialog(isDirty)}
           title={`Edit Question #${defaultValue?.order}`}
           className="mb-10"
         />
 
         <div className="flex flex-col overflow-y-auto pb-10">
-          <DialogHeader className="container max-w-4xl px-6">
-            <DialogTitle className="flex justify-between items-center">
+          <DrawerHeader className="container max-w-4xl px-6">
+            <DrawerTitle className="flex justify-between items-center">
               <div className="flex flex-row gap-2 items-center">
                 <Controller
                   control={control}
@@ -307,8 +306,8 @@ const DialogEditQuestion = ({
               <div className="flex flex-row gap-2 text-muted-foreground font-normal text-sm">
                 Last updated: {dayjs(updatedAt).fromNow()}
               </div>
-            </DialogTitle>
-          </DialogHeader>
+            </DrawerTitle>
+          </DrawerHeader>
 
           <div className="container max-w-4xl pb-10 pt-2">
             <Controller
@@ -466,8 +465,8 @@ const DialogEditQuestion = ({
             </div>
           </div>
         </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      </DrawerContent>
+    </Drawer>
   );
 };
 
@@ -575,10 +574,10 @@ const Options = ({
 
       {/* Add Option Button */}
       {value && value.length < maxOptions && (
-          <div className="mt-4">
+          <div className="mt-4 mx-auto">
             <Button
               variant="outline"
-              className="w-full"
+              className="w-max border-dashed"
               onClick={() => {
                 // Determine max options based on question type
 
@@ -593,7 +592,6 @@ const Options = ({
                 }
               }}
             >
-              <PlusCircle className="h-4 w-4 mr-2" />
               Add Option
             </Button>
           </div>
@@ -655,9 +653,11 @@ const OptionItem = ({
       dragListener={false}
       dragControls={control}
     >
-      <Button
+      <Tooltip>
+        <TooltipTrigger asChild>
+        <Button
         size={"icon"}
-        className="select-none size-10 mr-2"
+        className="select-none mr-2"
         variant={option.isCorrect ? "success" : "secondary"}
         onClick={onClickCorrect}
       >
@@ -667,11 +667,18 @@ const OptionItem = ({
           String.fromCharCode(65 + index)
         )}
       </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          {option.isCorrect 
+            ? "This is the correct answer" 
+            : "Click to mark as correct answer"}
+        </TooltipContent>
+      </Tooltip>
       <div className="flex-1 flex flex-row items-center">
         <Input
           placeholder={`Type options ${index + 1}`}
           className={cn(
-            "h-10",
+            "bg-secondary border-transparent",
             isEmptyOption ? "border-destructive" : "",
             isDuplicate ? "border-amber-500 bg-warning" : ""
           )}
@@ -682,16 +689,31 @@ const OptionItem = ({
         />
       </div>
       <div>
+        <Tooltip>
+          <TooltipTrigger asChild>
+
         <Button
           onPointerDown={(e) => control.start(e)}
           variant={"ghost"}
-          size={"icon-sm"}
+          size={"icon"}
         >
           <GripVertical className="text-muted-foreground" />
         </Button>
-        <Button variant={"ghost"} size={"icon-sm"} onClick={onDelete}>
-          <Trash2 className="text-muted-foreground" />
-        </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+          Drag to reorder options
+          </TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant={"ghost"} size={"icon"} onClick={onDelete}>
+              <Trash2 className="text-muted-foreground" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            Delete this option
+          </TooltipContent>
+        </Tooltip>
       </div>
     </Reorder.Item>
   );

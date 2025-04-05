@@ -26,8 +26,8 @@ const TextStyle = ({ editor }: { editor: Editor }) => {
           <button
             onClick={() => editor.chain().focus().setParagraph().run()}
             className={cn(
-              "w-full hover:bg-foreground/10 px-4 py-2 text-start flex flex-col rounded-lg",
-              { "bg-primary/20": editor.isActive("paragraph") }
+              "w-full hover:bg-foreground/5 px-4 py-2 text-start flex flex-col rounded-lg",
+              { "bg-primary/5": editor.isActive("paragraph") }
             )}
           >
             <span className="font-medium text-base">Text</span>
@@ -41,8 +41,8 @@ const TextStyle = ({ editor }: { editor: Editor }) => {
               editor.chain().focus().toggleHeading({ level: 1 }).run()
             }
             className={cn(
-              "w-full hover:bg-foreground/10 px-4 py-2 text-start flex flex-col rounded-lg",
-              { "bg-primary/20": editor.isActive("heading", { level: 1 }) }
+              "w-full hover:bg-foreground/5 px-4 py-2 text-start flex flex-col rounded-lg",
+              { "bg-primary/5": editor.isActive("heading", { level: 1 }) }
             )}
           >
             <span className="font-medium text-base">Heading 1</span>
@@ -54,8 +54,8 @@ const TextStyle = ({ editor }: { editor: Editor }) => {
               editor.chain().focus().toggleHeading({ level: 2 }).run()
             }
             className={cn(
-              "w-full hover:bg-foreground/10 px-4 py-2 text-start flex flex-col rounded-lg",
-              { "bg-primary/20": editor.isActive("heading", { level: 2 }) }
+              "w-full hover:bg-foreground/5 px-4 py-2 text-start flex flex-col rounded-lg",
+              { "bg-primary/5": editor.isActive("heading", { level: 2 }) }
             )}
           >
             <span className="font-medium text-base">Heading 2</span>
@@ -67,8 +67,8 @@ const TextStyle = ({ editor }: { editor: Editor }) => {
               editor.chain().focus().toggleHeading({ level: 3 }).run()
             }
             className={cn(
-              "w-full hover:bg-foreground/10 px-4 py-2 text-start flex flex-col rounded-lg",
-              { "bg-primary/20": editor.isActive("heading", { level: 3 }) }
+              "w-full hover:bg-foreground/5 px-4 py-2 text-start flex flex-col rounded-lg",
+              { "bg-primary/5": editor.isActive("heading", { level: 3 }) }
             )}
           >
             <span className="font-medium text-base">Heading 3</span>

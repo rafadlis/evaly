@@ -116,7 +116,7 @@ const Page = () => {
         values={localQuestions}
         as="div"
         className={cn(
-          "mt-4 flex flex-col border border-dashed overflow-clip",
+          "mt-4 flex flex-col border overflow-clip",
           localQuestions.length > 0 ? "pb-6" : ""
         )}
       >
@@ -190,7 +190,7 @@ const Page = () => {
                   </Button>
                 }
               />
-              <div className="h-auto border-b border-border/50 border-dashed w-full group-hover/separator:border-foreground/20" />
+              <div className="h-auto border-b w-full group-hover/separator:border-foreground/20" />
             </div>
           </Reorder.Item>
         ))}

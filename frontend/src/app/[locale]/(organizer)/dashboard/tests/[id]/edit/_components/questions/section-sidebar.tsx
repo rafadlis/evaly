@@ -159,7 +159,7 @@ const AddSession = () => {
     <div className="flex flex-col items-start mt-4">
       <Button
         variant={"outline"}
-        className="w-max"
+        className="w-max border-dashed"
         size={"sm"}
         disabled={isPending || isRefetchingSection}
         onClick={() => {
