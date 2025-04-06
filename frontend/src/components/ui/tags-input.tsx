@@ -65,14 +65,14 @@ export default function TagsInput({
   }
 
   return (
-    <div className={cn("flex flex-wrap items-center gap-1 p-1 border rounded-lg select-none", className)}>
+    <div className={cn("flex flex-wrap items-center gap-1.5  select-none", className)}>
       {tags.map((tag, index) => (
-        <Badge key={index} variant="outline" className="h-7 pl-3 pr-2 text-sm rounded-[6px]">
+        <Badge key={index} variant="outline" className="h-7 pl-3 pr-2 text-sm">
           {tag}
           <button
             type="button"
             onClick={() => removeTag(index)}
-            className="ml-1 rounded-full hover:opacity-70 cursor-pointer p-0.5"
+            className="ml-1  hover:opacity-70 cursor-pointer p-0.5"
             disabled={disabled}
             aria-label={`Remove ${tag}`}
           >

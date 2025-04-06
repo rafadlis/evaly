@@ -22,6 +22,10 @@ export const questionTemplate = pgTable(
     tags: jsonb("tags").$type<string[]>().notNull().default([]),
     isAiGenerated: boolean("is_ai_generated").notNull().default(false),
     isGenerating: boolean("is_generating").notNull().default(false),
+    isGeneratingExpiredAt: timestamp("is_generating_expired_at", {
+      mode: "string",
+      withTimezone: true,
+    }),
     aiContents: jsonb("ai_contents")
       .$type<
         {

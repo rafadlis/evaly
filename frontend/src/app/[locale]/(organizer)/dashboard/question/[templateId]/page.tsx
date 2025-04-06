@@ -95,6 +95,7 @@ const Page = () => {
             </Button>
           ) : null}
           <DialogAddQuestion
+            showTabsOption={false}
             referenceId={templateId}
             onSuccessCreateQuestion={(questions) => {
               setSelectedEditQuestion(questions[0]);
@@ -164,6 +165,7 @@ const Page = () => {
               )}
             >
               <DialogAddQuestion
+                showTabsOption={false}
                 referenceId={templateId}
                 referenceType="template"
                 order={index + 2}
@@ -198,6 +200,7 @@ const Page = () => {
           <div className="flex flex-col justify-center items-center py-16  gap-4">
             <h1>No question found on this section</h1>
             <DialogAddQuestion
+              showTabsOption={false}
               referenceId={templateId}
               referenceType="template"
               onSuccessCreateQuestion={(data) => {

@@ -19,6 +19,8 @@ const envSchema = z.object({
   OPENAI_API_KEY: z.string(),
   // MEM0_API_KEY: z.string(),
   GOOGLE_GENERATIVE_AI_API_KEY: z.string(),
+  TRIGGER_SECRET_KEY: z.string(),
+  TRIGGER_API_URL: z.string(),
   
   //development-backend
   WEB_PUBLIC_URL_DEVELOPMENT: z.string(),

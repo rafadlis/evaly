@@ -5,7 +5,13 @@ import { questionTypes } from "@/constants/question-type";
 import { cn } from "@/lib/utils";
 import { useUpdateBetweenQuestionMutation } from "@/query/organization/question/use-update-between-question.mutation";
 import { Question } from "@evaly/backend/types/question";
-import { ArrowDown, ArrowUp, CheckIcon, Loader2, MousePointerClick } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  CheckIcon,
+  Loader2,
+  MousePointerClick,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -18,6 +24,7 @@ const CardQuestion = ({
   onDeleteSuccess,
   previousQuestionId,
   nextQuestionId,
+  previewOnly,
 }: {
   className?: string;
   hideOptions?: boolean;
@@ -27,6 +34,7 @@ const CardQuestion = ({
   onClickEdit?: () => void;
   onChangeOrder?: (questions: { questionId: string; order: number }[]) => void;
   onDeleteSuccess?: () => void;
+  previewOnly?: boolean;
 }) => {
   const [isMoving, setIsMoving] = useState<"up" | "down">();
   const {
@@ -82,7 +90,10 @@ const CardQuestion = ({
         onChangeOrder?.(questions);
       });
   };
-  const selectedType = data?.type && questionTypes[data.type] ? questionTypes[data.type] : questionTypes["multiple-choice"];
+  const selectedType =
+    data?.type && questionTypes[data.type]
+      ? questionTypes[data.type]
+      : questionTypes["multiple-choice"];
 
   if (!data) return null;
 
@@ -97,9 +108,7 @@ const CardQuestion = ({
     >
       <CardHeader className="flex flex-row justify-between items-center p-0">
         <div className="flex flex-row gap-4">
-          <span
-            className="text-xs text-muted-foreground bg-secondary px-2 py-0.5"
-          >
+          <span className="text-xs text-muted-foreground bg-secondary px-2 py-0.5">
             # Question {data.order}
           </span>
           {data.pointValue ? (
@@ -108,67 +117,69 @@ const CardQuestion = ({
             </span>
           ) : null}
           <span className="text-xs text-muted-foreground px-1 py-0.5 flex flex-row items-center gap-1">
-          {selectedType.icon && <selectedType.icon size={12} />}
+            {selectedType.icon && <selectedType.icon size={12} />}
             {selectedType.label}
           </span>
         </div>
-        <div className="flex-row h-5 justify-end items-center invisible group-hover:visible flex">
-          <Button
-            className="hidden group-hover:flex mr-2"
-            size={"xs"}
-            variant={"secondary"}
-          >
-            <MousePointerClick className="size-4" />
-            Click to edit
-          </Button>
-
-          {previousQuestionId ? (
+        {!previewOnly ? (
+          <div className="flex-row h-5 justify-end items-center invisible group-hover:visible flex">
             <Button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleMove("up");
-              }}
-              size={"icon-xs"}
-              variant={"ghost"}
-              disabled={isPendingUpdateBetweenQuestion && isMoving === "up"}
+              className="hidden group-hover:flex mr-2"
+              size={"xs"}
+              variant={"secondary"}
             >
-              {isMoving === "up" ? (
-                <Loader2 className="text-muted-foreground" />
-              ) : (
-                <ArrowUp className="text-muted-foreground" />
-              )}
+              <MousePointerClick className="size-4" />
+              Click to edit
             </Button>
-          ) : null}
 
-          {nextQuestionId ? (
-            <Button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleMove("down");
+            {previousQuestionId ? (
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleMove("up");
+                }}
+                size={"icon-xs"}
+                variant={"ghost"}
+                disabled={isPendingUpdateBetweenQuestion && isMoving === "up"}
+              >
+                {isMoving === "up" ? (
+                  <Loader2 className="text-muted-foreground" />
+                ) : (
+                  <ArrowUp className="text-muted-foreground" />
+                )}
+              </Button>
+            ) : null}
+
+            {nextQuestionId ? (
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleMove("down");
+                }}
+                size={"icon-xs"}
+                variant={"ghost"}
+                disabled={
+                  (isPendingUpdateBetweenQuestion && isMoving === "down") ||
+                  !nextQuestionId
+                }
+              >
+                {isMoving === "down" ? (
+                  <Loader2 className="text-muted-foreground" />
+                ) : (
+                  <ArrowDown className="text-muted-foreground" />
+                )}
+              </Button>
+            ) : null}
+
+            <DialogDeleteQuestion
+              className="ml-2"
+              questionId={data.id}
+              onSuccess={() => {
+                onDeleteSuccess?.();
               }}
-              size={"icon-xs"}
-              variant={"ghost"}
-              disabled={
-                (isPendingUpdateBetweenQuestion && isMoving === "down") ||
-                !nextQuestionId
-              }
-            >
-              {isMoving === "down" ? (
-                <Loader2 className="text-muted-foreground" />
-              ) : (
-                <ArrowDown className="text-muted-foreground" />
-              )}
-            </Button>
-          ) : null}
-
-          <DialogDeleteQuestion
-            className="ml-2"
-            questionId={data.id}
-            onSuccess={() => {
-              onDeleteSuccess?.();
-            }}
-          />
-        </div>
+            />
+          </div>
+        ) : null}
       </CardHeader>
       <CardContent className="p-0 pt-4">
         <div
@@ -204,11 +215,7 @@ const CardQuestion = ({
                 <span className={cn("flex-1")}>
                   {option.text || "Option " + (i + 1)}
                 </span>
-                {
-                  option.isCorrect ? (
-                    <CheckIcon size={13} />
-                  ) : null
-                }
+                {option.isCorrect ? <CheckIcon size={13} /> : null}
               </div>
             ))}
           </div>

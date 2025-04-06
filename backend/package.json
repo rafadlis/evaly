@@ -11,7 +11,9 @@
     "db:migrate": "bun db:generate && ENVIRONMENT=development bun run src/lib/db/migrate.ts && ENVIRONMENT=staging bun run src/lib/db/migrate.ts && bun run prepare",
     "db:push": "bunx drizzle-kit push",
     "check-types": "tsc --noEmit",
-    "email": "email dev --dir src/emails"
+    "email": "email dev --dir src/emails",
+    "trigger:dev": "bunx trigger.dev@latest dev",
+    "trigger:deploy": "bunx trigger.dev@latest deploy --self-hosted --env prod --push"
   },
   "dependencies": {
     "@ai-sdk/google": "1.2.3",
@@ -24,6 +26,7 @@
     "@mem0/vercel-ai-provider": "^0.0.14",
     "@react-email/components": "^0.0.33",
     "@sinclair/typebox": "^0.34.28",
+    "@trigger.dev/sdk": "3.3.17",
     "ai": "4.2.5",
     "better-auth": "1.2.4",
     "bun": "1.2.5",

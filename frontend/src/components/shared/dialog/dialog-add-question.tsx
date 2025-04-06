@@ -19,11 +19,13 @@ import { InsertQuestion } from "@evaly/backend/types/question";
 import { Question, QuestionType } from "@evaly/backend/types/question";
 import { useMutation } from "@tanstack/react-query";
 import {
-  FileTextIcon, Loader2,
-  LockIcon, PencilIcon,
+  FileTextIcon,
+  Loader2,
+  LockIcon,
+  PencilIcon,
   Plus,
   SparklesIcon,
-  UploadIcon
+  UploadIcon,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import GenerateQuestionInputPrompt from "../generate-question-input-prompt";
@@ -34,12 +36,14 @@ const DialogAddQuestion = ({
   referenceType,
   onSuccessCreateQuestion,
   triggerButton,
+  showTabsOption = true,
 }: {
   order?: number;
   referenceId: string;
   referenceType?: Question["referenceType"];
   onSuccessCreateQuestion?: (question: Question[]) => void;
   triggerButton?: React.ReactNode;
+  showTabsOption?: boolean;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [typeSelected, setTypeSelected] = useState<QuestionType>();
@@ -91,14 +95,17 @@ const DialogAddQuestion = ({
   };
 
   const groupedQuestionTypes = useMemo(() => {
-    return Object.values(questionTypes).reduce((acc, type) => {
-      const group = type.group || "Other"; // Default group if missing
-      if (!acc[group]) {
-        acc[group] = [];
-      }
-      acc[group].push(type);
-      return acc;
-    }, {} as Record<string, typeof questionTypes[keyof typeof questionTypes][]>);
+    return Object.values(questionTypes).reduce(
+      (acc, type) => {
+        const group = type.group || "Other"; // Default group if missing
+        if (!acc[group]) {
+          acc[group] = [];
+        }
+        acc[group].push(type);
+        return acc;
+      },
+      {} as Record<string, (typeof questionTypes)[keyof typeof questionTypes][]>
+    );
   }, []);
 
   return (
@@ -121,28 +128,28 @@ const DialogAddQuestion = ({
             </DialogDescription>
           </DialogHeader>
           <Tabs defaultValue="manual" className="mt-4 space-y-6">
-            <TabsList className="divide-x gap-0 divide-dashed divide-foreground/5">
-              <TabsTrigger value="manual">
-                <PencilIcon className="size-4" /> Manual
-              </TabsTrigger>
-              <TabsTrigger value="import">
-                <UploadIcon className="size-4" /> Import
-              </TabsTrigger>
-              <TabsTrigger value="template">
-                <FileTextIcon className="size-4" /> Template
-              </TabsTrigger>
-              <TabsTrigger value="ai">
-                <SparklesIcon className="size-4" /> AI
-              </TabsTrigger>
-            </TabsList>
+            {showTabsOption ? (
+              <TabsList className="divide-x gap-0 divide-dashed divide-foreground/5">
+                <TabsTrigger value="manual">
+                  <PencilIcon className="size-4" /> Manual
+                </TabsTrigger>
+                <TabsTrigger value="import">
+                  <UploadIcon className="size-4" /> Import
+                </TabsTrigger>
+                <TabsTrigger value="template">
+                  <FileTextIcon className="size-4" /> Template
+                </TabsTrigger>
+                <TabsTrigger value="ai">
+                  <SparklesIcon className="size-4" /> AI
+                </TabsTrigger>
+              </TabsList>
+            ) : null}
 
             <TabsContent value="manual">
               <div className="space-y-6">
                 {Object.entries(groupedQuestionTypes).map(([group, types]) => (
                   <div key={group} className="">
-                    <Label>
-                      {group}
-                    </Label>
+                    <Label>{group}</Label>
                     <div className="flex flex-wrap gap-3 w-full mt-2">
                       {types.map((type) => (
                         <Button
@@ -160,7 +167,7 @@ const DialogAddQuestion = ({
                           }
                         >
                           {type.isHidden ? (
-                            <LockIcon className="size-3.5"/>
+                            <LockIcon className="size-3.5" />
                           ) : isPendingCreateQuestion &&
                             typeSelected === type.value ? (
                             <Loader2 className="animate-spin size-4" />
@@ -175,7 +182,7 @@ const DialogAddQuestion = ({
                 ))}
               </div>
             </TabsContent>
-       
+
             <TabsContent value="import">
               <div className="border border-dashed p-4 flex flex-col">
                 <Label className="font-semibold mb-2">Import Questions</Label>
@@ -196,7 +203,7 @@ const DialogAddQuestion = ({
                 </div>
               </div>
             </TabsContent>
-  
+
             <TabsContent value="template">
               <div className="border border-dashed p-4 flex flex-col">
                 <Label className="font-semibold mb-2">Use Template</Label>
@@ -218,7 +225,7 @@ const DialogAddQuestion = ({
                 </div>
               </div>
             </TabsContent>
-      
+
             <TabsContent value="ai">
               <div className="max-w-2xl w-full">
                 <GenerateQuestionInputPrompt />

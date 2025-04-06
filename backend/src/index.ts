@@ -10,6 +10,13 @@ const app = new Elysia()
   .use(cors())
   .use(swagger())
   .use(opentelemetry())
+  // .get("/", async function*() {
+  //   const task = await tasks.trigger("hello-world", {},{})
+  //   for await (const run of runs.subscribeToRun(task.id, {stopOnCompletion: true})){
+  //     yield run
+  //     yield "\n\n"
+  //   }
+  // })
   .all("/api/auth/*", betterAuthView) // Handle auth routes
   .use(organizationRouter)
   .use(participantRouter)
