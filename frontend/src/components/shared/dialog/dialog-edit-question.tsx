@@ -3,7 +3,8 @@ import {
   CheckCircle2,
   GripVertical,
   Loader2,
-  Trash2, XIcon
+  Trash2,
+  XIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -30,7 +31,11 @@ import {
   DrawerNavbar,
   DrawerTitle,
 } from "@/components/ui/drawer";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 dayjs.extend(relativeTime);
 
@@ -63,7 +68,12 @@ const DialogEditQuestion = ({
   } = useForm<UpdateQuestion>({
     reValidateMode: "onChange",
   });
-  const [type, updatedAt, allowMultipleAnswers, options] = watch(["type", "updatedAt", "allowMultipleAnswers", "options"])
+  const [type, updatedAt, allowMultipleAnswers, options] = watch([
+    "type",
+    "updatedAt",
+    "allowMultipleAnswers",
+    "options",
+  ]);
   const isOptionsType = type === "multiple-choice" || type === "yes-or-no";
 
   // Validate options
@@ -192,6 +202,7 @@ const DialogEditQuestion = ({
 
   return (
     <Drawer
+      direction="bottom"
       open={open}
       onOpenChange={(e) => {
         if (!e) {
@@ -391,7 +402,7 @@ const DialogEditQuestion = ({
                 ) : null}
               </div>
             ) : null}
-            
+
             {isOptionsType ? (
               <Controller
                 control={control}
@@ -474,12 +485,12 @@ const Options = ({
   value,
   onChange,
   allowMultipleAnswers,
-  type
+  type,
 }: {
   value: UpdateQuestion["options"];
   onChange: (options: UpdateQuestion["options"]) => void;
   allowMultipleAnswers: boolean;
-  type: UpdateQuestion["type"]
+  type: UpdateQuestion["type"];
 }) => {
   const onChangeOption = (
     option: NonNullable<UpdateQuestion["options"]>[number]
@@ -509,14 +520,15 @@ const Options = ({
     return uniqueOptionTexts.size < optionTexts.length;
   })();
 
-  const maxOptions = type === "multiple-choice" ? 5 : type === "yes-or-no" ? 2 : 0
+  const maxOptions =
+    type === "multiple-choice" ? 5 : type === "yes-or-no" ? 2 : 0;
 
   if (!value) return null;
 
   return (
     <div className="flex flex-col gap-2">
       <Reorder.Group
-        className="flex flex-col gap-4 mt-2 text-sm"
+        className="flex flex-col gap-2 mt-2 text-sm"
         onReorder={(newOrder) => {
           onChange(newOrder);
         }}
@@ -574,28 +586,28 @@ const Options = ({
 
       {/* Add Option Button */}
       {value && value.length < maxOptions && (
-          <div className="mt-4 mx-auto">
-            <Button
-              variant="outline"
-              className="w-max border-dashed"
-              onClick={() => {
-                // Determine max options based on question type
+        <div className="mt-4 mx-auto">
+          <Button
+            variant="outline"
+            className="w-max border-dashed"
+            onClick={() => {
+              // Determine max options based on question type
 
-                // Only add if we haven't reached the maximum
-                if (value.length < maxOptions) {
-                  const newOption = {
-                    id: nanoid(5),
-                    text: "",
-                    isCorrect: false,
-                  };
-                  onChange([...value, newOption]);
-                }
-              }}
-            >
-              Add Option
-            </Button>
-          </div>
-        )}
+              // Only add if we haven't reached the maximum
+              if (value.length < maxOptions) {
+                const newOption = {
+                  id: nanoid(5),
+                  text: "",
+                  isCorrect: false,
+                };
+                onChange([...value, newOption]);
+              }
+            }}
+          >
+            Add Option
+          </Button>
+        </div>
+      )}
 
       {/* Validation warnings */}
       {hasNoCorrectOption && (
@@ -655,22 +667,22 @@ const OptionItem = ({
     >
       <Tooltip>
         <TooltipTrigger asChild>
-        <Button
-        size={"icon"}
-        className="select-none mr-2"
-        variant={option.isCorrect ? "success" : "secondary"}
-        onClick={onClickCorrect}
-      >
-        {option.isCorrect ? (
-          <CheckCircle2 className="size-5" />
-        ) : (
-          String.fromCharCode(65 + index)
-        )}
-      </Button>
+          <Button
+            size={"icon"}
+            className="select-none mr-2"
+            variant={option.isCorrect ? "success" : "secondary"}
+            onClick={onClickCorrect}
+          >
+            {option.isCorrect ? (
+              <CheckCircle2 className="size-5" />
+            ) : (
+              String.fromCharCode(65 + index)
+            )}
+          </Button>
         </TooltipTrigger>
         <TooltipContent>
-          {option.isCorrect 
-            ? "This is the correct answer" 
+          {option.isCorrect
+            ? "This is the correct answer"
             : "Click to mark as correct answer"}
         </TooltipContent>
       </Tooltip>
@@ -691,18 +703,15 @@ const OptionItem = ({
       <div>
         <Tooltip>
           <TooltipTrigger asChild>
-
-        <Button
-          onPointerDown={(e) => control.start(e)}
-          variant={"ghost"}
-          size={"icon"}
-        >
-          <GripVertical className="text-muted-foreground" />
-        </Button>
+            <Button
+              onPointerDown={(e) => control.start(e)}
+              variant={"ghost"}
+              size={"icon"}
+            >
+              <GripVertical className="text-muted-foreground" />
+            </Button>
           </TooltipTrigger>
-          <TooltipContent>
-          Drag to reorder options
-          </TooltipContent>
+          <TooltipContent>Drag to reorder options</TooltipContent>
         </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>
@@ -710,9 +719,7 @@ const OptionItem = ({
               <Trash2 className="text-muted-foreground" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>
-            Delete this option
-          </TooltipContent>
+          <TooltipContent>Delete this option</TooltipContent>
         </Tooltip>
       </div>
     </Reorder.Item>

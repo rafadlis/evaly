@@ -1,0 +1,1 @@
+ALTER TABLE "question_template" DROP COLUMN "latest_run_id";

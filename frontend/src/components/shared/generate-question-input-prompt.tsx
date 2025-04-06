@@ -25,7 +25,7 @@ const GenerateQuestionInputPrompt = () => {
       mutationKey: ["start-question-generation"],
       mutationFn: async (prompt: string) => {
         if (prompt.length <= 0) {
-          toast.error("Prompt is required");
+          toast.error("Prompt is required", {position: "top-center"});
           return;
         }
   
@@ -36,18 +36,27 @@ const GenerateQuestionInputPrompt = () => {
         const data = res.data;
   
         if (!data) {
-          toast.error("Failed to generate questions, please try again.");
+          toast.error("Failed to generate questions, please try again.", {position: "top-center"});
           return;
         }
-        // startTransition(() => {
-        //   router.push(
-        //     `/dashboard/question/generate/${data.id}`,
-        //     { scroll: true }
-        //   );
-        // });
+        
+        if (!data.object.isValid){
+          toast(data.object.suggestion, { position: "top-center"})
+          return;
+        }
 
-        console.log(data)
-  
+        if (!data.templateCreated){
+          toast.error("Failed to create template. Please try again.", { position: "top-center"});
+          return;
+        }
+
+        startTransition(() => {
+          router.push(
+            `/dashboard/question/generate/${data.templateCreated?.id}`,
+            { scroll: true }
+          );
+        });
+
         // return res.data;
       },
     });
@@ -139,7 +148,8 @@ const GenerateQuestionInputPrompt = () => {
           )}
         />
         <div className="absolute bottom-0 left-0 p-2 flex flex-row gap-2 items-center justify-between w-full">
-          <div className="flex flex-row gap-2 items-center justify-center"></div>
+          <div className="flex flex-row gap-2 items-center justify-center">
+          </div>
           <div className="flex flex-row items-center justify-center gap-1">
             <Button size={"icon-sm"} variant={"ghost"} disabled>
               <Wand2Icon />

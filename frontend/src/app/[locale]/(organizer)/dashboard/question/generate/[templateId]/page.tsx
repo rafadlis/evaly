@@ -2,25 +2,25 @@
 
 import CardQuestion from "@/components/shared/card/card-question";
 import { Question } from "@evaly/backend/types/question";
+import { QuestionGenerated } from "@evaly/backend/types/question.generated";
 import { motion } from "motion/react";
-import React, { useEffect } from "react";
-import { useCompletion } from "@ai-sdk/react";
+import React from "react";
+import { experimental_useObject as useObject } from "@ai-sdk/react";
 import { env } from "@/lib/env";
 import { useParams } from "next/navigation";
+import LoadingScreen from "@/components/shared/loading/loading-screen";
 
 const Page = () => {
   const { templateId } = useParams();
-  const { completion, complete } = useCompletion({
-    body: {
-      templateId,
-    },
+  const { isLoading, object, stop, submit } = useObject({
     api: env.NEXT_PUBLIC_API_URL + "/organization/question/llm/completition",
     credentials: "include",
+    schema: QuestionGenerated,
   });
 
-  useEffect(() => {
-    complete("I want math");
-  }, [complete]);
+  if (isLoading && !object?.questions?.length){
+    return <LoadingScreen />
+  }
 
   return (
     <motion.div
@@ -29,28 +29,17 @@ const Page = () => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
-      {completion}
-      <div className="flex flex-col container max-w-4xl mt-10">
-        {Array.from({ length: 10 }).map((_, index) => (
+      <button onClick={() => submit({ templateId })}>Hi</button>
+      <div className="flex flex-col container max-w-4xl my-10">
+        {object?.questions?.map((question, index) => (
           <React.Fragment key={index}>
             <CardQuestion
-              key={index}
+              key={`qst-${index}`}
               className="p-0"
-              data={
-                {
-                  id: String(index),
-                  type: "text-field",
-                  question: "What is the capital of France?",
-                  order: index + 1,
-                  // options: [{id: "1", text: "Paris", isCorrect: true}, {id: "2", text: "London", isCorrect: false}, {id: "3", text: "Berlin", isCorrect: false}, {id: "4", text: "Madrid", isCorrect: false}],
-                  createdAt: new Date().toISOString(),
-                  updatedAt: new Date().toISOString(),
-                  deletedAt: null,
-                } as Question
-              }
+              data={question as Question}
             />
             {index !== 9 && (
-              <div className="border-b border-border border-dashed w-full mb-6" />
+              <div className="border-b border-border border-dashed w-full my-6" />
             )}
           </React.Fragment>
         ))}

@@ -1,10 +1,10 @@
 import {
-    jsonb,
-    pgTable,
-    timestamp,
-    varchar,
-    boolean,
-    index,
+  jsonb,
+  pgTable,
+  timestamp,
+  varchar,
+  boolean,
+  index,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm/relations";
 
@@ -20,8 +20,31 @@ export const questionTemplate = pgTable(
     organizationId: varchar("organization_id", { length: 255 }).notNull(),
     organizerId: varchar("organizer_id", { length: 255 }).notNull(),
     tags: jsonb("tags").$type<string[]>().notNull().default([]),
-    latestRunId: varchar("latest_run_id", { length: 255 }),
     isAiGenerated: boolean("is_ai_generated").notNull().default(false),
+    isGenerating: boolean("is_generating").notNull().default(false),
+    aiContents: jsonb("ai_contents")
+      .$type<
+        {
+          prompt: string;
+          questions?: {
+            options: {
+              id: string;
+              isCorrect: boolean;
+              text: string;
+            }[];
+            order: number,
+            type: "multiple-choice" | "yes-or-no" | "text-field";
+            question: string;
+          }[];
+          context: "educational" | "quiz" | "hr";
+          usage?: {
+            completionTokens: number;
+            promptTokens: number;
+            totalTokens: number;
+          };
+        }[]
+      >()
+      .default([]),
     createdAt: timestamp("created_at", {
       mode: "string",
       withTimezone: true,

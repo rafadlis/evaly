@@ -428,6 +428,34 @@
       "when": 1743034031090,
       "tag": "0060_flimsy_winter_soldier",
       "breakpoints": true
+    },
+    {
+      "idx": 61,
+      "version": "7",
+      "when": 1743863366304,
+      "tag": "0061_glossy_mercury",
+      "breakpoints": true
+    },
+    {
+      "idx": 62,
+      "version": "7",
+      "when": 1743863731693,
+      "tag": "0062_friendly_power_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 63,
+      "version": "7",
+      "when": 1743883697515,
+      "tag": "0063_third_bug",
+      "breakpoints": true
+    },
+    {
+      "idx": 64,
+      "version": "7",
+      "when": 1743907694047,
+      "tag": "0064_conscious_lady_bullseye",
+      "breakpoints": true
     }
   ]
 }

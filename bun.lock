@@ -27,6 +27,7 @@
         "drizzle-typebox": "^0.3.0",
         "elysia": "1.2.25",
         "elysia-compress": "^1.2.1",
+        "nanoid": "^5.1.5",
         "nodemailer": "^6.10.0",
         "openai": "4.89.0",
         "postgres": "^3.4.5",

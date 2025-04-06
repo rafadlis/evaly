@@ -159,7 +159,7 @@ const Page = () => {
             />
             <div
               className={cn(
-                "h-6 flex items-center justify-center group/separator relative",
+                "h-12 flex items-center justify-center group/separator relative",
                 index === localQuestions.length - 1 ? "mt-4" : ""
               )}
             >

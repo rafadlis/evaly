@@ -227,7 +227,7 @@ const Questions = () => {
                   />
                   <div
                     className={cn(
-                      "h-8 flex items-center justify-center group/separator relative",
+                      "h-12 flex items-center justify-center group/separator relative",
                       index === localQuestions.length - 1 ? "mb-4" : ""
                     )}
                   >

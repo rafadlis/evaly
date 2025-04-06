@@ -57,7 +57,7 @@ export const questionTemplateRouter = new Elysia().group("/template", (app) =>
         return await updateQuestionTemplate(params.id, organizationId, body);
       },
       {
-        body: createUpdateSchema(questionTemplate, {}),
+        body: createUpdateSchema(questionTemplate, { aiContents: t.Any() }),
       }
     )
 );

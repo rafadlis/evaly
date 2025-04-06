@@ -1,12 +1,22 @@
 import Elysia, { t } from "elysia";
 import { organizationMiddleware } from "../../middlewares/auth.middleware";
-import db from "../../lib/db";
-import { llmMessage } from "../../lib/db/schema";
 // import { openai } from "@ai-sdk/openai";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
-import { generateObject, streamText } from "ai";
+import { generateObject, streamObject } from "ai";
 import { google } from "@ai-sdk/google";
 import { z } from "zod";
+import { createQuestionTemplate } from "../../services/organization/question/create-question-template";
+import { updateQuestionTemplate } from "../../services/organization/question/update-question-template";
+import {
+  InsertQuestion,
+  UpdateQuestion,
+} from "../../types/question";
+import { nanoid } from "nanoid";
+import db from "../../lib/db";
+import { question } from "../../lib/db/schema";
+import { buildConflictUpdateColumns } from "../../lib/build-conflict-update-columns";
+import { spread } from "../../lib/utils";
+import { QuestionGenerated } from "../../types/question.generated";
 
 const openRouter = createOpenRouter({
   apiKey: process.env.OPENROUTER_API_KEY,
@@ -16,34 +26,14 @@ export const llmRouter = new Elysia().group("/llm", (app) => {
   return app
     .derive(organizationMiddleware)
     .post(
-      "/create",
-      async ({ organizer, error }) => {
-        const createdMessage = await db
-          .insert(llmMessage)
-          .values({
-            organizationId: organizer.organizationId,
-          })
-          .returning();
-
-        if (!createdMessage || createdMessage.length === 0) {
-          return error("Bad Request", "Failed to create chat");
-        }
-
-        return {
-          id: createdMessage[0].id,
-          // attachments: body.files,
-        };
-      },
-      {
-        body: t.Object({
-          files: t.Optional(t.Array(t.File())),
-        }),
-      }
-    )
-    .post(
       "/validate",
-      async ({body}) => {
-        const prompt = body.prompt
+      async ({ body, organizer }) => {
+        const organizationId = organizer.organizationId;
+        const organizerId = organizer.id;
+
+        const prompt = body.prompt;
+        const questionType = body.questionType || "multiple-choice";
+        
         const response = await generateObject({
           model: google("gemini-2.0-flash-001"),
           prompt: `You are an assistant designed to extract structured information from user prompts.
@@ -52,15 +42,14 @@ export const llmRouter = new Elysia().group("/llm", (app) => {
           1. The educational topic they want to create questions about
           2. The appropriate education level for the material
           3. The number of questions they want to generate
-          4. The type of questions they prefer (multiple-choice, text-field, etc.)
           
           Be precise and consistent in your extraction. The topic you identify will be used directly in subsequent prompts to generate educational content, so ensure it accurately represents the user's intent.
           
           CRITICAL REQUIREMENTS:
           - For the topic field: If the user does not explicitly mention an educational topic, you MUST return "undefined" for the topic value. Do not make assumptions or infer a topic if it's not clearly stated.
           - For the grade/education level: If the user does not explicitly mention a grade level, you MUST return "undefined". Do not guess or infer a grade level if it's not clearly stated.
-          - For the topic suggestion: If the user's topic is too general (like just "math" or "science"), provide a helpful suggestion to be more specific. If the topic is already specific enough, leave the suggestion empty.
-          - For the generationPrompt: Create a comprehensive, detailed prompt that can be used for question generation if the topic and grade are valid. This prompt should include specific instructions about the topic, difficulty level, question format, and educational objectives. If either topic is "undefined" or grade is "undefined", leave this field empty.
+          - For the suggestion: If the user's input is missing information or could be improved, provide a helpful suggestion. This could be asking them to specify a topic, grade level, or to make their topic more specific. If the input is valid and complete, leave this field empty.
+          - For the generationPrompt: Create a comprehensive, detailed prompt that can be used for question generation if the topic and grade are valid. This prompt should include specific instructions about the topic, difficulty level, question format (${questionType}), and educational objectives. If either topic is "undefined" or grade is "undefined", leave this field empty.
           
           Do not try to be helpful by guessing these values - accuracy is more important than completeness. If information is missing, use "undefined" for those fields.
           
@@ -68,98 +57,215 @@ export const llmRouter = new Elysia().group("/llm", (app) => {
           
           User prompt: ${prompt}`,
           schema: z.object({
-            topic: z.object({
-              topic: z.string().describe("The specific educational topic to create questions about. MUST be 'undefined' if no topic is clearly specified"),
-              suggestion: z.string().describe("Suggestion for the user if the topic is too general or vague. Leave empty if the topic is already specific enough.")
-            }).describe("The educational topic with optional suggestion for improvement"),
-            grade: z.enum([
-              "Kindergarten", 
-              "1st Grade", 
-              "2nd Grade", 
-              "3rd Grade", 
-              "4th Grade", 
-              "5th Grade", 
-              "6th Grade", 
-              "7th Grade", 
-              "8th Grade", 
-              "9th Grade", 
-              "10th Grade", 
-              "11th Grade", 
-              "12th Grade", 
-              "College",
-              "undefined"
-            ]).describe("The appropriate education level for the material. MUST be 'undefined' if no grade level is clearly specified"),
-            questionCount: z.number().int().min(1).max(50).default(5).describe("Number of questions to generate, default is 5."),
-            questionType: z.enum([
-              "multiple-choice", 
-              "text-field", 
-              "true-false", 
-              "mixed"
-            ]).default("multiple-choice").describe("Preferred question format"),
-            generationPrompt: z.string().describe("A comprehensive, detailed prompt that can be used for question generation. This should include specific instructions about the topic, difficulty level appropriate for the grade, question format, and educational objectives. Empty if either topic or grade is undefined.")
+            topic: z
+              .string()
+              .describe(
+                "The specific educational topic to create questions about. MUST be 'undefined' if no topic is clearly specified"
+              ),
+            grade: z
+              .enum([
+                "Kindergarten",
+                "1st Grade",
+                "2nd Grade",
+                "3rd Grade",
+                "4th Grade",
+                "5th Grade",
+                "6th Grade",
+                "7th Grade",
+                "8th Grade",
+                "9th Grade",
+                "10th Grade",
+                "11th Grade",
+                "12th Grade",
+                "College",
+                "undefined",
+              ])
+              .describe(
+                "The appropriate education level for the material. MUST be 'undefined' if no grade level is clearly specified"
+              ),
+            questionCount: z
+              .number()
+              .int()
+              .min(1)
+              .max(50)
+              .default(5)
+              .describe("Number of questions to generate, default is 5."),
+            isValid: z
+              .boolean()
+              .describe(
+                "Whether the input contains all required information (topic and grade) to generate questions"
+              ),
+            suggestion: z
+              .string()
+              .describe(
+                "A helpful message to show to the user about what information they should provide or how they could improve their prompt. Empty if the input is valid."
+              ),
+            title: z
+              .string()
+              .describe(
+                "A concise, descriptive title for the question set based on the topic and grade level"
+              ),
+            tags: z
+              .array(z.string())
+              .describe(
+                "1-3 relevant tags that categorize this question set (only if necessary)"
+              ),
+            generationPrompt: z
+              .string()
+              .describe(
+                `A comprehensive, detailed prompt that can be used for question generation. This should include specific instructions about the topic, difficulty level appropriate for the grade, question format (using ${questionType} type questions), and educational objectives. Empty if either topic or grade is undefined.`
+              ),
           }),
         });
+  
+        console.log(response.usage)
 
-        return response.object
+        if (!response.object.isValid) {
+          return { object: response.object };
+        }
+        const templateCreated = await createQuestionTemplate({
+          organizationId,
+          organizerId,
+          isAiGenerated: true,
+          title: response.object.title,
+          tags: response.object.tags,
+          aiContents: [
+            {
+              prompt: response.object.generationPrompt,
+              context: body.context || "educational",
+            },
+          ],
+        }, false);
+
+        return { object: response.object, templateCreated };
       },
       {
         body: t.Object({
           prompt: t.String(),
+          context: t.Optional(
+            t.Enum({ educational: "educational", hr: "hr", quiz: "quiz" })
+          ),
+          questionType: spread(question, "insert").type
         }),
       }
     )
     .post(
       "/completition",
-      async function ({ organizer, body, request, set }) {
+      async function ({ organizer, body, request, set, error }) {
         const organizationId = organizer.organizationId;
-        const prompt = body.prompt;
+        let prompt = body.prompt;
+        let context = body.context || "educational"; // Default to educational if not specified
         const templateId = body.templateId;
 
-        const message = await streamText({
+        // Get Existing Data
+        const template = await updateQuestionTemplate(
+          templateId,
+          organizationId,
+          {isGenerating: true}
+        );
+
+        if (!template) {
+          return error("Not Found");
+        }
+
+        // Assign the last prompt and context if there is no input or if user didn't override it
+        if (
+          template.aiContents &&
+          template.aiContents[template.aiContents?.length - 1]
+        ) {
+          const lastAiContents =
+            template.aiContents[template.aiContents?.length - 1];
+
+          if (!prompt) {
+            prompt = lastAiContents.prompt;
+            context = lastAiContents.context;
+          }
+        }
+
+        const message = await streamObject({
           model: google("gemini-2.0-flash-001"),
-          prompt: `You are a helpful assistant that can generate questions for given topic and audience.
-        the topic is: ${prompt}
-        the type of question is: multiple-choice
-        generate the questions with the following format:
+          prompt: `You are an expert question generator. Based on the following topic, context, and instructions, generate well-crafted questions.
 
-        q: question
-        type: type of question (multiple-choice, text-field)
-        a: option 1
-        b: option 2
-        c: option 3
-        d: option 4
-        correctOption: correct option (a, b, c, d)
-        ===
-        q: question
-        type: type of question
-        a: option 1
-        b: option 2
-        c: option 3
-        d: option 4
-        correctOption: correct option (a, b, c, d)
-        ===
+Topic: ${prompt}
+Template ID: ${templateId}
+Context: ${context}
 
-        IMPORTANT:
-        - Use the following format for the questions
-        - Do not include any other text in your response except the questions and options
-        - if the type of question is text-field, do not include options
-        - if the type of question is text-field, fill the correctOption with the suggested answer
-        - if the type of question is multiple-choice, include 4 options
-        - Generate total based on the requested number of questions
-      `,
+Instructions:
+1. Create questions that are clear, well-formatted, and appropriate for the specified context and topic
+2. For "educational" context: Focus on testing knowledge, understanding, and application of concepts in academic settings
+3. For "hr" context: Focus on evaluating skills, experience, problem-solving abilities, and cultural fit for job candidates
+4. For "quiz" context: Create engaging, fun questions suitable for trivia or general knowledge quizzes
+5. Each question should be properly formatted with correct grammar and punctuation
+6. For multiple-choice questions, ensure there is exactly one correct answer and provide plausible distractors
+7. Questions can include Markdown formatting for better readability (bold, italics, lists, etc.)
+8. For "multiple-choice" type questions, always provide exactly 4 options
+9. For "yes-or-no" type questions, always provide exactly 2 options (Yes and No)
+10. For "text-field" type questions, do not provide any options
+
+Please generate questions according to the specified schema structure.`,
+          schema: QuestionGenerated,
           maxRetries: 3,
-          onFinish: async ({ response, usage }) => {
-            console.log(JSON.stringify(response));
-            console.log(usage);
+          onFinish: async ({ usage, object,error }) => {
+            console.log(usage, error)
+            if (!object?.questions || !object?.questions.length || !prompt) {
+              return;
+            }
+
+            const currentAiContents = template.aiContents || [];
+            const aiContentVersions = [
+              ...currentAiContents,
+              { context, prompt, questions: object?.questions, usage },
+            ];
+
+            const insertedQuestions: InsertQuestion[] = object?.questions.map(
+              (e) => ({
+                id: e.id.length > 0 ? e.id : "qst-" + Bun.randomUUIDv7(),
+                referenceId: templateId,
+                question: e.question,
+                order: e.order,
+                referenceType: "template",
+                type: e.type as UpdateQuestion["type"],
+                options: e.options.map((e) => ({
+                  id: e.id.length > 0 ? e.id : nanoid(5),
+                  text: e.text,
+                  isCorrect: e.isCorrect,
+                })),
+              })
+            );
+
+            await db
+              .insert(question)
+              .values(insertedQuestions)
+              .onConflictDoUpdate({
+                target: [question.id],
+                set: buildConflictUpdateColumns(question, [
+                  "question",
+                  "type",
+                  "options",
+                ]),
+              });
+
+            const updatedQuestionTemplate = await updateQuestionTemplate(templateId, organizationId, {
+              aiContents: aiContentVersions,
+              updatedAt: new Date().toISOString(),
+              isAiGenerated: true,
+              isGenerating: false
+            });
+          },
+          onError(event) {
+            console.log(event.error)
           },
         });
 
-        return message.toDataStreamResponse();
+        return message.toTextStreamResponse();
       },
       {
         body: t.Object({
-          prompt: t.String(),
+          prompt: t.Optional(t.String()),
           templateId: t.String(),
+          context: t.Optional(
+            t.Enum({ educational: "educational", hr: "hr", quiz: "quiz" })
+          ),
         }),
       }
     );
