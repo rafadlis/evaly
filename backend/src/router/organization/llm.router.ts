@@ -1,7 +1,6 @@
 import Elysia, { t } from "elysia";
 import { organizationMiddleware } from "../../middlewares/auth.middleware";
 // import { openai } from "@ai-sdk/openai";
-import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { generateObject, generateText, streamObject } from "ai";
 import { google } from "@ai-sdk/google";
 import { z } from "zod";
@@ -13,10 +12,6 @@ import db from "../../lib/db";
 import { question } from "../../lib/db/schema";
 import { buildConflictUpdateColumns } from "../../lib/build-conflict-update-columns";
 import { QuestionGenerated } from "../../types/question.generated";
-
-const openRouter = createOpenRouter({
-  apiKey: process.env.OPENROUTER_API_KEY,
-});
 
 export const llmRouter = new Elysia().group("/llm", (app) => {
   return app

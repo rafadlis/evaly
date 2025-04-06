@@ -1,6 +1,5 @@
 "use client";
 import { cn } from "@/lib/utils";
-import SectionRecent from "./section-recent";
 import GenerateQuestionInputPrompt from "@/components/shared/generate-question-input-prompt";
 
 const Page = () => {
@@ -12,7 +11,7 @@ const Page = () => {
       <GenerateQuestionInputPrompt />
 
       {/* Recent Section */}
-      <SectionRecent />
+      {/* <SectionRecent /> */}
     </div>
   );
 };
