@@ -43,7 +43,7 @@ const DashboardPageClient = () => {
 
   if (!tests || tests?.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center flex-1 text-center">
+      <div className="flex flex-col items-center justify-center mt-[25vh] text-center">
         <FileSpreadsheet className="size-16 text-muted-foreground mb-6" />
         <h1 className="text-xl font-medium">No tests yet</h1>
         <h2 className="max-w-md mt-2 text-muted-foreground mb-4">
