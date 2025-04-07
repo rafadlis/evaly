@@ -85,6 +85,8 @@ const Page = () => {
 
   return (
     <div>
+      {/* {JSON.stringify(testData.organization)} */}
+      {testData ? <title>{`${testData.title}`}</title> : null}
       <Navbar />
 
       <div className="pb-20 mt-[5vh] md:mt-[10vh] lg:mt-[12vh] container max-w-2xl">

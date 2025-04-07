@@ -141,7 +141,7 @@ export const SubmissionDrawer = ({
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <DrawerTitle className="text-lg font-semibold">
+                  <DrawerTitle className="font-semibold">
                     {submission.name}
                   </DrawerTitle>
                   <DrawerDescription className="text-sm text-muted-foreground leading-1 flex items-center gap-2">
@@ -174,9 +174,9 @@ export const SubmissionDrawer = ({
             <TabsContent value="overview">
               <div className="space-y-8 ">
                 {/* Status Card */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg font-medium flex items-center gap-2">
+                <Card className="border-none">
+                  <CardHeader className="px-0">
+                    <CardTitle className="font-medium flex items-center gap-2">
                       <BarChart3 className="h-5 w-5 text-primary" />
                       Test Performance
                     </CardTitle>
@@ -201,7 +201,7 @@ export const SubmissionDrawer = ({
                       )}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="pt-6 border-t border-dashed">
+                  <CardContent className="px-0">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-2">
                       <div className="flex flex-col p-3 border border-dashed">
                         <div className={`text-2xl font-medium`}>
@@ -297,7 +297,7 @@ export const SubmissionDrawer = ({
 
                 {/* Section Performance */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium flex items-center gap-2 px-1">
+                  <h3 className="font-medium flex items-center gap-2 px-1">
                     <BarChart3 className="h-5 w-5 text-primary" />
                     Section Performance
                   </h3>
@@ -341,7 +341,7 @@ export const SubmissionDrawer = ({
                                 </span>
                               </div>
                               <div className="flex flex-col p-3 border border-dashed">
-                                <span className="text-lg font-medium">
+                                <span className="font-medium">
                                   {performance.unanswered}
                                 </span>
                                 <span className="text-xs text-muted-foreground">
@@ -374,7 +374,7 @@ export const SubmissionDrawer = ({
                 <Card>
                   <CardHeader>
                     <div className="flex justify-between items-center">
-                      <CardTitle className="text-lg font-medium">
+                      <CardTitle className="font-medium">
                         Questions
                       </CardTitle>
                       <div className="flex items-center gap-3 text-sm">

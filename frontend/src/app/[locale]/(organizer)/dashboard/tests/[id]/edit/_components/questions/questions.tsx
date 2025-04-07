@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ListTreeIcon, ListXIcon, PlusIcon } from "lucide-react";
 import CardQuestion from "../../../../../../../../../components/shared/card/card-question";
 import {
-  Card, CardDescription,
+  CardDescription,
   CardHeader,
   CardTitle
 } from "@/components/ui/card";
@@ -108,12 +108,11 @@ const Questions = () => {
   };
 
   return (
-    <div className="flex flex-row gap-6">
-      <SectionSidebar />
-      <Card className="border overflow-clip flex-1 h-max">
+    <div className="flex flex-row">
+      <div className="flex-1 pr-6">
         <CardHeader
           className={cn(
-            `bg-background z-10 pb-4 transition-all duration-300 border-b mb-2`,
+            `z-10 transition-all duration-300 border-b px-0 border-primary/20 border-dashed mb-4`,
           )}
         >
           <div className="flex flex-row items-start">
@@ -227,7 +226,7 @@ const Questions = () => {
                   />
                   <div
                     className={cn(
-                      "h-12 flex items-center justify-center group/separator relative",
+                      "h-12 flex items-center justify-center relative group/separator",
                       index === localQuestions.length - 1 ? "mb-4" : ""
                     )}
                   >
@@ -251,7 +250,7 @@ const Questions = () => {
                           size={"xxs"}
                           variant={"outline"}
                           className={cn(
-                            "absolute opacity-50 group-hover/separator:opacity-100",
+                            "absolute opacity-50 lg:opacity-0 lg:group-hover/separator:opacity-100",
                             index === localQuestions.length - 1
                               ? "lg:opacity-100"
                               : ""
@@ -268,7 +267,7 @@ const Questions = () => {
             })}
           </Reorder.Group>
         ) : (
-          <div className="flex flex-col justify-center items-center py-16 gap-4">
+          <div className="flex flex-col p-6 gap-4 bg-secondary">
             <h1>No question found on this section</h1>
             <DialogAddQuestion
               referenceId={selectedSection as string}
@@ -288,8 +287,8 @@ const Questions = () => {
             />
           </div>
         )}
-      </Card>
-
+      </div>
+      <SectionSidebar className="border-l pl-4 border-dashed min-h-screen"/>
       <DialogEditQuestion
         defaultValue={selectedQuestion}
         onSuccess={(question) => {

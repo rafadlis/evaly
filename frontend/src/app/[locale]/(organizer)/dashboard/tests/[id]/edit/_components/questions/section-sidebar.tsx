@@ -15,7 +15,7 @@ import { useTestSectionByIdQuery } from "@/query/organization/test-section/use-t
 
 const SectionSidebar = ({ className }: { className?: string }) => {
   return (
-    <div className={cn("w-[240px]  h-max pb-20 sticky top-20", className)}>
+    <div className={cn("w-[300px]  h-max pb-20 sticky top-20", className)}>
       <ListSession />
       <AddSession />
     </div>
@@ -156,7 +156,7 @@ const AddSession = () => {
   if (isPendingSession) return null;
 
   return (
-    <div className="flex flex-col items-start mt-4">
+    <div className="flex flex-col items-start mt-2">
       <Button
         variant={"outline"}
         className="w-max border-dashed"

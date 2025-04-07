@@ -8,7 +8,6 @@ import { Question } from "@evaly/backend/types/question";
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { useQuestionTemplateById } from "@/query/organization/question/use-question-template-by-id";
-import LoadingScreen from "@/components/shared/loading/loading-screen";
 import {
   cn,
   insertQuestionsAtCorrectPosition,
@@ -18,6 +17,7 @@ import Header from "./_components/header";
 import { Badge } from "@/components/ui/badge";
 import { Reorder } from "motion/react";
 import DialogAddQuestion from "@/components/shared/dialog/dialog-add-question";
+import LoadingScreen from "@/components/shared/loading/loading-screen";
 
 const Page = () => {
   const { templateId } = useParams<{ templateId: string }>();
@@ -68,10 +68,6 @@ const Page = () => {
     });
   };
 
-  if (isLoadingQuestionTemplate) {
-    return <LoadingScreen />;
-  }
-
   return (
     <div className="container dashboard-margin">
       <Header templateId={templateId} />
@@ -112,105 +108,109 @@ const Page = () => {
         </div>
       </div>
 
-      <Reorder.Group
-        onReorder={() => {}}
-        values={localQuestions}
-        as="div"
-        className={cn(
-          "mt-4 flex flex-col border overflow-clip",
-          localQuestions.length > 0 ? "pb-6" : ""
-        )}
-      >
-        {localQuestions?.map((question, index) => (
-          <Reorder.Item
-            value={question}
-            as="div"
-            key={question.id}
-            data-index={index}
-            dragListener={false}
-          >
-            <CardQuestion
+      {!isLoadingQuestionTemplate ? (
+        <Reorder.Group
+          onReorder={() => {}}
+          values={localQuestions}
+          as="div"
+          className={cn(
+            "mt-4 flex flex-col overflow-clip",
+            localQuestions.length > 0 ? "pb-6" : ""
+          )}
+        >
+          {localQuestions?.map((question, index) => (
+            <Reorder.Item
+              value={question}
+              as="div"
               key={question.id}
-              onChangeOrder={onHandleChangeOrder}
-              data={question}
-              onDeleteSuccess={() => {
-                const findIndex = localQuestions.findIndex(
-                  (q) => q.id === question.id
-                );
-                if (findIndex >= 0) {
-                  // Update the order of questions after deletion
-                  setLocalQuestions((prev) => {
-                    const filtered = prev.filter((q) => q.id !== question.id);
-                    return filtered.map((q, index) => ({
-                      ...q,
-                      order:
-                        q.order && question.order && q.order > question.order
-                          ? q.order - 1
-                          : index + 1,
-                    }));
-                  });
-                }
-              }}
-              onClickEdit={() => {
-                setSelectedEditQuestion(question);
-              }}
-              previousQuestionId={localQuestions[index - 1]?.id}
-              nextQuestionId={localQuestions[index + 1]?.id}
-              hideOptions={hideOptions}
-            />
-            <div
-              className={cn(
-                "h-12 flex items-center justify-center group/separator relative",
-                index === localQuestions.length - 1 ? "mt-4" : ""
-              )}
+              data-index={index}
+              dragListener={false}
             >
+              <CardQuestion
+                key={question.id}
+                onChangeOrder={onHandleChangeOrder}
+                data={question}
+                onDeleteSuccess={() => {
+                  const findIndex = localQuestions.findIndex(
+                    (q) => q.id === question.id
+                  );
+                  if (findIndex >= 0) {
+                    // Update the order of questions after deletion
+                    setLocalQuestions((prev) => {
+                      const filtered = prev.filter((q) => q.id !== question.id);
+                      return filtered.map((q, index) => ({
+                        ...q,
+                        order:
+                          q.order && question.order && q.order > question.order
+                            ? q.order - 1
+                            : index + 1,
+                      }));
+                    });
+                  }
+                }}
+                onClickEdit={() => {
+                  setSelectedEditQuestion(question);
+                }}
+                previousQuestionId={localQuestions[index - 1]?.id}
+                nextQuestionId={localQuestions[index + 1]?.id}
+                hideOptions={hideOptions}
+              />
+              <div
+                className={cn(
+                  "h-12 flex items-center justify-center group/separator relative",
+                  index === localQuestions.length - 1 ? "mt-4" : ""
+                )}
+              >
+                <DialogAddQuestion
+                  showTabsOption={false}
+                  referenceId={templateId}
+                  referenceType="template"
+                  order={index + 2}
+                  onSuccessCreateQuestion={(questions) => {
+                    setLocalQuestions((prev) =>
+                      insertQuestionsAtCorrectPosition(prev, questions)
+                    );
+                    if (questions.length === 1) {
+                      setSelectedEditQuestion(questions[0]);
+                    }
+                  }}
+                  triggerButton={
+                    <Button
+                      size={"xxs"}
+                      variant={"outline"}
+                      className={cn(
+                        "absolute opacity-50 lg:opacity-0 group-hover/separator:opacity-100",
+                        index === localQuestions.length - 1
+                          ? "lg:opacity-100"
+                          : ""
+                      )}
+                    >
+                      <PlusIcon /> Add Question
+                    </Button>
+                  }
+                />
+                <div className="h-auto border-b border-dashed w-full group-hover/separator:border-foreground/20" />
+              </div>
+            </Reorder.Item>
+          ))}
+          {localQuestions?.length === 0 ? (
+            <div className="flex flex-col p-6 gap-4 bg-secondary">
+              <h1>No question found on this section</h1>
               <DialogAddQuestion
                 showTabsOption={false}
                 referenceId={templateId}
                 referenceType="template"
-                order={index + 2}
-                onSuccessCreateQuestion={(questions) => {
-                  setLocalQuestions((prev) =>
-                    insertQuestionsAtCorrectPosition(prev, questions)
-                  );
-                  if (questions.length === 1) {
-                    setSelectedEditQuestion(questions[0]);
-                  }
+                onSuccessCreateQuestion={(data) => {
+                  setLocalQuestions(data);
+                  setSelectedEditQuestion(data[0]);
                 }}
-                triggerButton={
-                  <Button
-                    size={"xxs"}
-                    variant={"default"}
-                    className={cn(
-                      "absolute opacity-50 lg:opacity-0 group-hover/separator:opacity-100",
-                      index === localQuestions.length - 1
-                        ? "lg:opacity-100"
-                        : ""
-                    )}
-                  >
-                    <PlusIcon /> Add Question
-                  </Button>
-                }
               />
-              <div className="h-auto border-b w-full group-hover/separator:border-foreground/20" />
             </div>
-          </Reorder.Item>
-        ))}
-        {localQuestions?.length === 0 ? (
-          <div className="flex flex-col justify-center items-center py-16  gap-4">
-            <h1>No question found on this section</h1>
-            <DialogAddQuestion
-              showTabsOption={false}
-              referenceId={templateId}
-              referenceType="template"
-              onSuccessCreateQuestion={(data) => {
-                setLocalQuestions(data);
-                setSelectedEditQuestion(data[0]);
-              }}
-            />
-          </div>
-        ) : null}
-      </Reorder.Group>
+          ) : null}
+        </Reorder.Group>
+      ) : (
+        <LoadingScreen />
+      )}
 
       <DialogEditQuestion
         defaultValue={selectedEditQuestion}

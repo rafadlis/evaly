@@ -100,7 +100,7 @@ const CardQuestion = ({
   return (
     <Card
       className={cn(
-        "transition-all rounded-none border-transparent cursor-pointer duration-100 group px-6",
+        "transition-all rounded-none border-transparent cursor-pointer duration-100 group",
         data.order === 1 ? "mt-6" : "",
         className
       )}
@@ -183,7 +183,7 @@ const CardQuestion = ({
       </CardHeader>
       <CardContent className="p-0 pt-4">
         <div
-          className="custom-prose max-w-full max-h-[220px] min-h-[40px] h-max overflow-y-auto"
+          className="custom-prose max-w-full max-h-[220px] min-h-[40px] h-max overflow-y-auto line-clamp-4"
           dangerouslySetInnerHTML={{
             __html:
               !data.question || data.question === "<p></p>"
@@ -192,7 +192,7 @@ const CardQuestion = ({
           }}
         />
         {!hideOptions ? (
-          <div className="flex flex-row flex-wrap gap-y-3 gap-x-10 text-sm mt-2 mb-2">
+          <div className="flex flex-col gap-y-3 gap-x-10 text-sm mt-4 mb-2">
             {data.options?.map((option, i) => (
               <div
                 key={option.id || `option-${i}`}
@@ -212,7 +212,7 @@ const CardQuestion = ({
                     {String.fromCharCode(65 + i)}.
                   </span>
                 )}
-                <span className={cn("flex-1")}>
+                <span>
                   {option.text || "Option " + (i + 1)}
                 </span>
                 {option.isCorrect ? <CheckIcon size={13} /> : null}

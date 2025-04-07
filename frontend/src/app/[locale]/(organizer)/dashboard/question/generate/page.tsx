@@ -6,7 +6,7 @@ const Page = () => {
 
 
   return (
-    <div className={cn("container flex-1 flex flex-col mt-[25vh]")}>
+    <div className={cn("container flex-1 flex flex-col mt-[35vh]")}>
       {/* Prompt Section */}
       <GenerateQuestionInputPrompt />
 

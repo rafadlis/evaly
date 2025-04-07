@@ -10,11 +10,11 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground hover:bg-primary/80",
+          "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
           "bg-destructive text-destructive-foreground  hover:bg-destructive/90",
         outline:
-          "border border-input bg-background  hover:border-primary",
+          "border border-input bg-background  hover:shadow-sm",
         "outline-solid":
           "border-1 border-primary bg-background hover:bg-primary hover:text-primary-foreground",
         secondary:
@@ -27,15 +27,15 @@ const buttonVariants = cva(
         accent: "bg-accent text-accent-foreground hover:bg-accent/90",
       },
       size: {
-        default: "h-9 px-5 has-[>svg]:pl-4 gap-2 ",
-        sm: "h-8 px-4 has-[>svg]:pl-3 gap-1.5 text-sm ",
-        xs: "h-7 px-4 has-[>svg]:pl-2 text-xs gap-1 text-xs ",
-        xxs: "h-6 px-3 has-[>svg]:pl-2 text-xs gap-1 text-xs ",
-        lg: "h-10 px-5 has-[>svg]:pl-4 gap-2.5 text-base ",
-        icon: "size-9 ",
-        "icon-sm": "size-8 text-sm ",
-        "icon-xs": "size-7 text-xs ",
-        "icon-xxs": "size-6 text-xs ",
+        default: "h-8 px-3 gap-2 ",
+        sm: "h-7 px-3  gap-1.5 text-sm ",
+        xs: "h-6 px-3 text-xs gap-1 text-xs ",
+        xxs: "h-5 px-2 text-xs gap-1 text-xs ",
+        lg: "h-9 px-5  gap-2.5 text-base ",
+        icon: "size-8",
+        "icon-sm": "size-7 text-sm ",
+        "icon-xs": "size-6 text-xs ",
+        "icon-xxs": "size-5 text-xs ",
       },
       rounded: {
         false: "",

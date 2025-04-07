@@ -108,10 +108,10 @@ const CardQuestion = ({
                   <div
                     key={option.id}
                     className={cn(
-                      "flex items-start gap-4 cursor-pointer transition-colors duration-100 border p-1.5 rounded-lg",
+                      "flex items-start gap-4 cursor-pointer  border p-1.5",
                       field.value?.includes(option.id)
-                        ? "border-primary/50 bg-secondary"
-                        : "border-border bg-transparent hover:bg-foreground/5 active:bg-foreground/10"
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border bg-transparent hover:border-primary/50 active:bg-foreground/10"
                     )}
                     onClick={() => {
                       if (isPendingAnswer) return;
@@ -125,10 +125,11 @@ const CardQuestion = ({
                     <Button
                       variant={
                         field.value?.includes(option.id)
-                          ? "default"
+                          ? "outline"
                           : "secondary"
                       }
                       size={"icon-xs"}
+                      className="text-primary"
                     >
                       {option.id === targetOptionId && isPendingAnswer ? (
                         <Loader2 className="size-4 animate-spin" />

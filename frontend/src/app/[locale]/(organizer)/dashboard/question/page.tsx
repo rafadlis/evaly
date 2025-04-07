@@ -132,7 +132,7 @@ const QuestionTemplateSection = () => {
             </TabsTrigger>
           </TabsList> */}
           <div className="relative w-full md:w-80">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
             <Input
               placeholder="Search templates..."
               className="pl-8"
@@ -194,7 +194,7 @@ const OwnedTemplateCard = ({
         <CardHeader className="pb-3">
           <div className="flex justify-between items-start">
             <div>
-              <CardTitle className="text-lg">
+              <CardTitle className="line-clamp-1">
                 {template.title || "Untitled"}
               </CardTitle>
               {/* <CardDescription className="text-xs mt-1">
@@ -234,7 +234,7 @@ const OwnedTemplateCard = ({
                     <MinusIcon className="size-3" />
                   </div>
                   <div
-                    className="flex-1 truncate text-muted-foreground"
+                    className="flex-1 line-clamp-1 text-muted-foreground"
                     dangerouslySetInnerHTML={{
                       __html: question.question || "No preview available",
                     }}

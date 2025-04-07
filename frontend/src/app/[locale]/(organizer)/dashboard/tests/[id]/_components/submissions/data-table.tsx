@@ -201,10 +201,10 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4 mt-4">
-      <div className="relative rounded-md min-h-[500px]">
+      <div className="relative border px-4 pb-4 border-dashed">
         <ScrollArea className="w-full whitespace-nowrap rounded-md">
           <Table>
-            <TableHeader className="h-16">
+            <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (

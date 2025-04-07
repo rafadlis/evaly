@@ -298,7 +298,7 @@ const Submissions = () => {
     <div className="space-y-4">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2">
-          <h2 className="text-lg font-medium tracking-tight">Submissions</h2>
+          <h2 className="font-medium">Submissions</h2>
           <Badge variant={"secondary"}>Total: {dataWithRanks.length}</Badge>
           {selectedSection !== "all" && (
             <TooltipProvider>
@@ -365,7 +365,7 @@ const Submissions = () => {
             </div>
           )}
           <div className="relative w-full sm:w-[300px]">
-            <Search className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
+            <Search className="absolute left-2.5 top-2 size-3.5 text-muted-foreground" />
             <Input
               placeholder="Search participants..."
               value={searchQuery}

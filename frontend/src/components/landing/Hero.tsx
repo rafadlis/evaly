@@ -17,7 +17,7 @@ export const Hero = () => {
         <div className="absolute left-0 bottom-1/4 w-96 h-96 bg-foreground/5 rounded-full filter blur-[120px]"></div>
       </div>
 
-      <div className="container">
+      <div className="container max-w-3xl">
         {/* Content */}
         <MotionDiv
           initial={{ opacity: 0, y: 20 }}
@@ -38,11 +38,11 @@ export const Hero = () => {
             </div>
           </Button>
 
-          <h1 className="text-balance text-4xl md:text-5xl lg:text-6xl font-medium mb-4">
+          <h1 className="text-balance text-4xl font-bold mb-4 mt-4">
             Comprehensive Online Examination Platform
           </h1>
 
-          <p className="text-xl mb-8 max-w-2xl text-primary/80">
+          <p className="mb-8 max-w-2xl text-primary/80">
             Empowering institutions and businesses with a secure, AI-driven examination platform for automated question creation, proctoring, and analytics.
           </p>
 

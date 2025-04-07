@@ -87,12 +87,12 @@ const Settings = () => {
 
 const General = () => {
   const { theme, setTheme } = useTheme();
-  const [fontMono, setFontMono] = useLocalStorage("font-mono", false);
+  const [fontMono, setFontMono] = useLocalStorage("font-mono", true);
 
   return (
     <Card>
       <CardHeader className="border-b border-dashed">
-        <CardTitle className="text-lg font-medium">General</CardTitle>
+        <CardTitle className="font-medium">General</CardTitle>
         <CardDescription>
           Manage your general account settings and preferences. You can update
           your appearance settings and customize your experience.
@@ -102,7 +102,7 @@ const General = () => {
         <div>
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <Label className="text-base font-medium text-foreground">
+              <Label className="text-sm font-medium text-foreground">
                 Dark Mode
               </Label>
               <Switch
@@ -116,7 +116,7 @@ const General = () => {
 
             {/* Font Style */}
             <div className="flex items-center justify-between">
-              <Label className="text-base font-medium text-foreground">
+              <Label className="text-sm font-medium text-foreground">
                 Classic Font
               </Label>
               <Switch
@@ -183,7 +183,7 @@ const Profile = () => {
   return (
     <Card>
       <CardHeader className="border-b border-dashed">
-        <CardTitle className="text-lg font-medium">Profile</CardTitle>
+        <CardTitle className="font-medium">Profile</CardTitle>
         <CardDescription>
           Manage your profile settings. You can update your profile information.
         </CardDescription>
@@ -326,7 +326,7 @@ const Organization = () => {
   return (
     <Card>
       <CardHeader className="border-b border-dashed">
-        <CardTitle className="text-lg font-medium">Organization</CardTitle>
+        <CardTitle className="font-medium">Organization</CardTitle>
         <CardDescription>
           Manage your organization settings and preferences.
         </CardDescription>

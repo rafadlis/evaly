@@ -178,7 +178,7 @@ const GenerateQuestionInputPrompt = () => {
             onKeyDown={handleKeyDown}
             placeholder="Enter prompt or paste content to generate questions..."
             className={cn(
-              "w-full min-h-[120px] overflow-clip text-sm md:text-base p-4 [&::placeholder]:whitespace-pre-wrap resize-none focus-visible:ring-0 focus-visible:outline-0 focus-visible:ring-offset-0 focus-visible:border-foreground/20 shadow-none transition-all duration-200",
+              "w-full min-h-[120px] border-primary/50 focus-visible:border-primary overflow-clip text-sm md:text-base p-4 [&::placeholder]:whitespace-pre-rap resize-none focus-visible:ring-0 focus-visible:outline-0 focus-visible:ring-offset-0 transition-all duration-200",
               autoComplete.length > 0
                 ? "focus-visible:border-b-transparent rounded-b-none"
                 : ""

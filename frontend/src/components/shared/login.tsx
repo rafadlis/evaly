@@ -1,13 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { useGetCallbackUrl } from "@/hooks/use-get-callback-url";
 import { authClient } from "@/lib/auth.client";
 import { Label } from "../ui/label";
@@ -18,6 +11,14 @@ import { toast } from "sonner";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
 import { useOrganizerProfile } from "@/query/organization/profile/use-organizer-profile";
 import LoadingScreen from "./loading/loading-screen";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/dialog";
+import { Link } from "./progress-bar";
 
 const LogIn = () => {
   const [email, setEmail] = useState("");
@@ -37,18 +38,88 @@ const LogIn = () => {
     return <LoadingScreen />;
   }
 
-  if (otp !== null) {
-    return (
-      <Card className="z-50 max-w-md w-full">
-        <CardHeader>
-          <CardTitle>Verify your email</CardTitle>
-          <CardDescription>
-            Enter the 6 digit code sent to your email
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="pt-6 border-t border-dashed">
+  return (
+    <>
+      <h1 className="text-3xl font-semibold">Welcome to Evaly</h1>
+      <h2 className="mb-10 text-muted-foreground mt-4 text-center">
+        Making Online Exams Easier, Safer, and Smarter
+      </h2>
+
+      <div className="max-w-sm w-full">
+        <div className="flex flex-wrap items-center gap-2 w-full mb-8 pb-8 border-b border-dashed">
+          <Button
+            variant="outline"
+            type="button"
+            className="gap-2 flex-1 w-full py-4"
+            onClick={async () => {
+              await authClient.signIn.social({
+                provider: "google",
+                callbackURL:
+                  callbackURL || `${window.location.origin}/dashboard`,
+              });
+            }}
+          >
+            <GoogleIcon />
+            Sign in with Google
+          </Button>
+        </div>
+
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+
+            setLoading(true);
+            const res = await authClient.emailOtp.sendVerificationOtp({
+              email,
+              type: "sign-in",
+            });
+            setLoading(false);
+
+            if (!res.data?.success) {
+              toast.error(res.error?.message || "Something went wrong");
+              return;
+            }
+
+            setOtp("");
+            toast.success("OTP sent to your email");
+          }}
+          className="grid gap-4"
+        >
+          <div className="grid gap-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="your-email@gmail.com"
+              required
+              disabled={loading}
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
+              value={email}
+            />
+          </div>
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              "Continue with email"
+            )}
+          </Button>
+        </form>
+      </div>
+      <Dialog open={otp !== null}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Verify your email</DialogTitle>
+            <DialogDescription>
+              Enter the 6 digit code sent to your email
+            </DialogDescription>
+          </DialogHeader>
+
           <form
             onSubmit={async (e) => {
+              if (!otp) return;
               e.preventDefault();
 
               setLoading(true);
@@ -106,83 +177,27 @@ const LogIn = () => {
               Didn&apos;t receive the OTP?{" "}
               <button
                 type="button"
-                className="text-sm w-max cursor-pointer text-blue-600"
+                className="text-sm w-max cursor-pointer text-blue-500"
                 onClick={() => setOtp(null)}
               >
                 Resend OTP
               </button>
             </span>
           </form>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  return (
-    <Card className="z-50 max-w-md w-full">
-      <CardHeader>
-        <CardTitle>Sign In</CardTitle>
-        <CardDescription>Enter your email to sign in</CardDescription>
-      </CardHeader>
-      <CardContent className="pt-6 border-t border-dashed">
-        <form
-          onSubmit={async (e) => {
-            e.preventDefault();
-
-            setLoading(true);
-            const res = await authClient.emailOtp.sendVerificationOtp({
-              email,
-              type: "sign-in",
-            });
-            setLoading(false);
-
-            if (!res.data?.success) {
-              toast.error(res.error?.message || "Something went wrong");
-              return;
-            }
-
-            setOtp("");
-            toast.success("OTP sent to your email");
-          }}
-          className="grid gap-4"
-        >
-          <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="your-email@gmail.com"
-              required
-              disabled={loading}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
-              value={email}
-            />
-          </div>
-          <Button type="submit" className="w-full mt-4" disabled={loading}>
-            {loading ? <Loader2 size={16} className="animate-spin" /> : "Login"}
-          </Button>
-          <div className="flex flex-wrap items-center gap-2 w-full">
-            <Button
-              variant="outline"
-              type="button"
-              className="gap-2 flex-1 w-full py-4"
-              onClick={async () => {
-                await authClient.signIn.social({
-                  provider: "google",
-                  callbackURL:
-                    callbackURL || `${window.location.origin}/dashboard`,
-                });
-              }}
-            >
-              <GoogleIcon />
-              Continue with Google
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+        </DialogContent>
+      </Dialog>
+      <span className="container text-xs text-muted-foreground mt-4 max-w-md text-center fixed bottom-4">
+        By clicking &quot;Sign in with Google&quot; or &quot;Continue with
+        email&quot; you agree to our{" "}
+        <Link href={""} className="underline">
+          Terms of Use
+        </Link>{" "}
+        and{" "}
+        <Link className="underline" href={"Privacy policy"}>
+          Privacy policy
+        </Link>
+      </span>
+    </>
   );
 };
 export default LogIn;

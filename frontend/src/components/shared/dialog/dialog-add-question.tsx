@@ -114,7 +114,7 @@ const DialogAddQuestion = ({
         {triggerButton ? (
           triggerButton
         ) : (
-          <Button variant={"outline"} type="button">
+          <Button variant={"outline"} type="button" className="w-max">
             <Plus /> Add question
           </Button>
         )}

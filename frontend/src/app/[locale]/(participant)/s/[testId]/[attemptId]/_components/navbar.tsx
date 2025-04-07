@@ -12,17 +12,15 @@ import { useMutation, useMutationState } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
 import { useTransition } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { CheckIcon, ChevronLeft, CloudUpload } from "lucide-react";
+import { CheckIcon, ChevronLeft } from "lucide-react";
 import { Link } from "@/components/shared/progress-bar";
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
+  Dialog, DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from "@/components/ui/dialog";
 
 const Navbar = ({ attempt }: { attempt: TestAttemptWithSection }) => {
@@ -132,7 +130,7 @@ const DialogSubmitAttempt = ({ attemptId }: { attemptId: string }) => {
           className="mr-4"
           disabled={isStillUpdatingAnswer}
         >
-          <CloudUpload /> {"Submit this section"}
+          Submit this section
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -141,9 +139,7 @@ const DialogSubmitAttempt = ({ attemptId }: { attemptId: string }) => {
             <DialogTitle>Oops, something went wrong!</DialogTitle>
             <DialogDescription>{(error as Error).message}</DialogDescription>
             <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Close</Button>
-              </DialogClose>
+                <Button variant="outline" onClick={()=>{setIsOpen(false)}}>Close</Button>
             </DialogFooter>
           </DialogHeader>
         ) : !dataUpdatedAttempt ? (
@@ -153,9 +149,7 @@ const DialogSubmitAttempt = ({ attemptId }: { attemptId: string }) => {
             </DialogTitle>
             <DialogDescription>This action cannot be undone.</DialogDescription>
             <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </DialogClose>
+              <Button variant="outline" onClick={()=>setIsOpen(false)}>Cancel</Button>
               <Button
                 variant="default"
                 onClick={() => submitAttempt()}

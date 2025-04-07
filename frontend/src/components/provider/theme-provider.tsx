@@ -8,15 +8,17 @@ export function ThemeProvider({
   children,
   ...props
 }: React.ComponentProps<typeof NextThemesProvider>) {
-  const [fontMono] = useLocalStorage("font-mono", false, {
+  const [fontMono] = useLocalStorage("font-mono", true, {
     initializeWithValue: false,
   });
 
   React.useEffect(() => {
     if (fontMono) {
       document.documentElement.classList.add("font-mono");
+      document.documentElement.classList.add("tracking-tight")
     } else {
       document.documentElement.classList.remove("font-mono");
+      document.documentElement.classList.remove("tracking-tight")
     }
   }, [fontMono]);
 
