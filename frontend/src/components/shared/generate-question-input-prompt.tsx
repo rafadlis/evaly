@@ -27,8 +27,19 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { $api } from "@/lib/api";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+interface Props {
+  className?: string;
+  order?: number;
+  referenceId?: string;
+  testId?: string
+}
 
-const GenerateQuestionInputPrompt = () => {
+const GenerateQuestionInputPrompt = ({
+  className,
+  order,
+  referenceId,
+  testId
+}: Props) => {
   const autoComplete: string[] = [];
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -73,7 +84,7 @@ const GenerateQuestionInputPrompt = () => {
 
       startTransition(() => {
         router.push(
-          `/dashboard/question/generate/${data.templateCreated?.id}`,
+          `/dashboard/question/generate/${data.templateCreated?.id}?order=${order}&referenceId=${referenceId}&testId=${testId}`,
           { scroll: true }
         );
       });
@@ -116,7 +127,7 @@ const GenerateQuestionInputPrompt = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="flex-col flex items-center"
+      className={cn("flex-col flex items-center", className)}
     >
       <TextLoop
         interval={3}
@@ -200,7 +211,8 @@ const GenerateQuestionInputPrompt = () => {
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  Improve your prompt with AI assistance to generate better questions
+                  Improve your prompt with AI assistance to generate better
+                  questions
                 </TooltipContent>
               </Tooltip>
               <Tooltip>

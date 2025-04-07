@@ -1,11 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ListTreeIcon, ListXIcon, PlusIcon } from "lucide-react";
 import CardQuestion from "../../../../../../../../../components/shared/card/card-question";
-import {
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from "@/components/ui/card";
+import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import SectionSidebar from "./section-sidebar";
 import { useEffect, useState } from "react";
 import { useSelectedSection } from "../../_hooks/use-selected-section";
@@ -26,10 +22,12 @@ import { useTestSectionByTestIdQuery } from "@/query/organization/test-section/u
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTestSectionByIdQuery } from "@/query/organization/test-section/use-test-section-by-id";
 import { toast } from "sonner";
+import { useParams } from "next/navigation";
 
 const Questions = () => {
   const [selectedSection, setSelectedSection] = useSelectedSection();
   const [selectedQuestion, setSelectedQuestion] = useState<Question>();
+  const { id: testId } = useParams();
 
   const {
     data: dataSection,
@@ -112,7 +110,7 @@ const Questions = () => {
       <div className="flex-1 pr-6">
         <CardHeader
           className={cn(
-            `z-10 transition-all duration-300 border-b px-0 border-primary/20 border-dashed mb-4`,
+            `z-10 transition-all duration-300 border-b px-0 border-dashed mb-4`
           )}
         >
           <div className="flex flex-row items-start">
@@ -231,8 +229,8 @@ const Questions = () => {
                     )}
                   >
                     <DialogAddQuestion
+                      testId={testId as string}
                       referenceId={selectedSection as string}
-                      referenceType="test-section"
                       order={data.order + 1}
                       onSuccessCreateQuestion={(questions) => {
                         setLocalQuestions((prev) =>
@@ -270,8 +268,8 @@ const Questions = () => {
           <div className="flex flex-col p-6 gap-4 bg-secondary">
             <h1>No question found on this section</h1>
             <DialogAddQuestion
+              testId={testId as string}
               referenceId={selectedSection as string}
-              referenceType="test-section"
               order={localQuestions.length + 1}
               onSuccessCreateQuestion={(questions) => {
                 setLocalQuestions((prev) =>
@@ -288,7 +286,7 @@ const Questions = () => {
           </div>
         )}
       </div>
-      <SectionSidebar className="border-l pl-4 border-dashed min-h-screen"/>
+      <SectionSidebar className="border-l pl-4 border-dashed min-h-screen" />
       <DialogEditQuestion
         defaultValue={selectedQuestion}
         onSuccess={(question) => {

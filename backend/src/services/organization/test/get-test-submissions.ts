@@ -74,7 +74,6 @@ export const getTestSubmissions = async (testId: string) => {
     .where(
         and(
             or(...sectionIds.map(id => eq(question.referenceId, id))),
-            eq(question.referenceType, "test-section"),
             isNull(question.deletedAt)
         )
     );
@@ -346,7 +345,7 @@ export type Submission = {
     wrong: number;
     unanswered: number;
     submittedAt: string | null;
-    startedAt: string | null;
+    startedAt?: string | null;
     score: number;
     rank: number;
     sectionAnswers: {
@@ -358,7 +357,7 @@ export type Submission = {
     sectionWrong: {
         [key: string]: number; // sectionId: number of wrong answers
     };
-    status: 'completed' | 'in-progress' | 'not-started';
+    status?: 'completed' | 'in-progress' | 'not-started';
 }
 
 export type Section = {

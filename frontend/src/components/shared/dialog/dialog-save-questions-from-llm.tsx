@@ -1,13 +1,13 @@
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { useRouter } from "@/i18n/navigation";
 import { $api } from "@/lib/api";
@@ -72,7 +72,6 @@ const DialogSaveQuestionsFromLLM = ({
       questions.map((question, index) => ({
         ...question,
         id: undefined,
-        referenceType: "template",
         referenceId: id,
         order: index + 1,
       }))

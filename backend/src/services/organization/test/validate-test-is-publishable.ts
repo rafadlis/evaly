@@ -209,7 +209,6 @@ export async function validateTestIsPublishable(testId: string, organizationId: 
         const questions = await db.query.question.findMany({
             where: and(
                 eq(question.referenceId, section.id),
-                eq(question.referenceType, "test-section"),
                 isNull(question.deletedAt)
             ),
         });

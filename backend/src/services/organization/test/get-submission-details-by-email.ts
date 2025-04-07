@@ -60,7 +60,6 @@ export const getSubmissionDetailsByEmail = async (testId: string, email: string)
     .where(
         and(
             or(...sectionIds.map(id => eq(question.referenceId, id))),
-            eq(question.referenceType, "test-section"),
             isNull(question.deletedAt)
         )
     );

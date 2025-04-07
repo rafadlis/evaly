@@ -1,24 +1,27 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useTransition } from "react";
 import {
   Card,
-  CardContent, CardFooter,
+  CardContent,
+  CardFooter,
   CardHeader,
-  CardTitle
+  CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import {
-  Search, FileText,
+  Search,
+  FileText,
   Calendar,
   WandSparkles,
   Plus,
   Loader2,
   MinusIcon,
-  BookOpen
+  BookOpen,
+  Smile,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "@/components/shared/progress-bar";
@@ -28,6 +31,7 @@ import { toast } from "sonner";
 import { useRouter } from "@/i18n/navigation";
 import { useAllQuestionTemplate } from "@/query/organization/question/use-all-question-template";
 import dayjs from "dayjs";
+import { parseAsString, useQueryState } from "nuqs";
 
 const Page = () => {
   return (
@@ -35,7 +39,7 @@ const Page = () => {
       <div className="flex flex-row justify-between">
         <div className="flex flex-col mb-8">
           <h1 className="font-semibold">Question Bank</h1>
-          <p className="text-muted-foreground"> 
+          <p className="text-muted-foreground">
             Create and manage your question templates.
           </p>
         </div>
@@ -60,7 +64,9 @@ const CreateQuestionTemplateButton = () => {
   const { mutate: createQuestionTemplate, isPending: isLoading } = useMutation({
     mutationKey: ["create-question-template"],
     mutationFn: async () => {
-      const res = await $api.organization.question.template.create.post({withInitialQuestion: true});
+      const res = await $api.organization.question.template.create.post({
+        withInitialQuestion: true,
+      });
 
       if (!res.data) {
         toast.error("Failed to create question template");
@@ -98,73 +104,94 @@ const CreateQuestionTemplateButton = () => {
   );
 };
 
-const QuestionTemplateSection = () => {
-  const [searchQuery, setSearchQuery] = useState("");
+const QuestionTemplateSection = ({
+  className,
+  gridClassName
+}: {
+  className?: string;
+  gridClassName?: string
+}) => {
+  const [searchQuery, setSearchQuery] = useQueryState(
+    "search",
+    parseAsString.withDefault("")
+  );
+  const [tab, setTab] = useQueryState("tab", parseAsString.withDefault("all"));
 
   const { data: dataQuestionTemplate } = useAllQuestionTemplate();
 
   const filteredDataQuestionTemplate = useMemo(() => {
     if (!dataQuestionTemplate) return [];
+    let list = dataQuestionTemplate;
+    if (tab === "all") list = dataQuestionTemplate;
+    if (tab === "owned")
+      list = dataQuestionTemplate.filter((e) => {
+        return !e.isAiGenerated;
+      });
 
-    if (!searchQuery) return dataQuestionTemplate;
+    if (tab === "generated")
+      list = dataQuestionTemplate.filter((e) => {
+        return e.isAiGenerated;
+      });
 
-    return dataQuestionTemplate.filter((template) => {
+    if (!searchQuery) return list;
+
+    return list.filter((template) => {
       if (!template.title) return false;
-      return template.title.toLowerCase().includes(searchQuery.toLowerCase()) || template.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+      return (
+        template.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        template.tags.some((tag) =>
+          tag.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      );
     });
-  }, [dataQuestionTemplate, searchQuery]);
+  }, [dataQuestionTemplate, searchQuery, tab]);
 
   return (
-    <div className="space-y-6">
-      <Tabs defaultValue="owned" className="w-full">
-        <div className="flex flex-row justify-between mb-4">
-          {/* <TabsList className="p-1 bg-muted/50">
-            <TabsTrigger value="owned" className="transition-all duration-300">
-              <FileText className="mr-2 h-4 w-4" />
+    <div className={cn("space-y-6", className)}>
+      <Tabs className="w-full" value={tab} onValueChange={setTab}>
+        <div className="flex flex-col-reverse gap-4 md:flex-row justify-between mb-4">
+          <TabsList>
+            <TabsTrigger value="all">
+              <FileText className="size-3.5" />
+              All
+            </TabsTrigger>
+            <TabsTrigger value="owned">
+              <Smile className="size-3.5" />
               My Templates
             </TabsTrigger>
-            <TabsTrigger
-              value="favorites"
-              className="transition-all duration-300"
-            >
-              <Star className="mr-2 h-4 w-4" />
-              Favorites
+            <TabsTrigger value="generated">
+              <WandSparkles className="size-3.5" />
+              AI Generated
             </TabsTrigger>
-          </TabsList> */}
+          </TabsList>
           <div className="relative w-full md:w-80">
             <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
             <Input
               placeholder="Search templates..."
               className="pl-8"
-              value={searchQuery}
+              value={searchQuery ?? ""}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
         </div>
 
         {/* Owned Templates Tab */}
-        <TabsContent value="owned" className="mt-0">
-          {filteredDataQuestionTemplate && filteredDataQuestionTemplate?.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredDataQuestionTemplate?.map((template) => (
-                <OwnedTemplateCard
-                  key={template.id}
-                  template={template}
-                />
-              ))}
-            </div>
-          ) : (
-            <EmptyState
-              message="No templates match your search"
-            />
-          )}
-        </TabsContent>
+        {filteredDataQuestionTemplate &&
+        filteredDataQuestionTemplate?.length > 0 ? (
+          <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6", gridClassName)}>
+            {filteredDataQuestionTemplate?.map((template) => (
+              <CardQuestionTemplate key={template.id} template={template} />
+            ))}
+          </div>
+        ) : (
+          <EmptyState message="No templates match your search" />
+        )}
       </Tabs>
     </div>
   );
 };
 
-const OwnedTemplateCard = ({
+export const CardQuestionTemplate = ({
   template,
 }: {
   template: {
@@ -178,10 +205,10 @@ const OwnedTemplateCard = ({
     tags: string[];
     isAiGenerated: boolean;
     questions: {
-        id: string;
-        question: string | null;
+      id: string;
+      question: string | null;
     }[];
-};
+  };
 }) => {
   return (
     <Link href={`/dashboard/question/${template.id}`}>
@@ -258,7 +285,7 @@ const OwnedTemplateCard = ({
   );
 };
 
-const EmptyState = ({
+export const EmptyState = ({
   message,
   icon,
 }: {

@@ -98,7 +98,6 @@ const Page = () => {
               setLocalQuestions((prev) => [...prev, ...questions]);
             }}
             order={localQuestions.length + 1}
-            referenceType="template"
             triggerButton={
               <Button size={"sm"} variant={"outline"}>
                 <PlusIcon /> Add Question
@@ -164,7 +163,6 @@ const Page = () => {
                 <DialogAddQuestion
                   showTabsOption={false}
                   referenceId={templateId}
-                  referenceType="template"
                   order={index + 2}
                   onSuccessCreateQuestion={(questions) => {
                     setLocalQuestions((prev) =>
@@ -199,7 +197,6 @@ const Page = () => {
               <DialogAddQuestion
                 showTabsOption={false}
                 referenceId={templateId}
-                referenceType="template"
                 onSuccessCreateQuestion={(data) => {
                   setLocalQuestions(data);
                   setSelectedEditQuestion(data[0]);

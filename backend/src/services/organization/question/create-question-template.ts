@@ -18,10 +18,9 @@ export const createQuestionTemplate = async (
     await db.insert(question).values([
       {
         referenceId: dataCreated[0].id,
-      order: 1,
-      type: "text-field",
-      organizationId: body.organizationId,
-        referenceType: "template",
+        order: 1,
+        type: "text-field",
+        organizationId: body.organizationId,
       },
     ]);
   }

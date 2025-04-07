@@ -1,0 +1,1 @@
+ALTER TABLE "question" DROP COLUMN "reference_type";

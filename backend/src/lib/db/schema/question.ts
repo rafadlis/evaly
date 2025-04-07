@@ -1,15 +1,15 @@
 import { relations, sql } from "drizzle-orm";
 import {
-    index,
-    pgTable,
-    smallint,
-    text,
-    timestamp,
-    varchar,
-    integer,
-    boolean,
-    jsonb,
-    unique
+  index,
+  pgTable,
+  smallint,
+  text,
+  timestamp,
+  varchar,
+  integer,
+  boolean,
+  jsonb,
+  unique
 } from "drizzle-orm/pg-core";
 
 import { QUESTION_TYPES } from "../../../types/question-types";
@@ -26,12 +26,6 @@ export const question = pgTable(
       .$defaultFn(() => "qst-" + Bun.randomUUIDv7()),
     question: text("question"),
     referenceId: varchar("reference_id", { length: 255 }).notNull(),
-    referenceType: varchar("reference_type", {
-      length: 100,
-      enum: ["test-section", "template"],
-    })
-      .notNull()
-      .default("test-section"),
     organizationId: varchar("organization_id", { length: 255 }), // Owner of the question
     order: smallint("order").default(1).notNull(),
     type: varchar("type", {

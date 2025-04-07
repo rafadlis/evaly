@@ -40,7 +40,6 @@ export const getAllQuestionTemplate = async (organizationId: string) => {
         .where(
           and(
             eq(question.referenceId, template.id),
-            eq(question.referenceType, "template"),
             isNull(question.deletedAt)
           )
         );

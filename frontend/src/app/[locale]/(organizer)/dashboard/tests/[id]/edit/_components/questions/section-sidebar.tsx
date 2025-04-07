@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Loader2, PlusIcon } from "lucide-react";
+import { ArrowRight, Loader2, PlusIcon, PointerIcon } from "lucide-react";
 import { useSelectedSection } from "../../_hooks/use-selected-section";
 import { useParams } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,6 +12,18 @@ import { useMutation } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
 import { useTestSectionByTestIdQuery } from "@/query/organization/test-section/use-test-section-by-test-id";
 import { useTestSectionByIdQuery } from "@/query/organization/test-section/use-test-section-by-id";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { QuestionTemplateSection } from "./question-template-section";
+import { toast } from "sonner";
 
 const SectionSidebar = ({ className }: { className?: string }) => {
   return (
@@ -26,9 +38,10 @@ const ListSession = () => {
   const { id } = useParams();
   const [selectedSection, setSelectedSection] = useSelectedSection();
 
-  const { data, isPending, isRefetching, refetch } = useTestSectionByTestIdQuery({
-    testId: id as string,
-  });
+  const { data, isPending, isRefetching, refetch } =
+    useTestSectionByTestIdQuery({
+      testId: id as string,
+    });
 
   const { refetch: refetchSectionById } = useTestSectionByIdQuery({
     id: selectedSection as string,
@@ -129,6 +142,8 @@ const ListSession = () => {
 const AddSession = () => {
   const { id } = useParams();
   const [, setSelectedSection] = useSelectedSection();
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState("");
 
   const {
     refetch,
@@ -136,7 +151,7 @@ const AddSession = () => {
     isRefetching: isRefetchingSection,
   } = useTestSectionByTestIdQuery({ testId: id as string });
 
-  const { mutate, isPending } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationKey: ["create-section"],
     mutationFn: async () => {
       const response = await $api.organization.test.section.create.post({
@@ -144,35 +159,142 @@ const AddSession = () => {
       });
       return response.data?.sections;
     },
-    onSuccess(data) {
-      const sectionId = data?.at(0)?.id;
-      if (sectionId) {  
+  });
+
+  const { mutateAsync: tranferQuestion, isPending: isPendingTransferQuestion } =
+    useMutation({
+      mutationKey: ["add-bulk-to-other-reference"],
+      mutationFn: async (body: {
+        order: number;
+        fromReferenceId: string;
+        toReferenceId: string;
+      }) => {
+        const res =
+          await $api.organization.question["add-from-template"].post(body);
+
+        if (res.error) {
+          toast.error(res.error.value?.toString());
+        }
+
+        return res.data;
+      },
+    });
+
+  async function onUseTemplate() {
+    if (!selectedId) return;
+    const createdSection = await mutateAsync();
+    if (!createdSection?.length) {
+      toast.error("Something went wrong!");
+      return;
+    }
+    const order = 1;
+    const toReferenceId = createdSection?.[0].id;
+    const fromReferenceId = selectedId;
+
+    const transferredQuestion = await tranferQuestion({
+      order: Number(order),
+      toReferenceId: toReferenceId as string,
+      fromReferenceId,
+    });
+
+    if (transferredQuestion && transferredQuestion.length > 0) {
+      const sectionId = createdSection?.at(0)?.id;
+      setIsOpen(false);
+      if (sectionId) {
         setSelectedSection(sectionId);
         refetch();
       }
-    },
-  });
+    }
+  }
 
   if (isPendingSession) return null;
 
   return (
-    <div className="flex flex-col items-start mt-2">
-      <Button
-        variant={"outline"}
-        className="w-max border-dashed"
-        size={"sm"}
-        disabled={isPending || isRefetchingSection}
-        onClick={() => {
-          mutate();
+    <div className="flex flex-col items-end mt-2">
+      <Dialog
+        open={isOpen}
+        onOpenChange={(e) => {
+          if (!e) setSelectedId("");
+          setIsOpen(e);
         }}
       >
-        {isPending || isRefetchingSection ? (
-          <Loader2 className="animate-spin" />
-        ) : (
-          <PlusIcon />
-        )}
-        Add Section
-      </Button>
+        <DialogTrigger asChild>
+          <Button
+            variant={"outline"}
+            className="w-max border-dashed"
+            size={"sm"}
+            disabled={isPending || isRefetchingSection}
+          >
+            {isPending || isRefetchingSection ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <PlusIcon />
+            )}
+            Add Section
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="md:max-w-4xl lg:max-w-5xl xl:max-w-6xl">
+          <DialogHeader>
+            <DialogTitle>Add new section</DialogTitle>
+            <DialogDescription className="flex flex-wrap">
+              Add an empty section or use a question template. Click to
+              selecting the template <PointerIcon className="size-4 ml-2" />
+            </DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="h-[40vh]">
+            <QuestionTemplateSection
+              onSelectedIdChange={setSelectedId}
+              selectedId={selectedId}
+            />
+          </ScrollArea>
+          <DialogFooter>
+            <div className="flex flex-row justify-between w-full">
+              <DialogClose asChild>
+                <Button variant={"secondary"}>Back</Button>
+              </DialogClose>
+
+              <div className="flex gap-2">
+                <Button
+                  variant={"outline-solid"}
+                  className="w-max"
+                  disabled={isPending || isRefetchingSection}
+                  onClick={async () => {
+                    const data = await mutateAsync();
+                    const sectionId = data?.at(0)?.id;
+                    setIsOpen(false);
+                    if (sectionId) {
+                      setSelectedSection(sectionId);
+                      refetch();
+                    }
+                  }}
+                >
+                  {isPending || isRefetchingSection ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    <PlusIcon />
+                  )}
+                  Create Empty Section
+                </Button>
+                <Button
+                  onClick={onUseTemplate}
+                  variant={"default"}
+                  disabled={
+                    !selectedId || isPendingTransferQuestion || isPending
+                  }
+                >
+                  {selectedId ? (
+                    <>
+                      Use template <ArrowRight />
+                    </>
+                  ) : (
+                    "Choose template"
+                  )}
+                </Button>
+              </div>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

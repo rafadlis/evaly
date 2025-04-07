@@ -12,6 +12,7 @@ import {
 } from "../../types/question";
 import { questionTemplateRouter } from "./question.template.router";
 import { llmRouter } from "./llm.router";
+import { createBulkFromTemplate } from "../../services/organization/question/create-bulk-from-template";
 
 export const questionRouter = new Elysia().group("/question", (app) => {
   return (
@@ -26,7 +27,7 @@ export const questionRouter = new Elysia().group("/question", (app) => {
             ...question,
             organizationId: organizationId,
           }));
-
+          
           const questions = await createQuestion(inputQuestions);
 
           if (questions.length !== body.length) {
@@ -99,6 +100,32 @@ export const questionRouter = new Elysia().group("/question", (app) => {
               order: t.Number(),
             })
           ),
+        }
+      )
+
+      // Add-bulk from template
+      .post(
+        "/add-from-template",
+        async ({ body, organizer, error }) => {
+          const organizationId = organizer.organizationId;
+          try {
+            return await createBulkFromTemplate({
+              ...body,
+              organizationId,
+            });
+          } catch (errorBody) {
+            return error(
+              "Internal Server Error",
+              errorBody instanceof Error ? errorBody.message : null
+            );
+          }
+        },
+        {
+          body: t.Object({
+           fromReferenceId: t.String(),
+           toReferenceId: t.String(),
+            order: t.Number(), // Need to insert in the middle
+          }),
         }
       )
 

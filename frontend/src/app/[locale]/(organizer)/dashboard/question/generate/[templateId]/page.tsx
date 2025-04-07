@@ -4,7 +4,7 @@ import CardQuestion from "@/components/shared/card/card-question";
 import { Question } from "@evaly/backend/types/question";
 import { QuestionGenerated } from "@evaly/backend/types/question.generated";
 import { motion } from "motion/react";
-import React, { useEffect } from "react";
+import React, { useEffect, useTransition } from "react";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import { env } from "@/lib/env";
 import { useParams } from "next/navigation";
@@ -16,9 +16,17 @@ import { TextShimmer } from "@/components/ui/text-shimmer";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "@/i18n/navigation";
 import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
+import { $api } from "@/lib/api";
+import { Loader2 } from "lucide-react";
 
-const Page = () => {
+const Page = ({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) => {
   const { templateId } = useParams();
+  const [isRedirecting, setIsRedirecting] = useTransition();
   const router = useRouter();
   const { data: dataTemplate, isPending: isPendingTemplate } =
     useQuestionTemplateById(templateId as string);
@@ -34,12 +42,59 @@ const Page = () => {
     },
   });
 
+  const { mutateAsync: tranferQuestion, isPending: isPendingTransferQuestion } =
+    useMutation({
+      mutationKey: ["add-bulk-to-other-reference"],
+      mutationFn: async (body: {
+        order: number;
+        fromReferenceId: string;
+        toReferenceId: string;
+      }) => {
+        const res =
+          await $api.organization.question["add-from-template"].post(body);
+
+        if (res.error) {
+          toast.error(res.error.value?.toString());
+        }
+
+        return res.data;
+      },
+    });
+
+  async function onSave() {
+    const { order, referenceId: toReferenceId, testId } = await searchParams;
+    const fromReferenceId = dataTemplate?.id;
+
+    if (order !== undefined && testId && toReferenceId && fromReferenceId) {
+      const transferredQuestion = await tranferQuestion({
+        order: Number(order),
+        toReferenceId: toReferenceId as string,
+        fromReferenceId,
+      });
+      if (transferredQuestion && transferredQuestion.length > 0) {
+        setIsRedirecting(() => {
+          router.replace(
+            `/dashboard/tests/${testId}/edit?selected-section=${toReferenceId}`
+          );
+          toast.success("Questions added successfully to your test!");
+        });
+      }
+    } else {
+      setIsRedirecting(() => {
+        router.replace(`/dashboard/question/${templateId}`);
+        toast.success("Questions saved successfully");
+      });
+    }
+
+    // TODO add support for add question to another template
+  }
+
   useEffect(() => {
-    if (dataTemplate?.aiContents?.length === 1) {
+    if (dataTemplate?.aiContents?.length === 1 && !isPendingTemplate) {
       submit({ prompt: dataTemplate?.aiContents?.at(0)?.prompt, templateId });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataTemplate]);
+  }, [dataTemplate, isPendingTemplate]);
 
   if (
     (isLoading && !object?.questions?.length) ||
@@ -109,13 +164,19 @@ const Page = () => {
           </div>
           <div>
             <Button
-              disabled={isLoading}
+              disabled={isLoading || isRedirecting || isPendingTransferQuestion}
               onClick={() => {
-                router.push(`/dashboard/question/${templateId}`);
-                toast.success("Questions saved successfully");
+                onSave();
               }}
             >
-              Save
+              {isPendingTransferQuestion || isRedirecting ? (
+                <Loader2 className="animate-spin" />
+              ) : null}
+              {isRedirecting
+                ? "Redirecting back..."
+                : isPendingTransferQuestion
+                  ? "Transferring your question!"
+                  : "Save"}
             </Button>
           </div>
         </div>

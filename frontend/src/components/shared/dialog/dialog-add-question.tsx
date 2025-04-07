@@ -33,14 +33,14 @@ import GenerateQuestionInputPrompt from "../generate-question-input-prompt";
 const DialogAddQuestion = ({
   order = 1,
   referenceId,
-  referenceType,
   onSuccessCreateQuestion,
   triggerButton,
   showTabsOption = true,
+  testId
 }: {
+  testId?: string;
   order?: number;
   referenceId: string;
-  referenceType?: Question["referenceType"];
   onSuccessCreateQuestion?: (question: Question[]) => void;
   triggerButton?: React.ReactNode;
   showTabsOption?: boolean;
@@ -55,8 +55,7 @@ const DialogAddQuestion = ({
         const question: InsertQuestion = {
           referenceId,
           order,
-          type: typeSelected,
-          referenceType: referenceType,
+          type: typeSelected
         };
 
         if (
@@ -228,7 +227,7 @@ const DialogAddQuestion = ({
 
             <TabsContent value="ai">
               <div className="max-w-2xl w-full">
-                <GenerateQuestionInputPrompt />
+                <GenerateQuestionInputPrompt order={order} referenceId={referenceId} testId={testId}/>
               </div>
             </TabsContent>
           </Tabs>

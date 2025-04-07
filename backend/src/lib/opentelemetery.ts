@@ -8,7 +8,6 @@ import { env } from "./env";
 export const opentelemetry = () =>
   opentelemetryElysia({
     spanProcessors: [
-      // @ts-expect-error
       new BatchSpanProcessor(
         new OTLPTraceExporter({
           url: "https://api.axiom.co/v1/traces",
