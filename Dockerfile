@@ -14,6 +14,7 @@ COPY /frontend/package.json ./frontend/package.json
 COPY /backend ./backend
 
 RUN bun install --frozen-lockfile
+RUN bun db:migrate
 
 # Copy the backend code again
 COPY /backend ./backend
