@@ -7,7 +7,7 @@ import { motion } from "motion/react";
 import React, { useEffect, useTransition } from "react";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import { env } from "@/lib/env";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import LoadingScreen from "@/components/shared/loading/loading-screen";
 import { useAllQuestionByReferenceIdQuery } from "@/query/organization/question/use-all-question-by-reference-id.query";
 import { useQuestionTemplateById } from "@/query/organization/question/use-question-template-by-id";
@@ -20,13 +20,10 @@ import { useMutation } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
 import { Loader2 } from "lucide-react";
 
-const Page = ({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) => {
+const Page = () => {
   const { templateId } = useParams();
   const [isRedirecting, setIsRedirecting] = useTransition();
+  const searchParams = useSearchParams()
   const router = useRouter();
   const { data: dataTemplate, isPending: isPendingTemplate } =
     useQuestionTemplateById(templateId as string);
@@ -62,14 +59,12 @@ const Page = ({
     });
 
   async function onSave() {
-    const { order, referenceid: toReferenceId, testid } = await searchParams;
+    const order = searchParams.get("order")
+    const toReferenceId = searchParams.get("referenceid")
+    const testid= searchParams.get("testid")
+  
     const fromReferenceId = dataTemplate?.id;
-    console.log({
-      order,
-      testid,
-      toReferenceId,
-      fromReferenceId,
-    });
+  
     if (order !== undefined && testid && toReferenceId && fromReferenceId) {
       const transferredQuestion = await tranferQuestion({
         order: Number(order),
