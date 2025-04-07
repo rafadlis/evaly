@@ -64,7 +64,12 @@ const Page = ({
   async function onSave() {
     const { order, referenceid: toReferenceId, testid } = await searchParams;
     const fromReferenceId = dataTemplate?.id;
-
+    console.log({
+      order,
+      testid,
+      toReferenceId,
+      fromReferenceId,
+    });
     if (order !== undefined && testid && toReferenceId && fromReferenceId) {
       const transferredQuestion = await tranferQuestion({
         order: Number(order),
