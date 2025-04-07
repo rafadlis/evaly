@@ -191,7 +191,7 @@ const QuestionTemplateSection = ({
   );
 };
 
-export const CardQuestionTemplate = ({
+const CardQuestionTemplate = ({
   template,
 }: {
   template: {
@@ -285,7 +285,7 @@ export const CardQuestionTemplate = ({
   );
 };
 
-export const EmptyState = ({
+const EmptyState = ({
   message,
   icon,
 }: {

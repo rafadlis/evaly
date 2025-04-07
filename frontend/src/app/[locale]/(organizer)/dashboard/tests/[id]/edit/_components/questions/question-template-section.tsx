@@ -1,30 +1,35 @@
-import { EmptyState } from "@/app/[locale]/(organizer)/dashboard/question/page";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-    Card,
-    CardContent,
-    CardFooter,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
+import { $api } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { useAllQuestionTemplate } from "@/query/organization/question/use-all-question-template";
+import { useMutation } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import {
-    FileText,
-    Smile,
-    WandSparkles,
-    Search,
-    Calendar,
-    MinusIcon,
-    EyeIcon,
+  FileText,
+  Smile,
+  WandSparkles,
+  Search,
+  Calendar,
+  MinusIcon,
+  EyeIcon,
+  BookOpen,
+  Loader2,
+  Plus,
 } from "lucide-react";
 import { parseAsString, useQueryState } from "nuqs";
-import { useMemo } from "react";
+import { useMemo, useTransition } from "react";
+import { toast } from "sonner";
 
 export const QuestionTemplateSection = ({
   onSelectedIdChange,
@@ -223,5 +228,73 @@ const CardQuestionTemplate = ({
         </div>
       </CardFooter>
     </Card>
+  );
+};
+
+const EmptyState = ({
+  message,
+  icon,
+}: {
+  message: string;
+  icon?: React.ReactNode;
+}) => {
+  return (
+    <div className="flex flex-col items-center justify-center py-16 bg-muted/20 rounded-lg border border-dashed">
+      <div className="bg-background rounded-full p-4">
+        {icon || <BookOpen className="size-20 text-muted-foreground" />}
+      </div>
+      <p className="text-muted-foreground mt-2 mb-1">{message}</p>
+      <p className="text-xs text-muted-foreground/70 mb-4">
+        Try adjusting your search or browse all templates
+      </p>
+      <CreateQuestionTemplateButton />
+    </div>
+  );
+};
+
+const CreateQuestionTemplateButton = () => {
+  const router = useRouter();
+  const [transitionReady, startTransition] = useTransition();
+
+  const { mutate: createQuestionTemplate, isPending: isLoading } = useMutation({
+    mutationKey: ["create-question-template"],
+    mutationFn: async () => {
+      const res = await $api.organization.question.template.create.post({
+        withInitialQuestion: true,
+      });
+
+      if (!res.data) {
+        toast.error("Failed to create question template");
+        return;
+      }
+
+      startTransition(() => {
+        router.push(`/dashboard/question/${res.data.id}`);
+      });
+    },
+  });
+
+  return (
+    <Button
+      variant={"outline-solid"}
+      onClick={() => createQuestionTemplate()}
+      disabled={transitionReady || isLoading}
+    >
+      {isLoading ? (
+        <>
+          <Loader2 className="w-4 h-4 animate-spin" />
+          <span>Creating...</span>
+        </>
+      ) : transitionReady ? (
+        <>
+          <Loader2 className="w-4 h-4 animate-spin" />
+          <span>Redirecting...</span>
+        </>
+      ) : (
+        <>
+          <Plus /> Question template
+        </>
+      )}
+    </Button>
   );
 };
