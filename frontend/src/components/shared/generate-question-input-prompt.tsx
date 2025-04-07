@@ -84,7 +84,7 @@ const GenerateQuestionInputPrompt = ({
 
       startTransition(() => {
         router.push(
-          `/dashboard/question/generate/${data.templateCreated?.id}?order=${order}&referenceId=${referenceId}&testId=${testId}`,
+          `/dashboard/question/generate/${data.templateCreated?.id}?order=${order}&referenceid=${referenceId}&testid=${testId}`,
           { scroll: true }
         );
       });

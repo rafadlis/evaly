@@ -62,10 +62,10 @@ const Page = ({
     });
 
   async function onSave() {
-    const { order, referenceId: toReferenceId, testId } = await searchParams;
+    const { order, referenceid: toReferenceId, testid } = await searchParams;
     const fromReferenceId = dataTemplate?.id;
 
-    if (order !== undefined && testId && toReferenceId && fromReferenceId) {
+    if (order !== undefined && testid && toReferenceId && fromReferenceId) {
       const transferredQuestion = await tranferQuestion({
         order: Number(order),
         toReferenceId: toReferenceId as string,
@@ -74,7 +74,7 @@ const Page = ({
       if (transferredQuestion && transferredQuestion.length > 0) {
         setIsRedirecting(() => {
           router.replace(
-            `/dashboard/tests/${testId}/edit?selected-section=${toReferenceId}`
+            `/dashboard/tests/${testid}/edit?selected-section=${toReferenceId}`
           );
           toast.success("Questions added successfully to your test!");
         });
