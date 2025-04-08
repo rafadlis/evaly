@@ -86,7 +86,7 @@ const DialogEditSectionDuration = ({
       duration: newTotalMinutes,
     });
   };
-
+return null
   return (
     <Popover
       open={open}

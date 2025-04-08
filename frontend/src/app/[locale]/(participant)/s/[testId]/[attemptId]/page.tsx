@@ -58,7 +58,7 @@ const Page = () => {
   }
 
   return (
-    <div>
+    <>
       <Navbar attempt={attempt} />
       <div className="flex flex-col divide-y divide-dashed select-none container max-w-[900px]">
         {listQuestions.map((question, i) => (
@@ -73,7 +73,7 @@ const Page = () => {
           />
         ))}
       </div>
-    </div>
+    </>
   );
 };
 

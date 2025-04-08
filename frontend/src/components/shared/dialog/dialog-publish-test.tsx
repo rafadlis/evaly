@@ -68,7 +68,7 @@ const DialogPublishTest = ({
           ) : (
             <div className="flex-1 container max-w-3xl py-10">
             <div className="flex flex-row justify-between items-center">
-              <h1 className="text-xl font-bold">
+              <h1 className="text-xl font-medium">
                 Review Test Before Publishing
               </h1>
               <Button
@@ -87,22 +87,22 @@ const DialogPublishTest = ({
                 
               </Button>
             </div>
-            <div className="grid grid-cols-2 mt-6 border divide-y divide-x">
+            <div className="flex flex-col gap-4 mt-6">
               {data?.checklist.map((e) => (
                 <div
                   key={e.id}
                   className={cn(
-                    "flex flex-row items-center gap-6 px-4 py-2",
+                    "flex flex-row items-start gap-3",
                   )}
                 >
                   {e.status === "ok" ? (
-                    <CheckIcon className="size-5 text-success-foreground" />
+                    <CheckIcon className="size-4 text-success-foreground" />
                   ) : e.status === "error" ? (
-                    <XIcon className="size-5 text-destructive" />
+                    <XIcon className="size-4 text-destructive" />
                   ) : (
-                    <TriangleAlert className="stroke-warning-foreground size-5" />
+                    <TriangleAlert className="stroke-warning-foreground size-4" />
                   )}
-                  <div className="flex-1">
+                  <div className="flex-1 leading-0 -mt-1">
                     <span className="text-sm text-muted-foreground">
                       {e.title}
                     </span>
@@ -112,9 +112,9 @@ const DialogPublishTest = ({
               ))}
             </div>
 
-            <div className="mt-4">
+            <div className="mt-4 text-sm">
               {data?.isPublishable ? (
-                <p className="text-muted-foreground">
+                <p className="text-success-foreground bg-success px-4 py-2">
                   Your test is ready to be published.
                 </p>
               ) : (

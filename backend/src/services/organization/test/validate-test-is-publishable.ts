@@ -132,19 +132,19 @@ export async function validateTestIsPublishable(testId: string, organizationId: 
         // Check if each section has a title
         const sectionsWithoutTitle = testSections.filter(section => !section.title || section.title.trim() === "");
         if (sectionsWithoutTitle.length > 0) {
-            checklist.push({
-                id: "section_titles",
-                title: "Section titles",
-                status: "warning",
-                message: `${sectionsWithoutTitle.length} section(s) are missing a title`
-            });
+            // checklist.push({
+            //     id: "section_titles",
+            //     title: "Section titles",
+            //     status: "warning",
+            //     message: `${sectionsWithoutTitle.length} section(s) are missing a title`
+            // });
         } else {
-            checklist.push({
-                id: "section_titles",
-                title: "Section titles",
-                status: "ok",
-                message: "All sections have titles"
-            });
+            // checklist.push({
+            //     id: "section_titles",
+            //     title: "Section titles",
+            //     status: "ok",
+            //     message: "All sections have titles"
+            // });
         }
     }
 
@@ -248,19 +248,19 @@ export async function validateTestIsPublishable(testId: string, organizationId: 
 
     // Check total duration
     if (totalDuration === 0 && testSections.length > 0) {
-        checklist.push({
-            id: "duration",
-            title: "Test duration",
-            status: "warning",
-            message: "No time limit set for sections. Participants can complete the test at their own pace."
-        });
+        // checklist.push({
+        //     id: "duration",
+        //     title: "Test duration",
+        //     status: "warning",
+        //     message: "No time limit set for sections. Participants can complete the test at their own pace."
+        // });
     } else if (testSections.length > 0) {
-        checklist.push({
-            id: "duration",
-            title: "Test duration",
-            status: "ok",
-            message: `Total duration: ${totalDuration} minutes`
-        });
+        // checklist.push({
+        //     id: "duration",
+        //     title: "Test duration",
+        //     status: "ok",
+        //     message: `Total duration: ${totalDuration} minutes`
+        // });
     }
 
     // Build the summary object

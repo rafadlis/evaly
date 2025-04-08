@@ -2,7 +2,6 @@
 import ThemeToggle from "@/components/shared/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useEffect } from "react";
 import { useState } from "react";
 import {
   TestAttempt,
@@ -15,47 +14,48 @@ import { useRouter } from "@/i18n/navigation";
 import { CheckIcon, ChevronLeft } from "lucide-react";
 import { Link } from "@/components/shared/progress-bar";
 import {
-  Dialog, DialogContent,
+  Dialog,
+  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
+  DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const Navbar = ({ attempt }: { attempt: TestAttemptWithSection }) => {
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 30);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
     <div
       className={cn(
-        "flex flex-row items-center border-b border-dashed justify-between px-6 py-3 sticky top-0 bg-background transition-all duration-300 z-50",
-        isScrolled ? "border-border" : "border-transparent"
+        "flex flex-row items-center justify-between px-4 h-14 bg-background"
       )}
     >
       <div className="flex flex-row items-center gap-2">
-        <Link href={`/s/${attempt.testId}`}>
-          <Button variant={"ghost"} size={"icon"}>
-            <ChevronLeft />
-          </Button>
-        </Link>
-        <h1 className="text-lg font-medium">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Link href={`/s/${attempt.testId}`}>
+              <Button variant={"ghost"} size={"icon"}>
+                <ChevronLeft />
+              </Button>
+            </Link>
+          </TooltipTrigger>
+          <TooltipContent>Are you sure want to go back?</TooltipContent>
+        </Tooltip>
+
+        <h1 className="font-medium">
           {attempt.testSection?.title ||
             `Section ${attempt.testSection?.order}`}
         </h1>
       </div>
       <div className="flex flex-row items-center gap-2">
-        <DialogSubmitAttempt attemptId={attempt.id} />
         <ThemeToggle />
+        <DialogSubmitAttempt attemptId={attempt.id} />
       </div>
     </div>
   );
@@ -87,6 +87,7 @@ const DialogSubmitAttempt = ({ attemptId }: { attemptId: string }) => {
     mutate: submitAttempt,
     isError,
     error,
+    reset: resetMutation,
   } = useMutation({
     mutationKey: ["submit-attempt"],
     mutationFn: async () => {
@@ -118,10 +119,14 @@ const DialogSubmitAttempt = ({ attemptId }: { attemptId: string }) => {
     <Dialog
       open={isOpen}
       onOpenChange={(open) => {
-        if (dataUpdatedAttempt) {
-          return;
+        if (!open) {
+          // When closing, we reset the dialog state
+          setIsOpen(false);
+          // Reset the mutation state when dialog closes
+          resetMutation();
+        } else {
+          setIsOpen(true);
         }
-        setIsOpen(open);
       }}
     >
       <DialogTrigger asChild>
@@ -139,7 +144,11 @@ const DialogSubmitAttempt = ({ attemptId }: { attemptId: string }) => {
             <DialogTitle>Oops, something went wrong!</DialogTitle>
             <DialogDescription>{(error as Error).message}</DialogDescription>
             <DialogFooter>
-                <Button variant="outline" onClick={()=>{setIsOpen(false)}}>Close</Button>
+              <DialogClose asChild>
+                <Button variant="outline">
+                  Close
+                </Button>
+              </DialogClose>
             </DialogFooter>
           </DialogHeader>
         ) : !dataUpdatedAttempt ? (
@@ -149,7 +158,11 @@ const DialogSubmitAttempt = ({ attemptId }: { attemptId: string }) => {
             </DialogTitle>
             <DialogDescription>This action cannot be undone.</DialogDescription>
             <DialogFooter>
-              <Button variant="outline" onClick={()=>setIsOpen(false)}>Cancel</Button>
+              <DialogClose asChild>
+                <Button variant="outline">
+                  Cancel
+                </Button>
+              </DialogClose>
               <Button
                 variant="default"
                 onClick={() => submitAttempt()}
@@ -175,12 +188,14 @@ const DialogSubmitAttempt = ({ attemptId }: { attemptId: string }) => {
                 : "You can now go to the lobby to see the result."}
             </DialogDescription>
             <DialogFooter className="sm:justify-between">
-              <Button
-                variant="outline"
-                onClick={() => onGoToLobby(dataUpdatedAttempt)}
-              >
-                Go to lobby
-              </Button>
+              <DialogClose asChild>
+                <Button
+                  variant="outline"
+                  onClick={() => dataUpdatedAttempt && onGoToLobby(dataUpdatedAttempt)}
+                >
+                  Go to lobby
+                </Button>
+              </DialogClose>
             </DialogFooter>
           </DialogHeader>
         )}
