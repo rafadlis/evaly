@@ -4,6 +4,7 @@ import { $api } from "@/lib/api";
 export interface TestSubmission {
   id: string;
   name: string;
+  image: string | null;
   email: string;
   totalQuestions: number;
   answered: number;
@@ -32,7 +33,7 @@ export interface TestSubmissionsResponse {
   timestamp: string;
 }
 
-export const useTestSubmissionsById = (testId: string) => {
+export const useTestSubmissionsById = (testId: string, refetchInterval: number = 30000) => {
   return useQuery<TestSubmissionsResponse>({
     queryKey: ["test-submissions", testId],
     queryFn: async () => {
@@ -40,7 +41,7 @@ export const useTestSubmissionsById = (testId: string) => {
       return response.data as TestSubmissionsResponse;
     },
     enabled: !!testId,
-    refetchInterval: 30000, // Refetch every 30 seconds
+    refetchInterval: refetchInterval,
   });
 };
 

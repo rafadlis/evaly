@@ -11,6 +11,7 @@ import { DropdownMenu } from "@/components/ui/dropdown-menu";
 import { useRouter } from "@/i18n/navigation";
 import { useOrganizerProfile } from "@/query/organization/profile/use-organizer-profile";
 import { Building2, Home, LogOut, Settings, User } from "lucide-react";
+import Image from "next/image";
 
 const AdminAccount = () => {
   const { data } = useOrganizerProfile();
@@ -26,7 +27,9 @@ const AdminAccount = () => {
         <Button variant="ghost" className="rounded-full h-8 w-8 p-0">
           <Avatar className="h-8 w-8">
             {image ? (
-              <AvatarImage src={image} alt="User" />
+              <AvatarImage src={image} alt="User" asChild>
+                <Image src={image} alt="User" width={32} height={32} className="rounded-full size-8" />
+              </AvatarImage>
             ) : (
               <AvatarFallback>{email?.charAt(0).toUpperCase()}</AvatarFallback>
             )}

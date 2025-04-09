@@ -201,10 +201,10 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4 mt-4">
-      <div className="relative border px-4 pb-4 border-dashed">
+      <div className="relative border border-dashed">
         <ScrollArea className="w-full whitespace-nowrap rounded-md">
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-secondary">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
@@ -220,14 +220,14 @@ export function DataTable<TData, TValue>({
                 </TableRow>
               ))}
             </TableHeader>
-            <TableBody>
+            <TableBody className="divide-y divide-dashed">
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}
                     className={
                       onRowClick
-                        ? "cursor-pointer hover:opacity-80"
+                        ? "cursor-pointer hover:opacity-80 h-16"
                         : ""
                     }
                     onClick={() => onRowClick && onRowClick(row.original)}

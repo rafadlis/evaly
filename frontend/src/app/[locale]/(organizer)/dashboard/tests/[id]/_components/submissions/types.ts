@@ -1,6 +1,7 @@
 export interface Submission {
     id: number | string;
     name: string;
+    image: string | null;
     email: string;
     totalQuestions: number;
     answered: number;
@@ -15,7 +16,7 @@ export interface Submission {
     sectionAnswers: Record<string, number>;
     sectionCorrect: Record<string, number>;
     sectionWrong: Record<string, number>;
-    status: 'completed' | 'in-progress' | 'not-started';
+    status: 'completed' | 'in-progress' | 'not-started' | 'test-ended';
 }
 
 export interface Section {

@@ -55,7 +55,11 @@ export const ExportDialogDetails = ({
       Correct: `${submission.correct}/${submission.totalQuestions}`,
       Wrong: `${submission.wrong}/${submission.totalQuestions}`,
       Unanswered: submission.unanswered,
-      Status: submission.status === "in-progress" ? "In Progress" : "Completed",
+      Status: 
+        submission.status === "in-progress" ? "In Progress" : 
+        submission.status === "test-ended" ? "Time&apos;s up" : 
+        submission.status === "completed" ? "Completed" : 
+        "Not Started",
       StartedAt: submission.startedAt
         ? new Date(submission.startedAt).toLocaleString()
         : "Unknown",
@@ -63,6 +67,8 @@ export const ExportDialogDetails = ({
         ? new Date(submission.submittedAt).toLocaleString()
         : submission.status === "in-progress"
         ? "In Progress"
+        : submission.status === "test-ended"
+        ? "Not Submitted (Time&apos;s up)"
         : "Not Submitted",
     };
   };

@@ -18,7 +18,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { useDebounce } from "@/hooks/use-debounce";
 import { useQueryState } from "nuqs";
 import { Badge } from "@/components/ui/badge";
 
@@ -31,6 +30,7 @@ import {
   TestSubmission,
 } from "@/query/organization/test/use-test-submissions-byid";
 import { ExportDialog } from "./export-dialog";
+import { Label } from "@/components/ui/label";
 
 dayjs.extend(relativeTime);
 
@@ -38,10 +38,26 @@ const Submissions = () => {
   const params = useParams();
   const testId = params.id as string;
 
+  const [refetchInterval, setRefetchInterval] = useQueryState(
+    "refetchInterval",
+    {
+      defaultValue: 0,
+      parse: (value) => parseInt(value),
+      serialize: (value) => value.toString(),
+    }
+  );
+
   // Use nuqs for state management
   const [searchQuery, setSearchQuery] = useQueryState("search", {
     defaultValue: "",
   });
+
+  // Local state to track search input directly
+  const [localSearchInput, setLocalSearchInput] = useState(searchQuery || "");
+
+  // Use a key to force re-render of DataTable when search changes
+  const [tableKey, setTableKey] = useState(0);
+
   const [sectionParam, setSectionParam] = useQueryState("section", {
     defaultValue: "all",
     parse: (value) => value,
@@ -82,8 +98,8 @@ const Submissions = () => {
   };
 
   // Fetch submissions data using the provided query hook
-  const { data, isLoading, error, refetch, isFetching } =
-    useTestSubmissionsById(testId);
+  const { data, isLoading, error, refetch, isFetching, dataUpdatedAt } =
+    useTestSubmissionsById(testId, refetchInterval);
 
   // Extract submissions and sections from the response
   const submissions: Submission[] = useMemo(() => {
@@ -97,11 +113,12 @@ const Submissions = () => {
       const sectionIds = Object.entries(submission.sectionAnswers || {})
         .filter(([, count]) => count > 0)
         .map(([sectionId]) => sectionId);
-
+      console.log(submission.image)
       return {
         id: numericId,
         name: submission.name,
         email: submission.email,
+        image: submission.image,
         totalQuestions: submission.totalQuestions,
         answered: submission.answered,
         correct: submission.correct,
@@ -133,8 +150,6 @@ const Submissions = () => {
     }));
   }, [data?.sections]);
 
-  const debouncedSearchQuery = useDebounce(searchQuery, 300);
-
   // Get unique sections from submissions
   const sectionsWithAll = useMemo(() => {
     // If there's only one section, just return that section
@@ -151,64 +166,57 @@ const Submissions = () => {
 
   // Filter data based on section and search query
   const filteredData = useMemo(() => {
-    let filtered = submissions;
+    let filtered = [...submissions];
 
     // Filter by section if not "all"
     if (selectedSection !== "all") {
       filtered = filtered
         .filter((submission) => {
-          // Check if this submission has answers for the selected section
           const sectionAnswers = submission.sectionAnswers || {};
           const answerCount = sectionAnswers[selectedSection] || 0;
           return answerCount > 0;
         })
         .map((submission) => {
-          // For selected section, use section-specific counts
+          // Extract section-specific data
           const sectionAnswers =
             submission.sectionAnswers?.[selectedSection] || 0;
           const sectionCorrect =
             submission.sectionCorrect?.[selectedSection] || 0;
           const sectionWrong = submission.sectionWrong?.[selectedSection] || 0;
-
-          // Calculate section-specific unanswered
           const sectionQuestionsCount =
             sections.find((s) => s.id === selectedSection)?.questionsCount || 0;
-          const sectionUnanswered = sectionQuestionsCount - sectionAnswers;
 
-          // Calculate section-specific score
+          // Calculate derived values
+          const sectionUnanswered = sectionQuestionsCount - sectionAnswers;
           const sectionScore =
             sectionQuestionsCount > 0
               ? Math.round((sectionCorrect / sectionQuestionsCount) * 100)
               : 0;
 
-          // Return submission with section-specific counts
           return {
             ...submission,
-            // Override with section-specific counts
             answered: sectionAnswers,
             correct: sectionCorrect,
             wrong: sectionWrong,
             unanswered: sectionUnanswered,
             score: sectionScore,
-            // Update totalQuestions to reflect the selected section's question count
             totalQuestions: sectionQuestionsCount,
           };
         });
     }
 
     // Filter by search query
-    if (debouncedSearchQuery) {
-      const query = debouncedSearchQuery.toLowerCase();
-      filtered = filtered.filter((submission) => {
-        return (
-          submission.name.toLowerCase().includes(query) ||
-          submission.email.toLowerCase().includes(query)
-        );
-      });
+    if (searchQuery && searchQuery.trim() !== "") {
+      const query = searchQuery.toLowerCase().trim();
+      filtered = filtered.filter(
+        (submission) =>
+          (submission.name && submission.name.toLowerCase().includes(query)) ||
+          (submission.email && submission.email.toLowerCase().includes(query))
+      );
     }
 
     return filtered;
-  }, [submissions, debouncedSearchQuery, selectedSection, sections]);
+  }, [submissions, searchQuery, selectedSection, sections]);
 
   // Calculate ranks based on score (if not already provided by the API)
   const dataWithRanks = useMemo(() => {
@@ -252,6 +260,8 @@ const Submissions = () => {
   ) => {
     setPageIndex(String(newPageIndex));
     setPageSize(String(newPageSize));
+    // Force DataTable to re-render after pagination changes
+    setTableKey((prev) => prev + 1);
   };
 
   // Handle sorting state changes
@@ -261,17 +271,47 @@ const Submissions = () => {
   ) => {
     setSortColumn(columnId);
     setSortDirection(direction);
+    // Force DataTable to re-render after sorting changes
+    setTableKey((prev) => prev + 1);
   };
 
   // Reset pagination when filters change
   useEffect(() => {
     setPageIndex("0");
-  }, [selectedSection, debouncedSearchQuery, setPageIndex]);
+  }, [selectedSection, searchQuery, setPageIndex]);
 
   // Handle manual refresh
   const handleRefresh = () => {
     refetch();
   };
+
+  // Update search query with debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchQuery(localSearchInput);
+      // Force DataTable to re-render after search query changes
+      setTableKey((prev) => prev + 1);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [localSearchInput, setSearchQuery]);
+
+  // Simple search handler
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLocalSearchInput(e.target.value);
+  };
+
+  // Force re-render when sorting/filtering URL params change
+  useEffect(() => {
+    setTableKey((prev) => prev + 1);
+  }, [
+    sortColumn,
+    sortDirection,
+    searchQuery,
+    selectedSection,
+    pageIndex,
+    pageSize,
+  ]);
 
   if (isLoading) {
     return (
@@ -300,6 +340,11 @@ const Submissions = () => {
         <div className="flex items-center gap-2">
           <h2 className="font-medium">Submissions</h2>
           <Badge variant={"secondary"}>Total: {dataWithRanks.length}</Badge>
+          {searchQuery && searchQuery.trim() !== "" && (
+            <Badge variant="outline" className="ml-1">
+              Search: {`"${searchQuery}"`}
+            </Badge>
+          )}
           {selectedSection !== "all" && (
             <TooltipProvider>
               <Tooltip>
@@ -343,6 +388,43 @@ const Submissions = () => {
             <span className="sr-only">Refresh</span>
           </Button>
 
+          <Select
+            value={refetchInterval.toString()}
+            onValueChange={(value) => setRefetchInterval(parseInt(value))}
+          >
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SelectTrigger className="w-max">
+                  <SelectValue placeholder="Select refetch interval" />
+                </SelectTrigger>
+              </TooltipTrigger>
+              <TooltipContent>
+                {`Last updated: ${dayjs(dataUpdatedAt).fromNow()}`}
+              </TooltipContent>
+            </Tooltip>
+
+            <SelectContent>
+              <SelectItem value="0">
+                <Label className="text-xs">Auto Refresh: </Label>Off
+              </SelectItem>
+              <SelectItem value="5000">
+                <Label className="text-xs">Auto Refresh: </Label>5 seconds
+              </SelectItem>
+              <SelectItem value="60000">
+                <Label className="text-xs">Auto Refresh: </Label>1 minute
+              </SelectItem>
+              <SelectItem value="300000">
+                <Label className="text-xs">Auto Refresh: </Label>5 minutes
+              </SelectItem>
+              <SelectItem value="1800000">
+                <Label className="text-xs">Auto Refresh: </Label>30 minutes
+              </SelectItem>
+              <SelectItem value="3600000">
+                <Label className="text-xs">Auto Refresh: </Label>1 hour
+              </SelectItem>
+            </SelectContent>
+          </Select>
+
           {sectionsWithAll.length > 1 && (
             <Select value={selectedSection} onValueChange={handleSectionChange}>
               <SelectTrigger className="w-[180px]">
@@ -368,8 +450,8 @@ const Submissions = () => {
             <Search className="absolute left-2.5 top-2 size-3.5 text-muted-foreground" />
             <Input
               placeholder="Search participants..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={localSearchInput}
+              onChange={handleSearchChange}
               className="pl-9"
             />
           </div>
@@ -379,6 +461,7 @@ const Submissions = () => {
       </div>
 
       <DataTable
+        key={tableKey}
         columns={columns}
         data={dataWithRanks}
         onRowClick={setSelectedSubmission}

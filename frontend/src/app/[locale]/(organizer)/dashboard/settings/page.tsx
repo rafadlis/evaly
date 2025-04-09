@@ -37,6 +37,7 @@ import { OrganizerUserUpdate } from "@evaly/backend/types/user";
 import { useTheme } from "next-themes";
 import { Switch } from "@/components/ui/switch";
 import { useLocalStorage } from "usehooks-ts";
+import Image from "next/image";
 
 const Settings = () => {
   const [tab, setTab] = useQueryState("tab", { defaultValue: "general" });
@@ -223,7 +224,10 @@ const Profile = () => {
                         src={field.value}
                         alt="Profile"
                         className="object-cover bg-foreground/5"
-                      />
+                        asChild
+                      >
+                        <Image src={field.value} alt="Profile" width={96} height={96} />
+                      </AvatarImage>
                     ) : (
                       <AvatarFallback className="text-4xl">
                         {data?.data?.user?.email?.charAt(0).toUpperCase() ||

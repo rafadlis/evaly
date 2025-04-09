@@ -158,13 +158,15 @@ const Share = () => {
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
       // Add logo if it exists in the DOM
-      const logoImg = qrCodeRef.current?.querySelector(".qr-logo") as HTMLImageElement;
+      const logoImg = qrCodeRef.current?.querySelector(
+        ".qr-logo"
+      ) as HTMLImageElement;
       if (logoImg && logoImg.complete) {
         // Calculate logo position (center)
         const logoSize = 250; // Size of logo on the downloaded image
         const logoX = (canvas.width - logoSize) / 2;
         const logoY = (canvas.height - logoSize) / 2;
-        
+
         // Draw logo
         ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
       }
@@ -317,7 +319,7 @@ const Share = () => {
   // Function to handle logo upload (disabled for now)
   const handleLogoUpload = () => {
     setIsLogoUpdating(true);
-    
+
     // Simulate upload process
     setTimeout(() => {
       toast.info("Logo upload will be available in a future update");
@@ -476,8 +478,12 @@ const Share = () => {
                         <Table>
                           <TableHeader className="sticky top-0 bg-background z-10">
                             <TableRow>
-                              <TableHead className="pl-4 w-[50%]">Participant</TableHead>
-                              <TableHead className="hidden sm:table-cell">Status</TableHead>
+                              <TableHead className="pl-4 w-[50%]">
+                                Participant
+                              </TableHead>
+                              <TableHead className="hidden sm:table-cell">
+                                Status
+                              </TableHead>
                               <TableHead className="w-[100px] text-right sm:text-left">
                                 Actions
                               </TableHead>
@@ -490,9 +496,18 @@ const Share = () => {
                                   {participant.image ? (
                                     <Avatar className="hidden sm:inline-flex">
                                       <AvatarImage
+                                        asChild
                                         src={participant.image}
                                         alt={participant.email}
-                                      />
+                                      >
+                                        <Image
+                                          src={participant.image}
+                                          alt={participant.email}
+                                          width={32}
+                                          height={32}
+                                          className="rounded-full size-8"
+                                        />
+                                      </AvatarImage>
                                       <AvatarFallback>
                                         {participant.email
                                           .charAt(0)
@@ -520,11 +535,17 @@ const Share = () => {
                                           participant.createdAt
                                         ).toLocaleDateString()}
                                       </span>
-                                      <Badge 
-                                        variant={participant.isEmailSent ? "success" : "outline"}
+                                      <Badge
+                                        variant={
+                                          participant.isEmailSent
+                                            ? "success"
+                                            : "outline"
+                                        }
                                         className="sm:hidden"
                                       >
-                                        {participant.isEmailSent ? "Sent" : "Pending"}
+                                        {participant.isEmailSent
+                                          ? "Sent"
+                                          : "Pending"}
                                       </Badge>
                                     </div>
                                   </div>
@@ -627,7 +648,10 @@ const Share = () => {
 
             <TabsContent value="qr" className="space-y-4">
               <div className="flex flex-col md:flex-row items-start gap-6 p-4 bg-background rounded-md">
-                <div className="relative bg-background p-4 rounded-md border" ref={qrCodeRef}>
+                <div
+                  className="relative bg-background p-4 rounded-md border"
+                  ref={qrCodeRef}
+                >
                   <QRCodeSVG
                     value={shareUrl}
                     size={180}
@@ -643,7 +667,7 @@ const Share = () => {
                     }}
                   />
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <Image 
+                    <Image
                       src="/images/logo.svg" // Platform logo
                       alt="Logo"
                       width={logoSize}
@@ -654,19 +678,27 @@ const Share = () => {
                 </div>
                 <div className="flex flex-col items-center md:items-start space-y-4 flex-1">
                   <div>
-                    <h3 className="font-medium mb-2">QR Code for Test Access</h3>
+                    <h3 className="font-medium mb-2">
+                      QR Code for Test Access
+                    </h3>
                     <p className="text-sm text-muted-foreground">
-                      Scan this QR code to access the test directly. Useful for in-person events or printed materials.
+                      Scan this QR code to access the test directly. Useful for
+                      in-person events or printed materials.
                     </p>
                   </div>
-                  
+
                   <div className="w-full space-y-4">
                     <div className="flex flex-col space-y-2">
                       <div className="flex items-center justify-between">
-                        <label htmlFor="logo-size" className="text-sm font-medium">
+                        <label
+                          htmlFor="logo-size"
+                          className="text-sm font-medium"
+                        >
                           Logo Size
                         </label>
-                        <span className="text-sm text-muted-foreground">{logoSize}px</span>
+                        <span className="text-sm text-muted-foreground">
+                          {logoSize}px
+                        </span>
                       </div>
                       <Slider
                         id="logo-size"
@@ -678,7 +710,7 @@ const Share = () => {
                         className="w-full"
                       />
                     </div>
-                    
+
                     <div className="flex flex-col sm:flex-row gap-3 w-full">
                       <Button
                         variant="outline"
@@ -701,9 +733,9 @@ const Share = () => {
                         {copied ? "Copied!" : "Copy Link"}
                       </Button>
                     </div>
-                    
+
                     <Separator />
-                    
+
                     <div>
                       <h4 className="text-sm font-medium mb-2">Custom Logo</h4>
                       <div className="flex items-center gap-2">
@@ -726,7 +758,10 @@ const Share = () => {
                               <Info className="h-4 w-4 text-muted-foreground cursor-help" />
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p>Custom logo upload will be available in a future update</p>
+                              <p>
+                                Custom logo upload will be available in a future
+                                update
+                              </p>
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
@@ -864,7 +899,9 @@ const Share = () => {
                               )}
                             </Avatar>
                             <div className="min-w-0 flex-1">
-                              <p className="font-medium truncate">{participant.email}</p>
+                              <p className="font-medium truncate">
+                                {participant.email}
+                              </p>
                               <p className="text-xs text-muted-foreground">
                                 Invited on{" "}
                                 {new Date(

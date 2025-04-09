@@ -8,7 +8,8 @@ import {
     testAttempt,
     testAttemptAnswer,
     question,
-    user
+    user,
+    test
 } from "../../../lib/db/schema";
 
 // Define types for database query results
@@ -48,6 +49,17 @@ type TestAnswer = {
 };
 
 export const getTestSubmissions = async (testId: string) => {
+    // Fetch the test to get the finishedAt timestamp
+    const testDetails = await db.select({
+        finishedAt: test.finishedAt
+    })
+    .from(test)
+    .where(eq(test.id, testId))
+    .limit(1);
+
+    const testFinishedAt = testDetails[0]?.finishedAt || null;
+    const isTestEnded = testFinishedAt && new Date(testFinishedAt) < new Date();
+
     // 1. Fetch all active sections for this test
     const sectionsRaw = await db.select({
         id: testSection.id,
@@ -126,6 +138,7 @@ export const getTestSubmissions = async (testId: string) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        image: user.image,
     })
     .from(user)
     .where(or(...participantEmails.map(email => eq(user.email, email))));
@@ -196,6 +209,7 @@ export const getTestSubmissions = async (testId: string) => {
     for (const [participantEmail, participantAttempts] of Object.entries(attemptsByParticipant)) {
         const userRecord = userMap.get(participantEmail);
         const name = userRecord?.name || participantEmail;
+        const image = userRecord?.image || null;
         
         // Initialize section data
         const sectionAnswers: Record<string, number> = {};
@@ -278,6 +292,7 @@ export const getTestSubmissions = async (testId: string) => {
         submissions.push({
             id: participantAttempts[0].id, // Use the first attempt ID as the submission ID
             name: name,
+            image: image,
             email: participantEmail,
             totalQuestions,
             answered: totalAnswered,
@@ -291,15 +306,16 @@ export const getTestSubmissions = async (testId: string) => {
             sectionAnswers,
             sectionCorrect,
             sectionWrong,
-            status: latestCompletedAt ? 'completed' : (isInProgress ? 'in-progress' : 'not-started')
+            status: latestCompletedAt ? 'completed' : (isInProgress ? (isTestEnded ? 'test-ended' : 'in-progress') : 'not-started')
         });
     }
 
     // Sort submissions by score (descending) and assign ranks
     submissions.sort((a, b) => {
         // First prioritize completed submissions
-        if (a.status === 'completed' && b.status !== 'completed') return -1;
-        if (a.status !== 'completed' && b.status === 'completed') return 1;
+        // Enable this to sort completed submissions to the top
+        // if (a.status === 'completed' && b.status !== 'completed') return -1;
+        // if (a.status !== 'completed' && b.status === 'completed') return 1;
         
         // Then sort by score (descending)
         if (b.score !== a.score) {
@@ -311,8 +327,10 @@ export const getTestSubmissions = async (testId: string) => {
             return new Date(a.submittedAt).getTime() - new Date(b.submittedAt).getTime();
         }
         
-        // For in-progress submissions with equal scores, sort by start time
-        if (a.status === 'in-progress' && b.status === 'in-progress' && a.startedAt && b.startedAt) {
+        // For in-progress or test-ended submissions with equal scores, sort by start time
+        if ((a.status === 'in-progress' || a.status === 'test-ended') && 
+            (b.status === 'in-progress' || b.status === 'test-ended') && 
+            a.startedAt && b.startedAt) {
             return new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime();
         }
         
@@ -339,6 +357,7 @@ export type Submission = {
     id: string;
     name: string;
     email: string;
+    image: string | null;
     totalQuestions: number;
     answered: number;
     correct: number;
@@ -357,7 +376,7 @@ export type Submission = {
     sectionWrong: {
         [key: string]: number; // sectionId: number of wrong answers
     };
-    status?: 'completed' | 'in-progress' | 'not-started';
+    status?: 'completed' | 'in-progress' | 'not-started' | 'test-ended';
 }
 
 export type Section = {

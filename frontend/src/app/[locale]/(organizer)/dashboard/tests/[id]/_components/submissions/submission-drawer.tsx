@@ -2,44 +2,45 @@ import { useState, useMemo } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import {
-  XCircle,
-  HelpCircle,
-  Loader2,
-  Clock,
-  BarChart3,
-  Calendar,
-  Mail,
-  Timer,
-  AlertCircle,
-  CheckCircle2,
-  XIcon,
+    XCircle,
+    HelpCircle,
+    Loader2,
+    Clock,
+    BarChart3,
+    Calendar,
+    Mail,
+    Timer,
+    AlertCircle,
+    CheckCircle2,
+    XIcon,
+    AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerNavbar,
-  DrawerTitle,
+    Drawer,
+    DrawerClose,
+    DrawerContent,
+    DrawerDescription,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerNavbar,
+    DrawerTitle,
 } from "@/components/ui/drawer";
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
@@ -185,6 +186,11 @@ export const SubmissionDrawer = ({
                         <div className="flex items-center gap-1 text-amber-500">
                           <Timer className="h-4 w-4" />
                           <span>This test is still in progress</span>
+                        </div>
+                      ) : submission.status === "test-ended" ? (
+                        <div className="flex items-center gap-1 text-red-500">
+                          <AlertTriangle className="h-4 w-4" />
+                          <span>Time&apos;s up before completion</span>
                         </div>
                       ) : (
                         <div className="flex items-center gap-1">

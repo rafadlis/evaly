@@ -1,37 +1,27 @@
 "use client";
 
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Controller, useForm } from "react-hook-form";
 import { $api } from "@/lib/api";
 import { OrganizerUserUpdate } from "@evaly/backend/types/user";
 import { useMutation } from "@tanstack/react-query";
 import { PencilLine, Info, Loader2, Save } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useParticipantProfile } from "@/query/participants/profile/use-participant-profile";
-import Navbar from "../_components/navbar";
-import BackButton from "@/components/shared/back-button";
 
-export const dynamic = "force-static";
-
-const ProfilePage = () => {
+export const ProfilePage = () => {
   const { data, refetch } = useParticipantProfile();
+  const [imageFilePreview, setImageFilePreview] = useState<string | null>(null);
 
   // Define form for profile
   const {
@@ -79,21 +69,6 @@ const ProfilePage = () => {
     });
 
   return (
-    <div className="flex-1 flex flex-col">
-      <Navbar />
-      <div className=" flex flex-col items-center justify-center flex-1 container max-w-xl">
-        <div className="mb-2 w-full">
-          <BackButton />
-        </div>
-        <Card className="w-full">
-          <CardHeader className="border-b border-dashed">
-            <CardTitle className="text-lg font-medium">Profile</CardTitle>
-            <CardDescription>
-              Manage your profile settings. You can update your profile
-              information.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pt-6">
             <form
               className="space-y-6"
               onSubmit={handleSubmit((data) => {
@@ -110,7 +85,13 @@ const ProfilePage = () => {
                   render={({ field }) => (
                     <div className="relative w-max">
                       <Avatar className="size-24">
-                        {imageFile ? (
+                        {imageFilePreview ? (
+                          <AvatarImage
+                            src={imageFilePreview}
+                            alt="Profile"
+                            className="object-cover"
+                          />
+                        ) : imageFile ? (
                           <AvatarImage
                             src={URL.createObjectURL(imageFile)}
                             alt="Profile"
@@ -150,6 +131,7 @@ const ProfilePage = () => {
                               setValue("imageFile", file, {
                                 shouldDirty: true,
                               });
+                              setImageFilePreview(URL.createObjectURL(file));
                             }
                           }}
                           className="hidden"
@@ -201,7 +183,14 @@ const ProfilePage = () => {
 
                   <div className="flex justify-end gap-2 pt-4">
                     {isDirty ? (
-                      <Button type="button" variant="outline">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          reset();
+                          setImageFilePreview(null);
+                        }}
+                      >
                         Cancel
                       </Button>
                     ) : null}
@@ -224,11 +213,5 @@ const ProfilePage = () => {
                 </div>
               </div>
             </form>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
   );
 };
-
-export default ProfilePage;

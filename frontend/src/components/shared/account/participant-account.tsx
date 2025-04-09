@@ -1,55 +1,56 @@
+import { ProfilePage } from "@/app/[locale]/(participant)/_components/profile";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { DropdownMenu } from "@/components/ui/dropdown-menu";
-import { useRouter } from "@/i18n/navigation";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useParticipantProfile } from "@/query/participants/profile/use-participant-profile";
-import { User } from "lucide-react";
+import Image from "next/image";
 
 const ParticipantAccount = () => {
   const { data } = useParticipantProfile();
-  const router = useRouter();
 
   const name = data?.user?.name;
   const email = data?.user?.email;
   const image = data?.user?.image;
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+    <Dialog>
+      <DialogTrigger asChild>
         <Button variant="ghost" className="rounded-full h-8 w-8 p-0">
           <Avatar className="h-8 w-8">
             {image ? (
-              <AvatarImage src={image} alt="User" />
+              <AvatarImage src={image} alt="User" asChild>
+                <Image
+                  src={image}
+                  alt="User"
+                  width={32}
+                  height={32}
+                  className="rounded-full size-8"
+                />
+              </AvatarImage>
             ) : (
               <AvatarFallback>{email?.charAt(0).toUpperCase()}</AvatarFallback>
             )}
           </Avatar>
         </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel>Hi {name}</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => router.push(`/profile`)}>
-          <User className="size-4 mr-2" />
-          Profile
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={() => {
-            router.push("/logout");
-          }}
-        >
-          Log out
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Hi {name}</DialogTitle>
+          <DialogDescription>
+            Manage your profile settings. You can update your profile
+            information.
+          </DialogDescription>
+        </DialogHeader>
+        <ProfilePage />
+      </DialogContent>
+    </Dialog>
   );
 };
 

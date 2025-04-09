@@ -28,6 +28,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import ParticipantAccount from "@/components/shared/account/participant-account";
 
 const Navbar = ({ attempt }: { attempt: TestAttemptWithSection }) => {
   return (
@@ -56,6 +57,7 @@ const Navbar = ({ attempt }: { attempt: TestAttemptWithSection }) => {
       <div className="flex flex-row items-center gap-2">
         <ThemeToggle />
         <DialogSubmitAttempt attemptId={attempt.id} />
+        <ParticipantAccount />
       </div>
     </div>
   );

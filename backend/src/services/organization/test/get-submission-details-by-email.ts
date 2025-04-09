@@ -107,6 +107,7 @@ export const getSubmissionDetailsByEmail = async (testId: string, email: string)
         id: user.id,
         name: user.name,
         email: user.email,
+        image: user.image,
     })
     .from(user)
     .where(eq(user.email, email));
@@ -248,6 +249,7 @@ export const getSubmissionDetailsByEmail = async (testId: string, email: string)
         }
     }
 
+
     // Calculate total questions count
     const totalQuestions = questionsRaw.length;
     
@@ -261,6 +263,7 @@ export const getSubmissionDetailsByEmail = async (testId: string, email: string)
         email,
         totalQuestions,
         answered: totalAnswered,
+        image: userRecord?.image || null,
         correct: totalCorrect,
         wrong: totalWrong,
         unanswered: totalQuestions - totalAnswered,

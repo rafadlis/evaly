@@ -108,7 +108,7 @@ const CardQuestion = ({
                   <div
                     key={option.id}
                     className={cn(
-                      "flex items-start gap-4 cursor-pointer  border p-1.5",
+                      "flex items-start gap-2 md:gap-4 cursor-pointer  border p-0.5 md:p-1.5",
                       field.value?.includes(option.id)
                         ? "border-primary bg-primary text-primary-foreground"
                         : "border-border bg-transparent hover:border-primary/50 active:bg-foreground/10"
@@ -137,7 +137,7 @@ const CardQuestion = ({
                         String.fromCharCode(65 + i)
                       )}
                     </Button>
-                    <p className="flex-1 pt-0.5">{option.text}</p>
+                    <p className="flex-1 pt-0.5 md:text-base text-sm">{option.text}</p>
                   </div>
                 ))}
               </div>
