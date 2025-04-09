@@ -37,6 +37,25 @@ export async function startAttempt({
     };
   }
 
+  // If Test is not published, return error
+  if (!test.isPublished) {
+    return {
+      error: {
+        code: 403,
+        message: "Test is not published",
+      },
+    };
+  }
+
+  // If Test is finished, return error
+  if (test.finishedAt) {
+    return {
+      error: {
+        code: 403,
+        message: "Test is finished",
+      },
+    };
+  }
   // Get the test section data that targetted
   const testSection = test.testSections.find(
     (section) => section.id === testSectionId

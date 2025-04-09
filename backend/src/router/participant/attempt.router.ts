@@ -47,6 +47,14 @@ export const attemptRouter = new Elysia().group("/attempt", (app) =>
         return error(404, "Attempt not found");
       }
 
+      if (!check.test.isPublished){
+        return error(403, `You can't access this test because it's not published`);
+      }
+
+      if (check.test.finishedAt) {
+        return error(403, `You can't access this test because it's finished`);
+      }
+
       // Check if the test is published or not return error if not published
       const test = await getTestById({
         id: check.testId,
@@ -75,6 +83,15 @@ export const attemptRouter = new Elysia().group("/attempt", (app) =>
         if (!check) {
           return error(404, "Attempt not found");
         }
+
+        if (!check.test.isPublished){
+          return error(403, `You can't access this test because it's not published`);
+        }
+
+        if (check.test.finishedAt) {
+          return error(403, `You can't access this test because it's finished`);
+        }
+
 
         if (check.completedAt) {
           return error(
@@ -107,6 +124,14 @@ export const attemptRouter = new Elysia().group("/attempt", (app) =>
 
         if (!check) {
           return error(404, "Attempt not found");
+        }
+
+        if (!check.test.isPublished){
+          return error(403, `You can't access the answers of this test because it's not published`);
+        }
+
+        if (check.test.finishedAt) {
+          return error(403, `You can't access the answers of this test because it's finished`);
         }
 
         const answers = await getAttemptAnswers(params.id);

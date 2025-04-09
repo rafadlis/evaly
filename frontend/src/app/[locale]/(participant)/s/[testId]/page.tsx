@@ -136,7 +136,8 @@ const Page = () => {
           totalSections={totalSections}
         />
 
-        {isCompleted ? <Result testId={testId as string} /> : null}
+        {/* Always show Result component when test is finished */}
+        {(isCompleted || testData.finishedAt) ? <Result testId={testId as string} /> : null}
 
         <SectionList
           testId={testId as string}
@@ -168,6 +169,7 @@ const StartContinueButton = ({
 }) => {
   const router = useRouter();
   const [isRedirecting, startTransitionRedirect] = useTransition();
+  const { data: testData } = useTestById(testId);
 
   const { mutate: mutateStartTest, isPending: isPendingStartTest } =
     useAttemptStartMutation((data) => {
@@ -176,7 +178,9 @@ const StartContinueButton = ({
       });
     });
 
-  if (completedAttempts === totalSections) return null;
+  // Don't show button if all sections are completed or test is finished
+  if (completedAttempts === totalSections || testData?.finishedAt) return null;
+  
   return (
     <Button
       onClick={() =>
@@ -189,6 +193,7 @@ const StartContinueButton = ({
       disabled={
         isPendingStartTest ||
         isRedirecting ||
+        !!testData?.finishedAt ||
         (totalAttempts === completedAttempts &&
           totalSections === completedAttempts)
       }
@@ -281,6 +286,10 @@ const SectionList = ({
                   <Badge variant="success">
                     <CheckIcon /> Completed
                   </Badge>
+                ) : testData.finishedAt ? (
+                  <Badge variant="outline">
+                    Test Ended
+                  </Badge>
                 ) : (
                   <Button
                     onClick={() => {
@@ -290,7 +299,7 @@ const SectionList = ({
                       });
                     }}
                     size={"xs"}
-                    disabled={isPendingStartTest || isRedirecting}
+                    disabled={isPendingStartTest || isRedirecting || !!testData.finishedAt}
                     variant={"outline"}
                   >
                     {isPendingStartTest ? (
@@ -416,16 +425,23 @@ const Result = ({ testId }: { testId: string }) => {
     return null;
   }
 
+  // Never show results if visibility is set to "never"
   if (testData.resultVisibility === "never") return null;
 
-  if (testData.resultVisibility === "after_test_end" && !testData.finishedAt) {
-    return (
-      <Button variant="outline" className="mt-4 w-full">
-        You can view your result after the test ends.
-      </Button>
-    );
+  // Handle "after_test_end" visibility setting
+  if (testData.resultVisibility === "after_test_end") {
+    if (!testData.finishedAt) {
+      return (
+        <Button variant="outline" disabled className="mt-4 w-full">
+          You can view your result after the test ends
+        </Button>
+      );
+    }
   }
 
+  // Show result button if either:
+  // 1. resultVisibility is "always" 
+  // 2. resultVisibility is "after_test_end" AND test has finished
   return (
     <Link href={`/s/${testId}/result`}>
       <Button variant="default" className="mt-6 w-max">

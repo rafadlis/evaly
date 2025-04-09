@@ -9,6 +9,14 @@ export async function checkAttemptAccess(attemptId: string, participantEmail: st
             completedAt: true,
             testId: true,
         },
+        with: {
+            test: {
+                columns:{ 
+                    isPublished: true,
+                    finishedAt: true,
+                }
+            },
+        },
         where: and(
             eq(testAttempt.id, attemptId),
             eq(testAttempt.participantEmail, participantEmail)
