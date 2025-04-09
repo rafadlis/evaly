@@ -1,25 +1,22 @@
 "use client"
 import { motion } from "motion/react";
+import { useTranslations } from 'next-intl';
 
 const MotionDiv = motion.div;
 
 export const LogosSection = () => {
-  const logos = [
-    'Top Universities', 
-    'K-12 Schools', 
-    'Training Centers', 
-    'HR Departments', 
-    'Certification Providers'
-  ];
+  const t = useTranslations('HomePage');
+  
+  const logoKeys = ['logo1', 'logo2', 'logo3', 'logo4', 'logo5'];
   
   return (
     <section className="py-8 border-y border-border/40">
       <div className="container">
         <div className="text-center text-sm text-muted-foreground mb-6">
-          Trusted by educational institutions and businesses
+          {t('logos.title')}
         </div>
         <div className="flex flex-wrap justify-between items-center gap-4">
-          {logos.map((logo, i) => (
+          {logoKeys.map((key, i) => (
             <MotionDiv
               key={i}
               initial={{ opacity: 0 }}
@@ -27,7 +24,7 @@ export const LogosSection = () => {
               transition={{ duration: 0.5, delay: i * 0.1 }}
               className="text-muted-foreground/70 font-medium"
             >
-              {logo}
+              {t(`logos.${key}`)}
             </MotionDiv>
           ))}
         </div>

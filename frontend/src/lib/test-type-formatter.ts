@@ -1,6 +1,19 @@
 import { TestType } from "@evaly/backend/types/test";
 
-export const testTypeFormatter = (type?: TestType) => {
+// For backwards compatibility, provide the original non-translated version
+export const testTypeFormatter = (type?: TestType, t?: (key: string) => string) => {
+  if (t) {
+    switch (type) {
+      case "live":
+        return t("liveTestType");
+      case "self-paced":
+        return t("selfPacedTestType");
+      default:
+        return t("unknownTestType");
+    }
+  }
+  
+  // Fallback for when translation function is not provided
   switch (type) {
     case "live":
       return "Live test";

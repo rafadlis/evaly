@@ -1,6 +1,8 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -13,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { Trash2Icon } from "lucide-react";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 const DialogDeleteTest = ({
   className,
@@ -24,6 +27,8 @@ const DialogDeleteTest = ({
   onSuccess?: () => void;
 }) => {
   const [open, setOpen] = useState(false);
+  const t = useTranslations("TestDialogs");
+  const tCommon = useTranslations("Common");
   const { mutate, isPending } = useMutation({
     mutationKey: ["delete-test"],
     mutationFn: async (testId: string) => {
@@ -61,17 +66,20 @@ const DialogDeleteTest = ({
         }}
       >
         <DialogHeader>
-          <DialogTitle>Are you sure want to delete this session?</DialogTitle>
-          <DialogDescription>
-            All information related to this session including all question will
-            be removed
-          </DialogDescription>
+          <DialogTitle>{t("deleteTestTitle")}</DialogTitle>
+          <DialogDescription>{t("deleteTestDescription")}</DialogDescription>
         </DialogHeader>
         {/* <CardSession data={} /> */}
         <DialogFooter>
-          <Button variant={"secondary"}>Back</Button>
-          <Button variant={"destructive"} onClick={() => mutate(testId)}>
-            {isPending ? "Deleting..." : "Delete"}
+          <DialogClose asChild>
+            <Button variant={"secondary"}>{tCommon("backButton")}</Button>
+          </DialogClose>
+          <Button
+            variant={"destructive"}
+            onClick={() => mutate(testId)}
+            disabled={isPending}
+          >
+            {isPending ? tCommon("deletingStatus") : tCommon("deleteButton")}
           </Button>
         </DialogFooter>
       </DialogContent>

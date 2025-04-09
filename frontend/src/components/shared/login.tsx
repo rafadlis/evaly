@@ -19,12 +19,15 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 import { Link } from "./progress-bar";
+import { useTranslations } from "next-intl";
 
 const LogIn = () => {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { data, isPending, refetch } = useOrganizerProfile();
+  const t = useTranslations("Auth");
+  const tCommon = useTranslations("Common");
 
   const callbackURL = useGetCallbackUrl();
 
@@ -40,9 +43,9 @@ const LogIn = () => {
 
   return (
     <>
-      <h1 className="text-3xl font-semibold">Welcome to Evaly</h1>
+      <h1 className="text-3xl font-semibold">{t("welcomeMessage")}</h1>
       <h2 className="mb-10 text-muted-foreground mt-4 text-center">
-        Making Online Exams Easier, Safer, and Smarter
+        {t("welcomeMessageDescription")}
       </h2>
 
       <div className="max-w-sm w-full">
@@ -60,14 +63,13 @@ const LogIn = () => {
             }}
           >
             <GoogleIcon />
-            Sign in with Google
+            {t("signInWithGoogle")}
           </Button>
         </div>
 
         <form
           onSubmit={async (e) => {
             e.preventDefault();
-
             setLoading(true);
             const res = await authClient.emailOtp.sendVerificationOtp({
               email,
@@ -76,21 +78,21 @@ const LogIn = () => {
             setLoading(false);
 
             if (!res.data?.success) {
-              toast.error(res.error?.message || "Something went wrong");
+              toast.error(res.error?.message || tCommon("genericError"));
               return;
             }
 
             setOtp("");
-            toast.success("OTP sent to your email");
+            toast.success(t("otpSentToEmail"));
           }}
           className="grid gap-4"
         >
           <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{tCommon("emailLabel")}</Label>
             <Input
               id="email"
               type="email"
-              placeholder="your-email@gmail.com"
+              placeholder={t("emailPlaceholder")}
               required
               disabled={loading}
               onChange={(e) => {
@@ -103,7 +105,7 @@ const LogIn = () => {
             {loading ? (
               <Loader2 size={16} className="animate-spin" />
             ) : (
-              "Continue with email"
+              t("continueWithEmail")
             )}
           </Button>
         </form>
@@ -111,10 +113,8 @@ const LogIn = () => {
       <Dialog open={otp !== null}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Verify your email</DialogTitle>
-            <DialogDescription>
-              Enter the 6 digit code sent to your email
-            </DialogDescription>
+            <DialogTitle>{t("verifyEmailTitle")}</DialogTitle>
+            <DialogDescription>{t("verifyEmailDescription")}</DialogDescription>
           </DialogHeader>
 
           <form
@@ -130,7 +130,7 @@ const LogIn = () => {
 
               if (res.error) {
                 setLoading(false);
-                toast.error(res.error?.message || "Something went wrong");
+                toast.error(res.error?.message || tCommon("genericError"));
                 return;
               }
 
@@ -145,7 +145,7 @@ const LogIn = () => {
             className="grid gap-4"
           >
             <div className="grid gap-2">
-              <Label htmlFor="otp">Enter the OTP</Label>
+              <Label htmlFor="otp">{t("verifyEmailLabel")}</Label>
               <InputOTP
                 maxLength={6}
                 onChange={(e) => {
@@ -162,39 +162,35 @@ const LogIn = () => {
                   <InputOTPSlot index={5} />
                 </InputOTPGroup>
               </InputOTP>
-              <Label>
-                Please enter the one-time password sent to your email.
-              </Label>
             </div>
             <Button type="submit" className="w-full mt-4" disabled={loading}>
               {loading ? (
                 <Loader2 size={16} className="animate-spin" />
               ) : (
-                "Login"
+                t("loginButton")
               )}
             </Button>
             <span className="text-sm text-muted-foreground">
-              Didn&apos;t receive the OTP?{" "}
+              {t("didNotReceiveOTP")}{" "}
               <button
                 type="button"
                 className="text-sm w-max cursor-pointer text-blue-500"
                 onClick={() => setOtp(null)}
               >
-                Resend OTP
+                {t("resendOTPButton")}
               </button>
             </span>
           </form>
         </DialogContent>
       </Dialog>
       <span className="container text-xs text-muted-foreground mt-4 max-w-md text-center fixed bottom-4">
-        By clicking &quot;Sign in with Google&quot; or &quot;Continue with
-        email&quot; you agree to our{" "}
-        <Link href={""} className="underline">
-          Terms of Use
+        {t("termsOfUseDescription")}{" "}
+        <Link href={"/terms-of-use"} className="underline">
+          {t("termsOfUse")}
         </Link>{" "}
-        and{" "}
-        <Link className="underline" href={"Privacy policy"}>
-          Privacy policy
+        {t("and")}{" "}
+        <Link className="underline" href={"/privacy-policy"}>
+          {t("privacyPolicy")}
         </Link>
       </span>
     </>

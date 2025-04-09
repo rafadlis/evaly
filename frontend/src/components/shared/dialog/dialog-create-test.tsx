@@ -17,11 +17,14 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useMutation } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
+import { useTranslations } from "next-intl";
 
 const DialogCreateTest = () => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const [isPendingRoute, startTransition] = useTransition();
+  const t = useTranslations("TestDialogs");
+  const tCommon = useTranslations("Common");
 
   const { mutate, isPending: isPendingCreate } = useMutation({
     mutationKey: ["create-test"],
@@ -56,41 +59,39 @@ const DialogCreateTest = () => {
       <DialogTrigger asChild>
         <Button variant={"default"}>
           <PlusIcon />
-          Create Test
+          {t("createTestButton")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create New Test</DialogTitle>
+          <DialogTitle>{t("createTestTitle")}</DialogTitle>
           <DialogDescription>
-            Select the type of test you want to create:
+            {t("createTestDescription")}
           </DialogDescription>
         </DialogHeader>
         <Card className="p-4 cursor-pointer ring-2 ring-offset-2">
           <div className="flex flex-row items-start justify-between">
-            <h1>Self-Paced Test</h1>
-              <CheckCircle size={20}/>
+            <h1>{t("selfPacedTestLabel")}</h1>
+            <CheckCircle size={20} />
           </div>
           <Label className="text-sm">
-            Allow candidates to take the test at their own pace. Ideal for
-            screening and pre-assessment purposes.
+            {t("selfPacedTestDescription")}
           </Label>
         </Card>
         <Card className="p-4 opacity-80">
           <div className="flex flex-row items-start justify-between">
-            <h1>Live Test</h1>
+            <h1>{t("liveTestLabel")}</h1>
             <Badge variant={"secondary"}>
-              <LockIcon /> Coming Soon
+              <LockIcon /> {tCommon("comingSoon")}
             </Badge>
           </div>
           <Label className="text-sm">
-            Schedule a synchronized test for all candidates. Ideal for
-            final assessments and examinations.
+            {t("liveTestDescription")}
           </Label>
         </Card>
         <DialogFooter>
           <Button variant={"secondary"} onClick={onBack}>
-            Back
+            {tCommon("backButton")}
           </Button>
           <Button
             variant={"default"}
@@ -98,7 +99,7 @@ const DialogCreateTest = () => {
             disabled={isPending}
           >
             {isPending ? <Loader2 size={16} className="animate-spin" /> : null}
-            Continue
+            {tCommon("continueButton")}
             {!isPending ? <ArrowRight size={16} /> : null}
           </Button>
         </DialogFooter>

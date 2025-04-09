@@ -16,12 +16,14 @@ import { useTestQuery } from "@/query/organization/test/use-test.query";
 import CardTest from "@/components/shared/card/card-test";
 import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "motion/react";
+import { useTranslations } from "next-intl";
 
 const DashboardPageClient = () => {
   const [queryStates, setQueryStates] = useQueryStates({
     limit: parseAsInteger.withDefault(100),
     page: parseAsInteger.withDefault(1),
   });
+  const t = useTranslations("DashboardTest");
 
   const { data, isPending } = useTestQuery(queryStates);
   const queryClient = useQueryClient();
@@ -33,7 +35,7 @@ const DashboardPageClient = () => {
     return (
       <div className="container">
         <div className="flex flex-row items-start justify-between mb-10">
-          <h1 className="font-semibold">Dashboard</h1>
+          <h1 className="font-semibold">{t("dashboardTitle")}</h1>
           <DialogCreateTest />
         </div>
         <LoadingTest />
@@ -45,10 +47,9 @@ const DashboardPageClient = () => {
     return (
       <div className="flex flex-col items-center justify-center mt-[25vh] text-center">
         <FileSpreadsheet className="size-16 text-muted-foreground mb-6" />
-        <h1 className="text-xl font-medium">No tests yet</h1>
+        <h1 className="text-xl font-medium">{t("noTestsYet")}</h1>
         <h2 className="max-w-md mt-2 text-muted-foreground mb-4">
-          Create your first test and make assessment a breeze. Start building
-          engaging questions today!
+          {t("noTestsDescription")}
         </h2>
         <DialogCreateTest />
       </div>
@@ -58,9 +59,9 @@ const DashboardPageClient = () => {
     <div className="container">
       <div className="flex flex-row items-start justify-between">
         <div>
-          <h1 className="font-semibold">Dashboard</h1>
+          <h1 className="font-semibold">{t("dashboardTitle")}</h1>
           <p className="text-muted-foreground">
-            List of all your tests and assessments.
+            {t("dashboardDescription")}
           </p>
         </div>
         <DialogCreateTest />

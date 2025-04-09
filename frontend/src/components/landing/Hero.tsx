@@ -5,10 +5,13 @@ import { Link } from "@/i18n/navigation";
 import { Wand2 } from "lucide-react";
 import { motion } from "motion/react";
 import { Badge } from "../ui/badge";
+import { useTranslations } from 'next-intl';
 
 const MotionDiv = motion.div;
 
 export const Hero = () => {
+  const t = useTranslations('HomePage');
+  
   return (
     <section className="py-24 relative overflow-hidden">
       {/* Background elements */}
@@ -30,31 +33,32 @@ export const Hero = () => {
             className="p-1 pr-3 rounded-full h-max mb-2"
           >
             <Badge>
-              AI-Powered <Wand2 />
+              {t('hero.badge')}
+              <Wand2 />
             </Badge>
             <div className="h-1 w-1 rounded-full bg-border"></div>
             <div className="text-xs text-muted-foreground">
-              Making Online Exams Easier, Safer, and Smarter
+              {t('hero.title')}
             </div>
           </Button>
 
           <h1 className="text-balance text-4xl font-bold mb-4 mt-4">
-            Comprehensive Online Examination Platform
+            {t('hero.heading')}
           </h1>
 
           <p className="mb-8 max-w-2xl text-primary/80">
-            Empowering institutions and businesses with a secure, AI-driven examination platform for automated question creation, proctoring, and analytics.
+            {t('hero.subtitle')}
           </p>
 
           <div className="flex flex-wrap gap-4">
             <Link href="/auth/register">
               <Button size="lg">
-                Start Free Trial
+                {t('hero.getStarted')}
               </Button>
             </Link>
             <Link href="#">
               <Button variant="outline" size="lg">
-                Watch Demo
+                {t('hero.watchDemo')}
               </Button>
             </Link>
           </div>
@@ -71,8 +75,7 @@ export const Hero = () => {
               ))}
             </div>
             <p className="text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">1000+</span> schools
-              and companies trust Evaly
+              <span className="font-medium text-foreground">1000+</span> {t('hero.trustText')}
             </p>
           </div>
         </MotionDiv>

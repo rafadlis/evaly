@@ -20,6 +20,7 @@ import { LogoType } from "./logo";
 import ThemeToggle from "./theme-toggle";
 import { usePathname } from "@/i18n/navigation";
 import AdminAccount from "./account/admin-account";
+import DialogSelectLanguage from "./dialog/dialog-select-language";
 
 const navItems = [
   {
@@ -110,7 +111,7 @@ export function DashboardNavbar({ className }: { className?: string }) {
               <Bell className="h-5 w-5" />
               <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500"></span>
             </Button> */}
-
+            <DialogSelectLanguage />
             <ThemeToggle />
 
             <AdminAccount />

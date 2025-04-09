@@ -15,10 +15,8 @@ export function ThemeProvider({
   React.useEffect(() => {
     if (fontMono) {
       document.documentElement.classList.add("font-mono");
-      document.documentElement.classList.add("tracking-tight")
     } else {
       document.documentElement.classList.remove("font-mono");
-      document.documentElement.classList.remove("tracking-tight")
     }
   }, [fontMono]);
 

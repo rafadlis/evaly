@@ -15,6 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import DialogDeleteTest from "../dialog/dialog-delete-test";
 import { testTypeColor, testTypeFormatter } from "@/lib/test-type-formatter";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 const CardTest = ({
   data,
@@ -23,6 +24,7 @@ const CardTest = ({
   data: Test;
   onDelete?: () => void;
 }) => {
+  const t = useTranslations("DashboardTest");
   const redirectLink = data.isPublished
     ? `/dashboard/tests/${data.id}`
     : `/dashboard/tests/${data.id}/edit`;
@@ -34,25 +36,25 @@ const CardTest = ({
       >
         <div className="flex justify-between items-start p-4">
           <div>
-            <h3 className="font-medium">{data.title || "Untitled Test"}</h3>
+            <h3 className="font-medium">{data.title || t("untitledTestLabel")}</h3>
           </div>
 
           <div>
             {data.isPublished && !data.finishedAt ? (
               <Badge variant={"ghost"} className="text-muted-foreground">
                 <CircleIcon className="fill-success-foreground stroke-success-foreground size-3" />
-                Active
+                {t("activeStatus")}
               </Badge>
             ) : null}
 
             {!data.isPublished && !data.finishedAt ? (
-              <Badge variant={"secondary"}>Draft</Badge>
+              <Badge variant={"secondary"}>{t("draftStatus")}</Badge>
             ) : null}
 
             {data.isPublished && data.finishedAt ? (
               <Badge variant={"success"}>
                 <CheckIcon />
-                Finished
+                {t("finishedStatus")}
               </Badge>
             ) : null}
           </div>
@@ -61,7 +63,7 @@ const CardTest = ({
         <div className="flex flex-wrap items-center gap-6 text-sm px-4 py-2 border-dashed border-t text-muted-foreground">
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant={"secondary"} className={testTypeColor(data.type)}>
-              {testTypeFormatter(data.type)}
+              {testTypeFormatter(data.type, t)}
             </Badge>
             {Number(data.duration || "0") > 0 ? (
               <Badge variant={"secondary"}>
@@ -74,14 +76,14 @@ const CardTest = ({
             <CircleUserIcon size={14} />
             <span>
               {data.access === "public"
-                ? "Public"
-                : `${data.invitations} participants`}
+                ? t("publicAccess")
+                : `${data.invitations} ${t("participantsLabel")}`}
             </span>
           </div>
           <div className="flex items-center gap-1">
             <Calendar size={14} />
             <span>
-              Created on {dayjs(data.createdAt).format("DD MMM YYYY")}
+              {t("createdOnLabel")}{dayjs(data.createdAt).format("DD MMM YYYY")}
             </span>
           </div>
 
@@ -93,7 +95,7 @@ const CardTest = ({
             <DialogDeleteTest
               testId={data.id}
               onSuccess={() => {
-                toast.success("Test deleted successfully");
+                toast.success(t("testDeletedMessage"));
                 onDelete?.();
               }}
             />
