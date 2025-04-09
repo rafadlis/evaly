@@ -1,7 +1,170 @@
 {
   "HomePage": {
     "title": "你好，世界！",
-    "about": "前往关于页面"
+    "about": "前往信息页面",
+    "dashboard": "控制面板",
+    "hero": {
+      "badge": "AI驱动",
+      "title": "让在线考试更简单、更安全、更智能",
+      "heading": "全面的在线考试平台",
+      "subtitle": "轻松创建、分发和分析测试。适合教育机构和企业。",
+      "getStarted": "立即开始",
+      "watchDemo": "观看演示",
+      "trustText": "学校和公司信任Evaly"
+    },
+    "logos": {
+      "title": "受到领先组织的信任",
+      "logo1": "顶尖大学",
+      "logo2": "K-12学校",
+      "logo3": "培训中心",
+      "logo4": "人力资源部门",
+      "logo5": "认证提供商"
+    },
+    "features": {
+      "title": "全面的考试功能",
+      "description": "我们的平台将问题创建、测试交付、监控和分析集成在一个适合学校和企业的解决方案中",
+      "educatorsTab": "教育工作者",
+      "companiesTab": "企业",
+      "participantsTab": "参与者",
+      "tab1": "创建测试",
+      "tab2": "监控进度",
+      "tab3": "分析结果",
+      "tab1Desc": "使用我们的直观编辑器在几分钟内创建专业测试。",
+      "tab2Desc": "通过详细分析实时跟踪参与者的进度。",
+      "tab3Desc": "获取有关测试表现的全面见解和报告。",
+      "educators": {
+        "aiQuestionGenerator": {
+          "title": "AI问题生成器",
+          "description": "只需指定主题、难度和问题类型，即可使用我们的AI引擎即时创建考试问题。",
+          "tags": ["节省时间", "可定制"]
+        },
+        "flexibleExamFormats": {
+          "title": "灵活的考试格式",
+          "description": "在常规格式（列表视图）或幻灯片格式（演示视图）之间选择，支持丰富媒体。",
+          "tags": ["丰富媒体", "公式支持"]
+        },
+        "flexibleScheduling": {
+          "title": "灵活的日程安排",
+          "description": "设置同步时间的直播考试或具有灵活时间限制的自定进度考试。",
+          "tags": ["时间延长", "重考政策"]
+        },
+        "aiPoweredAnalytics": {
+          "title": "AI驱动的分析",
+          "description": "通过AI分析弱点领域和潜在作弊行为，获取学生表现的洞察。",
+          "tags": ["数据导出", "实时警报"]
+        },
+        "automaticCertification": {
+          "title": "自动认证",
+          "description": "在成功通过考试后自动生成和分发证书。",
+          "tags": ["可定制", "可验证"]
+        },
+        "collaborationTools": {
+          "title": "协作工具",
+          "description": "与团队成员合作创建考试，并邀请外部评审员监督评估。",
+          "tags": ["团队访问", "LMS集成"]
+        }
+      },
+      "companies": {
+        "talentAssessment": {
+          "title": "人才评估",
+          "description": "使用标准化评估测试应聘者，为您的组织识别最佳人才。",
+          "tags": ["招聘", "技能验证"]
+        },
+        "complianceTraining": {
+          "title": "合规培训",
+          "description": "通过自动评估和认证跟踪确保监管合规性。",
+          "tags": ["审计就绪", "认证"]
+        },
+        "timeEfficientEvaluation": {
+          "title": "高效评估",
+          "description": "通过自动评分和即时结果生成，减少60%的评估时间。",
+          "tags": ["自动化", "效率"]
+        },
+        "performanceInsights": {
+          "title": "绩效洞察",
+          "description": "根据评估结果识别技能差距并创建有针对性的培训计划。",
+          "tags": ["数据驱动", "发展"]
+        },
+        "aiPoweredRecommendations": {
+          "title": "AI驱动的建议",
+          "description": "基于评估结果获取员工发展的智能建议。",
+          "tags": ["个性化", "成长导向"]
+        },
+        "seamlessIntegration": {
+          "title": "无缝集成",
+          "description": "连接到现有的HR系统，实现高效的数据流和统一报告。",
+          "tags": ["API访问", "数据同步"]
+        }
+      },
+      "participants": {
+        "userFriendlyInterface": {
+          "title": "用户友好界面",
+          "description": "通过专为最佳测试体验设计的直观界面浏览考试。",
+          "tags": ["无障碍", "响应式"]
+        },
+        "flexibleTestTaking": {
+          "title": "灵活的考试方式",
+          "description": "通过自定进度选项或预定的直播会话，在方便的时间参加考试。",
+          "tags": ["便利", "灵活性"]
+        },
+        "instantFeedback": {
+          "title": "即时反馈",
+          "description": "获取即时结果和详细反馈，以了解您的表现。",
+          "tags": ["学习", "改进"]
+        },
+        "digitalCertificates": {
+          "title": "数字证书",
+          "description": "成功通过评估后获得可验证的数字证书。",
+          "tags": ["认可", "可分享"]
+        },
+        "secureEnvironment": {
+          "title": "安全环境",
+          "description": "在安全且受监控的环境中参加考试，确保所有人公平评估。",
+          "tags": ["公平", "可靠"]
+        },
+        "progressTracking": {
+          "title": "进度跟踪",
+          "description": "通过综合进度跟踪监控随时间的改进情况。",
+          "tags": ["成长", "分析"]
+        }
+      },
+      "security": {
+        "title": "全面监控系统",
+        "description": "Evaly提供多层安全功能，确保考试的完整性并防止高风险考试中的作弊行为",
+        "webcamSurveillance": "网络摄像头监控",
+        "tabWindowDetection": "标签/窗口检测",
+        "voiceDetection": "语音检测",
+        "activityLogging": "活动日志记录"
+      }
+    },
+    "benefits": {
+      "title": "为什么选择Evaly",
+      "competitiveEdge": "竞争优势",
+      "allInOne": "一体化解决方案",
+      "allInOneDesc": "将问题创建、测试交付、监控和分析集成在一个平台中。",
+      "aiIntegration": "AI集成",
+      "aiIntegrationDesc": "自动问题生成和结果分析使Evaly区别于基础测试平台。",
+      "dualMode": "双模式测试",
+      "dualModeDesc": "针对不同使用场景在实时和自定步调考试之间灵活切换。",
+      "security": "全面安全",
+      "securityDesc": "为高风险考试提供多层监考系统。",
+      "accessibility": "易于访问",
+      "accessibilityDesc": "随时随地在所有设备上可用。",
+      "analytics": "详细分析",
+      "analyticsDesc": "关于测试表现的全面报告和见解。"
+    },
+    "cta": {
+      "title": "准备好改变您的测试体验了吗？",
+      "subtitle": "加入已经使在线考试更简单、更安全、更智能的学校、大学和企业，使用Evaly的全面平台。",
+      "button": "开始免费试用",
+      "scheduleDemo": "预约演示"
+    },
+    "footer": {
+      "product": "产品",
+      "company": "公司",
+      "legal": "法律",
+      "copyright": "© 2023 Evaly. 保留所有权利。"
+    }
   },
   "Auth": {
     "signUpTitle": "注册",

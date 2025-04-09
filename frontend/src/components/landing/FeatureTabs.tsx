@@ -18,149 +18,135 @@ import {
   Laptop,
   Camera,
 } from "lucide-react";
+import { useTranslations } from 'next-intl';
 
 const MotionDiv = motion.div;
 
 // Feature data for each tab
-const tabsData = {
+const getTabsData = (t: ReturnType<typeof useTranslations>) => ({
   educators: [
     {
       icon: Brain,
-      title: "AI Question Generator",
-      description:
-        "Create exam questions instantly with our AI engine by specifying topic, difficulty, and question type.",
-      tags: ["Time-saving", "Customizable"],
+      title: t('educators.aiQuestionGenerator.title'),
+      description: t('educators.aiQuestionGenerator.description'),
+      tags: t.raw('educators.aiQuestionGenerator.tags') as string[],
     },
     {
       icon: Presentation,
-      title: "Flexible Exam Formats",
-      description:
-        "Choose between Normal (list view) or Slide (presentation view) formats with rich media support.",
-      tags: ["Rich Media", "Math Formulas"],
+      title: t('educators.flexibleExamFormats.title'),
+      description: t('educators.flexibleExamFormats.description'),
+      tags: t.raw('educators.flexibleExamFormats.tags') as string[],
     },
     {
       icon: Timer,
-      title: "Flexible Scheduling",
-      description:
-        "Set up Live Tests with synchronized timing or Self-Paced Tests with flexible time limits.",
-      tags: ["Time Extensions", "Retake Policies"],
+      title: t('educators.flexibleScheduling.title'),
+      description: t('educators.flexibleScheduling.description'),
+      tags: t.raw('educators.flexibleScheduling.tags') as string[],
     },
     {
       icon: BarChart,
-      title: "AI-Powered Analytics",
-      description:
-        "Gain insights into student performance with AI-driven analysis of weak areas and potential cheating.",
-      tags: ["Data Export", "Real-time Alerts"],
+      title: t('educators.aiPoweredAnalytics.title'),
+      description: t('educators.aiPoweredAnalytics.description'),
+      tags: t.raw('educators.aiPoweredAnalytics.tags') as string[],
     },
     {
       icon: Award,
-      title: "Automatic Certification",
-      description:
-        "Generate and distribute certificates automatically upon successful exam completion.",
-      tags: ["Customizable", "Verifiable"],
+      title: t('educators.automaticCertification.title'),
+      description: t('educators.automaticCertification.description'),
+      tags: t.raw('educators.automaticCertification.tags') as string[],
     },
     {
       icon: Workflow,
-      title: "Collaboration Tools",
-      description:
-        "Work with team members to create exams and invite external examiners to monitor assessments.",
-      tags: ["Team Access", "LMS Integration"],
+      title: t('educators.collaborationTools.title'),
+      description: t('educators.collaborationTools.description'),
+      tags: t.raw('educators.collaborationTools.tags') as string[],
     },
   ],
   companies: [
     {
       icon: Users,
-      title: "Talent Assessment",
-      description:
-        "Evaluate candidates with standardized assessments to identify the best fit for your organization.",
-      tags: ["Recruitment", "Skill Verification"],
+      title: t('companies.talentAssessment.title'),
+      description: t('companies.talentAssessment.description'),
+      tags: t.raw('companies.talentAssessment.tags') as string[],
     },
     {
       icon: Shield,
-      title: "Compliance Training",
-      description:
-        "Ensure regulatory compliance with automated assessment and certification tracking.",
-      tags: ["Audit-Ready", "Certification"],
+      title: t('companies.complianceTraining.title'),
+      description: t('companies.complianceTraining.description'),
+      tags: t.raw('companies.complianceTraining.tags') as string[],
     },
     {
       icon: Clock,
-      title: "Time-Efficient Evaluation",
-      description:
-        "Reduce assessment time by 60% with automated grading and instant result generation.",
-      tags: ["Automation", "Efficiency"],
+      title: t('companies.timeEfficientEvaluation.title'),
+      description: t('companies.timeEfficientEvaluation.description'),
+      tags: t.raw('companies.timeEfficientEvaluation.tags') as string[],
     },
     {
       icon: Zap,
-      title: "Performance Insights",
-      description:
-        "Identify skill gaps and create targeted training programs based on assessment results.",
-      tags: ["Data-Driven", "Development"],
+      title: t('companies.performanceInsights.title'),
+      description: t('companies.performanceInsights.description'),
+      tags: t.raw('companies.performanceInsights.tags') as string[],
     },
     {
       icon: Bot,
-      title: "AI-Powered Recommendations",
-      description:
-        "Receive intelligent suggestions for employee development based on assessment outcomes.",
-      tags: ["Personalized", "Growth-Oriented"],
+      title: t('companies.aiPoweredRecommendations.title'),
+      description: t('companies.aiPoweredRecommendations.description'),
+      tags: t.raw('companies.aiPoweredRecommendations.tags') as string[],
     },
     {
       icon: Workflow,
-      title: "Seamless Integration",
-      description:
-        "Connect with your existing HR systems for streamlined data flow and unified reporting.",
-      tags: ["API Access", "Data Sync"],
+      title: t('companies.seamlessIntegration.title'),
+      description: t('companies.seamlessIntegration.description'),
+      tags: t.raw('companies.seamlessIntegration.tags') as string[],
     },
   ],
   participants: [
     {
       icon: Laptop,
-      title: "User-Friendly Interface",
-      description:
-        "Navigate through exams with an intuitive interface designed for optimal test-taking experience.",
-      tags: ["Accessible", "Responsive"],
+      title: t('participants.userFriendlyInterface.title'),
+      description: t('participants.userFriendlyInterface.description'),
+      tags: t.raw('participants.userFriendlyInterface.tags') as string[],
     },
     {
       icon: Timer,
-      title: "Flexible Test Taking",
-      description:
-        "Take exams at your convenience with self-paced options or scheduled live sessions.",
-      tags: ["Convenience", "Flexibility"],
+      title: t('participants.flexibleTestTaking.title'),
+      description: t('participants.flexibleTestTaking.description'),
+      tags: t.raw('participants.flexibleTestTaking.tags') as string[],
     },
     {
       icon: BarChart,
-      title: "Instant Feedback",
-      description:
-        "Receive immediate results and detailed feedback to understand your performance.",
-      tags: ["Learning", "Improvement"],
+      title: t('participants.instantFeedback.title'),
+      description: t('participants.instantFeedback.description'),
+      tags: t.raw('participants.instantFeedback.tags') as string[],
     },
     {
       icon: Award,
-      title: "Digital Certificates",
-      description:
-        "Earn verifiable digital certificates upon successful completion of assessments.",
-      tags: ["Recognition", "Shareable"],
+      title: t('participants.digitalCertificates.title'),
+      description: t('participants.digitalCertificates.description'),
+      tags: t.raw('participants.digitalCertificates.tags') as string[],
     },
     {
       icon: Shield,
-      title: "Secure Environment",
-      description:
-        "Take exams in a secure, monitored environment that ensures fair assessment for all.",
-      tags: ["Fair", "Reliable"],
+      title: t('participants.secureEnvironment.title'),
+      description: t('participants.secureEnvironment.description'),
+      tags: t.raw('participants.secureEnvironment.tags') as string[],
     },
     {
       icon: Layers,
-      title: "Progress Tracking",
-      description:
-        "Monitor your improvement over time with comprehensive progress tracking.",
-      tags: ["Growth", "Analytics"],
+      title: t('participants.progressTracking.title'),
+      description: t('participants.progressTracking.description'),
+      tags: t.raw('participants.progressTracking.tags') as string[],
     },
   ],
-};
+});
 
 export const FeatureTabs = () => {
+  const t = useTranslations('HomePage.features');
   const [activeTab, setActiveTab] = useState<
     "educators" | "companies" | "participants"
   >("educators");
+
+  const tabsData = getTabsData(t);
 
   return (
     <section className="py-20 relative">
@@ -168,11 +154,10 @@ export const FeatureTabs = () => {
       <div className="container">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-3">
-            Comprehensive Examination Features
+            {t('title')}
           </h2>
           <p className="text-muted-foreground max-w-[600px] mx-auto">
-            Our platform combines question creation, test delivery, monitoring,
-            and analysis in a single solution for schools and companies
+            {t('description')}
           </p>
         </div>
 
@@ -188,7 +173,7 @@ export const FeatureTabs = () => {
                     : "text-foreground/70 hover:text-foreground"
                 }`}
               >
-                For Educators
+                {t('educatorsTab')}
               </button>
               <button
                 onClick={() => setActiveTab("companies")}
@@ -198,7 +183,7 @@ export const FeatureTabs = () => {
                     : "text-foreground/70 hover:text-foreground"
                 }`}
               >
-                For Companies
+                {t('companiesTab')}
               </button>
               <button
                 onClick={() => setActiveTab("participants")}
@@ -208,7 +193,7 @@ export const FeatureTabs = () => {
                     : "text-foreground/70 hover:text-foreground"
                 }`}
               >
-                For Participants
+                {t('participantsTab')}
               </button>
             </div>
           </div>
@@ -232,7 +217,7 @@ export const FeatureTabs = () => {
                     {feature.description}
                   </p>
                   <div className="flex flex-wrap gap-2 mt-auto">
-                    {feature.tags.map((tag, j) => (
+                    {feature.tags.map((tag: string, j: number) => (
                       <div
                         key={j}
                         className="text-xs bg-primary/5 text-primary px-2 py-1 rounded-full"
@@ -262,32 +247,31 @@ export const FeatureTabs = () => {
                   <Shield className="h-5 w-5 text-primary" />
                 </div>
                 <h3 className="font-medium text-lg">
-                  Comprehensive Proctoring System
+                  {t('security.title')}
                 </h3>
               </div>
 
               <p className="text-muted-foreground mb-6 max-w-[700px]">
-                Evaly provides multi-layered security features to ensure exam
-                integrity and prevent cheating for high-stakes examinations
+                {t('security.description')}
               </p>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
                   {
                     icon: <Camera className="h-4 w-4" />,
-                    text: "Webcam Surveillance",
+                    text: t('security.webcamSurveillance'),
                   },
                   {
                     icon: <Laptop className="h-4 w-4" />,
-                    text: "Tab/Window Detection",
+                    text: t('security.tabWindowDetection'),
                   },
                   {
                     icon: <Bot className="h-4 w-4" />,
-                    text: "Voice Detection",
+                    text: t('security.voiceDetection'),
                   },
                   {
                     icon: <Layers className="h-4 w-4" />,
-                    text: "Activity Logging",
+                    text: t('security.activityLogging'),
                   },
                 ].map((feature, i) => (
                   <div key={i} className="flex items-center gap-2">

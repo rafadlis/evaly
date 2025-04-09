@@ -21,18 +21,133 @@
       "logo5": "Zertifizierungsanbieter"
     },
     "features": {
-      "title": "Leistungsstarke Funktionen",
+      "title": "Umfassende Prüfungsfunktionen",
+      "description": "Unsere Plattform kombiniert Fragenerstellung, Testdurchführung, Überwachung und Analyse in einer einzigen Lösung für Schulen und Unternehmen",
+      "educatorsTab": "Für Pädagogen",
+      "companiesTab": "Für Unternehmen",
+      "participantsTab": "Für Teilnehmer",
       "tab1": "Tests erstellen",
       "tab2": "Fortschritt überwachen",
       "tab3": "Ergebnisse analysieren",
       "tab1Desc": "Erstellen Sie professionelle Tests in Minuten mit unserem intuitiven Editor.",
       "tab2Desc": "Verfolgen Sie den Fortschritt der Teilnehmer in Echtzeit mit detaillierten Analysen.",
-      "tab3Desc": "Erhalten Sie umfassende Einblicke und Berichte zur Testleistung."
+      "tab3Desc": "Erhalten Sie umfassende Einblicke und Berichte zur Testleistung.",
+      "educators": {
+        "aiQuestionGenerator": {
+          "title": "KI-Fragengenerator",
+          "description": "Erstellen Sie Prüfungsfragen sofort mit unserer KI-Engine, indem Sie Thema, Schwierigkeitsgrad und Fragetyp angeben.",
+          "tags": ["Zeitsparend", "Anpassbar"]
+        },
+        "flexibleExamFormats": {
+          "title": "Flexible Prüfungsformate",
+          "description": "Wählen Sie zwischen Normal (Listenansicht) oder Präsentation (Folienansicht) mit umfassender Medienunterstützung.",
+          "tags": ["Medienreich", "Mathematische Formeln"]
+        },
+        "flexibleScheduling": {
+          "title": "Flexible Terminplanung",
+          "description": "Richten Sie Live-Tests mit synchronisiertem Timing oder selbstgesteuerte Tests mit flexiblen Zeitlimits ein.",
+          "tags": ["Zeitverlängerungen", "Wiederholungsrichtlinien"]
+        },
+        "aiPoweredAnalytics": {
+          "title": "KI-gestützte Analysen",
+          "description": "Gewinnen Sie Einblicke in die Leistung der Studierenden mit KI-gestützter Analyse von Schwachstellen und potenziellen Betrugsfällen.",
+          "tags": ["Datenexport", "Echtzeit-Warnungen"]
+        },
+        "automaticCertification": {
+          "title": "Automatische Zertifizierung",
+          "description": "Generieren und verteilen Sie Zertifikate automatisch nach erfolgreicher Prüfung.",
+          "tags": ["Anpassbar", "Verifizierbar"]
+        },
+        "collaborationTools": {
+          "title": "Kollaborationstools",
+          "description": "Arbeiten Sie mit Teammitgliedern zusammen, um Prüfungen zu erstellen und laden Sie externe Prüfer ein, um Bewertungen zu überwachen.",
+          "tags": ["Teamzugriff", "LMS-Integration"]
+        }
+      },
+      "companies": {
+        "talentAssessment": {
+          "title": "Talentbewertung",
+          "description": "Bewerten Sie Kandidaten mit standardisierten Assessments, um die beste Passung für Ihre Organisation zu identifizieren.",
+          "tags": ["Rekrutierung", "Kompetenzverifizierung"]
+        },
+        "complianceTraining": {
+          "title": "Compliance-Schulung",
+          "description": "Stellen Sie die Einhaltung von Vorschriften mit automatisierter Bewertung und Zertifizierungsverfolgung sicher.",
+          "tags": ["Auditbereit", "Zertifizierung"]
+        },
+        "timeEfficientEvaluation": {
+          "title": "Zeiteffiziente Bewertung",
+          "description": "Reduzieren Sie die Bewertungszeit um 60% mit automatisierter Benotung und sofortiger Ergebniserstellung.",
+          "tags": ["Automatisierung", "Effizienz"]
+        },
+        "performanceInsights": {
+          "title": "Leistungseinblicke",
+          "description": "Identifizieren Sie Kompetenzlücken und erstellen Sie gezielte Schulungsprogramme basierend auf Bewertungsergebnissen.",
+          "tags": ["Datengesteuert", "Entwicklung"]
+        },
+        "aiPoweredRecommendations": {
+          "title": "KI-gestützte Empfehlungen",
+          "description": "Erhalten Sie intelligente Vorschläge für die Mitarbeiterentwicklung basierend auf Bewertungsergebnissen.",
+          "tags": ["Personalisiert", "Wachstumsorientiert"]
+        },
+        "seamlessIntegration": {
+          "title": "Nahtlose Integration",
+          "description": "Verbinden Sie sich mit Ihren bestehenden HR-Systemen für einen optimierten Datenfluss und einheitliche Berichterstattung.",
+          "tags": ["API-Zugang", "Datensynchronisierung"]
+        }
+      },
+      "participants": {
+        "userFriendlyInterface": {
+          "title": "Benutzerfreundliche Oberfläche",
+          "description": "Navigieren Sie durch Prüfungen mit einer intuitiven Oberfläche, die für optimale Prüfungserfahrungen entwickelt wurde.",
+          "tags": ["Zugänglich", "Responsiv"]
+        },
+        "flexibleTestTaking": {
+          "title": "Flexible Prüfungsteilnahme",
+          "description": "Absolvieren Sie Prüfungen nach Ihrem eigenen Tempo mit selbstgesteuerten Optionen oder geplanten Live-Sitzungen.",
+          "tags": ["Bequemlichkeit", "Flexibilität"]
+        },
+        "instantFeedback": {
+          "title": "Sofortiges Feedback",
+          "description": "Erhalten Sie sofortige Ergebnisse und detailliertes Feedback, um Ihre Leistung zu verstehen.",
+          "tags": ["Lernen", "Verbesserung"]
+        },
+        "digitalCertificates": {
+          "title": "Digitale Zertifikate",
+          "description": "Verdienen Sie verifizierbare digitale Zertifikate nach erfolgreicher Absolvierung von Bewertungen.",
+          "tags": ["Anerkennung", "Teilbar"]
+        },
+        "secureEnvironment": {
+          "title": "Sichere Umgebung",
+          "description": "Nehmen Sie an Prüfungen in einer sicheren, überwachten Umgebung teil, die faire Bewertung für alle gewährleistet.",
+          "tags": ["Fair", "Zuverlässig"]
+        },
+        "progressTracking": {
+          "title": "Fortschrittsverfolgung",
+          "description": "Überwachen Sie Ihre Verbesserung im Laufe der Zeit mit umfassender Fortschrittsverfolgung.",
+          "tags": ["Wachstum", "Analytik"]
+        }
+      },
+      "security": {
+        "title": "Umfassendes Überwachungssystem",
+        "description": "Evaly bietet mehrschichtige Sicherheitsfunktionen, um die Integrität von Prüfungen zu gewährleisten und Betrug bei wichtigen Prüfungen zu verhindern",
+        "webcamSurveillance": "Webcam-Überwachung",
+        "tabWindowDetection": "Tab/Fenster-Erkennung",
+        "voiceDetection": "Spracherkennung",
+        "activityLogging": "Aktivitätsprotokollierung"
+      }
     },
     "benefits": {
       "title": "Warum Evaly wählen",
-      "security": "Fortschrittliche Sicherheit",
-      "securityDesc": "Verschlüsselung und Datenschutz auf Unternehmensniveau.",
+      "competitiveEdge": "Wettbewerbsvorteil",
+      "allInOne": "All-in-One-Lösung",
+      "allInOneDesc": "Kombiniert Fragenerstellung, Testdurchführung, Überwachung und Analyse in einer einzigen Plattform.",
+      "aiIntegration": "KI-Integration",
+      "aiIntegrationDesc": "Automatisierte Fragengenerierung und Ergebnisanalyse hebt Evaly von einfachen Testplattformen ab.",
+      "dualMode": "Dual-Modus-Testen",
+      "dualModeDesc": "Flexibilität zwischen Live- und selbstgesteuerten Prüfungen für verschiedene Anwendungsfälle.",
+      "security": "Umfassende Sicherheit",
+      "securityDesc": "Mehrschichtiges Überwachungssystem für hochrangige Prüfungen.",
       "accessibility": "Zugänglichkeit",
       "accessibilityDesc": "Verfügbar auf allen Geräten, jederzeit und überall.",
       "analytics": "Detaillierte Analysen",
@@ -40,8 +155,9 @@
     },
     "cta": {
       "title": "Bereit, Ihr Prüfungserlebnis zu transformieren?",
-      "subtitle": "Schließen Sie sich tausenden zufriedener Nutzer weltweit an.",
-      "button": "Kostenlose Testversion starten"
+      "subtitle": "Schließen Sie sich Schulen, Universitäten und Unternehmen an, die Online-Prüfungen mit Evalys umfassender Plattform einfacher, sicherer und intelligenter gestaltet haben.",
+      "button": "Kostenlose Testversion starten",
+      "scheduleDemo": "Demo vereinbaren"
     },
     "footer": {
       "product": "Produkt",

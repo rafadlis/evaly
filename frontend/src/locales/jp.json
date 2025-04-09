@@ -1,7 +1,170 @@
 {
   "HomePage": {
     "title": "こんにちは世界！",
-    "about": "詳細ページへ移動"
+    "about": "詳細ページへ移動",
+    "dashboard": "ダッシュボード",
+    "hero": {
+      "badge": "AI搭載",
+      "title": "オンライン試験をより簡単に、安全に、スマートに",
+      "heading": "包括的なオンライン試験プラットフォーム",
+      "subtitle": "テストを簡単に作成、配布、分析。教育機関や企業に最適です。",
+      "getStarted": "今すぐ始める",
+      "watchDemo": "デモを見る",
+      "trustText": "の学校と企業がEvalyを信頼しています"
+    },
+    "logos": {
+      "title": "主要な組織から信頼されています",
+      "logo1": "一流大学",
+      "logo2": "K-12学校",
+      "logo3": "研修センター",
+      "logo4": "人事部門",
+      "logo5": "認定プロバイダ"
+    },
+    "features": {
+      "title": "包括的な試験機能",
+      "description": "当社のプラットフォームは、問題作成、テスト配信、監視、分析を学校や企業向けの単一ソリューションに統合しています",
+      "educatorsTab": "教育者向け",
+      "companiesTab": "企業向け",
+      "participantsTab": "参加者向け",
+      "tab1": "テスト作成",
+      "tab2": "進捗モニタリング",
+      "tab3": "結果分析",
+      "tab1Desc": "直感的なエディタで数分でプロ仕様のテストを作成。",
+      "tab2Desc": "詳細な分析でリアルタイムに参加者の進捗を追跡。",
+      "tab3Desc": "テストパフォーマンスに関する包括的な洞察とレポートを取得。",
+      "educators": {
+        "aiQuestionGenerator": {
+          "title": "AI問題生成ツール",
+          "description": "トピック、難易度、質問タイプを指定するだけで、AIエンジンで即座に試験問題を作成できます。",
+          "tags": ["時間節約", "カスタマイズ可能"]
+        },
+        "flexibleExamFormats": {
+          "title": "柔軟な試験形式",
+          "description": "リッチメディアをサポートした通常（リスト表示）またはスライド（プレゼンテーション表示）形式から選択できます。",
+          "tags": ["リッチメディア", "数式対応"]
+        },
+        "flexibleScheduling": {
+          "title": "柔軟なスケジュール設定",
+          "description": "同期タイミングでのライブテストや、柔軟な時間制限を持つ自己ペーステストを設定できます。",
+          "tags": ["時間延長", "再受験ポリシー"]
+        },
+        "aiPoweredAnalytics": {
+          "title": "AI駆動の分析",
+          "description": "弱点領域や不正行為の可能性についてのAI分析により、学生のパフォーマンスについての洞察を得られます。",
+          "tags": ["データエクスポート", "リアルタイムアラート"]
+        },
+        "automaticCertification": {
+          "title": "自動認証",
+          "description": "試験に合格すると自動的に証明書を生成して配布します。",
+          "tags": ["カスタマイズ可能", "検証可能"]
+        },
+        "collaborationTools": {
+          "title": "コラボレーションツール",
+          "description": "チームメンバーと協力して試験を作成し、外部審査員を招待して評価を監視できます。",
+          "tags": ["チームアクセス", "LMS統合"]
+        }
+      },
+      "companies": {
+        "talentAssessment": {
+          "title": "人材評価",
+          "description": "標準化された評価で候補者を評価し、組織に最適な人材を特定します。",
+          "tags": ["採用", "スキル検証"]
+        },
+        "complianceTraining": {
+          "title": "コンプライアンストレーニング",
+          "description": "自動評価と認証追跡により規制コンプライアンスを確保します。",
+          "tags": ["監査対応", "認証"]
+        },
+        "timeEfficientEvaluation": {
+          "title": "時間効率の良い評価",
+          "description": "自動採点と即時結果生成により評価時間を60％削減します。",
+          "tags": ["自動化", "効率性"]
+        },
+        "performanceInsights": {
+          "title": "パフォーマンス分析",
+          "description": "評価結果に基づいてスキルギャップを特定し、ターゲットを絞ったトレーニングプログラムを作成します。",
+          "tags": ["データ駆動", "育成"]
+        },
+        "aiPoweredRecommendations": {
+          "title": "AI駆動の推奨事項",
+          "description": "評価結果に基づいて、従業員の育成のためのインテリジェントな提案を受け取ります。",
+          "tags": ["パーソナライズ", "成長指向"]
+        },
+        "seamlessIntegration": {
+          "title": "シームレスな統合",
+          "description": "既存のHRシステムと接続して、効率的なデータフローと統一されたレポートを実現します。",
+          "tags": ["APIアクセス", "データ同期"]
+        }
+      },
+      "participants": {
+        "userFriendlyInterface": {
+          "title": "ユーザーフレンドリーなインターフェース",
+          "description": "最適なテスト体験のために設計された直感的なインターフェースで試験をナビゲートします。",
+          "tags": ["アクセシブル", "レスポンシブ"]
+        },
+        "flexibleTestTaking": {
+          "title": "柔軟なテスト受験",
+          "description": "自己ペースのオプションやスケジュールされたライブセッションで、都合の良いときに試験を受けられます。",
+          "tags": ["便利さ", "柔軟性"]
+        },
+        "instantFeedback": {
+          "title": "即時フィードバック",
+          "description": "すぐに結果が得られ、詳細なフィードバックでパフォーマンスを理解できます。",
+          "tags": ["学習", "改善"]
+        },
+        "digitalCertificates": {
+          "title": "デジタル証明書",
+          "description": "評価に合格すると、検証可能なデジタル証明書を獲得できます。",
+          "tags": ["認知", "共有可能"]
+        },
+        "secureEnvironment": {
+          "title": "安全な環境",
+          "description": "すべての人に公平な評価を保証する、安全で監視された環境で試験を受けられます。",
+          "tags": ["公平", "信頼性"]
+        },
+        "progressTracking": {
+          "title": "進捗追跡",
+          "description": "包括的な進捗追跡で時間とともに改善状況を監視できます。",
+          "tags": ["成長", "分析"]
+        }
+      },
+      "security": {
+        "title": "包括的な監視システム",
+        "description": "Evalyは、試験の完全性を確保し、重要な試験での不正行為を防止するための多層セキュリティ機能を提供します",
+        "webcamSurveillance": "ウェブカム監視",
+        "tabWindowDetection": "タブ/ウィンドウ検出",
+        "voiceDetection": "音声検出",
+        "activityLogging": "活動ログ記録"
+      }
+    },
+    "benefits": {
+      "title": "Evalyを選ぶ理由",
+      "competitiveEdge": "競争優位性",
+      "allInOne": "オールインワンソリューション",
+      "allInOneDesc": "問題作成、テスト配信、監視、分析を単一のプラットフォームに統合。",
+      "aiIntegration": "AI統合",
+      "aiIntegrationDesc": "自動問題生成と結果分析がEvalyを基本的なテストプラットフォームと差別化。",
+      "dualMode": "デュアルモードテスト",
+      "dualModeDesc": "様々なユースケースに対応するライブテストと自己ペーステストの柔軟性。",
+      "security": "包括的なセキュリティ",
+      "securityDesc": "重要な試験のための多層監視システム。",
+      "accessibility": "アクセシビリティ",
+      "accessibilityDesc": "あらゆるデバイスで、いつでもどこでも利用可能。",
+      "analytics": "詳細な分析",
+      "analyticsDesc": "テストパフォーマンスに関する包括的なレポートと洞察。"
+    },
+    "cta": {
+      "title": "テスト体験を変革する準備はできていますか？",
+      "subtitle": "Evalyの包括的なプラットフォームでオンライン試験をより簡単に、安全に、スマートにした学校、大学、企業に加わりましょう。",
+      "button": "無料トライアルを開始",
+      "scheduleDemo": "デモの予約"
+    },
+    "footer": {
+      "product": "製品",
+      "company": "会社情報",
+      "legal": "法的情報",
+      "copyright": "© 2023 Evaly. All rights reserved."
+    }
   },
   "Auth": {
     "signUpTitle": "新規登録",

@@ -1,7 +1,170 @@
 {
   "HomePage": {
-    "title": "Bonjour le monde !",
-    "about": "Aller à la page à propos"
+    "title": "Bonjour le monde!",
+    "about": "Aller à la page d'information",
+    "dashboard": "Tableau de bord",
+    "hero": {
+      "badge": "Propulsé par l'IA",
+      "title": "Rendre les examens en ligne plus faciles, plus sûrs et plus intelligents",
+      "heading": "Plateforme complète d'examens en ligne",
+      "subtitle": "Créez, distribuez et analysez des tests facilement. Parfait pour les établissements d'enseignement et les entreprises.",
+      "getStarted": "Commencer",
+      "watchDemo": "Voir la démo",
+      "trustText": "écoles et entreprises font confiance à Evaly"
+    },
+    "logos": {
+      "title": "Approuvé par des organisations leaders",
+      "logo1": "Grandes universités",
+      "logo2": "Écoles K-12",
+      "logo3": "Centres de formation",
+      "logo4": "Départements RH",
+      "logo5": "Fournisseurs de certification"
+    },
+    "features": {
+      "title": "Fonctionnalités complètes d'examen",
+      "description": "Notre plateforme combine la création de questions, la livraison de tests, le suivi et l'analyse en une seule solution pour les écoles et les entreprises",
+      "educatorsTab": "Pour les éducateurs",
+      "companiesTab": "Pour les entreprises",
+      "participantsTab": "Pour les participants",
+      "tab1": "Créer des tests",
+      "tab2": "Suivre les progrès",
+      "tab3": "Analyser les résultats",
+      "tab1Desc": "Créez des tests professionnels en quelques minutes avec notre éditeur intuitif.",
+      "tab2Desc": "Suivez les progrès des participants en temps réel avec des analyses détaillées.",
+      "tab3Desc": "Obtenez des aperçus complets et des rapports sur les performances des tests.",
+      "educators": {
+        "aiQuestionGenerator": {
+          "title": "Générateur de questions IA",
+          "description": "Créez instantanément des questions d'examen avec notre moteur IA en spécifiant simplement le sujet, la difficulté et le type de question.",
+          "tags": ["Gain de temps", "Personnalisable"]
+        },
+        "flexibleExamFormats": {
+          "title": "Formats d'examen flexibles",
+          "description": "Choisissez entre un format standard (vue liste) ou diaporama (vue présentation) avec prise en charge de médias riches.",
+          "tags": ["Médias riches", "Compatible avec formules"]
+        },
+        "flexibleScheduling": {
+          "title": "Planification flexible",
+          "description": "Configurez des tests en direct à heures synchronisées ou des tests à rythme libre avec des limites de temps flexibles.",
+          "tags": ["Extensions de temps", "Politiques de reprise"]
+        },
+        "aiPoweredAnalytics": {
+          "title": "Analyses alimentées par l'IA",
+          "description": "Obtenez des insights sur les performances des étudiants avec des analyses IA sur les domaines de faiblesse et les éventuelles tricheries.",
+          "tags": ["Exportation de données", "Alertes en temps réel"]
+        },
+        "automaticCertification": {
+          "title": "Certification automatique",
+          "description": "Générez et distribuez automatiquement des certificats lorsque les examens sont réussis.",
+          "tags": ["Personnalisable", "Vérifiable"]
+        },
+        "collaborationTools": {
+          "title": "Outils de collaboration",
+          "description": "Collaborez avec les membres de l'équipe pour créer des examens et invitez des évaluateurs externes pour superviser les évaluations.",
+          "tags": ["Accès d'équipe", "Intégration LMS"]
+        }
+      },
+      "companies": {
+        "talentAssessment": {
+          "title": "Évaluation des talents",
+          "description": "Évaluez les candidats avec des évaluations standardisées pour identifier les meilleurs talents pour votre organisation.",
+          "tags": ["Recrutement", "Vérification des compétences"]
+        },
+        "complianceTraining": {
+          "title": "Formation à la conformité",
+          "description": "Assurez la conformité réglementaire avec des évaluations automatisées et un suivi des certifications.",
+          "tags": ["Prêt pour audit", "Certification"]
+        },
+        "timeEfficientEvaluation": {
+          "title": "Évaluation efficace",
+          "description": "Réduisez le temps d'évaluation de 60% grâce à la notation automatique et la génération instantanée de résultats.",
+          "tags": ["Automatisation", "Efficacité"]
+        },
+        "performanceInsights": {
+          "title": "Analyse des performances",
+          "description": "Identifiez les lacunes de compétences et créez des programmes de formation ciblés basés sur les résultats d'évaluation.",
+          "tags": ["Piloté par les données", "Développement"]
+        },
+        "aiPoweredRecommendations": {
+          "title": "Recommandations IA",
+          "description": "Recevez des suggestions intelligentes pour le développement des employés basées sur les résultats d'évaluation.",
+          "tags": ["Personnalisé", "Axé sur la croissance"]
+        },
+        "seamlessIntegration": {
+          "title": "Intégration transparente",
+          "description": "Connectez-vous à vos systèmes RH existants pour un flux de données efficace et des rapports unifiés.",
+          "tags": ["Accès API", "Synchronisation des données"]
+        }
+      },
+      "participants": {
+        "userFriendlyInterface": {
+          "title": "Interface conviviale",
+          "description": "Naviguez dans les examens avec une interface intuitive conçue pour une expérience de test optimale.",
+          "tags": ["Accessible", "Responsive"]
+        },
+        "flexibleTestTaking": {
+          "title": "Passage de test flexible",
+          "description": "Passez des examens quand cela vous convient avec des options à votre rythme ou des sessions programmées en direct.",
+          "tags": ["Pratique", "Flexibilité"]
+        },
+        "instantFeedback": {
+          "title": "Feedback instantané",
+          "description": "Obtenez des résultats immédiats et comprenez vos performances avec des retours détaillés.",
+          "tags": ["Apprentissage", "Amélioration"]
+        },
+        "digitalCertificates": {
+          "title": "Certificats numériques",
+          "description": "Gagnez des certificats numériques vérifiables lorsque vous réussissez vos évaluations.",
+          "tags": ["Reconnaissance", "Partageables"]
+        },
+        "secureEnvironment": {
+          "title": "Environnement sécurisé",
+          "description": "Passez les examens dans un environnement sécurisé et surveillé qui garantit une évaluation équitable pour tous.",
+          "tags": ["Équitable", "Fiable"]
+        },
+        "progressTracking": {
+          "title": "Suivi de progression",
+          "description": "Surveillez vos améliorations au fil du temps avec un suivi de progression complet.",
+          "tags": ["Croissance", "Analytique"]
+        }
+      },
+      "security": {
+        "title": "Système de surveillance complet",
+        "description": "Evaly offre des fonctionnalités de sécurité multicouches pour garantir l'intégrité des examens et prévenir la triche lors d'évaluations critiques",
+        "webcamSurveillance": "Surveillance par webcam",
+        "tabWindowDetection": "Détection des onglets/fenêtres",
+        "voiceDetection": "Détection vocale",
+        "activityLogging": "Journalisation des activités"
+      }
+    },
+    "benefits": {
+      "title": "Pourquoi choisir Evaly",
+      "competitiveEdge": "Avantage concurrentiel",
+      "allInOne": "Solution tout-en-un",
+      "allInOneDesc": "Combine la création de questions, la livraison de tests, le suivi et l'analyse en une seule plateforme.",
+      "aiIntegration": "Intégration de l'IA",
+      "aiIntegrationDesc": "La génération automatisée de questions et l'analyse des résultats distinguent Evaly des plateformes de test basiques.",
+      "dualMode": "Tests en double mode",
+      "dualModeDesc": "Flexibilité entre les examens en direct et à son propre rythme pour différents cas d'utilisation.",
+      "security": "Sécurité complète",
+      "securityDesc": "Système de surveillance à plusieurs niveaux pour les examens à enjeux élevés.",
+      "accessibility": "Accessibilité",
+      "accessibilityDesc": "Disponible sur tous les appareils, à tout moment et en tout lieu.",
+      "analytics": "Analyses détaillées",
+      "analyticsDesc": "Rapports complets et aperçus sur les performances des tests."
+    },
+    "cta": {
+      "title": "Prêt à transformer votre expérience d'évaluation?",
+      "subtitle": "Rejoignez les écoles, universités et entreprises qui ont rendu les examens en ligne plus faciles, plus sûrs et plus intelligents avec la plateforme complète d'Evaly.",
+      "button": "Commencer l'essai gratuit",
+      "scheduleDemo": "Planifier une démo"
+    },
+    "footer": {
+      "product": "Produit",
+      "company": "Entreprise",
+      "legal": "Mentions légales",
+      "copyright": "© 2023 Evaly. Tous droits réservés."
+    }
   },
   "Auth": {
     "signUpTitle": "S'inscrire",
@@ -11,20 +174,20 @@
     "loginLink": "Connexion",
     "welcomeMessage": "Bienvenue sur Evaly",
     "welcomeMessageDescription": "Rendre les examens en ligne plus faciles, plus sûrs et plus intelligents",
-    "verifyEmailTitle": "Vérifiez votre e-mail",
-    "otpLabel": "Entrez le code OTP",
-    "verifyEmailLabel": "Vérifiez votre e-mail",
+    "verifyEmailTitle": "Vérifiez votre email",
+    "otpLabel": "Entrez l'OTP",
+    "verifyEmailLabel": "Vérifiez votre email",
     "signInWithGoogle": "Se connecter avec Google",
-    "verifyEmailDescription": "Veuillez entrer le mot de passe à usage unique envoyé à votre adresse e-mail.",
+    "verifyEmailDescription": "Veuillez entrer le mot de passe à usage unique envoyé à votre adresse email.",
     "termsOfUse": "Conditions d'utilisation",
-    "termsOfUseDescription": "En cliquant sur 'Se connecter avec Google' ou 'Continuer avec e-mail', vous acceptez nos",
+    "termsOfUseDescription": "En cliquant sur 'Se connecter avec Google' ou 'Continuer avec email', vous acceptez nos",
     "and": "et",
     "privacyPolicy": "Politique de confidentialité",
-    "didNotReceiveOTP": "Vous n'avez pas reçu le code OTP ?",
-    "resendOTPButton": "Renvoyer le code OTP",
+    "didNotReceiveOTP": "Vous n'avez pas reçu l'OTP ?",
+    "resendOTPButton": "Renvoyer l'OTP",
     "loginButton": "Connexion",
-    "continueWithEmail": "Continuer avec e-mail",
-    "otpSentToEmail": "Code OTP envoyé à votre e-mail",
+    "continueWithEmail": "Continuer avec email",
+    "otpSentToEmail": "OTP envoyé à votre email",
     "emailPlaceholder": "votre-email@gmail.com"
   },
   "LandingPage": {

@@ -1,31 +1,193 @@
 {
   "HomePage": {
-    "title": "Halo dunia!",
-    "about": "Pergi ke halaman tentang"
+    "title": "Halo Dunia!",
+    "about": "Pergi ke halaman informasi",
+    "dashboard": "Dasbor",
+    "hero": {
+      "badge": "Didukung oleh AI",
+      "title": "Membuat Ujian Online Mudah, Aman, dan Cerdas",
+      "heading": "Platform Ujian Online Komprehensif",
+      "subtitle": "Buat, distribusikan, dan analisis tes dengan mudah. Cocok untuk institusi pendidikan dan bisnis.",
+      "getStarted": "Mulai",
+      "watchDemo": "Tonton Demo",
+      "trustText": "Sekolah dan perusahaan percaya pada Evaly"
+    },
+    "logos": {
+      "title": "Dipercaya oleh organisasi terkemuka",
+      "logo1": "Universitas Terkemuka",
+      "logo2": "Sekolah K-12",
+      "logo3": "Pusat Pelatihan",
+      "logo4": "Departemen SDM",
+      "logo5": "Penyedia Sertifikasi"
+    },
+    "features": {
+      "title": "Fitur Ujian Komprehensif",
+      "description": "Platform kami menggabungkan pembuatan soal, distribusi tes, pemantauan, dan analisis dalam satu solusi untuk sekolah dan perusahaan",
+      "educatorsTab": "Untuk Pendidik",
+      "companiesTab": "Untuk Perusahaan",
+      "participantsTab": "Untuk Peserta",
+      "tab1": "Buat Tes",
+      "tab2": "Pantau Kemajuan",
+      "tab3": "Analisis Hasil",
+      "tab1Desc": "Buat tes profesional dalam hitungan menit dengan editor intuitif kami.",
+      "tab2Desc": "Lacak kemajuan peserta secara real-time dengan analisis terperinci.",
+      "tab3Desc": "Dapatkan wawasan dan laporan komprehensif tentang kinerja tes.",
+      "educators": {
+        "aiQuestionGenerator": {
+          "title": "Generator Soal dengan AI",
+          "description": "Buat soal ujian instan dengan mesin AI kami dengan menentukan topik, tingkat kesulitan, dan jenis pertanyaan.",
+          "tags": ["Hemat Waktu", "Dapat Disesuaikan"]
+        },
+        "flexibleExamFormats": {
+          "title": "Format Ujian Fleksibel",
+          "description": "Pilih antara format Normal (tampilan daftar) atau Slide (tampilan presentasi) dengan dukungan media yang kaya.",
+          "tags": ["Media Kaya", "Rumus Matematika"]
+        },
+        "flexibleScheduling": {
+          "title": "Penjadwalan Fleksibel",
+          "description": "Siapkan Tes Langsung dengan waktu yang sinkron atau Tes Mandiri dengan batas waktu yang fleksibel.",
+          "tags": ["Perpanjangan Waktu", "Kebijakan Mengulang"]
+        },
+        "aiPoweredAnalytics": {
+          "title": "Analisis dengan Dukungan AI",
+          "description": "Dapatkan wawasan tentang kinerja siswa dengan analisis berbasis AI untuk area lemah dan potensi kecurangan.",
+          "tags": ["Ekspor Data", "Peringatan Real-time"]
+        },
+        "automaticCertification": {
+          "title": "Sertifikasi Otomatis",
+          "description": "Buat dan distribusikan sertifikat secara otomatis setelah keberhasilan penyelesaian ujian.",
+          "tags": ["Dapat Disesuaikan", "Dapat Diverifikasi"]
+        },
+        "collaborationTools": {
+          "title": "Alat Kolaborasi",
+          "description": "Bekerja dengan anggota tim untuk membuat ujian dan mengundang penguji eksternal untuk memantau penilaian.",
+          "tags": ["Akses Tim", "Integrasi LMS"]
+        }
+      },
+      "companies": {
+        "talentAssessment": {
+          "title": "Penilaian Bakat",
+          "description": "Evaluasi kandidat dengan penilaian standar untuk mengidentifikasi yang terbaik untuk organisasi Anda.",
+          "tags": ["Rekrutmen", "Verifikasi Keterampilan"]
+        },
+        "complianceTraining": {
+          "title": "Pelatihan Kepatuhan",
+          "description": "Pastikan kepatuhan terhadap peraturan dengan penilaian otomatis dan pelacakan sertifikasi.",
+          "tags": ["Siap Audit", "Sertifikasi"]
+        },
+        "timeEfficientEvaluation": {
+          "title": "Evaluasi Hemat Waktu",
+          "description": "Kurangi waktu penilaian hingga 60% dengan penilaian otomatis dan pembuatan hasil instan.",
+          "tags": ["Otomatisasi", "Efisiensi"]
+        },
+        "performanceInsights": {
+          "title": "Wawasan Kinerja",
+          "description": "Identifikasi kesenjangan keterampilan dan buat program pelatihan yang ditargetkan berdasarkan hasil penilaian.",
+          "tags": ["Berbasis Data", "Pengembangan"]
+        },
+        "aiPoweredRecommendations": {
+          "title": "Rekomendasi dengan Dukungan AI",
+          "description": "Terima saran cerdas untuk pengembangan karyawan berdasarkan hasil penilaian.",
+          "tags": ["Dipersonalisasi", "Berorientasi Pertumbuhan"]
+        },
+        "seamlessIntegration": {
+          "title": "Integrasi Mulus",
+          "description": "Hubungkan dengan sistem HR yang ada untuk aliran data yang efisien dan pelaporan terpadu.",
+          "tags": ["Akses API", "Sinkronisasi Data"]
+        }
+      },
+      "participants": {
+        "userFriendlyInterface": {
+          "title": "Antarmuka Ramah Pengguna",
+          "description": "Navigasi melalui ujian dengan antarmuka intuitif yang dirancang untuk pengalaman ujian optimal.",
+          "tags": ["Mudah Diakses", "Responsif"]
+        },
+        "flexibleTestTaking": {
+          "title": "Pengambilan Tes Fleksibel",
+          "description": "Ambil ujian sesuai kenyamanan Anda dengan opsi mandiri atau sesi langsung terjadwal.",
+          "tags": ["Kenyamanan", "Fleksibilitas"]
+        },
+        "instantFeedback": {
+          "title": "Umpan Balik Instan",
+          "description": "Terima hasil segera dan umpan balik terperinci untuk memahami kinerja Anda.",
+          "tags": ["Pembelajaran", "Peningkatan"]
+        },
+        "digitalCertificates": {
+          "title": "Sertifikat Digital",
+          "description": "Dapatkan sertifikat digital yang dapat diverifikasi setelah berhasil menyelesaikan penilaian.",
+          "tags": ["Pengakuan", "Dapat Dibagikan"]
+        },
+        "secureEnvironment": {
+          "title": "Lingkungan Aman",
+          "description": "Ambil ujian dalam lingkungan yang aman dan terpantau yang memastikan penilaian adil bagi semua.",
+          "tags": ["Adil", "Dapat Diandalkan"]
+        },
+        "progressTracking": {
+          "title": "Pelacakan Kemajuan",
+          "description": "Pantau peningkatan Anda dari waktu ke waktu dengan pelacakan kemajuan yang komprehensif.",
+          "tags": ["Pertumbuhan", "Analitik"]
+        }
+      },
+      "security": {
+        "title": "Sistem Pengawasan Komprehensif",
+        "description": "Evaly menyediakan fitur keamanan berlapis untuk memastikan integritas ujian dan mencegah kecurangan untuk ujian berisiko tinggi",
+        "webcamSurveillance": "Pengawasan Webcam",
+        "tabWindowDetection": "Deteksi Tab/Jendela",
+        "voiceDetection": "Deteksi Suara",
+        "activityLogging": "Pencatatan Aktivitas"
+      }
+    },
+    "benefits": {
+      "title": "Mengapa Memilih Evaly",
+      "competitiveEdge": "Keunggulan Kompetitif",
+      "allInOne": "Solusi All-in-One",
+      "allInOneDesc": "Menggabungkan pembuatan soal, distribusi tes, pemantauan, dan analisis dalam satu platform.",
+      "aiIntegration": "Integrasi AI",
+      "aiIntegrationDesc": "Pembuatan soal otomatis dan analisis hasil membedakan Evaly dari platform pengujian dasar.",
+      "dualMode": "Pengujian Mode Ganda",
+      "dualModeDesc": "Fleksibilitas antara ujian langsung dan self-paced untuk berbagai kasus penggunaan.",
+      "security": "Keamanan Komprehensif",
+      "securityDesc": "Sistem pemantauan multi-level untuk ujian high-stakes.",
+      "accessibility": "Aksesibilitas",
+      "accessibilityDesc": "Tersedia di semua perangkat, kapan saja, di mana saja.",
+      "analytics": "Analisis Terperinci",
+      "analyticsDesc": "Laporan dan wawasan komprehensif tentang kinerja tes."
+    },
+    "cta": {
+      "title": "Siap untuk mengubah pengalaman pengujian Anda?",
+      "subtitle": "Bergabunglah dengan sekolah, universitas, dan perusahaan yang telah membuat ujian online menjadi mudah, aman, dan cerdas dengan platform komprehensif Evaly.",
+      "button": "Mulai Uji Coba Gratis",
+      "scheduleDemo": "Jadwalkan Demo"
+    },
+    "footer": {
+      "product": "Produk",
+      "company": "Perusahaan",
+      "legal": "Hukum",
+      "copyright": "© 2023 Evaly. Hak Cipta Dilindungi."
+    }
   },
   "Auth": {
-    "signUpTitle": "Daftar",
-    "firstNameLabel": "Nama depan",
-    "lastNameLabel": "Nama belakang",
-    "confirmPasswordLabel": "Konfirmasi Kata Sandi",
-    "loginLink": "Masuk",
-    "welcomeMessage": "Selamat datang di Evaly",
-    "welcomeMessageDescription": "Buat Ujian Online Lebih Mudah, Aman, dan Cepat",
-    "verifyEmailTitle": "Verifikasi email Kamu",
-    "otpLabel": "Masukkan OTP",
-    "verifyEmailLabel": "Verifikasi email Kamu",
-    "signInWithGoogle": "Masuk dengan Google",
-    "verifyEmailDescription": "Silakan masukkan kata sandi sekali pakai yang dikirim ke email Kamu.",
-    "termsOfUse": "Ketentuan Penggunaan",
-    "termsOfUseDescription": "Dengan mengklik 'Masuk dengan Google' atau 'Lanjutkan dengan email', Kamu menyetujui",
-    "and": "dan",
-    "privacyPolicy": "Kebijakan Privasi",
-    "didNotReceiveOTP": "Tidak menerima OTP?",
-    "resendOTPButton": "Kirim Ulang OTP",
-    "loginButton": "Masuk",
-    "continueWithEmail": "Lanjutkan dengan email",
-    "otpSentToEmail": "OTP telah dikirim ke email ",
-    "emailPlaceholder": "email-kamu@gmail.com"
+    "login": "Masuk",
+    "register": "Daftar",
+    "email": "Email",
+    "password": "Kata Sandi",
+    "forgotPassword": "Lupa Kata Sandi?",
+    "noAccount": "Belum punya akun?",
+    "alreadyHaveAccount": "Sudah punya akun?",
+    "resetPassword": "Atur Ulang Kata Sandi",
+    "backToLogin": "Kembali ke Masuk",
+    "registerAs": "Daftar Sebagai",
+    "organizer": "Organisator",
+    "participant": "Peserta",
+    "organizerDesc": "Membuat dan mengelola tes",
+    "participantDesc": "Mengambil tes dan lihat hasil",
+    "name": "Nama",
+    "confirmPassword": "Konfirmasi Kata Sandi",
+    "agreeToTerms": "Saya setuju dengan Syarat dan Ketentuan",
+    "invalidEmail": "Email tidak valid",
+    "passwordRequirements": "Kata sandi harus minimal 8 karakter",
+    "passwordMismatch": "Kata sandi tidak cocok",
+    "termsRequired": "Anda harus menyetujui syarat dan ketentuan"
   },
   "LandingPage": {
     "benefitsTitle": "Mengapa Memilih Evaly",

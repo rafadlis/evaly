@@ -1,7 +1,170 @@
 {
   "HomePage": {
-    "title": "Olá Mundo!",
-    "about": "Ir para a página sobre"
+    "title": "Olá mundo!",
+    "about": "Ir para a página de informações",
+    "dashboard": "Painel de controle",
+    "hero": {
+      "badge": "Impulsionado por IA",
+      "title": "Tornando exames online mais fáceis, seguros e inteligentes",
+      "heading": "Plataforma abrangente de exames online",
+      "subtitle": "Crie, distribua e analise testes com facilidade. Perfeito para instituições educacionais e empresas.",
+      "getStarted": "Começar agora",
+      "watchDemo": "Assistir demonstração",
+      "trustText": "escolas e empresas confiam na Evaly"
+    },
+    "logos": {
+      "title": "Confiado por organizações líderes",
+      "logo1": "Universidades de elite",
+      "logo2": "Escolas K-12",
+      "logo3": "Centros de treinamento",
+      "logo4": "Departamentos de RH",
+      "logo5": "Provedores de certificação"
+    },
+    "features": {
+      "title": "Recursos abrangentes de exames",
+      "description": "Nossa plataforma combina criação de questões, entrega de testes, monitoramento e análise em uma única solução para escolas e empresas",
+      "educatorsTab": "Para Educadores",
+      "companiesTab": "Para Empresas",
+      "participantsTab": "Para Participantes",
+      "tab1": "Criar testes",
+      "tab2": "Monitorar progresso",
+      "tab3": "Analisar resultados",
+      "tab1Desc": "Construa testes profissionais em minutos com nosso editor intuitivo.",
+      "tab2Desc": "Acompanhe o progresso dos participantes em tempo real com análises detalhadas.",
+      "tab3Desc": "Obtenha insights abrangentes e relatórios sobre o desempenho dos testes.",
+      "educators": {
+        "aiQuestionGenerator": {
+          "title": "Gerador de Questões com IA",
+          "description": "Crie questões de exame instantaneamente com nosso mecanismo de IA especificando apenas tópico, dificuldade e tipo de questão.",
+          "tags": ["Economia de tempo", "Personalizável"]
+        },
+        "flexibleExamFormats": {
+          "title": "Formatos Flexíveis de Exame",
+          "description": "Escolha entre formato regular (visualização em lista) ou formato de slides (visualização de apresentação) com suporte a mídia rica.",
+          "tags": ["Mídia rica", "Suporte a fórmulas"]
+        },
+        "flexibleScheduling": {
+          "title": "Agendamento Flexível",
+          "description": "Configure exames ao vivo com tempo sincronizado ou exames autoguiados com limites de tempo flexíveis.",
+          "tags": ["Extensão de tempo", "Políticas de repetição"]
+        },
+        "aiPoweredAnalytics": {
+          "title": "Análises Impulsionadas por IA",
+          "description": "Obtenha insights sobre o desempenho dos alunos com análises de IA de áreas de fraqueza e potencial comportamento de fraude.",
+          "tags": ["Exportação de dados", "Alertas em tempo real"]
+        },
+        "automaticCertification": {
+          "title": "Certificação Automática",
+          "description": "Gere e distribua certificados automaticamente após a conclusão bem-sucedida do exame.",
+          "tags": ["Personalizável", "Verificável"]
+        },
+        "collaborationTools": {
+          "title": "Ferramentas de Colaboração",
+          "description": "Colabore com membros da equipe para criar exames e convide avaliadores externos para supervisionar as avaliações.",
+          "tags": ["Acesso em equipe", "Integração com LMS"]
+        }
+      },
+      "companies": {
+        "talentAssessment": {
+          "title": "Avaliação de Talentos",
+          "description": "Teste candidatos com avaliações padronizadas para identificar os melhores talentos para sua organização.",
+          "tags": ["Recrutamento", "Verificação de habilidades"]
+        },
+        "complianceTraining": {
+          "title": "Treinamento de Conformidade",
+          "description": "Garanta a conformidade regulatória com avaliações automáticas e rastreamento de certificação.",
+          "tags": ["Pronto para auditoria", "Certificação"]
+        },
+        "timeEfficientEvaluation": {
+          "title": "Avaliação Eficiente em Tempo",
+          "description": "Reduza o tempo de avaliação em 60% com classificação automática e geração instantânea de resultados.",
+          "tags": ["Automação", "Eficiência"]
+        },
+        "performanceInsights": {
+          "title": "Insights de Desempenho",
+          "description": "Identifique lacunas de habilidades e crie programas de treinamento direcionados com base nos resultados da avaliação.",
+          "tags": ["Orientado por dados", "Desenvolvimento"]
+        },
+        "aiPoweredRecommendations": {
+          "title": "Recomendações Impulsionadas por IA",
+          "description": "Receba recomendações inteligentes para o desenvolvimento de funcionários com base nos resultados da avaliação.",
+          "tags": ["Personalizado", "Orientado para o crescimento"]
+        },
+        "seamlessIntegration": {
+          "title": "Integração Perfeita",
+          "description": "Conecte-se aos sistemas de RH existentes para fluxo de dados eficiente e relatórios unificados.",
+          "tags": ["Acesso à API", "Sincronização de dados"]
+        }
+      },
+      "participants": {
+        "userFriendlyInterface": {
+          "title": "Interface Amigável",
+          "description": "Navegue pelos exames com uma interface intuitiva projetada para a melhor experiência de teste.",
+          "tags": ["Acessível", "Responsivo"]
+        },
+        "flexibleTestTaking": {
+          "title": "Realização Flexível de Testes",
+          "description": "Faça exames quando for conveniente com opções de ritmo próprio ou sessões ao vivo agendadas.",
+          "tags": ["Conveniência", "Flexibilidade"]
+        },
+        "instantFeedback": {
+          "title": "Feedback Instantâneo",
+          "description": "Receba resultados instantâneos e feedback detalhado sobre seu desempenho.",
+          "tags": ["Aprendizado", "Melhoria"]
+        },
+        "digitalCertificates": {
+          "title": "Certificados Digitais",
+          "description": "Ganhe certificados digitais verificáveis após a conclusão bem-sucedida das avaliações.",
+          "tags": ["Reconhecimento", "Compartilhável"]
+        },
+        "secureEnvironment": {
+          "title": "Ambiente Seguro",
+          "description": "Faça exames em um ambiente seguro e monitorado, garantindo avaliações justas para todos.",
+          "tags": ["Justo", "Confiável"]
+        },
+        "progressTracking": {
+          "title": "Acompanhamento de Progresso",
+          "description": "Monitore melhorias ao longo do tempo com acompanhamento abrangente de progresso.",
+          "tags": ["Crescimento", "Análise"]
+        }
+      },
+      "security": {
+        "title": "Sistema Abrangente de Monitoramento",
+        "description": "Evaly oferece recursos de segurança em várias camadas para garantir a integridade do exame e prevenir fraudes em exames de alto risco",
+        "webcamSurveillance": "Vigilância por webcam",
+        "tabWindowDetection": "Detecção de abas/janelas",
+        "voiceDetection": "Detecção de voz",
+        "activityLogging": "Registro de atividades"
+      }
+    },
+    "benefits": {
+      "title": "Por que escolher a Evaly",
+      "competitiveEdge": "Vantagem competitiva",
+      "allInOne": "Solução tudo em um",
+      "allInOneDesc": "Combina criação de questões, entrega de testes, monitoramento e análise em uma única plataforma.",
+      "aiIntegration": "Integração com IA",
+      "aiIntegrationDesc": "Geração automatizada de questões e análise de resultados diferencia a Evaly das plataformas básicas de teste.",
+      "dualMode": "Testes em modo duplo",
+      "dualModeDesc": "Flexibilidade entre exames ao vivo e no próprio ritmo para diferentes casos de uso.",
+      "security": "Segurança abrangente",
+      "securityDesc": "Sistema de fiscalização em múltiplas camadas para exames de alta importância.",
+      "accessibility": "Acessibilidade",
+      "accessibilityDesc": "Disponível em todos os dispositivos, a qualquer hora, em qualquer lugar.",
+      "analytics": "Análises detalhadas",
+      "analyticsDesc": "Relatórios abrangentes e insights sobre o desempenho dos testes."
+    },
+    "cta": {
+      "title": "Pronto para transformar sua experiência de testes?",
+      "subtitle": "Junte-se a escolas, universidades e empresas que tornaram os exames online mais fáceis, seguros e inteligentes com a plataforma abrangente da Evaly.",
+      "button": "Iniciar teste gratuito",
+      "scheduleDemo": "Agendar demonstração"
+    },
+    "footer": {
+      "product": "Produto",
+      "company": "Empresa",
+      "legal": "Legal",
+      "copyright": "© 2023 Evaly. Todos os direitos reservados."
+    }
   },
   "Auth": {
     "signUpTitle": "Cadastrar-se",

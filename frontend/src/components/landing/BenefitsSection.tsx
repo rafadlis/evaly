@@ -2,36 +2,39 @@
 
 import { motion } from "motion/react";
 import { CheckCircle } from "lucide-react";
+import { useTranslations } from 'next-intl';
 
 const MotionDiv = motion.div;
 
-const benefits = [
-  {
-    title: "All-in-One Solution",
-    description: "Combines question creation, test delivery, monitoring, and analysis in a single platform."
-  },
-  {
-    title: "AI Integration",
-    description: "Automated question generation and result analysis sets Evaly apart from basic testing platforms."
-  },
-  {
-    title: "Dual-Mode Testing",
-    description: "Flexibility between Live and Self-Paced exams for different use cases."
-  },
-  {
-    title: "Comprehensive Security",
-    description: "Multi-layered proctoring system for high-stakes examinations."
-  }
-];
-
 export const BenefitsSection = () => {
+  const t = useTranslations('HomePage.benefits');
+  
+  const benefits = [
+    {
+      title: t('allInOne'),
+      description: t('allInOneDesc')
+    },
+    {
+      title: t('aiIntegration'),
+      description: t('aiIntegrationDesc')
+    },
+    {
+      title: t('dualMode'),
+      description: t('dualModeDesc')
+    },
+    {
+      title: t('security'),
+      description: t('securityDesc')
+    }
+  ];
+
   return (
     <section className="py-20">
       <div className="container">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold">Why Choose Evaly</h2>
+          <h2 className="text-2xl font-bold">{t('title')}</h2>
           <div className="text-sm px-3 py-1 rounded-full bg-foreground/10 text-foreground">
-            Competitive Edge
+            {t('competitiveEdge')}
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

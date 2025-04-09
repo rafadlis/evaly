@@ -4,10 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
+import { useTranslations } from 'next-intl';
 
 const MotionDiv = motion.div;
 
 export const CTASection = () => {
+  const t = useTranslations('HomePage.cta');
+  
   return (
     <section className="py-20 bg-foreground/[0.02] relative">
       <div className="absolute inset-0 bg-grid-pattern opacity-[0.015] pointer-events-none"></div>
@@ -19,19 +22,19 @@ export const CTASection = () => {
           viewport={{ once: true }}
         >
           <div className="bg-background p-8 rounded-2xl shadow-sm border border-border/40">
-            <h2 className="text-2xl font-bold mb-3">Ready to transform your examination process?</h2>
+            <h2 className="text-2xl font-bold mb-3">{t('title')}</h2>
             <p className="text-muted-foreground mb-6 max-w-[600px] mx-auto">
-              Join schools, universities, and businesses that have made online exams easier, safer, and smarter with Evaly&apos;s comprehensive platform.
+              {t('subtitle')}
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link href="/auth/register">
                 <Button variant="default" size="lg" >
-                  Start Free Trial <ArrowRight className="ml-2 h-4 w-4" />
+                  {t('button')} <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
               <Link href="#">
                 <Button variant="outline" size="lg">
-                  Schedule Demo
+                  {t('scheduleDemo')}
                 </Button>
               </Link>
             </div>

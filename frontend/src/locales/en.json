@@ -1,16 +1,16 @@
 {
     "HomePage": {
-      "title": "Hello world!",
-      "about": "Go to the about page",
+      "title": "Hello World!",
+      "about": "Go to about page",
       "dashboard": "Dashboard",
       "hero": {
         "badge": "AI-Powered",
-        "title": "Making Online Exams Easier, Safer, and Smarter",
+        "title": "Making Online Exams Easy, Secure, and Smart",
         "heading": "Comprehensive Online Examination Platform",
         "subtitle": "Create, distribute, and analyze tests with ease. Perfect for educational institutions and businesses.",
         "getStarted": "Get Started",
         "watchDemo": "Watch Demo",
-        "trustText": "schools and companies trust Evaly"
+        "trustText": "Schools and companies trust Evaly"
       },
       "logos": {
         "title": "Trusted by leading organizations",
@@ -21,18 +21,133 @@
         "logo5": "Certification Providers"
       },
       "features": {
-        "title": "Powerful Features",
+        "title": "Comprehensive Exam Features",
+        "description": "Our platform combines question creation, test distribution, monitoring, and analysis in one solution for schools and companies",
+        "educatorsTab": "For Educators",
+        "companiesTab": "For Companies",
+        "participantsTab": "For Participants",
         "tab1": "Create Tests",
         "tab2": "Monitor Progress",
         "tab3": "Analyze Results",
-        "tab1Desc": "Build professional tests in minutes with our intuitive editor.",
+        "tab1Desc": "Create professional tests in minutes with our intuitive editor.",
         "tab2Desc": "Track participants' progress in real-time with detailed analytics.",
-        "tab3Desc": "Get comprehensive insights and reports on test performance."
+        "tab3Desc": "Get comprehensive insights and reports on test performance.",
+        "educators": {
+          "aiQuestionGenerator": {
+            "title": "AI Question Generator",
+            "description": "Create exam questions instantly with our AI engine by specifying topic, difficulty, and question type.",
+            "tags": ["Time-saving", "Customizable"]
+          },
+          "flexibleExamFormats": {
+            "title": "Flexible Exam Formats",
+            "description": "Choose between Normal (list view) or Slide (presentation view) formats with rich media support.",
+            "tags": ["Rich Media", "Math Formulas"]
+          },
+          "flexibleScheduling": {
+            "title": "Flexible Scheduling",
+            "description": "Set up Live Tests with synchronized timing or Self-Paced Tests with flexible time limits.",
+            "tags": ["Time Extensions", "Retake Policies"]
+          },
+          "aiPoweredAnalytics": {
+            "title": "AI-Powered Analytics",
+            "description": "Gain insights into student performance with AI-driven analysis of weak areas and potential cheating.",
+            "tags": ["Data Export", "Real-time Alerts"]
+          },
+          "automaticCertification": {
+            "title": "Automatic Certification",
+            "description": "Generate and distribute certificates automatically upon successful exam completion.",
+            "tags": ["Customizable", "Verifiable"]
+          },
+          "collaborationTools": {
+            "title": "Collaboration Tools",
+            "description": "Work with team members to create exams and invite external examiners to monitor assessments.",
+            "tags": ["Team Access", "LMS Integration"]
+          }
+        },
+        "companies": {
+          "talentAssessment": {
+            "title": "Talent Assessment",
+            "description": "Evaluate candidates with standardized assessments to identify the best fit for your organization.",
+            "tags": ["Recruitment", "Skill Verification"]
+          },
+          "complianceTraining": {
+            "title": "Compliance Training",
+            "description": "Ensure regulatory compliance with automated assessment and certification tracking.",
+            "tags": ["Audit-Ready", "Certification"]
+          },
+          "timeEfficientEvaluation": {
+            "title": "Time-Efficient Evaluation",
+            "description": "Reduce assessment time by 60% with automated grading and instant result generation.",
+            "tags": ["Automation", "Efficiency"]
+          },
+          "performanceInsights": {
+            "title": "Performance Insights",
+            "description": "Identify skill gaps and create targeted training programs based on assessment results.",
+            "tags": ["Data-Driven", "Development"]
+          },
+          "aiPoweredRecommendations": {
+            "title": "AI-Powered Recommendations",
+            "description": "Receive intelligent suggestions for employee development based on assessment outcomes.",
+            "tags": ["Personalized", "Growth-Oriented"]
+          },
+          "seamlessIntegration": {
+            "title": "Seamless Integration",
+            "description": "Connect with your existing HR systems for streamlined data flow and unified reporting.",
+            "tags": ["API Access", "Data Sync"]
+          }
+        },
+        "participants": {
+          "userFriendlyInterface": {
+            "title": "User-Friendly Interface",
+            "description": "Navigate through exams with an intuitive interface designed for optimal test-taking experience.",
+            "tags": ["Accessible", "Responsive"]
+          },
+          "flexibleTestTaking": {
+            "title": "Flexible Test Taking",
+            "description": "Take exams at your convenience with self-paced options or scheduled live sessions.",
+            "tags": ["Convenience", "Flexibility"]
+          },
+          "instantFeedback": {
+            "title": "Instant Feedback",
+            "description": "Receive immediate results and detailed feedback to understand your performance.",
+            "tags": ["Learning", "Improvement"]
+          },
+          "digitalCertificates": {
+            "title": "Digital Certificates",
+            "description": "Earn verifiable digital certificates upon successful completion of assessments.",
+            "tags": ["Recognition", "Shareable"]
+          },
+          "secureEnvironment": {
+            "title": "Secure Environment",
+            "description": "Take exams in a secure, monitored environment that ensures fair assessment for all.",
+            "tags": ["Fair", "Reliable"]
+          },
+          "progressTracking": {
+            "title": "Progress Tracking",
+            "description": "Monitor your improvement over time with comprehensive progress tracking.",
+            "tags": ["Growth", "Analytics"]
+          }
+        },
+        "security": {
+          "title": "Comprehensive Proctoring System",
+          "description": "Evaly provides multi-layered security features to ensure exam integrity and prevent cheating for high-stakes examinations",
+          "webcamSurveillance": "Webcam Surveillance",
+          "tabWindowDetection": "Tab/Window Detection",
+          "voiceDetection": "Voice Detection",
+          "activityLogging": "Activity Logging"
+        }
       },
       "benefits": {
         "title": "Why Choose Evaly",
-        "security": "Advanced Security",
-        "securityDesc": "Enterprise-grade encryption and privacy protection.",
+        "competitiveEdge": "Competitive Edge",
+        "allInOne": "All-in-One Solution",
+        "allInOneDesc": "Combines question creation, test distribution, monitoring, and analysis in a single platform.",
+        "aiIntegration": "AI Integration",
+        "aiIntegrationDesc": "Automated question generation and result analysis sets Evaly apart from basic testing platforms.",
+        "dualMode": "Dual-Mode Testing",
+        "dualModeDesc": "Flexibility between live and self-paced exams for various use cases.",
+        "security": "Comprehensive Security",
+        "securityDesc": "Multi-level monitoring system for high-stakes examinations.",
         "accessibility": "Accessibility",
         "accessibilityDesc": "Available on all devices, anytime, anywhere.",
         "analytics": "Detailed Analytics",
@@ -40,8 +155,9 @@
       },
       "cta": {
         "title": "Ready to transform your testing experience?",
-        "subtitle": "Join thousands of satisfied users worldwide.",
-        "button": "Start Free Trial"
+        "subtitle": "Join schools, universities, and companies that have made online exams easy, secure, and smart with Evaly's comprehensive platform.",
+        "button": "Start Free Trial",
+        "scheduleDemo": "Schedule Demo"
       },
       "footer": {
         "product": "Product",

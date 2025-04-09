@@ -21,18 +21,133 @@
       "logo5": "Proveedores de certificación"
     },
     "features": {
-      "title": "Características potentes",
+      "title": "Características completas de exámenes",
+      "description": "Nuestra plataforma combina creación de preguntas, entrega de pruebas, monitoreo y análisis en una sola solución para escuelas y empresas",
+      "educatorsTab": "Para Educadores",
+      "companiesTab": "Para Empresas",
+      "participantsTab": "Para Participantes",
       "tab1": "Crear exámenes",
       "tab2": "Monitorear progreso",
       "tab3": "Analizar resultados",
       "tab1Desc": "Construya exámenes profesionales en minutos con nuestro editor intuitivo.",
       "tab2Desc": "Siga el progreso de los participantes en tiempo real con análisis detallados.",
-      "tab3Desc": "Obtenga información completa e informes sobre el rendimiento de las pruebas."
+      "tab3Desc": "Obtenga información completa e informes sobre el rendimiento de las pruebas.",
+      "educators": {
+        "aiQuestionGenerator": {
+          "title": "Generador de Preguntas con IA",
+          "description": "Cree preguntas de examen al instante con nuestro motor de IA especificando tema, dificultad y tipo de pregunta.",
+          "tags": ["Ahorro de tiempo", "Personalizable"]
+        },
+        "flexibleExamFormats": {
+          "title": "Formatos de Examen Flexibles",
+          "description": "Elija entre formatos Normal (vista de lista) o Diapositiva (vista de presentación) con soporte multimedia avanzado.",
+          "tags": ["Multimedia", "Fórmulas matemáticas"]
+        },
+        "flexibleScheduling": {
+          "title": "Programación Flexible",
+          "description": "Configure Exámenes en Vivo con sincronización o Exámenes a su Propio Ritmo con límites de tiempo flexibles.",
+          "tags": ["Extensiones de tiempo", "Políticas de recuperación"]
+        },
+        "aiPoweredAnalytics": {
+          "title": "Análisis Impulsado por IA",
+          "description": "Obtenga información sobre el rendimiento de los estudiantes con análisis basado en IA de áreas débiles y posibles fraudes.",
+          "tags": ["Exportación de datos", "Alertas en tiempo real"]
+        },
+        "automaticCertification": {
+          "title": "Certificación Automática",
+          "description": "Genere y distribuya certificados automáticamente tras completar con éxito el examen.",
+          "tags": ["Personalizable", "Verificable"]
+        },
+        "collaborationTools": {
+          "title": "Herramientas de Colaboración",
+          "description": "Trabaje con miembros del equipo para crear exámenes e invite a examinadores externos a supervisar evaluaciones.",
+          "tags": ["Acceso de equipo", "Integración LMS"]
+        }
+      },
+      "companies": {
+        "talentAssessment": {
+          "title": "Evaluación de Talento",
+          "description": "Evalúe candidatos con pruebas estandarizadas para identificar el mejor ajuste para su organización.",
+          "tags": ["Reclutamiento", "Verificación de habilidades"]
+        },
+        "complianceTraining": {
+          "title": "Formación en Cumplimiento",
+          "description": "Asegure el cumplimiento normativo con evaluación automatizada y seguimiento de certificaciones.",
+          "tags": ["Listo para auditoría", "Certificación"]
+        },
+        "timeEfficientEvaluation": {
+          "title": "Evaluación Eficiente",
+          "description": "Reduzca el tiempo de evaluación en un 60% con calificación automática y generación instantánea de resultados.",
+          "tags": ["Automatización", "Eficiencia"]
+        },
+        "performanceInsights": {
+          "title": "Análisis de Rendimiento",
+          "description": "Identifique brechas de habilidades y cree programas de formación específicos basados en resultados de evaluación.",
+          "tags": ["Basado en datos", "Desarrollo"]
+        },
+        "aiPoweredRecommendations": {
+          "title": "Recomendaciones con IA",
+          "description": "Reciba sugerencias inteligentes para el desarrollo de empleados basadas en resultados de evaluación.",
+          "tags": ["Personalizado", "Orientado al crecimiento"]
+        },
+        "seamlessIntegration": {
+          "title": "Integración Perfecta",
+          "description": "Conéctese con sus sistemas de RRHH existentes para un flujo de datos eficiente e informes unificados.",
+          "tags": ["Acceso API", "Sincronización de datos"]
+        }
+      },
+      "participants": {
+        "userFriendlyInterface": {
+          "title": "Interfaz Amigable",
+          "description": "Navegue a través de exámenes con una interfaz intuitiva diseñada para una experiencia óptima.",
+          "tags": ["Accesible", "Responsiva"]
+        },
+        "flexibleTestTaking": {
+          "title": "Exámenes Flexibles",
+          "description": "Realice exámenes a su conveniencia con opciones a su propio ritmo o sesiones programadas en vivo.",
+          "tags": ["Comodidad", "Flexibilidad"]
+        },
+        "instantFeedback": {
+          "title": "Retroalimentación Instantánea",
+          "description": "Reciba resultados inmediatos y comentarios detallados para entender su rendimiento.",
+          "tags": ["Aprendizaje", "Mejora"]
+        },
+        "digitalCertificates": {
+          "title": "Certificados Digitales",
+          "description": "Obtenga certificados digitales verificables tras completar con éxito las evaluaciones.",
+          "tags": ["Reconocimiento", "Compartible"]
+        },
+        "secureEnvironment": {
+          "title": "Entorno Seguro",
+          "description": "Realice exámenes en un entorno seguro y supervisado que garantiza una evaluación justa para todos.",
+          "tags": ["Justo", "Fiable"]
+        },
+        "progressTracking": {
+          "title": "Seguimiento de Progreso",
+          "description": "Monitoree su mejora a lo largo del tiempo con un seguimiento integral del progreso.",
+          "tags": ["Crecimiento", "Análisis"]
+        }
+      },
+      "security": {
+        "title": "Sistema de Supervisión Integral",
+        "description": "Evaly proporciona características de seguridad multicapa para garantizar la integridad del examen y prevenir fraudes en exámenes de alta importancia",
+        "webcamSurveillance": "Vigilancia por Webcam",
+        "tabWindowDetection": "Detección de Pestañas/Ventanas",
+        "voiceDetection": "Detección de Voz",
+        "activityLogging": "Registro de Actividad"
+      }
     },
     "benefits": {
       "title": "Por qué elegir Evaly",
-      "security": "Seguridad avanzada",
-      "securityDesc": "Encriptación de nivel empresarial y protección de privacidad.",
+      "competitiveEdge": "Ventaja competitiva",
+      "allInOne": "Solución todo en uno",
+      "allInOneDesc": "Combina creación de preguntas, entrega de exámenes, monitoreo y análisis en una sola plataforma.",
+      "aiIntegration": "Integración de IA",
+      "aiIntegrationDesc": "La generación automatizada de preguntas y el análisis de resultados distingue a Evaly de las plataformas básicas de pruebas.",
+      "dualMode": "Pruebas en modo dual",
+      "dualModeDesc": "Flexibilidad entre exámenes en vivo y a su propio ritmo para diferentes casos de uso.",
+      "security": "Seguridad completa",
+      "securityDesc": "Sistema de supervisión multicapa para exámenes de alta importancia.",
       "accessibility": "Accesibilidad",
       "accessibilityDesc": "Disponible en todos los dispositivos, en cualquier momento y lugar.",
       "analytics": "Análisis detallados",
@@ -40,8 +155,9 @@
     },
     "cta": {
       "title": "¿Listo para transformar su experiencia de evaluación?",
-      "subtitle": "Únase a miles de usuarios satisfechos en todo el mundo.",
-      "button": "Iniciar prueba gratuita"
+      "subtitle": "Únase a escuelas, universidades y empresas que han hecho los exámenes en línea más fáciles, seguros e inteligentes con la plataforma integral de Evaly.",
+      "button": "Iniciar prueba gratuita",
+      "scheduleDemo": "Programar demostración"
     },
     "footer": {
       "product": "Producto",
