@@ -1,7 +1,7 @@
 import { ColumnDef, Column } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { ArrowDown, ArrowUp, ArrowUpDown, CheckIcon, CircleHelp, XIcon } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { Submission } from "./types";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -66,32 +66,35 @@ export const columns: ColumnDef<Submission>[] = [
   {
     accessorKey: "correct",
     header: ({ column }) => (
-      <SortableHeader column={column} title="Correct / Wrong" />
+      <SortableHeader column={column} title="Result" />
     ),
     cell: ({ row }) => {
       const correct = row.original.correct as number;
-      const totalQuestions = row.original.totalQuestions;
+      const wrong = row.original.wrong as number;
+      const unanswered = row.original.unanswered as number;
+
       return (
         <div className="flex flex-row gap-2">
-          <Badge variant={"success"}><CheckIcon /> {correct}</Badge>
-          <Badge variant={"success"} className="bg-red-500/10 text-red-500 border-red-500/10"><XIcon /> {totalQuestions - correct}</Badge>
+          <Badge variant={"success"}>Correct: <span className="font-bold">{correct}</span></Badge>
+          <Badge variant={"success"} className="bg-red-400/10 text-red-400 border-red-500/10">Wrong: <span className="font-bold">{wrong}</span></Badge>
+          {unanswered > 0 && <Badge variant={"secondary"}>Skip: <span className="font-bold">{unanswered}</span></Badge>}
         </div>
       );
     },
   },
-  {
-    accessorKey: "answered",
-    header: ({ column }) => <SortableHeader column={column} title="Answered" />,
-    cell: ({ row }) => (
-      <div className="text-muted-foreground flex flex-row gap-2">
-        <Badge variant={"secondary"}><CheckIcon /> Answered: {row.original.answered}</Badge>
-        <Badge variant={"secondary"}>
-          <CircleHelp />
-          Unanswered: {row.original.unanswered}
-        </Badge>
-      </div>
-    ),
-  },
+  // {
+  //   accessorKey: "answered",
+  //   header: ({ column }) => <SortableHeader column={column} title="Answered" />,
+  //   cell: ({ row }) => (
+  //     <div className="text-muted-foreground flex flex-row gap-2">
+  //       <Badge variant={"secondary"}><CheckIcon /> Answered: {row.original.answered}</Badge>
+  //       <Badge variant={"secondary"}>
+  //         <CircleHelp />
+  //         Unanswered: {row.original.unanswered}
+  //       </Badge>
+  //     </div>
+  //   ),
+  // },
   {
     accessorKey: "submittedAt",
     header: ({ column }) => (

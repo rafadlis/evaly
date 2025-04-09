@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { TooltipInfo } from "@/components/ui/tooltip";
 
 type SettingSectionProps = {
   title: string;
@@ -36,9 +37,9 @@ const SettingSection = ({
 }: SettingSectionProps) => (
   <div className="py-4 first:pt-0 last:pb-0">
     <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-20">
-      <div className="space-y-1">
+      <div className="flex flex-row gap-2 flex-wrap">
         <h2 className="text-sm font-semibold">{title}</h2>
-        <Label className="text-sm text-muted-foreground">{description}</Label>
+        <TooltipInfo size={"icon-xs"} variant={"ghost"} className="text-muted-foreground">{description}</TooltipInfo>
       </div>
       <div className="w-full flex flex-col gap-4">{children}</div>
     </div>
@@ -229,17 +230,23 @@ const Setting = () => {
 
                 {field.value === "after_completion" && (
                   <Label className="text-sm font-normal text-muted-foreground block">
-                    Participants will see their results immediately after submitting the test. Best for practice assessments where instant feedback is valuable.
+                    Participants will see their results immediately after
+                    submitting the test. Best for practice assessments where
+                    instant feedback is valuable.
                   </Label>
                 )}
                 {field.value === "after_test_end" && (
                   <Label className="text-sm font-normal text-muted-foreground block">
-                    Participants will see their results only after the scheduled end date of the test. Ideal for formal assessments where you want everyone to finish before seeing results.
+                    Participants will see their results only after the scheduled
+                    end date of the test. Ideal for formal assessments where you
+                    want everyone to finish before seeing results.
                   </Label>
                 )}
                 {field.value === "never" && (
                   <Label className="text-sm font-normal text-muted-foreground block">
-                    Results will only be visible to you as the administrator. Use this when you want to review responses before sharing results with participants.
+                    Results will only be visible to you as the administrator.
+                    Use this when you want to review responses before sharing
+                    results with participants.
                   </Label>
                 )}
               </>

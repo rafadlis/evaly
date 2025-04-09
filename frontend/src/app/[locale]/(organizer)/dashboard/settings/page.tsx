@@ -28,7 +28,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Controller, useForm } from "react-hook-form";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useMutation } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
@@ -51,27 +51,30 @@ const Settings = () => {
       <div className="flex flex-row gap-10 mt-10">
         <div className="w-[240px] flex flex-col gap-2 sticky top-24 h-max">
           <Button
+            size={"lg"}
             variant={tab === "general" ? "secondary" : "ghost"}
             className="w-full justify-start"
             onClick={() => setTab("general")}
           >
-            <SettingsIcon className="text-muted-foreground/50" />
+            <SettingsIcon className="text-muted-foreground" />
             General
           </Button>
           <Button
+            size={"lg"}
             variant={tab === "profile" ? "secondary" : "ghost"}
             className="w-full justify-start"
             onClick={() => setTab("profile")}
           >
-            <UserIcon className="text-muted-foreground/50" />
+            <UserIcon className="text-muted-foreground" />
             Profile
           </Button>
           <Button
+            size={"lg"}
             variant={tab === "organization" ? "secondary" : "ghost"}
             className="w-full justify-start"
             onClick={() => setTab("organization")}
           >
-            <Building2Icon className="text-muted-foreground/50" />
+            <Building2Icon className="text-muted-foreground" />
             Organization
           </Button>
         </div>
@@ -142,7 +145,6 @@ const Profile = () => {
     formState: { isDirty },
     handleSubmit,
     setValue,
-    watch,
   } = useForm<OrganizerUserUpdate & { imageFile?: File }>({
     defaultValues: {
       name: "",
@@ -150,7 +152,7 @@ const Profile = () => {
     },
   });
 
-  const imageFile = watch("imageFile");
+  const [previewURL, setPreviewURL] = useState<string | null>(null);
 
   useEffect(() => {
     reset({
@@ -159,6 +161,11 @@ const Profile = () => {
       image: data?.data?.user?.image,
     });
   }, [data, reset]);
+
+  const onImagePreviewChange = (e: File) => {
+    const objectUrl = URL.createObjectURL(e);
+    setPreviewURL(objectUrl);
+  };
 
   const { mutate: mutateUpdateProfile, isPending: isPendingUpdateProfile } =
     useMutation({
@@ -205,9 +212,9 @@ const Profile = () => {
               render={({ field }) => (
                 <div className="relative w-max">
                   <Avatar className="size-24">
-                    {imageFile ? (
+                    {previewURL ? (
                       <AvatarImage
-                        src={URL.createObjectURL(imageFile)}
+                        src={previewURL}
                         alt="Profile"
                         className="object-cover"
                       />
@@ -219,7 +226,8 @@ const Profile = () => {
                       />
                     ) : (
                       <AvatarFallback className="text-4xl">
-                        {data?.data?.user?.email?.charAt(0) || "U"}
+                        {data?.data?.user?.email?.charAt(0).toUpperCase() ||
+                          "U"}
                       </AvatarFallback>
                     )}
                   </Avatar>
@@ -242,9 +250,11 @@ const Profile = () => {
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) {
+                          // Set the file in the form
                           setValue("imageFile", file, {
                             shouldDirty: true,
                           });
+                          onImagePreviewChange(file);
                         }
                       }}
                       className="hidden"
@@ -292,7 +302,14 @@ const Profile = () => {
 
               <div className="flex justify-end gap-2 pt-4">
                 {isDirty ? (
-                  <Button type="button" variant="outline">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      reset();
+                      setPreviewURL(null);
+                    }}
+                  >
                     Cancel
                   </Button>
                 ) : null}
