@@ -88,6 +88,7 @@ export const columns: ColumnDef<Submission>[] = [
       const correct = row.original.correct as number;
       const wrong = row.original.wrong as number;
       const unanswered = row.original.unanswered as number;
+      const status = row.original.status;
 
       return (
         <div className="flex flex-row gap-2">
@@ -102,7 +103,8 @@ export const columns: ColumnDef<Submission>[] = [
           </Badge>
           {unanswered > 0 && (
             <Badge variant={"secondary"}>
-              Skip: <span className="font-bold">{unanswered}</span>
+              {status === "test-ended" || status === "completed" ? "Skipped: " : "Pending: "}
+              <span className="font-bold">{unanswered}</span>
             </Badge>
           )}
         </div>
