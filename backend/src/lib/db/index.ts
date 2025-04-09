@@ -1,7 +1,24 @@
-import { drizzle } from "drizzle-orm/bun-sql";
-import * as schema from "./schema";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 import { env } from "../env";
+import * as schema from "./schema";
 
-const db = drizzle(env.DATABASE_URL, { schema });
+const primaryDb = drizzle(
+  new Pool({
+    connectionString: env.DATABASE_URL,
+  }),
+  {
+    schema,
+  }
+);
 
-export default db;
+// const readUsEast1Db = drizzle(
+//   new Pool({
+//     connectionString: env.DATABASE_URL,
+//   }),
+//   {
+//     schema,
+//   }
+// );
+
+export default primaryDb;

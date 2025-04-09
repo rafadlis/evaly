@@ -6,7 +6,7 @@ import { swagger } from "@elysiajs/swagger";
 import { participantRouter } from "./router/participant/participant.router";
 import { opentelemetry } from "./lib/opentelemetery";
 
-const app = new Elysia()
+export const app = new Elysia()
   .use(cors())
   .use(swagger())
   .use(opentelemetry())
