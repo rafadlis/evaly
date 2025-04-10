@@ -338,7 +338,7 @@ const Share = () => {
         </div>
       </div>
 
-      <Card className="border rounded-lg">
+      <Card className="border">
         <CardHeader className="pb-2 border-b border-dashed">
           <CardTitle className="flex items-center gap-2">
             <Share2 className="h-5 w-5" />
@@ -401,7 +401,7 @@ const Share = () => {
                 </Button>
               </div>
 
-              <div className="bg-muted/50 p-4 rounded-md flex items-start gap-3">
+              <div className="bg-muted/50 p-4 flex items-start gap-3">
                 <Info className="h-5 w-5 text-blue-500 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium">
@@ -420,7 +420,7 @@ const Share = () => {
 
             {isInviteOnly && (
               <TabsContent value="email" className="space-y-4">
-                <div className="bg-muted/50 p-4 rounded-md">
+                <div className="bg-muted/50 p-4">
                   <p className="text-sm">
                     Send email invitations to specific participants. Only
                     invited participants will be able to access the test.
@@ -647,9 +647,9 @@ const Share = () => {
             )}
 
             <TabsContent value="qr" className="space-y-4">
-              <div className="flex flex-col md:flex-row items-start gap-6 p-4 bg-background rounded-md">
+              <div className="flex flex-col md:flex-row items-start gap-6 p-4 bg-background">
                 <div
-                  className="relative bg-background p-4 rounded-md border"
+                  className="relative bg-background p-4 border"
                   ref={qrCodeRef}
                 >
                   <QRCodeSVG
@@ -672,7 +672,7 @@ const Share = () => {
                       alt="Logo"
                       width={logoSize}
                       height={logoSize}
-                      className="qr-logo rounded-md"
+                      className="qr-logo"
                     />
                   </div>
                 </div>
@@ -775,7 +775,7 @@ const Share = () => {
         </CardContent>
       </Card>
 
-      <Card className="border rounded-lg">
+      <Card className="border">
         <CardHeader className="pb-2 border-b border-dashed">
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
@@ -811,7 +811,7 @@ const Share = () => {
               </Badge>
             </div>
 
-            <div className="bg-muted/50 p-4 rounded-md flex flex-col sm:flex-row items-start gap-3">
+            <div className="bg-muted/50 p-4 flex flex-col sm:flex-row items-start gap-3">
               <Info className="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
               <div className="flex-1">
                 <p className="text-sm font-medium">
@@ -873,7 +873,7 @@ const Share = () => {
                 <h4 className="text-sm font-medium mb-2">
                   Invited Participants Status
                 </h4>
-                <ScrollArea className="h-[200px] rounded-md border">
+                <ScrollArea className="h-[200px] border">
                   <div className="p-4 space-y-2">
                     {invitedParticipants.map((participant) => {
                       const hasStarted = activeParticipants.some(
@@ -883,7 +883,7 @@ const Share = () => {
                       return (
                         <div
                           key={participant.id}
-                          className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-2 px-3 rounded-md hover:bg-muted/50"
+                          className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-2 px-3 hover:bg-muted/50"
                         >
                           <div className="flex items-center gap-2">
                             <Avatar className="h-8 w-8 hidden sm:inline-flex">

@@ -2,7 +2,6 @@
   "name": "evaly",
   "private": true,
   "scripts": {
-    "prepare": "bun --filter @evaly/backend prepare",
     "check-types": "tsc --noEmit",
     "db:migrate": "bun --filter @evaly/backend db:migrate",
     "db:studio": "bun --filter @evaly/backend db:studio",
