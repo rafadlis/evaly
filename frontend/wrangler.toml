@@ -1,0 +1,12 @@
+  main = ".open-next/worker.js"
+  name = "evaly"
+  compatibility_date = "2025-03-25"
+  compatibility_flags = ["nodejs_compat"]
+
+  [assets]
+  directory = ".open-next/assets"
+  binding = "ASSETS"
+  
+  [vars]
+  NEXT_PUBLIC_URL= "evaly.fahreziadh.workers.dev"
+  NEXT_PUBLIC_API_URL = "https://api-staging.evaly.io"

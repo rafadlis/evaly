@@ -2,7 +2,6 @@
   "name": "evaly",
   "private": true,
   "scripts": {
-    "prepare": "bun --filter @evaly/backend prepare",
     "check-types": "tsc --noEmit",
     "db:migrate": "bun --filter @evaly/backend db:migrate",
     "db:studio": "bun --filter @evaly/backend db:studio",
@@ -16,5 +15,6 @@
   "workspaces": [
     "backend",
     "frontend"
-  ]
+  ],
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }
