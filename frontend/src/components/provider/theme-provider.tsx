@@ -14,11 +14,11 @@ export function ThemeProvider({
 
   React.useEffect(() => {
     if (fontMono) {
-      document.documentElement.classList.add("font-mono");
+      document.documentElement.classList.remove("font-sans");
     } else {
-      document.documentElement.classList.remove("font-mono");
+      document.documentElement.classList.add("font-sans");
     }
   }, [fontMono]);
 
-  return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
+  return <NextThemesProvider  {...props}>{children}</NextThemesProvider>;
 }

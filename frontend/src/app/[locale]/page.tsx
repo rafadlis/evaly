@@ -20,7 +20,7 @@ export default function HomePage() {
     <div className="flex flex-col min-h-screen bg-background">
       {/* Navigation */}
       <header className="sticky top-0 z-50 bg-background">
-        <div className="flex items-center justify-between py-3 px-3 md:px-6">
+        <div className="flex items-center justify-between py-3 container">
           <LogoType href="/" />
           <div className="flex items-center gap-4">
             <DialogSelectLanguage />

@@ -33,7 +33,7 @@ export const BenefitsSection = () => {
       <div className="container">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl font-bold">{t('title')}</h2>
-          <div className="text-sm px-3 py-1 rounded-full bg-foreground/10 text-foreground">
+          <div className="text-sm px-3 py-1 bg-foreground/10 text-foreground">
             {t('competitiveEdge')}
           </div>
         </div>
@@ -45,9 +45,9 @@ export const BenefitsSection = () => {
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.4, delay: Math.floor(i / 2) * 0.1 }}
               viewport={{ once: true }}
-              className="flex gap-4 p-4 rounded-xl hover:bg-foreground/[0.02] transition-colors duration-300 border border-border/40"
+              className="flex gap-4 p-4 hover:bg-foreground/[0.02] transition-colors duration-300 border border-border/40"
             >
-              <div className="bg-foreground/10 h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="bg-foreground/10 h-10 w-10 flex items-center justify-center flex-shrink-0">
                 <CheckCircle className="h-5 w-5 text-foreground" />
               </div>
               <div>

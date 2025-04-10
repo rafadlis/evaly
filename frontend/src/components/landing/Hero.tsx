@@ -14,35 +14,26 @@ export const Hero = () => {
   
   return (
     <section className="py-24 relative overflow-hidden">
-      {/* Background elements */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute right-0 top-1/4 w-96 h-96 bg-primary/5 rounded-full filter blur-[120px]"></div>
-        <div className="absolute left-0 bottom-1/4 w-96 h-96 bg-foreground/5 rounded-full filter blur-[120px]"></div>
-      </div>
-
       <div className="container max-w-3xl">
         {/* Content */}
         <MotionDiv
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
           className="max-w-4xl text-center mx-auto flex flex-col items-center"
         >
           <Button
             variant={"outline"}
-            className="p-1 pr-3 rounded-full h-max mb-2"
+            className="p-1 pr-3  h-max mb-2"
           >
             <Badge>
               {t('hero.badge')}
               <Wand2 />
             </Badge>
-            <div className="h-1 w-1 rounded-full bg-border"></div>
+            <div className="h-1 w-1 bg-border"></div>
             <div className="text-xs text-muted-foreground">
               {t('hero.title')}
             </div>
           </Button>
 
-          <h1 className="text-balance text-4xl font-bold mb-4 mt-4">
+          <h1 className="text-balance text-3xl md:text-5xl lg:text-6xl font-medium mb-6 mt-6 font-serif">
             {t('hero.heading')}
           </h1>
 

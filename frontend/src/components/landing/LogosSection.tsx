@@ -19,9 +19,6 @@ export const LogosSection = () => {
           {logoKeys.map((key, i) => (
             <MotionDiv
               key={i}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
               className="text-muted-foreground/70 font-medium"
             >
               {t(`logos.${key}`)}

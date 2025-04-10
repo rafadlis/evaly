@@ -48,7 +48,7 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} suppressHydrationWarning className={`${interSans.variable} ${geistMono.variable}`}>
+    <html lang={locale} suppressHydrationWarning className={`${interSans.variable} ${geistMono.variable} font-mono`}>
      {/* <ReactScan /> */}
       <body
         className={`antialiased min-h-svh flex flex-col`}
