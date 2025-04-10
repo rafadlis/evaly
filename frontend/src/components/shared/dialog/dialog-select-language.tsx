@@ -37,7 +37,7 @@ const DialogSelectLanguage = () => {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="ghost" size={"icon"}>
-          <Image className="rounded-[2px]" src={localesWithLabels[activeLocale].flag} alt={localesWithLabels[activeLocale].label} width={16} height={16} />
+          <Image className="rounded-[2px] border" src={localesWithLabels[activeLocale].flag} alt={localesWithLabels[activeLocale].label} width={18} height={18} />
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-[400px]">
@@ -61,7 +61,6 @@ const DialogSelectLanguage = () => {
                     router.replace(pathname, { locale });
                   });
                 }}
-                size={"lg"}
                 key={locale}
                 disabled={transition}
                 variant={locale === activeLocale ? "default" : "ghost"}

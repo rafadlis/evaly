@@ -329,5 +329,11 @@
     "continueButton": "Продолжить",
     "deleteButton": "Удалить",
     "deletingStatus": "Удаление..."
+  },
+  "Navbar": {
+    "dashboard": "Панель управления",
+    "question": "Вопрос",
+    "participant": "Участник",
+    "settings": "Настройки"
   }
 } 

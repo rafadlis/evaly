@@ -329,5 +329,11 @@
     "continueButton": "Continuar",
     "deleteButton": "Eliminar",
     "deletingStatus": "Eliminando..."
+  },
+  "Navbar": {
+    "dashboard": "Tablero",
+    "question": "Pregunta",
+    "participant": "Participante",
+    "settings": "Configuración"
   }
 } 

@@ -16,7 +16,7 @@ const ThemeToggle = () => {
   if (!mounted)
     return (
       <Button variant="ghost" size="icon" className="hidden sm:flex">
-      <Loader2 className="h-5 w-5 animate-spin" />
+      <Loader2 className="size-4 animate-spin" />
     </Button>
   );
   return (
@@ -27,9 +27,9 @@ const ThemeToggle = () => {
       className="hidden sm:flex"
     >
       {theme === "light" ? (
-        <Sun className="h-5 w-5" />
+        <Sun className="size-4" />
       ) : (
-        <Moon className="h-5 w-5" />
+        <Moon className="size-4" />
       )}
     </Button>
   );

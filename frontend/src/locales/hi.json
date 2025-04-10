@@ -329,5 +329,11 @@
     "continueButton": "जारी रखें",
     "deleteButton": "हटाएं",
     "deletingStatus": "हटा रहा है..."
+  },
+  "Navbar": {
+    "dashboard": "डैशबोर्ड",
+    "question": "प्रश्न",
+    "participant": "प्रतिभागी",
+    "settings": "सेटिंग्स"
   }
 } 

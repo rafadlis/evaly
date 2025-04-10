@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Menu,
   X,
@@ -21,34 +21,39 @@ import ThemeToggle from "./theme-toggle";
 import { usePathname } from "@/i18n/navigation";
 import AdminAccount from "./account/admin-account";
 import DialogSelectLanguage from "./dialog/dialog-select-language";
+import { useTranslations } from "next-intl";
 
-const navItems = [
-  {
-    name: "Dashboard",
-    href: "/dashboard",
-    icon: <Home className="size-3.5 mr-1.5" />,
-  },
-  {
-    name: "Question",
-    href: "/dashboard/question",
-    icon: <BookOpen className="size-3.5 mr-1.5" />,
-  },
-  {
-    name: "Participant",
-    href: "/dashboard/participant",
-    icon: <UserCircle className="size-3.5 mr-1.5" />,
-  },
-  {
-    name: "Settings",
-    href: "/dashboard/settings",
-    icon: <Cog className="size-3.5 mr-1.5" />,
-  },
-];
+
+
 export function DashboardNavbar({ className }: { className?: string }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const [activeItem, setActiveItem] = useState("/dashboard");
   const { setTheme, theme } = useTheme();
+  const t = useTranslations("Navbar");
+
+  const navItems = useMemo(() =>[
+    {
+      name: t("dashboard"),
+      href: "/dashboard",
+      icon: <Home className="size-3.5 mr-1.5" />,
+    },
+    {
+      name: t("question"),
+      href: "/dashboard/question",
+      icon: <BookOpen className="size-3.5 mr-1.5" />,
+    },
+    {
+      name: t("participant"),
+      href: "/dashboard/participant",
+      icon: <UserCircle className="size-3.5 mr-1.5" />,
+    },
+    {
+      name: t("settings"),
+      href: "/dashboard/settings",
+      icon: <Cog className="size-3.5 mr-1.5" />,
+    },
+  ], [t]);
 
   useEffect(() => {
     // Set active item based on pathname or keep it as state for demo
@@ -68,7 +73,7 @@ export function DashboardNavbar({ className }: { className?: string }) {
         }
       }
     }
-  }, [pathname]);
+  }, [pathname, navItems]);
 
 
   return (
@@ -85,17 +90,17 @@ export function DashboardNavbar({ className }: { className?: string }) {
             <LogoType href="/dashboard" />
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center ml-16 gap-2">
+            <div className="hidden md:flex items-center ml-20 gap-6">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "text-muted-foreground transition-colors hover:text-primary px-3 py-1.5 font-medium text-sm flex items-center",
+                    "text-muted-foreground transition-colors hover:text-primary font-medium text-sm flex items-center",
                     // Special case for dashboard
                     item.href === "/dashboard" 
-                      ? (pathname === "/dashboard" || pathname.startsWith("/dashboard/test")) && "text-primary bg-secondary"
-                      : pathname.startsWith(item.href) && "text-primary bg-secondary"
+                      ? (pathname === "/dashboard" || pathname.startsWith("/dashboard/test")) && "font-bold text-primary"
+                      : pathname.startsWith(item.href) && "font-bold text-primary"
                   )}
                 >
                   {/* {item.icon} */}

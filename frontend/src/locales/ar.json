@@ -329,5 +329,11 @@
     "continueButton": "متابعة",
     "deleteButton": "حذف",
     "deletingStatus": "جاري الحذف..."
+  },
+  "Navbar": {
+    "dashboard": "لوحة التحكم",
+    "question": "الأسئلة",
+    "participant": "المشاركون",
+    "settings": "الإعدادات"
   }
 } 

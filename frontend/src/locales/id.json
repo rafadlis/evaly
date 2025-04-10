@@ -2,7 +2,7 @@
   "HomePage": {
     "title": "Halo Dunia!",
     "about": "Pergi ke halaman informasi",
-    "dashboard": "Dasbor",
+    "dashboard": "Dashboard",
     "hero": {
       "badge": "Didukung oleh AI",
       "title": "Membuat Ujian Online Mudah, Aman, dan Cerdas",
@@ -328,5 +328,11 @@
     "continueButton": "Lanjutkan",
     "deleteButton": "Hapus",
     "deletingStatus": "Menghapus..."
+  },
+  "Navbar": {
+    "dashboard": "Dashboard",
+    "question": "Pertanyaan",
+    "participant": "Peserta",
+    "settings": "Pengaturan"
   }
 }

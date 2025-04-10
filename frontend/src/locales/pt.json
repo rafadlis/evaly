@@ -329,5 +329,11 @@
     "continueButton": "Continuar",
     "deleteButton": "Excluir",
     "deletingStatus": "Excluindo..."
+  },
+  "Navbar": {
+    "dashboard": "Painel",
+    "question": "Pergunta",
+    "participant": "Participante",
+    "settings": "Configurações"
   }
 } 

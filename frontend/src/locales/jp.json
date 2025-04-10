@@ -329,5 +329,11 @@
     "continueButton": "続行",
     "deleteButton": "削除",
     "deletingStatus": "削除中..."
+  },
+  "Navbar": {
+    "dashboard": "ダッシュボード",
+    "question": "問題",
+    "participant": "参加者",
+    "settings": "設定"
   }
 }

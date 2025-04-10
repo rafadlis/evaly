@@ -329,5 +329,11 @@
     "continueButton": "继续",
     "deleteButton": "删除",
     "deletingStatus": "删除中..."
+  },
+  "Navbar": {
+    "dashboard": "仪表盘",
+    "question": "问题",
+    "participant": "参与者",
+    "settings": "设置"
   }
 } 

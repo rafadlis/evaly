@@ -329,5 +329,11 @@
     "continueButton": "Continuer",
     "deleteButton": "Supprimer",
     "deletingStatus": "Suppression en cours..."
+  },
+  "Navbar": {
+    "dashboard": "Tableau de bord",
+    "question": "Question",
+    "participant": "Participant",
+    "settings": "Paramètres"
   }
 } 
