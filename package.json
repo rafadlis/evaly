@@ -7,7 +7,9 @@
     "db:studio": "bun --filter @evaly/backend db:studio",
     "dev:be": "bun --filter @evaly/backend dev",
     "dev:fe": "bun --filter @evaly/frontend dev",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "deploy:fe": "bun --filter @evaly/frontend deploy",
+    "deploy:be": "bun --filter @evaly/backend deploy"
   },
   "keywords": [],
   "author": "",
