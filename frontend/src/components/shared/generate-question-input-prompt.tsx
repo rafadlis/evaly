@@ -31,14 +31,14 @@ interface Props {
   className?: string;
   order?: number;
   referenceId?: string;
-  testId?: string
+  testId?: string;
 }
 
 const GenerateQuestionInputPrompt = ({
   className,
   order,
   referenceId,
-  testId
+  testId,
 }: Props) => {
   const autoComplete: string[] = [];
   const router = useRouter();
@@ -83,10 +83,17 @@ const GenerateQuestionInputPrompt = ({
       }
 
       startTransition(() => {
-        router.push(
-          `/dashboard/question/generate/${data.templateCreated?.id}?order=${order}&referenceid=${referenceId}&testid=${testId}`,
-          { scroll: true }
-        );
+        if (testId) {
+          router.push(
+            `/dashboard/question/generate/${data.templateCreated?.id}?order=${order}&referenceid=${referenceId}&testid=${testId}`,
+            { scroll: true }
+          );
+        } else {
+          router.push(
+            `/dashboard/question/generate/${data.templateCreated?.id}`,
+            { scroll: true }
+          );
+        }
       });
 
       // return res.data;
@@ -189,7 +196,7 @@ const GenerateQuestionInputPrompt = ({
             onKeyDown={handleKeyDown}
             placeholder="Enter prompt or paste content to generate questions..."
             className={cn(
-              "w-full min-h-[120px] border-primary/50 focus-visible:border-primary overflow-clip text-sm md:text-base p-4 [&::placeholder]:whitespace-pre-rap resize-none focus-visible:ring-0 focus-visible:outline-0 focus-visible:ring-offset-0 transition-all duration-200",
+              "w-full min-h-[120px] border-border focus-visible:border-border overflow-clip text-sm md:text-base p-4 [&::placeholder]:whitespace-pre-rap resize-none focus-visible:ring-0 focus-visible:outline-0 focus-visible:ring-offset-0 transition-all duration-200",
               autoComplete.length > 0
                 ? "focus-visible:border-b-transparent rounded-b-none"
                 : ""

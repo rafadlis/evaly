@@ -1,14 +1,4 @@
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -29,6 +19,17 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import GenerateQuestionInputPrompt from "../generate-question-input-prompt";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import ImportQuestions from "../import-questions";
 
 const DialogAddQuestion = ({
   order = 1,
@@ -36,7 +37,7 @@ const DialogAddQuestion = ({
   onSuccessCreateQuestion,
   triggerButton,
   showTabsOption = true,
-  testId
+  testId,
 }: {
   testId?: string;
   order?: number;
@@ -55,7 +56,7 @@ const DialogAddQuestion = ({
         const question: InsertQuestion = {
           referenceId,
           order,
-          type: typeSelected
+          type: typeSelected,
         };
 
         if (
@@ -108,8 +109,8 @@ const DialogAddQuestion = ({
   }, []);
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
+    <Drawer open={isOpen} onOpenChange={setIsOpen}>
+      <DrawerTrigger asChild>
         {triggerButton ? (
           triggerButton
         ) : (
@@ -117,15 +118,15 @@ const DialogAddQuestion = ({
             <Plus /> Add question
           </Button>
         )}
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-none h-dvh flex flex-col p-0">
+      </DrawerTrigger>
+      <DrawerContent className="sm:max-w-none h-dvh flex flex-col p-0">
         <div className="container max-w-2xl overflow-y-auto pt-[14vh] pb-20">
-          <DialogHeader>
-            <DialogTitle>Add Question</DialogTitle>
-            <DialogDescription>
+          <DrawerHeader className="p-0">
+            <DrawerTitle>Add Question</DrawerTitle>
+            <DrawerDescription>
               Select the question type you want to add
-            </DialogDescription>
-          </DialogHeader>
+            </DrawerDescription>
+          </DrawerHeader>
           <Tabs defaultValue="manual" className="mt-4 space-y-6">
             {showTabsOption ? (
               <TabsList className="divide-x gap-0 divide-dashed divide-foreground/5">
@@ -183,24 +184,7 @@ const DialogAddQuestion = ({
             </TabsContent>
 
             <TabsContent value="import">
-              <div className="border border-dashed p-4 flex flex-col">
-                <Label className="font-semibold mb-2">Import Questions</Label>
-                <Label className="mb-4">
-                  Upload document to generate questions
-                </Label>
-                <div className="flex flex-row gap-2">
-                  <Input
-                    type="file"
-                    className="mt-2"
-                    accept=".pdf,.xlsx,.xls,.csv,.json"
-                  />
-                  <Button className="mt-2">Import</Button>
-                </div>
-                <div className="text-sm text-muted-foreground mt-4 space-x-2">
-                  <span>Supported formats:</span>
-                  <span>.pdf, .xlsx, .xls, .csv, .json</span>
-                </div>
-              </div>
+               <ImportQuestions />
             </TabsContent>
 
             <TabsContent value="template">
@@ -226,21 +210,23 @@ const DialogAddQuestion = ({
             </TabsContent>
 
             <TabsContent value="ai">
-              <div className="max-w-2xl w-full">
-                <GenerateQuestionInputPrompt order={order} referenceId={referenceId} testId={testId}/>
-              </div>
+              <GenerateQuestionInputPrompt
+                order={order}
+                referenceId={referenceId}
+                testId={testId}
+              />
             </TabsContent>
           </Tabs>
         </div>
         <div className="fixed bottom-0 left-0 right-0 border-t border-dashed bg-background">
-          <DialogFooter className="sm:justify-start mt-0 py-4 container max-w-2xl">
-            <DialogClose asChild>
-              <Button variant={"outline"}>Back</Button>
-            </DialogClose>
-          </DialogFooter>
+          <DrawerFooter className="sm:justify-start mt-0 py-4 container max-w-2xl">
+            <DrawerClose asChild>
+              <Button variant={"outline"} className="w-max">Back</Button>
+            </DrawerClose>
+          </DrawerFooter>
         </div>
-      </DialogContent>
-    </Dialog>
+      </DrawerContent>
+    </Drawer>
   );
 };
 
