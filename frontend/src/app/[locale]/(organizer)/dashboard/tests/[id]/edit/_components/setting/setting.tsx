@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TooltipInfo } from "@/components/ui/tooltip";
+import { useTranslations } from "next-intl";
 
 type SettingSectionProps = {
   title: string;
@@ -47,6 +48,8 @@ const SettingSection = ({
 );
 
 const Setting = () => {
+  const t = useTranslations("TestDetail");
+  const tCommon = useTranslations("Common");
   const { id: testId } = useParams();
   const { isPending, data } = useTestByIdQuery({
     id: testId?.toString() || "",
@@ -70,7 +73,7 @@ const Setting = () => {
     },
     onSuccess(data) {
       if (!data) {
-        throw new Error("Failed to update test. Please try again later.");
+        throw new Error(tCommon("genericUpdateError"));
       }
 
       reset(data);
@@ -95,16 +98,15 @@ const Setting = () => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col divide-y divide-dashed">
         <SettingSection
-          title="Type"
-          description="This determines how candidates will interact with your assessment."
+          title={t("type")}
+          description={t("typeDescription")}
         >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Card className="w-full p-3 border-foreground cursor-pointer relative">
               <CheckCircle2 size={18} className="absolute top-2 right-2" />
-              <h3 className="font-medium mb-2">Self-paced Test</h3>
+              <h3 className="font-medium mb-2">{t("selfPacedTest")}</h3>
               <Label className="font-normal">
-                Allow candidates to take the test at their own pace. Ideal for
-                screening and pre-assessment purposes.
+                {t("selfPacedTestDescription")}
               </Label>
             </Card>
 
@@ -113,18 +115,17 @@ const Setting = () => {
                 size={18}
                 className="absolute top-2 right-2 opacity-50"
               />
-              <h3 className="font-medium mb-2">Live Test</h3>
+              <h3 className="font-medium mb-2">{t("liveTest")}</h3>
               <Label className="font-normal">
-                Schedule a synchronized test for all candidates. Ideal for final
-                assessments and examinations.
+                {t("liveTestDescription")}
               </Label>
             </Card>
           </div>
         </SettingSection>
 
         <SettingSection
-          title="Access"
-          description="Control who can access your test. Public tests are visible to anyone."
+          title={t("access")}
+          description={t("accessDescription")}
         >
           <Controller
             name="access"
@@ -141,13 +142,12 @@ const Setting = () => {
                 }}
               >
                 <TabsList className="mb-2">
-                  <TabsTrigger value="public">Public</TabsTrigger>
-                  <TabsTrigger value="invite-only">Invite Only</TabsTrigger>
+                  <TabsTrigger value="public">{t("public")}</TabsTrigger>
+                  <TabsTrigger value="invite-only">{t("inviteOnly")}</TabsTrigger>
                 </TabsList>
                 <TabsContent value="public">
                   <Label className="text-sm font-normal">
-                    Anyone with the link can access and take this test. The test
-                    will be publicly listed on your profile.
+                    {t("publicDescription")}
                   </Label>
                 </TabsContent>
                 <TabsContent value="invite-only">
@@ -159,8 +159,8 @@ const Setting = () => {
         </SettingSection>
 
         <SettingSection
-          title="Section Selection Mode"
-          description="Control how candidates will navigate through the test sections."
+          title={t("sectionSelectionMode")}
+          description={t("sectionSelectionModeDescription")}
         >
           <Controller
             name="sectionSelectionMode"
@@ -176,18 +176,17 @@ const Setting = () => {
                 }}
               >
                 <TabsList className="mb-2">
-                  <TabsTrigger value="random">Random</TabsTrigger>
-                  <TabsTrigger value="sequential">Sequential</TabsTrigger>
+                  <TabsTrigger value="random">{t("random")}</TabsTrigger>
+                  <TabsTrigger value="sequential">{t("sequential")}</TabsTrigger>
                 </TabsList>
                 <TabsContent value="random">
                   <Label className="text-sm font-normal">
-                    Candidates will be able to choose any section to start with.
+                    {t("randomDescription")}
                   </Label>
                 </TabsContent>
                 <TabsContent value="sequential">
                   <Label className="text-sm font-normal">
-                    Candidates will navigate through sections in a predetermined
-                    order.
+                    {t("sequentialDescription")}
                   </Label>
                 </TabsContent>
               </Tabs>
@@ -196,8 +195,8 @@ const Setting = () => {
         </SettingSection>
 
         <SettingSection
-          title="Result Visibility"
-          description="Control when participants can see their test results."
+          title={t("resultVisibility")}
+          description={t("resultVisibilityDescription")}
         >
           <Controller
             name="resultVisibility"
@@ -217,36 +216,30 @@ const Setting = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="after_completion">
-                      <Timer className="h-4 w-4 mr-2" /> After Completion
+                      <Timer className="h-4 w-4 mr-2" /> {t("afterCompletion")}
                     </SelectItem>
                     <SelectItem value="after_test_end">
-                      <Clock className="h-4 w-4 mr-2" /> After Test End
+                      <Clock className="h-4 w-4 mr-2" /> {t("afterTestEnd")}
                     </SelectItem>
                     <SelectItem value="never">
-                      <ShieldOff className="h-4 w-4 mr-2" /> Do not show results
+                      <ShieldOff className="h-4 w-4 mr-2" /> {t("never")}
                     </SelectItem>
                   </SelectContent>
                 </Select>
 
                 {field.value === "after_completion" && (
                   <Label className="text-sm font-normal text-muted-foreground block">
-                    Participants will see their results immediately after
-                    submitting the test. Best for practice assessments where
-                    instant feedback is valuable.
+                    {t("afterCompletionDescription")}
                   </Label>
                 )}
                 {field.value === "after_test_end" && (
                   <Label className="text-sm font-normal text-muted-foreground block">
-                    Participants will see their results only after the scheduled
-                    end date of the test. Ideal for formal assessments where you
-                    want everyone to finish before seeing results.
+                    {t("afterTestEndDescription")}
                   </Label>
                 )}
                 {field.value === "never" && (
                   <Label className="text-sm font-normal text-muted-foreground block">
-                    Results will only be visible to you as the administrator.
-                    Use this when you want to review responses before sharing
-                    results with participants.
+                    {t("neverDescription")}
                   </Label>
                 )}
               </>
@@ -255,15 +248,15 @@ const Setting = () => {
         </SettingSection>
 
         <SettingSection
-          title="Description"
-          description="Add a description to provide more information about your test to candidates."
+          title={t("description")}
+          description={t("descriptionDescription")}
         >
           <Controller
             name="description"
             control={control}
             render={({ field }) => (
               <Textarea
-                placeholder="Type test's description here...."
+                placeholder={t("descriptionPlaceholder")}
                 value={field.value || ""}
                 className="resize-none min-h-[140px] text-base p-4 w-full"
                 onChange={field.onChange}
@@ -280,7 +273,7 @@ const Setting = () => {
             type="submit"
             variant={isDirty ? "default" : "outline-solid"}
           >
-            {isPendingUpdateTest ? "Saving..." : "Save changes"}
+            {isPendingUpdateTest ? tCommon("savingStatus") : tCommon("saveChanges")}
           </Button>
         </div>
       </div>

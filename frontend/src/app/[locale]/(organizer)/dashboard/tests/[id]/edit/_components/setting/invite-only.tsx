@@ -1,24 +1,24 @@
 import { Button } from "@/components/ui/button";
 import {
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import { $api } from "@/lib/api";
 import { useTestInvitationByTestId } from "@/query/organization/test/use-test-invitation-by-test-id";
@@ -28,8 +28,11 @@ import { useMutation } from "@tanstack/react-query";
 import { ChevronRight, Loader2, XIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 const InviteOnly = ({ testId }: { testId: string }) => {
+  const t = useTranslations("TestDetail");
+  const tCommon = useTranslations("Common");
   const { data, isPending } = useTestInvitationByTestId(testId);
   const [emailInput, setEmailInput] = useState("");
   const [listInvited, setListInvited] = useState<TestInvitation[]>([]);
@@ -55,7 +58,7 @@ const InviteOnly = ({ testId }: { testId: string }) => {
       }
 
       if (response.data && response.data.data.length > 0) {
-        toast.success(`${response.data.data.length} participants added`);
+        toast.success(`${response.data.data.length} ${t("participantsAdded")}`);
         setListInvited([...listInvited, ...response.data.data]);
       }
 
@@ -85,7 +88,7 @@ const InviteOnly = ({ testId }: { testId: string }) => {
       }
 
       if (response.data) {
-        toast.success("Participant removed");
+        toast.success(t("participantRemoved"));
         setListInvited(listInvited.filter((item) => item.email !== email));
       }
 
@@ -96,7 +99,7 @@ const InviteOnly = ({ testId }: { testId: string }) => {
   return (
     <div>
       <Label className="text-sm">
-        Only candidates with an invitation can access and take this
+        {t("inviteOnlyDescription")}
       </Label>
       <div className="mt-4 p-4 border">
         <div className="flex flex-row gap-2">
@@ -141,7 +144,7 @@ const InviteOnly = ({ testId }: { testId: string }) => {
             {isPendingAddInvitedParticipant ? (
               <Loader2 className="animate-spin" />
             ) : (
-              "Add"
+              tCommon("add")
             )}
           </Button>
         </div>
@@ -183,29 +186,29 @@ const InviteOnly = ({ testId }: { testId: string }) => {
           ))}
           {listInvitedPreview?.length === 0 ? (
             <div className="text-muted-foreground">
-              No invited participants, start by adding one
+              {t("noInvitedParticipants")}
             </div>
           ) : (
             <Dialog>
               <DialogTrigger asChild>
                 <Button rounded variant={"secondary"} className="h-9">
-                  See detail <ChevronRight className="size-4" />
+                  {t("seeDetail")} <ChevronRight className="size-4" />
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Invited Participants</DialogTitle>
+                  <DialogTitle>{t("invitedParticipants")}</DialogTitle>
                   <DialogDescription>
-                    {listInvited.length} participants invited
+                    {listInvited.length} {t("participantsInvited")}
                   </DialogDescription>
                 </DialogHeader>
                 <ScrollArea className="h-[50vh]">
                   <Table>
                     <TableHeader className="sticky top-0 bg-background">
                       <TableRow>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Action</TableHead>
+                        <TableHead>{t("email")}</TableHead>
+                        <TableHead>{t("name")}</TableHead>
+                        <TableHead>{t("action")}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -244,7 +247,7 @@ const InviteOnly = ({ testId }: { testId: string }) => {
                 </ScrollArea>
                 <DialogFooter>
                   <DialogClose asChild>
-                    <Button variant={"outline"}>Close</Button>
+                    <Button variant={"outline"}>{tCommon("close")}</Button>
                   </DialogClose>
                 </DialogFooter>
               </DialogContent>
@@ -257,7 +260,7 @@ const InviteOnly = ({ testId }: { testId: string }) => {
           )}
           {listInvited.length > 10 ? (
             <Button rounded variant={"outline"} className="h-9">
-              ...
+              {t("seeDetail")} <ChevronRight className="size-4" />
             </Button>
           ) : null}
         </div>

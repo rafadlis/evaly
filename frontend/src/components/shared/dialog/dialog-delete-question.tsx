@@ -12,6 +12,7 @@ import { $api } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { Trash2Icon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -41,6 +42,8 @@ const DialogDeleteQuestion = ({
   questionId: string;
   onSuccess: () => void;
 }) => {
+  const t = useTranslations("Questions");
+  const tCommon = useTranslations("Common");
   const [open, setOpen] = useState(false);
 
   const { mutate: deleteQuestion, isPending } = useMutation({
@@ -67,9 +70,9 @@ const DialogDeleteQuestion = ({
       <DialogTrigger asChild>{dialogTrigger}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Are you sure want to delete this question?</DialogTitle>
+          <DialogTitle>{t("deleteQuestionTitle")}</DialogTitle>
           <DialogDescription>
-            All information related to this question will be removed
+            {t("deleteQuestionDescription")}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -80,7 +83,7 @@ const DialogDeleteQuestion = ({
               setOpen(false);
             }}
           >
-            Back
+            {tCommon("backButton")}
           </Button>
           <Button
             variant={"destructive"}
@@ -90,7 +93,7 @@ const DialogDeleteQuestion = ({
               deleteQuestion();
             }}
           >
-            {isPending ? "Deleting..." : "Delete"}
+            {isPending ? tCommon("deletingStatus") : tCommon("deleteButton")}
           </Button>
         </DialogFooter>
       </DialogContent>

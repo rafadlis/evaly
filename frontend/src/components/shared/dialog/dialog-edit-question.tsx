@@ -36,6 +36,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useTranslations } from "next-intl";
 
 dayjs.extend(relativeTime);
 
@@ -51,6 +52,8 @@ const DialogEditQuestion = ({
   onSuccess?: (question: Question) => void;
   onClose?: () => void;
 }) => {
+  const t = useTranslations("Questions");
+  const tCommon = useTranslations("Common");
   const [open, setOpen] = useState(false);
   const [questionTextLength, setQuestionTextLength] = useState(0);
 
@@ -262,12 +265,12 @@ const DialogEditQuestion = ({
                     typeof field.value === "number" ? (
                       <div className="flex flex-row gap-2 items-center relative">
                         <Label className="absolute left-2.5 text-xs text-muted-foreground/80 pt-0.5">
-                          Point:
+                          {t("point")}
                         </Label>
                         <Input
                           type="number"
                           className={cn(
-                            "w-28 pl-12",
+                            "w-28 pl-12 h-7",
                             errors.pointValue ? "border-destructive" : ""
                           )}
                           min={0}
@@ -303,7 +306,7 @@ const DialogEditQuestion = ({
                         variant={"secondary"}
                         size={"sm"}
                       >
-                        Add Point
+                        {t("addPoint")}
                       </Button>
                     )
                   }
@@ -315,7 +318,7 @@ const DialogEditQuestion = ({
                 )}
               </div>
               <div className="flex flex-row gap-2 text-muted-foreground font-normal text-sm">
-                Last updated: {dayjs(updatedAt).fromNow()}
+                {t("lastUpdated")}: {dayjs(updatedAt).fromNow()}
               </div>
             </DrawerTitle>
           </DrawerHeader>
@@ -370,13 +373,13 @@ const DialogEditQuestion = ({
             {isOptionsType ? (
               <div className="mt-8 mb-6 flex flex-row items-center gap-2">
                 <Label className="text-sm text-muted-foreground">
-                  Select the correct answer
+                  {t("selectCorrectAnswer")}
                 </Label>
                 <Separator className="flex-1" />
                 {options && options?.length > 2 ? (
                   <div className="flex flex-row items-center gap-2">
                     <Label className="text-sm text-muted-foreground">
-                      Allow multiple answers
+                      {t("allowMultipleAnswers")}
                     </Label>
                     <Switch
                       checked={allowMultipleAnswers === true}
@@ -436,7 +439,7 @@ const DialogEditQuestion = ({
           <div className="flex flex-row justify-between w-full z-50 container max-w-4xl">
             <div className="flex flex-row gap-2">
               <DialogClose asChild>
-                <Button variant={"secondary"}>Back</Button>
+                <Button variant={"secondary"}>{tCommon("backButton")}</Button>
               </DialogClose>
               {isDirty ? (
                 <Button
@@ -447,7 +450,7 @@ const DialogEditQuestion = ({
                     }
                   }}
                 >
-                  Reset
+                  {tCommon("resetButton")}
                 </Button>
               ) : null}
             </div>
@@ -461,7 +464,7 @@ const DialogEditQuestion = ({
                   {isPendingUpdateQuestion ? (
                     <Loader2 className="animate-spin" />
                   ) : null}
-                  Save & Close
+                  {tCommon("saveAndCloseButton")}
                 </Button>
               ) : null}
               <Button
@@ -471,7 +474,7 @@ const DialogEditQuestion = ({
                 {isPendingUpdateQuestion ? (
                   <Loader2 className="animate-spin" />
                 ) : null}
-                Save
+                {tCommon("saveButton")}
               </Button>
             </div>
           </div>
@@ -492,6 +495,7 @@ const Options = ({
   allowMultipleAnswers: boolean;
   type: UpdateQuestion["type"];
 }) => {
+  const t = useTranslations("Questions");
   const onChangeOption = (
     option: NonNullable<UpdateQuestion["options"]>[number]
   ) => {
@@ -604,7 +608,7 @@ const Options = ({
               }
             }}
           >
-            Add Option
+            {t("addOption")}
           </Button>
         </div>
       )}
@@ -612,28 +616,27 @@ const Options = ({
       {/* Validation warnings */}
       {hasNoCorrectOption && (
         <div className="text-sm text-warning-foreground bg-warning p-2 rounded-md mb-2">
-          At least one option must be marked as correct.
+          {t("atLeastOneOptionMustBeMarkedAsCorrect")}
         </div>
       )}
       {allowMultipleAnswers && allOptionsCorrect && (
         <div className="text-sm text-warning-foreground bg-warning p-2 rounded-md mb-2">
-          Not all options should be marked as correct in multiple-choice
-          questions.
+          {t("notAllOptionsShouldBeMarkedAsCorrectInMultipleChoiceQuestions")}
         </div>
       )}
       {hasEmptyOptions && (
         <div className="text-sm text-warning-foreground bg-warning p-2 rounded-md mb-2">
-          All options must have text content.
+          {t("allOptionsMustHaveTextContent")}
         </div>
       )}
       {hasTooFewOptions && (
         <div className="text-sm text-warning-foreground bg-warning p-2 rounded-md mb-2">
-          At least 2 options are required.
+          {t("atLeastTwoOptionsAreRequired")}
         </div>
       )}
       {hasDuplicateOptions && (
         <div className="text-sm text-warning-foreground bg-warning p-2 rounded-md mb-2">
-          All options must have unique values.
+          {t("allOptionsMustHaveUniqueValues")}
         </div>
       )}
     </div>
@@ -655,6 +658,7 @@ const OptionItem = ({
   onDelete: () => void;
   isDuplicate?: boolean;
 }) => {
+  const t = useTranslations("Questions");
   const control = useDragControls();
   const isEmptyOption = !option.text || option.text.trim() === "";
 
@@ -688,7 +692,7 @@ const OptionItem = ({
       </Tooltip>
       <div className="flex-1 flex flex-row items-center">
         <Input
-          placeholder={`Type options ${index + 1}`}
+          placeholder={`${t("typeOptions", { number: index + 1 })}`}
           className={cn(
             "bg-secondary border-transparent",
             isEmptyOption ? "border-destructive" : "",
@@ -711,7 +715,7 @@ const OptionItem = ({
               <GripVertical className="text-muted-foreground" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>Drag to reorder options</TooltipContent>
+          <TooltipContent>{t("dragToReorderOptions")}</TooltipContent>
         </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>
@@ -719,7 +723,7 @@ const OptionItem = ({
               <Trash2 className="text-muted-foreground" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>Delete this option</TooltipContent>
+          <TooltipContent>{t("deleteOption")}</TooltipContent>
         </Tooltip>
       </div>
     </Reorder.Item>

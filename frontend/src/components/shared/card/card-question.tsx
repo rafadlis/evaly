@@ -12,6 +12,7 @@ import {
   Loader2,
   MousePointerClick,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -36,6 +37,8 @@ const CardQuestion = ({
   onDeleteSuccess?: () => void;
   previewOnly?: boolean;
 }) => {
+  const t = useTranslations("Questions");
+  const tTestDetail = useTranslations("TestDetail");
   const [isMoving, setIsMoving] = useState<"up" | "down">();
   const {
     mutateAsync: updateBetweenQuestion,
@@ -109,16 +112,16 @@ const CardQuestion = ({
       <CardHeader className="flex flex-row justify-between items-center p-0">
         <div className="flex flex-row gap-4">
           <span className="text-xs text-muted-foreground bg-secondary px-2 py-0.5">
-            # Question {data.order}
+            {t("questionNumber", { number: data.order })}
           </span>
           {data.pointValue ? (
             <span className="text-xs text-muted-foreground bg-secondary px-1 py-0.5">
-              Point: {data.pointValue}
+              {t("pointValue", { number: data.pointValue })}
             </span>
           ) : null}
           <span className="text-xs text-muted-foreground px-1 py-0.5 flex flex-row items-center gap-1">
             {selectedType.icon && <selectedType.icon size={12} />}
-            {selectedType.label}
+            {tTestDetail(selectedType.value)}
           </span>
         </div>
         {!previewOnly ? (
@@ -129,7 +132,7 @@ const CardQuestion = ({
               variant={"secondary"}
             >
               <MousePointerClick className="size-4" />
-              Click to edit
+              {t("clickToEdit")}
             </Button>
 
             {previousQuestionId ? (
@@ -187,7 +190,7 @@ const CardQuestion = ({
           dangerouslySetInnerHTML={{
             __html:
               !data.question || data.question === "<p></p>"
-                ? "<p class='text-muted-foreground italic'>No question content. Click to edit.</p>"
+                ? ` <p class='text-muted-foreground italic'>${t("noQuestionContent")}. ${t("clickToEdit")}.</p>`
                 : data.question,
           }}
         />
@@ -213,7 +216,7 @@ const CardQuestion = ({
                   </span>
                 )}
                 <span>
-                  {option.text || "Option " + (i + 1)}
+                  {option.text || t("option", { number: i + 1 })}
                 </span>
                 {option.isCorrect ? <CheckIcon size={13} /> : null}
               </div>

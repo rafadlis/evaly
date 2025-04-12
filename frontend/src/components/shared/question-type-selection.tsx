@@ -4,6 +4,7 @@ import { Label } from "../ui/label";
 import { questionTypes } from "@/constants/question-type";
 import { QuestionType } from "@evaly/backend/types/question";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 const QuestionTypeSelection = ({
   value,
@@ -20,6 +21,9 @@ const QuestionTypeSelection = ({
   className?: string;
   readonly?: boolean;
 }) => {
+  const tTestDetail = useTranslations("TestDetail");
+  const t = useTranslations("Questions")
+
   // Get the current selected question type or default to "multiple-choice"
   const selectedType = value && questionTypes[value] ? questionTypes[value] : questionTypes["multiple-choice"];
   
@@ -31,11 +35,11 @@ const QuestionTypeSelection = ({
       <PopoverTrigger asChild>
         <Button size={size} disabled={readonly} variant={variant} className={cn("cursor-default disabled:opacity-100", className)}>
           {SelectedIcon && <SelectedIcon size={16} className="mr-1" />}
-          {selectedType?.label || "Multiple Choice"} 
+          {tTestDetail(selectedType?.value) || tTestDetail("multiple-choice")} 
         </Button>
       </PopoverTrigger>
       <PopoverContent align="start" className="w-[240px] p-2">
-        <Label className="px-2 mb-2 block">Question Type</Label>
+        <Label className="px-2 mb-2 block">{t("questionType")}</Label>
           <div className="flex flex-col gap-1">
             {Object.values(questionTypes).map((type) => {
               // Ensure each type has an icon or use a fallback
@@ -48,14 +52,13 @@ const QuestionTypeSelection = ({
                     e.stopPropagation();
                     onValueChange?.(type.value as QuestionType);
                   }}
-                  
                   size={"sm"}
                   key={type.value}
                   className="w-full justify-start gap-2"
                   variant={value === type.value ? "default" : "ghost"}
                 >
                   {TypeIcon && <TypeIcon size={16} />}
-                  {type.label}
+                  {tTestDetail(type.value)}
                 </Button>
               );
             })}

@@ -128,7 +128,7 @@ const DialogPublishTest = ({
                 </span>
               )}
             </div>
-            <h1 className="text-xl font-bold mt-12 mb-4">{t("publishTestSummaryTitle")}</h1>
+            <h1 className="text-xl font-medium mt-12 mb-4">{t("publishTestSummaryTitle")}</h1>
             <div className="grid grid-cols-4 divide-x divide-y border text-sm">
               <div className="p-4 col-span-2">
                 <Label>{t("publishTestSummaryTitle")}</Label>

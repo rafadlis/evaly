@@ -10,7 +10,7 @@
       "subtitle": "परीक्षण बनाएं, वितरित करें और आसानी से विश्लेषण करें। शैक्षिक संस्थानों और व्यवसायों के लिए उपयुक्त।",
       "getStarted": "शुरू करें",
       "watchDemo": "डेमो देखें",
-      "trustText": "स्कूल और कंपनियां Evaly पर भरोसा करती हैं"
+      "trustText": "स्कूल और कंपनियां एवेली (Evaly) पर भरोसा करती हैं"
     },
     "logos": {
       "title": "अग्रणी संगठनों द्वारा विश्वसनीय",
@@ -35,7 +35,7 @@
       "educators": {
         "aiQuestionGenerator": {
           "title": "AI प्रश्न जनरेटर",
-          "description": "विषय, कठिनाई और प्रश्न प्रकार निर्दिष्ट करके हमारे AI इंजन के साथ तुरंत परीक्षा प्रश्न बनाएं।",
+          "description": "विषय, कठिनाई स्तर और प्रश्न प्रकार निर्दिष्ट करके हमारे AI इंजन से तुरंत परीक्षा प्रश्न बनाएं।",
           "tags": ["समय बचाने वाला", "अनुकूलन योग्य"]
         },
         "flexibleExamFormats": {
@@ -143,7 +143,7 @@
       "allInOne": "ऑल-इन-वन समाधान",
       "allInOneDesc": "प्रश्न निर्माण, परीक्षण वितरण, निगरानी और विश्लेषण को एक ही प्लेटफॉर्म में संयोजित करता है।",
       "aiIntegration": "AI एकीकरण",
-      "aiIntegrationDesc": "स्वचालित प्रश्न निर्माण और परिणाम विश्लेषण Evaly को बुनियादी परीक्षण प्लेटफार्मों से अलग करता है।",
+      "aiIntegrationDesc": "स्वचालित प्रश्न निर्माण और परिणाम विश्लेषण एवेली (Evaly) को बुनियादी परीक्षण प्लेटफार्मों से अलग करता है।",
       "dualMode": "द्वि-मोड परीक्षण",
       "dualModeDesc": "विभिन्न उपयोग मामलों के लिए लाइव और स्व-गति वाली परीक्षाओं के बीच लचीलापन।",
       "security": "व्यापक सुरक्षा",
@@ -155,7 +155,7 @@
     },
     "cta": {
       "title": "अपने परीक्षण अनुभव को बदलने के लिए तैयार हैं?",
-      "subtitle": "उन स्कूलों, विश्वविद्यालयों और कंपनियों से जुड़ें जिन्होंने Evaly के व्यापक प्लेटफॉर्म के साथ ऑनलाइन परीक्षाओं को आसान, सुरक्षित और स्मार्ट बना दिया है।",
+      "subtitle": "उन स्कूलों, विश्वविद्यालयों और कंपनियों से जुड़ें जिन्होंने एवेली (Evaly) के व्यापक प्लेटफॉर्म के साथ ऑनलाइन परीक्षाओं को आसान, सुरक्षित और स्मार्ट बना दिया है।",
       "button": "निःशुल्क परीक्षण प्रारंभ करें",
       "scheduleDemo": "डेमो शेड्यूल करें"
     },
@@ -163,7 +163,7 @@
       "product": "उत्पाद",
       "company": "कंपनी",
       "legal": "कानूनी",
-      "copyright": "© 2023 Evaly. सर्वाधिकार सुरक्षित।"
+      "copyright": "© 2023 एवेली (Evaly). सर्वाधिकार सुरक्षित।"
     }
   },
   "Auth": {
@@ -221,7 +221,29 @@
     "createEngagingChallenges": "आकर्षक चुनौतियाँ बनाएं",
     "designThoughtProvokingQuestions": "विचारोत्तेजक प्रश्न डिज़ाइन करें",
     "transformConceptsIntoQueries": "अवधारणाओं को क्वेरी में बदलें",
-    "sparkCuriosityWithQuestions": "प्रश्नों के साथ जिज्ञासा जगाएं"
+    "sparkCuriosityWithQuestions": "प्रश्नों के साथ जिज्ञासा जगाएं",
+    "clickToEdit": "संपादित करने के लिए क्लिक करें",
+    "questionNumber": "प्रश्न {number}",
+    "pointValue": "अंक: {number}",
+    "option": "विकल्प {number}",
+    "noQuestionContent": "कोई प्रश्न सामग्री नहीं",
+    "deleteQuestionTitle": "क्या आप वाकई इस प्रश्न को हटाना चाहते हैं?",
+    "deleteQuestionDescription": "इस प्रश्न से संबंधित सभी जानकारी हटा दी जाएगी",
+    "questionType": "प्रश्न प्रकार",
+    "addPoint": "अंक जोड़ें",
+    "point": "अंक",
+    "lastUpdated": "अंतिम अपडेट",
+    "selectCorrectAnswer": "सही उत्तर चुनें",
+    "allowMultipleAnswers": "एकाधिक उत्तरों की अनुमति दें",
+    "addOption": "विकल्प जोड़ें",
+    "atLeastOneOptionMustBeMarkedAsCorrect": "कम से कम एक विकल्प को सही के रूप में चिह्नित किया जाना चाहिए।",
+    "notAllOptionsShouldBeMarkedAsCorrectInMultipleChoiceQuestions": "बहुविकल्पीय प्रश्नों में सभी विकल्पों को सही के रूप में चिह्नित नहीं किया जाना चाहिए।",
+    "allOptionsMustHaveTextContent": "सभी विकल्पों में टेक्स्ट सामग्री होनी चाहिए।",
+    "atLeastTwoOptionsAreRequired": "कम से कम 2 विकल्प आवश्यक हैं।",
+    "allOptionsMustHaveUniqueValues": "सभी विकल्पों के मान अद्वितीय होने चाहिए।",
+    "typeOptions": "विकल्प {number} टाइप करें",
+    "dragToReorderOptions": "विकल्पों को पुनः क्रमित करने के लिए खींचें",
+    "deleteOption": "इस विकल्प को हटाएं"
   },
   "TestEditor": {
     "dialogEditSectionTitle": "सेक्शन विवरण संपादित करें",
@@ -291,8 +313,8 @@
     "creatingStatus": "बना रहा है...",
     "redirectingStatus": "पुनर्निर्देशित कर रहा है...",
     "optionsLabel": "विकल्प",
-    "noQuestionInSection": "इस सेक्शन में कोई प्रश्न नहीं मिला",
-    "generatingQuestions": "आपके प्रश्न उत्पन्न कर रहा है...",
+    "noQuestionInSection": "इस सेक्शन में कोई प्रश्न नहीं है",
+    "generatingQuestions": "आपके प्रश्न उत्पन्न किए जा रहे हैं...",
     "reopenTestConfirmation": "आप परीक्षा को फिर से खोलने वाले हैं।",
     "submissionsTab": "प्रस्तुतियां",
     "shareTab": "साझा करें",
@@ -355,11 +377,18 @@
     "continueButton": "जारी रखें",
     "deleteButton": "हटाएं",
     "deletingStatus": "हटा रहा है...",
+    "savingStatus": "सहेज रहा है...",
+    "saveChanges": "परिवर्तन सहेजें",
     "saveButton": "सहेजें",
     "questionsAddedSuccessfully": "प्रश्न सफलतापूर्वक जोड़े गए",
     "publishButton": "प्रकाशित करें",
     "testPublishedSuccessfully": "परीक्षा सफलतापूर्वक प्रकाशित की गई",
-    "publishTestTitle": "परीक्षा प्रकाशित करें"
+    "publishTestTitle": "परीक्षा प्रकाशित करें",
+    "saveAndCloseButton": "सहेजें और बंद करें",
+    "resetButton": "रीसेट करें",
+    "genericUpdateError": "परीक्षा अपडेट करने में विफल। कृपया बाद में पुनः प्रयास करें।",
+    "add": "जोड़ें",
+    "close": "बंद करें"
   },
   "Navbar": {
     "dashboard": "डैशबोर्ड",
@@ -374,7 +403,7 @@
     "totalDurationPopover": "यदि आप चाहते हैं कि प्रतिभागी जब चाहें तब परीक्षा समाप्त कर सकें, तो आप अवधि खाली छोड़ सकते हैं।",
     "publishedTest": "यह परीक्षा प्रकाशित है और प्रतिभागियों द्वारा ली जा सकती है, आपके द्वारा किए गए हर बदलाव परीक्षा में दिखाई देंगे।",
     "publishedTestDescription": "कृपया परिवर्तन करते समय सावधान रहें।",
-    "noQuestionFound": "इस सेक्शन में कोई प्रश्न नहीं मिला",
+    "noQuestionFound": "इस सेक्शन में कोई प्रश्न नहीं है",
     "addQuestion": "प्रश्न जोड़ें",
     "untitledSection": "शीर्षकहीन सेक्शन",
     "showOptions": "विकल्प दिखाएं",
@@ -446,6 +475,44 @@
     "code-editor": "कोड एडिटर",
     "input": "इनपुट",
     "scaleStructure": "स्केल और संरचना",
-    "advanced": "उन्नत"
+    "advanced": "उन्नत",
+    "access": "पहुंच",
+    "accessDescription": "नियंत्रित करें कि आपकी परीक्षा तक कौन पहुंच सकता है",
+    "sectionSelectionMode": "सेक्शन चयन मोड",
+    "sectionSelectionModeDescription": "नियंत्रित करें कि उम्मीदवार परीक्षा के सेक्शन में कैसे नेविगेट करेंगे।",
+    "public": "सार्वजनिक",
+    "inviteOnly": "केवल आमंत्रण द्वारा",
+    "sequential": "क्रमिक",
+    "random": "यादृच्छिक",
+    "afterCompletion": "पूरा होने के बाद",
+    "afterTestEnd": "परीक्षा समाप्त होने के बाद",
+    "never": "कभी नहीं",
+    "description": "विवरण",
+    "descriptionDescription": "उम्मीदवारों को अपनी परीक्षा के बारे में अधिक जानकारी प्रदान करने के लिए एक विवरण जोड़ें।",
+    "descriptionPlaceholder": "अपनी परीक्षा के लिए एक विवरण दर्ज करें",
+    "type": "प्रकार",
+    "typeDescription": "यह निर्धारित करता है कि उम्मीदवार आपके मूल्यांकन के साथ कैसे इंटरैक्ट करेंगे।",
+    "selfPacedTest": "स्व-गति परीक्षा",
+    "selfPacedTestDescription": "उम्मीदवारों को अपनी गति से परीक्षा देने की अनुमति दें। स्क्रीनिंग और पूर्व-मूल्यांकन उद्देश्यों के लिए आदर्श।",
+    "liveTest": "लाइव परीक्षा",
+    "liveTestDescription": "सभी उम्मीदवारों के लिए एक सिंक्रनाइज़ परीक्षा शेड्यूल करें। अंतिम मूल्यांकन और परीक्षाओं के लिए आदर्श।",
+    "publicDescription": "लिंक वाला कोई भी व्यक्ति इस परीक्षा तक पहुंच सकता है और इसे ले सकता है। परीक्षा आपकी प्रोफ़ाइल पर सार्वजनिक रूप से सूचीबद्ध की जाएगी।",
+    "sequentialDescription": "उम्मीदवार क्रमिक क्रम में परीक्षा के सेक्शन से होकर गुजरेंगे।",
+    "randomDescription": "उम्मीदवार यादृच्छिक क्रम में परीक्षा के सेक्शन से होकर गुजरेंगे।",
+    "afterCompletionDescription": "उम्मीदवार परीक्षा पूरी करने के बाद परीक्षा तक पहुंच सकते हैं।",
+    "afterTestEndDescription": "उम्मीदवार परीक्षा समाप्त होने के बाद परीक्षा तक पहुंच सकते हैं।",
+    "neverDescription": "उम्मीदवार प्रकाशित होने के बाद परीक्षा तक पहुंच नहीं सकते हैं।",
+    "invitedParticipants": "आमंत्रित प्रतिभागी",
+    "participantsInvited": "प्रतिभागी आमंत्रित",
+    "seeDetail": "विवरण देखें",
+    "email": "ईमेल",
+    "name": "नाम",
+    "action": "कार्रवाई",
+    "noInvitedParticipants": "कोई आमंत्रित प्रतिभागी नहीं, एक जोड़कर शुरू करें",
+    "inviteOnlyDescription": "केवल आमंत्रण वाले उम्मीदवार ही इस तक पहुंच सकते हैं और इसे ले सकते हैं",
+    "participantsAdded": "प्रतिभागी जोड़े गए",
+    "participantRemoved": "प्रतिभागी हटाया गया",
+    "resultVisibility": "परिणाम दृश्यता",
+    "resultVisibilityDescription": "नियंत्रित करें कि प्रतिभागी कब अपने परीक्षा परिणाम देख सकते हैं।"
   }
 } 
