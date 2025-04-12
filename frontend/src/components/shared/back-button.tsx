@@ -1,10 +1,11 @@
 import { cn } from "@/lib/utils";
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 const BackButton = ({
   className,
-  label = "Back",
+  label,
   fallbackUrl = "/dashboard",
   href,
 }: {
@@ -14,6 +15,7 @@ const BackButton = ({
   href?: string;
 }) => {
   const router = useRouter();
+  const t = useTranslations("Common");
 
   const onBackClick = () => {
     if (href) {
@@ -39,7 +41,7 @@ const BackButton = ({
       onClick={onBackClick}
     >
       <ChevronLeft className="size-4" />
-      {label}
+      {label || t("backButton")}
     </button>
   );
 };

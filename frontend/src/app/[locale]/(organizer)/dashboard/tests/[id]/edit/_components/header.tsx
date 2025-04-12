@@ -18,12 +18,14 @@ import {
 import { useProgressRouter } from "@/components/shared/progress-bar";
 import BackButton from "@/components/shared/back-button";
 import { useTestSectionByTestIdQuery } from "@/query/organization/test-section/use-test-section-by-test-id";
+import { useTranslations } from "next-intl";
 
 const Header = () => {
   const { id } = useParams();
 
   const router = useProgressRouter();
-
+  const tCommon = useTranslations("Common");
+  const t = useTranslations("TestDetail");
   const { data: dataTest, isPending: isPendingTest } = useTestByIdQuery({
     id: id?.toString() || "",
   });
@@ -123,7 +125,7 @@ const Header = () => {
               ) : (
                 <Save className="size-3.5" />
               )}
-              Save
+              {tCommon("saveButton")}
             </Button>
           </motion.div>
         ) : null}
@@ -131,8 +133,8 @@ const Header = () => {
 
       <div className="mb-4 mt-2 flex flex-row justify-between items-center">
         <TabsList>
-          <TabsTrigger value="questions">Questions</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
+          <TabsTrigger value="questions">{t("questionsTab")}</TabsTrigger>
+          <TabsTrigger value="settings">{t("settingsTab")}</TabsTrigger>
         </TabsList>
 
         <div className="flex flex-row items-center gap-2">
@@ -140,13 +142,12 @@ const Header = () => {
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant={"ghost"} className="text-foreground/75">
-                  <ClockIcon /> Total duration: {hours > 0 ? `${hours}h ` : ""}
+                  <ClockIcon /> {tCommon("totalDuration")}: {hours > 0 ? `${hours}h ` : ""}
                   {minutes}m
                 </Button>
               </PopoverTrigger>
               <PopoverContent>
-                If you want participants to be able to finish the test whenever
-                they want, you can leave the duration empty.
+                {t("totalDurationPopover")}
               </PopoverContent>
             </Popover>
           ) : null}
@@ -166,11 +167,8 @@ const Header = () => {
         <div className="bg-warning text-warning-foreground p-4 flex flex-row items-start border-warning-foreground/20 border mb-4">
           <CircleAlertIcon className="size-6 mr-4" />
           <div className="flex-1 -mt-1 font-medium">
-            <p>
-              This test is published and can be taken by participants, every
-              change you make will be reflected on the test.
-            </p>
-            <p>Please be careful when making changes.</p>
+            <p>{t("publishedTest")}</p>
+            <p>{t("publishedTestDescription")}</p>
           </div>
         </div>
       )}

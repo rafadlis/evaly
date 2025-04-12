@@ -23,11 +23,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useTestSectionByIdQuery } from "@/query/organization/test-section/use-test-section-by-id";
 import { toast } from "sonner";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 const Questions = () => {
   const [selectedSection, setSelectedSection] = useSelectedSection();
   const [selectedQuestion, setSelectedQuestion] = useState<Question>();
   const { id: testId } = useParams();
+
+  const tCommon = useTranslations("Common");
+  const t = useTranslations("TestDetail");
 
   const {
     data: dataSection,
@@ -118,7 +122,7 @@ const Questions = () => {
               {dataSection ? (
                 <>
                   {dataSection?.order}.{" "}
-                  {dataSection?.title || "Untitled section"}
+                  {dataSection?.title || t("untitledSection")}
                   <DialogEditSection sectionId={selectedSection as string} />
                 </>
               ) : (
@@ -136,12 +140,12 @@ const Questions = () => {
                 {hideOptions ? (
                   <>
                     <ListTreeIcon />
-                    Show Options
+                    {t("showOptions")}
                   </>
                 ) : (
                   <>
                     <ListXIcon />
-                    Hide Options
+                    {t("hideOptions")}
                   </>
                 )}
               </Button>
@@ -170,7 +174,7 @@ const Questions = () => {
             </div>
           </div>
           <CardDescription className="max-w-md flex flex-row items-end gap-2">
-            {dataSection?.description || "No section description"}
+            {dataSection?.description || t("noSectionDescription")}
           </CardDescription>
         </CardHeader>
         {localQuestions?.length ? (
@@ -239,7 +243,7 @@ const Questions = () => {
                         if (questions.length === 1) {
                           setSelectedQuestion(questions[0]);
                         } else {
-                          toast.success("Questions added successfully");
+                          toast.success(tCommon("questionsAddedSuccessfully"));
                         }
                         refetchSections();
                       }}
@@ -254,7 +258,7 @@ const Questions = () => {
                               : ""
                           )}
                         >
-                          <PlusIcon /> Add Question
+                          <PlusIcon /> {t("addQuestion")}
                         </Button>
                       }
                     />
@@ -266,7 +270,7 @@ const Questions = () => {
           </Reorder.Group>
         ) : (
           <div className="flex flex-col p-6 gap-4 bg-secondary">
-            <h1>No question found on this section</h1>
+            <h1>{t("noQuestionFound")}</h1>
             <DialogAddQuestion
               testId={testId as string}
               referenceId={selectedSection as string}
@@ -278,7 +282,7 @@ const Questions = () => {
                 if (questions.length === 1) {
                   setSelectedQuestion(questions[0]);
                 } else {
-                  toast.success("Questions added successfully");
+                  toast.success(tCommon("questionsAddedSuccessfully"));
                 }
                 refetchSections();
               }}

@@ -392,7 +392,7 @@ const CreatedByOrganizer = ({ testId }: { testId: string }) => {
   return (
     <>
       <div className="flex items-center gap-3 w-full bg-background mt-10 border-t border-dashed pt-5">
-        <Avatar className="h-9 w-9">
+        <Avatar className="h-8 w-8">
           <AvatarImage src="/placeholder-avatar.jpg" alt="Avatar" />
           <AvatarFallback>
             {testData.createdByOrganizer?.user.email.charAt(0).toUpperCase()}

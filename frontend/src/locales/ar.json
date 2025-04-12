@@ -197,6 +197,32 @@
     "pricing": "الأسعار",
     "security": "الأمان"
   },
+  "Questions": {
+    "importQuestions": "استيراد الأسئلة",
+    "uploadDocument": "تحميل مستند لإنشاء الأسئلة",
+    "upload": "تحميل",
+    "useTemplate": "استخدام قالب",
+    "supportedFormats": "التنسيقات المدعومة: .pdf, .xlsx, .xls, .csv, .json, .docx, .doc, .txt, .md, .pptx, .ppt",
+    "supportedFormatsTitle": "التنسيقات المدعومة؟",
+    "downloadTemplateExcel": "تحميل قالب Excel الخاص بنا",
+    "uploadTemplateExcelFile": "تحميل ملف قالب Excel مع الأسئلة",
+    "promptRequired": "المطالبة مطلوبة",
+    "failedToGenerateQuestions": "فشل إنشاء الأسئلة، يرجى المحاولة مرة أخرى.",
+    "failedToCreateTemplate": "فشل إنشاء القالب. يرجى المحاولة مرة أخرى.",
+    "promptPlaceholder": "أدخل المطالبة أو الصق المحتوى لإنشاء الأسئلة...",
+    "improvePrompt": "تحسين المطالبة بمساعدة الذكاء الاصطناعي لإنشاء أسئلة أفضل",
+    "attachFiles": "إرفاق ملفات لإنشاء الأسئلة",
+    "spreadsheet": "جدول بيانات",
+    "importDocument": "استيراد مستند",
+    "importImage": "استيراد صورة",
+    "youtube": "يوتيوب",
+    "turnIdeasIntoInquiries": "تحويل الأفكار إلى استفسارات",
+    "letsCraftYourQuestion": "دعنا نصيغ سؤالك",
+    "createEngagingChallenges": "إنشاء تحديات جذابة",
+    "designThoughtProvokingQuestions": "تصميم أسئلة مثيرة للتفكير",
+    "transformConceptsIntoQueries": "تحويل المفاهيم إلى استعلامات",
+    "sparkCuriosityWithQuestions": "إثارة الفضول بالأسئلة"
+  },
   "TestEditor": {
     "dialogEditSectionTitle": "تعديل تفاصيل القسم",
     "dialogAddQuestionTitle": "إضافة سؤال",
@@ -328,7 +354,12 @@
     "genericError": "حدث خطأ ما",
     "continueButton": "متابعة",
     "deleteButton": "حذف",
-    "deletingStatus": "جاري الحذف..."
+    "deletingStatus": "جاري الحذف...",
+    "saveButton": "حفظ",
+    "questionsAddedSuccessfully": "تمت إضافة الأسئلة بنجاح",
+    "publishButton": "نشر",
+    "testPublishedSuccessfully": "تم نشر الاختبار بنجاح",
+    "publishTestTitle": "نشر الاختبار"
   },
   "Navbar": {
     "dashboard": "لوحة التحكم",

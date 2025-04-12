@@ -119,8 +119,6 @@ export const llmRouter = new Elysia().group("/llm", (app) => {
           return { object: response.object };
         }
 
-        console.log(response.object);
-
         const templateCreated = await createQuestionTemplate(
           {
             organizationId,

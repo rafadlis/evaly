@@ -18,6 +18,7 @@ import {
   Loader2, LockIcon, TriangleAlert,
   XIcon
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -28,6 +29,9 @@ const DialogPublishTest = ({
   testId: string;
   onPublished?: (newTest: Test) => void;
 }) => {
+  const tCommon = useTranslations("Common");
+  const t = useTranslations("TestDetail");
+  
   const [isOpen, setIsOpen] = useState(false);
   const { data, isPending } = useTestValidatePublishable(testId, isOpen);
   const { mutate: publishTest, isPending: isPublishing } = useMutation({
@@ -42,7 +46,7 @@ const DialogPublishTest = ({
         onPublished?.(res.data?.data);
       }
 
-      toast.success("Test published successfully");
+      toast.success(tCommon("testPublishedSuccessfully"));
       setIsOpen(false);
       return res.data;
     },
@@ -52,7 +56,7 @@ const DialogPublishTest = ({
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
         <Button disabled={isPublishing}>
-          Publish
+          {tCommon("publishButton")}
         </Button>
       </DrawerTrigger>
       <DrawerContent className="h-dvh">
@@ -60,7 +64,7 @@ const DialogPublishTest = ({
           onBack={() => {
             setIsOpen(false);
           }}
-          title="Publish Test"
+          title={t("publishTestTitle")}
         />
         <div className="overflow-y-auto">
           {isPending ? (
@@ -69,7 +73,7 @@ const DialogPublishTest = ({
             <div className="flex-1 container max-w-3xl py-10">
             <div className="flex flex-row justify-between items-center">
               <h1 className="text-xl font-medium">
-                Review Test Before Publishing
+                {t("publishTestReviewTitle")}
               </h1>
               <Button
                 className="w-max mt-4"
@@ -83,7 +87,7 @@ const DialogPublishTest = ({
                 {!data?.isPublishable ? <LockIcon /> :null}
                 {isPublishing ? (
                   <Loader2 className="animate-spin" />
-                ) : "Publish Test"}
+                ) : tCommon("publishButton")}
                 
               </Button>
             </div>
@@ -115,62 +119,61 @@ const DialogPublishTest = ({
             <div className="mt-4 text-sm">
               {data?.isPublishable ? (
                 <p className="text-success-foreground bg-success px-4 py-2">
-                  Your test is ready to be published.
+                  {t("publishTestReadyToPublish")}
                 </p>
               ) : (
                 <span className="bg-destructive/10 text-destructive px-4 py-2 flex items-center gap-2 border border-destructive/10">
                   <CircleAlert size={16}/>
-                  Your test is not ready to be published. Please fix the issues
-                  above.
+                  {t("publishTestNotReadyToPublish")}
                 </span>
               )}
             </div>
-            <h1 className="text-xl font-bold mt-12 mb-4">Summary</h1>
+            <h1 className="text-xl font-bold mt-12 mb-4">{t("publishTestSummaryTitle")}</h1>
             <div className="grid grid-cols-4 divide-x divide-y border text-sm">
               <div className="p-4 col-span-2">
-                <Label>Title</Label>
+                <Label>{t("publishTestSummaryTitle")}</Label>
                 <p>{data?.summary?.title || "No title"}</p>
               </div>
               <div className="p-4">
-                <Label>Type</Label>
+                <Label>{t("publishTestSummaryType")}</Label>
                 <p>
                   {data?.summary?.type === "self-paced"
-                    ? "Self-Paced"
-                    : "Live Test"}
+                    ? t("publishTestSummaryTypeSelfPaced")
+                    : t("publishTestSummaryTypeLiveTest")}
                 </p>
               </div>
               <div className="p-4">
                 <Label>Access</Label>
                 <p>
                   {data?.summary?.access === "public"
-                    ? "Public"
-                    : "Invite Only"}
+                    ? t("publishTestSummaryAccessPublic")
+                    : t("publishTestSummaryAccessInviteOnly")}
                 </p>
               </div>
               <div className="p-4">
-                <Label>Total Sections</Label>
-                <p>{data?.summary?.totalSections || "No total sections"}</p>
+                <Label>{t("publishTestSummaryTotalSections")}</Label>
+                <p>{data?.summary?.totalSections || t("publishTestSummaryTotalSectionsDefault")}</p>
               </div>
               <div className="p-4">
-                <Label>Total Questions</Label>
-                <p>{data?.summary?.totalQuestions || "No total questions"}</p>
+                <Label>{t("publishTestSummaryTotalQuestions")}</Label>
+                <p>{data?.summary?.totalQuestions || t("publishTestSummaryTotalQuestionsDefault")}</p>
               </div>
               <div className=" p-4">
-                <Label>Total Duration</Label>
-                <p>{data?.summary?.totalDuration || "No total duration"}</p>
+                <Label>{t("publishTestSummaryTotalDuration")}</Label>
+                <p>{data?.summary?.totalDuration || t("publishTestSummaryTotalDurationDefault")}</p>
               </div>
               <div className=" p-4">
-                <Label>Total Participants</Label>
+                <Label>{t("publishTestSummaryTotalParticipants")}</Label>
                 <p>
-                  {data?.summary?.totalParticipants || "No total participants"}
+                  {data?.summary?.totalParticipants || t("publishTestSummaryTotalParticipantsDefault")}
                 </p>
               </div>
               <div className="col-span-4 max-h-[300px] overflow-y-auto  p-4">
-                <Label>Description</Label>
+                <Label>{t("publishTestSummaryDescription")}</Label>
                 <div
                   className="custom-prose"
                   dangerouslySetInnerHTML={{
-                    __html: data?.summary?.description || "No description",
+                    __html: data?.summary?.description || t("publishTestSummaryDescriptionDefault"),
                   }}
                 />
               </div>

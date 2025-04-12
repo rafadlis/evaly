@@ -12,6 +12,7 @@ import { $api } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { Trash2Icon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -42,6 +43,9 @@ const DialogDeleteSection = ({
   onSuccess: () => void;
   isLastSection?: boolean;
 }) => {
+  const t = useTranslations("TestDetail");
+  const tCommon = useTranslations("Common");
+  
   const [open, setOpen] = useState(false);
   const { mutate: deleteSection, isPending } = useMutation({
     mutationKey: ["delete-section"],
@@ -68,28 +72,26 @@ const DialogDeleteSection = ({
       <DialogTrigger asChild>{dialogTrigger}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Are you sure want to delete this section?</DialogTitle>
+          <DialogTitle>{t("deleteSectionTitle")}</DialogTitle>
           <DialogDescription>
-            All information related to this section including all question will
-            be removed
+            {t("deleteSectionDescription")}
           </DialogDescription>
-        </DialogHeader>
+        </DialogHeader> 
         {isLastSection && (
           <span className="text-sm text-muted-foreground bg-secondary p-2 rounded-md">
-            You can&apos;t delete the last section. Please add at least one
-            section before deleting.
+            {t("deleteSectionLastSection")}
           </span>
         )}
         <DialogFooter>
           <Button variant={"secondary"} onClick={() => setOpen(false)}>
-            Back
+            {tCommon("backButton")}
           </Button>
           <Button
             variant={"destructive"}
             disabled={isPending || isLastSection}
             onClick={() => deleteSection()}
           >
-            {isPending ? "Deleting..." : "Delete"}
+            {isPending ? tCommon("deletingStatus") : tCommon("deleteButton")}
           </Button>
         </DialogFooter>
       </DialogContent>

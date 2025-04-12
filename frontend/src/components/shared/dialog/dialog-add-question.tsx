@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { questionTypes } from "@/constants/question-type";
@@ -30,6 +29,8 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import ImportQuestions from "../import-questions";
+import { useTranslations } from "next-intl";
+import UseTemplate from "../use-template";
 
 const DialogAddQuestion = ({
   order = 1,
@@ -46,6 +47,9 @@ const DialogAddQuestion = ({
   triggerButton?: React.ReactNode;
   showTabsOption?: boolean;
 }) => {
+  const t = useTranslations("TestDetail");
+  const tCommon = useTranslations("Common");
+
   const [isOpen, setIsOpen] = useState(false);
   const [typeSelected, setTypeSelected] = useState<QuestionType>();
 
@@ -122,25 +126,25 @@ const DialogAddQuestion = ({
       <DrawerContent className="sm:max-w-none h-dvh flex flex-col p-0">
         <div className="container max-w-2xl overflow-y-auto pt-[14vh] pb-20">
           <DrawerHeader className="p-0">
-            <DrawerTitle>Add Question</DrawerTitle>
+            <DrawerTitle>{t("addQuestionTitle")}</DrawerTitle>
             <DrawerDescription>
-              Select the question type you want to add
+              {t("addQuestionDescription")}
             </DrawerDescription>
           </DrawerHeader>
           <Tabs defaultValue="manual" className="mt-4 space-y-6">
             {showTabsOption ? (
               <TabsList className="divide-x gap-0 divide-dashed divide-foreground/5">
                 <TabsTrigger value="manual">
-                  <PencilIcon className="size-4" /> Manual
+                  <PencilIcon className="size-4" /> {t("manual")}
                 </TabsTrigger>
                 <TabsTrigger value="import">
-                  <UploadIcon className="size-4" /> Import
+                  <UploadIcon className="size-4" /> {t("import")}
                 </TabsTrigger>
                 <TabsTrigger value="template">
-                  <FileTextIcon className="size-4" /> Template
+                  <FileTextIcon className="size-4" /> {t("template")}
                 </TabsTrigger>
                 <TabsTrigger value="ai">
-                  <SparklesIcon className="size-4" /> AI
+                  <SparklesIcon className="size-4" /> {t("ai")}
                 </TabsTrigger>
               </TabsList>
             ) : null}
@@ -149,7 +153,7 @@ const DialogAddQuestion = ({
               <div className="space-y-6">
                 {Object.entries(groupedQuestionTypes).map(([group, types]) => (
                   <div key={group} className="">
-                    <Label>{group}</Label>
+                    <Label>{t(group)}</Label>
                     <div className="flex flex-wrap gap-3 w-full mt-2">
                       {types.map((type) => (
                         <Button
@@ -174,7 +178,7 @@ const DialogAddQuestion = ({
                           ) : (
                             <type.icon className="size-4" />
                           )}
-                          {type.label}
+                          {t(type.value)}
                         </Button>
                       ))}
                     </div>
@@ -188,25 +192,7 @@ const DialogAddQuestion = ({
             </TabsContent>
 
             <TabsContent value="template">
-              <div className="border border-dashed p-4 flex flex-col">
-                <Label className="font-semibold mb-2">Use Template</Label>
-                <Label className="mb-4">
-                  Upload a template Excel file with questions
-                </Label>
-                <div className="flex flex-row gap-2">
-                  <Input type="file" className="mt-2" accept=".xlsx,.xls" />
-                  <Button className="mt-2">Upload</Button>
-                </div>
-                <div className="mt-4">
-                  <Button variant="link" size="sm" className="p-0">
-                    Download template Excel
-                  </Button>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Download our template Excel to create questions based on our
-                    format
-                  </p>
-                </div>
-              </div>
+              <UseTemplate />
             </TabsContent>
 
             <TabsContent value="ai">
@@ -221,7 +207,7 @@ const DialogAddQuestion = ({
         <div className="fixed bottom-0 left-0 right-0 border-t border-dashed bg-background">
           <DrawerFooter className="sm:justify-start mt-0 py-4 container max-w-2xl">
             <DrawerClose asChild>
-              <Button variant={"outline"} className="w-max">Back</Button>
+              <Button variant={"outline"} className="w-max">{tCommon("backButton")}</Button>
             </DrawerClose>
           </DrawerFooter>
         </div>

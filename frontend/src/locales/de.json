@@ -197,6 +197,32 @@
     "pricing": "Preise",
     "security": "Sicherheit"
   },
+  "Questions": {
+    "importQuestions": "Fragen importieren",
+    "uploadDocument": "Dokument hochladen, um Fragen zu generieren",
+    "upload": "Hochladen",
+    "useTemplate": "Vorlage verwenden",
+    "supportedFormats": "Unterstützte Formate: .pdf, .xlsx, .xls, .csv, .json, .docx, .doc, .txt, .md, .pptx, .ppt",
+    "supportedFormatsTitle": "Unterstützte Formate?",
+    "downloadTemplateExcel": "Unsere Excel-Vorlage herunterladen",
+    "uploadTemplateExcelFile": "Excel-Vorlagendatei mit Fragen hochladen",
+    "promptRequired": "Eingabeaufforderung erforderlich",
+    "failedToGenerateQuestions": "Fragen konnten nicht generiert werden, bitte versuchen Sie es erneut.",
+    "failedToCreateTemplate": "Vorlage konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
+    "promptPlaceholder": "Geben Sie eine Eingabeaufforderung ein oder fügen Sie Inhalt ein, um Fragen zu generieren...",
+    "improvePrompt": "Verbessern Sie Ihre Eingabeaufforderung mit KI-Unterstützung, um bessere Fragen zu generieren",
+    "attachFiles": "Dateien an Ihre Fragengenerierung anhängen",
+    "spreadsheet": "Tabellenkalkulation",
+    "importDocument": "Dokument importieren",
+    "importImage": "Bild importieren",
+    "youtube": "Youtube",
+    "turnIdeasIntoInquiries": "Ideen in Fragen umwandeln",
+    "letsCraftYourQuestion": "Lassen Sie uns Ihre Frage gestalten",
+    "createEngagingChallenges": "Erstellen Sie ansprechende Herausforderungen",
+    "designThoughtProvokingQuestions": "Entwerfen Sie zum Nachdenken anregende Fragen",
+    "transformConceptsIntoQueries": "Konzepte in Abfragen umwandeln",
+    "sparkCuriosityWithQuestions": "Neugier mit Fragen wecken"
+  },
   "TestEditor": {
     "dialogEditSectionTitle": "Abschnittsdetails bearbeiten",
     "dialogAddQuestionTitle": "Frage hinzufügen",
@@ -328,7 +354,12 @@
     "genericError": "Etwas ist schiefgelaufen",
     "continueButton": "Fortfahren",
     "deleteButton": "Löschen",
-    "deletingStatus": "Löschen..."
+    "deletingStatus": "Löschen...",
+    "saveButton": "Speichern",
+    "questionsAddedSuccessfully": "Fragen erfolgreich hinzugefügt",
+    "publishButton": "Veröffentlichen",
+    "testPublishedSuccessfully": "Test erfolgreich veröffentlicht",
+    "publishTestTitle": "Test veröffentlichen"
   },
   "Navbar": {
     "dashboard": "Dashboard",

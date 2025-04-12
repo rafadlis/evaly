@@ -27,6 +27,7 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { $api } from "@/lib/api";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { useTranslations } from "next-intl";
 interface Props {
   className?: string;
   order?: number;
@@ -44,6 +45,7 @@ const GenerateQuestionInputPrompt = ({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [inputValue, setInputValue] = useState("");
+  const t = useTranslations("Questions");
   // const searchParams = useSearchParams()
 
   // const referenceId = searchParams.get("templateId");
@@ -53,7 +55,7 @@ const GenerateQuestionInputPrompt = ({
     mutationKey: ["start-question-generation"],
     mutationFn: async (prompt: string) => {
       if (prompt.length <= 0) {
-        toast.error("Prompt is required", { position: "top-center" });
+        toast.error(t("promptRequired"), { position: "top-center" });
         return;
       }
 
@@ -64,7 +66,7 @@ const GenerateQuestionInputPrompt = ({
       const data = res.data;
 
       if (!data) {
-        toast.error("Failed to generate questions, please try again.", {
+        toast.error(t("failedToGenerateQuestions"), {
           position: "top-center",
         });
         return;
@@ -76,7 +78,7 @@ const GenerateQuestionInputPrompt = ({
       }
 
       if (!data.templateCreated) {
-        toast.error("Failed to create template. Please try again.", {
+        toast.error(t("failedToCreateTemplate"), {
           position: "top-center",
         });
         return;
@@ -167,24 +169,22 @@ const GenerateQuestionInputPrompt = ({
         className="relative text-primary font-mono mb-4 w-full max-w-2xl text-sm"
       >
         <span>
-          <WandSparkles className="size-3 inline" /> Let&apos;s Craft Your
-          Question
+          <WandSparkles className="size-3 inline" /> {t("letsCraftYourQuestion")}
         </span>
         <span>
-          <Lightbulb className="size-3 inline" /> Turn Ideas into Inquiries
+          <Lightbulb className="size-3 inline" /> {t("turnIdeasIntoInquiries")}
         </span>
         <span>
-          <Brain className="size-3 inline" /> Design Thought-Provoking Questions
+          <Brain className="size-3 inline" /> {t("designThoughtProvokingQuestions")}
         </span>
         <span>
-          <Rocket className="size-3 inline" /> Create Engaging Challenges
+          <Rocket className="size-3 inline" /> {t("createEngagingChallenges")}
         </span>
         <span>
-          <Search className="size-3 inline" /> Spark Curiosity with Questions
+          <Search className="size-3 inline" /> {t("sparkCuriosityWithQuestions")}
         </span>
         <span>
-          <RefreshCw className="size-3 inline" /> Transform Concepts into
-          Queries
+          <RefreshCw className="size-3 inline" /> {t("transformConceptsIntoQueries")}
         </span>
       </TextLoop>
       <div className="max-w-2xl w-full">
@@ -194,7 +194,7 @@ const GenerateQuestionInputPrompt = ({
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Enter prompt or paste content to generate questions..."
+            placeholder={t("promptPlaceholder")}
             className={cn(
               "w-full min-h-[120px] border-border focus-visible:border-border overflow-clip text-sm md:text-base p-4 [&::placeholder]:whitespace-pre-rap resize-none focus-visible:ring-0 focus-visible:outline-0 focus-visible:ring-offset-0 transition-all duration-200",
               autoComplete.length > 0
@@ -218,8 +218,7 @@ const GenerateQuestionInputPrompt = ({
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  Improve your prompt with AI assistance to generate better
-                  questions
+                  {t("improvePrompt")}
                 </TooltipContent>
               </Tooltip>
               <Tooltip>
@@ -229,7 +228,7 @@ const GenerateQuestionInputPrompt = ({
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  Attach files to your question generation
+                  {t("attachFiles")}
                 </TooltipContent>
               </Tooltip>
             </div>
@@ -276,19 +275,19 @@ const GenerateQuestionInputPrompt = ({
         <div className="flex flex-row gap-x-2 gap-y-4 flex-wrap justify-start mt-4">
           <Button variant={"outline"} size={"sm"} rounded className="px-4">
             <FileSpreadsheet />
-            <span>Spreadsheet</span>
+            <span>{t("spreadsheet")}</span>
           </Button>
           <Button variant={"outline"} size={"sm"} rounded className="px-4">
             <FileText />
-            <span>Import Document</span>
+            <span>{t("importDocument")}</span>
           </Button>
           <Button variant={"outline"} size={"sm"} rounded className="px-4">
             <ImageIcon />
-            <span>Import Image</span>
+            <span>{t("importImage")}</span>
           </Button>
           <Button variant={"outline"} size={"sm"} rounded className="px-4">
             <VideoIcon />
-            <span>Youtube</span>
+            <span>{t("youtube")}</span>
           </Button>
         </div>
       </div>
