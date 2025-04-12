@@ -33,6 +33,7 @@ const DialogSelectLanguage = () => {
     );
   }, [search]);
 
+  return null
   return (
     <Dialog>
       <DialogTrigger asChild>
