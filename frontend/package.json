@@ -5,7 +5,7 @@
   "scripts": {
     "lint": "next lint",
     "check-types": "tsc --noEmit",
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
