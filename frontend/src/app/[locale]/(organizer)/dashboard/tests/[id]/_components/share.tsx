@@ -21,7 +21,7 @@ import {
   Upload,
 } from "lucide-react";
 import { toast } from "sonner";
-import { env } from "@/lib/env";
+import { env } from "@/lib/env.client";
 import { useTestByIdQuery } from "@/query/organization/test/use-test-by-id.query";
 import { useTestSubmissionsById } from "@/query/organization/test/use-test-submissions-byid";
 import { useTabsState } from "../edit/_hooks/use-tabs-state";

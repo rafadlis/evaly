@@ -12,7 +12,7 @@ import { redirect, useParams } from "next/navigation";
 import { useTestByIdQuery } from "@/query/organization/test/use-test-by-id.query";
 import { Link } from "@/components/shared/progress-bar";
 import { toast } from "sonner";
-import { env } from "@/lib/env";
+import { env } from "@/lib/env.client";
 import BackButton from "@/components/shared/back-button";
 import { useMutation } from "@tanstack/react-query";
 import { $api } from "@/lib/api";

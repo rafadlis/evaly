@@ -6,7 +6,6 @@ import { QuestionGenerated } from "@evaly/backend/types/question.generated";
 import { motion } from "motion/react";
 import React, { useEffect, useTransition } from "react";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
-import { env } from "@/lib/env";
 import { useParams, useSearchParams } from "next/navigation";
 import LoadingScreen from "@/components/shared/loading/loading-screen";
 import { useAllQuestionByReferenceIdQuery } from "@/query/organization/question/use-all-question-by-reference-id.query";
@@ -31,7 +30,7 @@ const Page = () => {
     useAllQuestionByReferenceIdQuery({ referenceId: templateId as string });
 
   const { isLoading, object, submit } = useObject({
-    api: env.NEXT_PUBLIC_API_URL + "/organization/question/llm/completition",
+    api: "/organization/question/llm/completition",
     credentials: "include",
     schema: QuestionGenerated,
     onFinish({}) {

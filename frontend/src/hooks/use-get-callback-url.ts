@@ -1,4 +1,3 @@
-import { env } from "@/lib/env";
 import { useSearchParams } from "next/navigation";
 
 export const useGetCallbackUrl = () => {
@@ -9,5 +8,5 @@ export const useGetCallbackUrl = () => {
     return null;
   }
 
-  return env.NEXT_PUBLIC_URL + callbackURL;
+  return  callbackURL;
 };

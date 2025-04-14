@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useGetCallbackUrl } from "@/hooks/use-get-callback-url";
 import { authClient } from "@/lib/auth.client";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
@@ -20,6 +19,7 @@ import {
 } from "../ui/dialog";
 import { Link } from "./progress-bar";
 import { useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
 
 const LogIn = () => {
   const [email, setEmail] = useState("");
@@ -29,7 +29,8 @@ const LogIn = () => {
   const t = useTranslations("Auth");
   const tCommon = useTranslations("Common");
 
-  const callbackURL = useGetCallbackUrl();
+  const searchParams = useSearchParams();
+  const callbackURL = searchParams.get("callbackURL")
 
   useEffect(() => {
     if (data?.data?.user) {

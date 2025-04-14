@@ -21,7 +21,7 @@ const envSchema = z.object({
   GOOGLE_GENERATIVE_AI_API_KEY: z.string(),
   TRIGGER_SECRET_KEY: z.string(),
   TRIGGER_API_URL: z.string(),
-  
+
   //development-backend
   WEB_PUBLIC_URL_DEVELOPMENT: z.string(),
   BETTER_AUTH_SECRET_DEVELOPMENT: z.string(),

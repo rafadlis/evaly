@@ -2,8 +2,8 @@
 
 import LoadingScreen from "@/components/shared/loading/loading-screen";
 import { usePathname } from "@/i18n/navigation";
-import { useOrganizerProfile } from "@/query/organization/profile/use-organizer-profile";
-import { notFound, useParams, useRouter } from "next/navigation";
+import { trpc } from "@/trpc/trpc.client";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useTransition } from "react";
 
 const Provider = ({ children }: { children: React.ReactNode }) => {
@@ -12,22 +12,19 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
   const { locale } = useParams();
   const router = useRouter();
 
-  const { isPending, data } = useOrganizerProfile();
+  const { isPending, data } = trpc.organization.profile.useQuery()
 
   useEffect(() => {
-    if (data?.status === 401 && pathName) {
+    if (data?.organizer === null && pathName) {
       startRedirecting(() => {
         router.replace(
           `/${locale}/login?callbackURL=${encodeURIComponent(`${pathName}`)}`
         );
       });
     }
-  }, [data?.status, pathName, locale, router]);
+  }, [data?.organizer, pathName, locale, router]);
 
-  if (isPending || !pathName) return <LoadingScreen />;
-
-  if (data?.status !== 200 && data?.status !== 401) return notFound();
-  if (isRedirecting) return <LoadingScreen />;
+  if (isPending || !pathName || isRedirecting) return <LoadingScreen />;
 
   return <>{children}</>;
 };
