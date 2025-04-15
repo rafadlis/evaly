@@ -3,9 +3,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const LoadingTest = ({ className }: { className?: string }) => {
   return (
-    <div className={cn("flex flex-col animate-pulse gap-4 min-h-dvh", className)}>
+    <div className={cn("flex flex-col gap-4 min-h-dvh", className)}>
       {Array.from({ length: 10 }).map((_, e) => (
-          <Skeleton className="w-full h-32 rounded-xl" key={e} />
+          <Skeleton className="w-full h-28" key={e} />
       ))}
     </div>
   );

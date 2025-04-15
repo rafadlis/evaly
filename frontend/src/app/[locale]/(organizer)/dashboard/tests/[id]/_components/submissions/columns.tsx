@@ -6,7 +6,7 @@ import { Submission } from "./types";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import Image from "next/image";
+import { Image } from "@/components/ui/image";
 
 dayjs.extend(relativeTime);
 

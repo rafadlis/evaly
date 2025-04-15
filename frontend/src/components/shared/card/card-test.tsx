@@ -32,7 +32,7 @@ const CardTest = ({
     <Link href={redirectLink}>
       <div
         key={data.id}
-        className="border border-dashed transition-all duration-100 bg-background w-full hover:border-primary/30 active:opacity-80"
+        className="border transition-all duration-100 bg-background w-full hover:border-primary/30 active:opacity-80"
       >
         <div className="flex justify-between items-start p-4">
           <div>
@@ -60,7 +60,7 @@ const CardTest = ({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-6 text-sm px-4 py-2 border-dashed border-t text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-6 text-sm px-4 py-2 border-t text-muted-foreground">
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant={"secondary"} className={testTypeColor(data.type)}>
               {testTypeFormatter(data.type, t)}

@@ -16,7 +16,7 @@ import { localesWithLabels } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import { CheckIcon } from "lucide-react";
 import { useLocale } from "next-intl";
-import Image from "next/image";
+import { Image } from "@/components/ui/image";
 import { useState, useTransition } from "react";
 import { useMemo } from "react";
 

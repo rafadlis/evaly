@@ -17,7 +17,6 @@ import {
   Save,
   Info,
   PencilLine,
-  SettingsIcon,
   UserIcon,
   Building2Icon,
 } from "lucide-react";
@@ -30,17 +29,16 @@ import {
 import { Controller, useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useMutation } from "@tanstack/react-query";
-import { $api } from "@/lib/api";
 import { toast } from "sonner";
 import { OrganizerUserUpdate } from "@evaly/backend/types/user";
 import { useTheme } from "next-themes";
 import { Switch } from "@/components/ui/switch";
 import { useLocalStorage } from "usehooks-ts";
-import Image from "next/image";
+import { Image } from "@/components/ui/image";
+import { trpc } from "@/trpc/trpc.client";
 
 const Settings = () => {
-  const [tab, setTab] = useQueryState("tab", { defaultValue: "general" });
+  const [tab, setTab] = useQueryState("tab", { defaultValue: "profile" });
   return (
     <div className="container dashboard-margin">
       <div className="flex flex-col">
@@ -51,14 +49,14 @@ const Settings = () => {
       </div>
       <div className="flex flex-row gap-4 mt-10">
         <div className="w-[240px] flex flex-col gap-2 sticky top-24 h-max">
-          <Button
+          {/* <Button
             variant={tab === "general" ? "secondary" : "ghost"}
             className="w-full justify-start"
             onClick={() => setTab("general")}
           >
             <SettingsIcon className="text-muted-foreground" />
             General
-          </Button>
+          </Button> */}
           <Button
             variant={tab === "profile" ? "secondary" : "ghost"}
             className="w-full justify-start"
@@ -134,7 +132,7 @@ const General = () => {
 };
 
 const Profile = () => {
-  const { data, refetch } = useOrganizerProfile();
+  const { data, refetch } = trpc.organization.profile.useQuery();
 
   // Define form for profile
   const {
@@ -154,9 +152,9 @@ const Profile = () => {
 
   useEffect(() => {
     reset({
-      name: data?.data?.user?.name,
-      email: data?.data?.user?.email,
-      image: data?.data?.user?.image,
+      name: data?.user?.name,
+      email: data?.user?.email,
+      image: data?.user?.image,
     });
   }, [data, reset]);
 
@@ -166,16 +164,7 @@ const Profile = () => {
   };
 
   const { mutate: mutateUpdateProfile, isPending: isPendingUpdateProfile } =
-    useMutation({
-      mutationKey: ["update-organizer-profile"],
-      mutationFn: async (data: { fullName: string; imageFile?: File }) => {
-        const response = await $api.organization.profile.put(data);
-        if (response.error?.value) {
-          toast.error(response.error.value.message);
-          return;
-        }
-        return response.data;
-      },
+    trpc.organization.updateProfile.useMutation({
       onSuccess(data) {
         if (data) {
           toast.success("Profile updated successfully");
@@ -197,10 +186,10 @@ const Profile = () => {
         <form
           className="space-y-6"
           onSubmit={handleSubmit((data) => {
-            mutateUpdateProfile({
-              fullName: data.name ?? "",
-              imageFile: data.imageFile,
-            });
+            const formData = new FormData();
+            formData.append("fullName", data.name ?? "");
+            formData.append("imageFile", data.imageFile ?? new File([], ""));
+            mutateUpdateProfile(formData);
           })}
         >
           <div className="flex flex-col">
@@ -223,12 +212,16 @@ const Profile = () => {
                         className="object-cover bg-foreground/5"
                         asChild
                       >
-                        <Image src={field.value} alt="Profile" width={96} height={96} />
+                        <Image
+                          src={field.value}
+                          alt="Profile"
+                          width={96}
+                          height={96}
+                        />
                       </AvatarImage>
                     ) : (
                       <AvatarFallback className="text-4xl">
-                        {data?.data?.user?.email?.charAt(0).toUpperCase() ||
-                          "U"}
+                        {data?.user?.email?.charAt(0).toUpperCase() || "U"}
                       </AvatarFallback>
                     )}
                   </Avatar>
@@ -278,28 +271,30 @@ const Profile = () => {
                 )}
               />
 
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Label htmlFor="email">Email Address</Label>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Info className="h-4 w-4 text-muted-foreground cursor-help" />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Email address cannot be changed</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+              {data?.user ? (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="email">Email Address</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Email address cannot be changed</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                  <Input
+                    id="email"
+                    value={data?.user?.email}
+                    disabled
+                    className="bg-muted"
+                    placeholder="Your email address"
+                  />
                 </div>
-                <Input
-                  id="email"
-                  value={data?.data?.user?.email}
-                  disabled
-                  className="bg-muted"
-                  placeholder="Your email address"
-                />
-              </div>
+              ) : null}
 
               <div className="flex justify-end gap-2 pt-4">
                 {isDirty ? (

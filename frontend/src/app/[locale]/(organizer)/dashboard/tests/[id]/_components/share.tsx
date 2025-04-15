@@ -1,7 +1,7 @@
 import { useState, useRef, useMemo } from "react";
 import { useParams } from "next/navigation";
 import { QRCodeSVG } from "qrcode.react";
-import Image from "next/image";
+import { Image } from "@/components/ui/image";
 import {
   Copy,
   Link2,

@@ -6,8 +6,6 @@ import { notFound, useParams } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { UpdateTest } from "@evaly/backend/types/test";
-import { useMutation } from "@tanstack/react-query";
-import { $api } from "@/lib/api";
 import DialogPublishTest from "@/components/shared/dialog/dialog-publish-test";
 import {
   Popover,
@@ -18,6 +16,7 @@ import { useProgressRouter } from "@/components/shared/progress-bar";
 import BackButton from "@/components/shared/back-button";
 import { useTranslations } from "next-intl";
 import { trpc } from "@/trpc/trpc.client";
+import { toast } from "sonner";
 
 const Header = () => {
   const { id } = useParams();
@@ -25,26 +24,20 @@ const Header = () => {
   const router = useProgressRouter();
   const tCommon = useTranslations("Common");
   const t = useTranslations("TestDetail");
-  const { data: dataTest, isPending: isPendingTest } = trpc.organization.test.getById.useQuery({
-    id: id?.toString() || "",
-  });
+  const { data: dataTest, isPending: isPendingTest } =
+    trpc.organization.test.getById.useQuery({
+      id: id?.toString() || "",
+    });
 
-  const { mutate: updateTest, isPending: isPendingUpdateTest } = useMutation({
-    mutationKey: ["update-test"],
-    mutationFn: async (data: UpdateTest) => {
-      const response = await $api.organization
-        .test({ id: id?.toString() || "" })
-        .put(data);
-      return response.data;
-    },
-    onSuccess(data) {
-      if (!data) {
-        throw new Error("Failed to update test. Please try again later.");
-      }
-
-      reset(data);
-    },
-  });
+  const { mutate: updateTest, isPending: isPendingUpdateTest } =
+    trpc.organization.test.update.useMutation({
+      onSuccess(data) {
+        reset(data);
+      },
+      onError(error) {
+        toast.error(error.message);
+      },
+    });
 
   const {
     register,
@@ -64,7 +57,7 @@ const Header = () => {
 
   const { data: dataSections } = trpc.organization.testSection.getAll.useQuery({
     testId: id?.toString() || "",
-  })
+  });
 
   const { hours, minutes, totalDuration } = useMemo(() => {
     if (!dataSections?.length) return { hours: 0, minutes: 0 };
@@ -90,12 +83,13 @@ const Header = () => {
         className="mb-2"
         href={isPublished ? `/dashboard/tests/${id}` : `/dashboard`}
       />
+      
       <input
         type="text"
         {...register("title")}
         className="outline-none text-xl font-medium"
-        placeholder="Test title"
-        disabled={isPendingTest}
+        placeholder={isPendingTest ? "Loading..." : "Test title"}
+        disabled={isPendingTest || isPendingUpdateTest}
       />
 
       <AnimatePresence>
@@ -115,6 +109,7 @@ const Header = () => {
               size={"sm"}
               onClick={() =>
                 updateTest({
+                  id: id?.toString() || "",
                   title: getValues("title"),
                 })
               }
@@ -141,13 +136,12 @@ const Header = () => {
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant={"ghost"} className="text-foreground/75">
-                  <ClockIcon /> {tCommon("totalDuration")}: {hours > 0 ? `${hours}h ` : ""}
+                  <ClockIcon /> {tCommon("totalDuration")}:{" "}
+                  {hours > 0 ? `${hours}h ` : ""}
                   {minutes}m
                 </Button>
               </PopoverTrigger>
-              <PopoverContent>
-                {t("totalDurationPopover")}
-              </PopoverContent>
+              <PopoverContent>{t("totalDurationPopover")}</PopoverContent>
             </Popover>
           ) : null}
           {!isPublished ? (

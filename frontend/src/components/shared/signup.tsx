@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { authClient } from "@/lib/auth.client";
-import Image from "next/image";
+import { Image } from "@/components/ui/image";
 import { Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "@/components/shared/progress-bar";

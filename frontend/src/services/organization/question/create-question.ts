@@ -3,7 +3,7 @@ import { question } from "@/lib/db/schema";
 import { and, eq, gte, ne, sql } from "drizzle-orm";
 import { InsertQuestion, Question } from "@/types/question";
 
-export async function createQuestion(listQuestion: InsertQuestion[]) {
+export async function createQuestion(referenceId: string, listQuestion: InsertQuestion[]) {
   return await db.transaction(async (tx) => {
     const listQuestionWithOptions: Question[] = [];
     for (const item of listQuestion) {
@@ -11,6 +11,7 @@ export async function createQuestion(listQuestion: InsertQuestion[]) {
         .insert(question)
         .values({
           ...item,
+          referenceId,
         })
         .returning();
       const insertedQuestion = insertNewQuestion.at(0);

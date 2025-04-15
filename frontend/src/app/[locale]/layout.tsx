@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Provider from "@/components/provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -8,8 +8,8 @@ import { routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 
-const interSans = Inter({
-  variable: "--font-inter-sans",
+const geist = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
@@ -48,7 +48,7 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} suppressHydrationWarning className={`${interSans.variable} ${geistMono.variable} font-mono`}>
+    <html lang={locale} suppressHydrationWarning className={`${geist.variable} ${geistMono.variable}`}>
      {/* <ReactScan /> */}
       <body
         className={`antialiased min-h-svh flex flex-col`}

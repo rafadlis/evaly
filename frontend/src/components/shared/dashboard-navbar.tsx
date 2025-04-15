@@ -79,7 +79,7 @@ export function DashboardNavbar({ className }: { className?: string }) {
   return (
     <nav
       className={cn(
-        "sticky top-0 left-0 w-full z-50 transition-all bg-background",
+        "sticky top-0 left-0 w-full z-50 transition-all bg-background border-b border-dashed",
         className,
       )}
     >
@@ -99,8 +99,8 @@ export function DashboardNavbar({ className }: { className?: string }) {
                     "text-muted-foreground transition-colors hover:text-primary font-medium text-sm flex items-center",
                     // Special case for dashboard
                     item.href === "/dashboard" 
-                      ? (pathname === "/dashboard" || pathname.startsWith("/dashboard/test")) && "font-bold text-primary"
-                      : pathname.startsWith(item.href) && "font-bold text-primary"
+                      ? (pathname === "/dashboard" || pathname.startsWith("/dashboard/test")) && "text-primary"
+                      : pathname.startsWith(item.href) && "text-primary"
                   )}
                 >
                   {/* {item.icon} */}

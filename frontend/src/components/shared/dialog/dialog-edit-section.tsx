@@ -15,8 +15,6 @@ import { CircleHelpIcon, Loader2, PencilLine } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { UpdateTestSection } from "@evaly/backend/types/test";
-import { useMutation } from "@tanstack/react-query";
-import { $api } from "@/lib/api";
 import { toast } from "sonner";
 import {
   Popover,
@@ -43,9 +41,10 @@ const DialogEditSection = ({ sectionId }: { sectionId: string }) => {
     id: sectionId,
   });
 
-  const { refetch: refetchSections } = trpc.organization.testSection.getAll.useQuery({
-    testId: dataSection?.testId as string,
-  });
+  const { refetch: refetchSections } =
+    trpc.organization.testSection.getAll.useQuery({
+      testId: dataSection?.testId as string,
+    });
 
   useEffect(() => {
     if (dataSection) {
@@ -54,14 +53,7 @@ const DialogEditSection = ({ sectionId }: { sectionId: string }) => {
   }, [dataSection, reset]);
 
   const { mutate: updateSection, isPending: isPendingUpdateSection } =
-    useMutation({
-      mutationKey: ["update-section"],
-      mutationFn: async (data: UpdateTestSection) => {
-        const response = await $api.organization.test
-          .section({ id: sectionId })
-          .put(data);
-        return response.data;
-      },
+    trpc.organization.testSection.update.useMutation({
       onSuccess: async () => {
         await refetchSection();
         refetchSections();
@@ -71,8 +63,11 @@ const DialogEditSection = ({ sectionId }: { sectionId: string }) => {
 
   const onSubmit = (data: UpdateTestSection) => {
     updateSection({
-      ...data,
-      duration: data.duration || 0, // Ensure duration is a number, not null or undefined
+      id: sectionId,
+      data: {
+        ...data,
+        duration: data.duration || 0, // Ensure duration is a number, not null or undefined
+      },
     });
   };
 
@@ -109,8 +104,8 @@ const DialogEditSection = ({ sectionId }: { sectionId: string }) => {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent>
-                  If you want participants to be able to finish the test whenever
-                  they want, you can leave the duration empty.
+                  If you want participants to be able to finish the test
+                  whenever they want, you can leave the duration empty.
                 </PopoverContent>
               </Popover>
             </div>
@@ -181,7 +176,7 @@ const DialogEditSection = ({ sectionId }: { sectionId: string }) => {
             />
           </div>
           <DialogFooter className="mt-0">
-            <Button 
+            <Button
               onClick={() => {
                 setOpen(false);
               }}

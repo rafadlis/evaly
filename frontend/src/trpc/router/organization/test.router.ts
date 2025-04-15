@@ -5,8 +5,9 @@ import { deleteTest } from "@/services/organization/test/delete-test";
 import { getAllTestsByOrganizationId } from "@/services/organization/test/get-all-tests-by-organization-id";
 import { getTestById } from "@/services/organization/test/get-test-by-id";
 import { updateTest } from "@/services/organization/test/update-test";
+import { validateTestIsPublishable } from "@/services/organization/test/validate-test-is-publishable";
 import { organizerProcedure, router } from "@/trpc";
-import { createInsertSchema } from "drizzle-zod";
+import { createUpdateSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const testRouter = router({
@@ -60,7 +61,7 @@ export const testRouter = router({
     }),
 
   update: organizerProcedure
-    .input(createInsertSchema(test))
+    .input(createUpdateSchema(test))
     .mutation(async ({ctx, input}) => {
         const organizationId = ctx.organizer.organizationId;
         const testId = input.id;
@@ -126,7 +127,12 @@ export const testRouter = router({
         id: z.string(),
       })
     )
-    .query(async () => {}),
+    .query(async ({ctx, input}) => {
+        const organizationId = ctx.organizer.organizationId;
+        const testId = input.id;
+
+        return await validateTestIsPublishable(testId, organizationId);
+    }),
 
   publish: organizerProcedure
     .input(

@@ -4,7 +4,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { getQueryClient, getUrl, trpc } from '@/trpc/trpc.client';
 import { useState } from 'react';
-import { httpBatchLink } from '@trpc/client';
+import { httpBatchLink, httpLink, isNonJsonSerializable, splitLink } from '@trpc/client';
 
 
 const TanstackQueryProvider = ({ children }: { children: React.ReactNode }) => {
@@ -16,9 +16,14 @@ const TanstackQueryProvider = ({ children }: { children: React.ReactNode }) => {
   const [trpcClient] = useState(() =>
     trpc.createClient({
       links: [
-        httpBatchLink({
-          // transformer: superjson,// <-- if you use a data transformer
-          url: getUrl(),
+        splitLink({
+          condition: (op) => isNonJsonSerializable(op.input),
+          true: httpLink({
+            url: getUrl(),
+          }),
+          false: httpBatchLink({
+            url: getUrl(),
+          })
         }),
       ],
     }),

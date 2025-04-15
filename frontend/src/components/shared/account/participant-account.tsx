@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useParticipantProfile } from "@/query/participants/profile/use-participant-profile";
-import Image from "next/image";
+import { Image } from "@/components/ui/image";
 
 const ParticipantAccount = () => {
   const { data } = useParticipantProfile();

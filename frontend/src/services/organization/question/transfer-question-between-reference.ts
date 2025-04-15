@@ -2,7 +2,7 @@ import { and, eq, gte, ne, sql } from "drizzle-orm";
 import db from "@/lib/db";
 import { question } from "@/lib/db/schema";
 
-export async function createBulkFromTemplate(params: {
+export async function transferBetweenReference(params: {
   fromReferenceId: string;
   toReferenceId: string;
   order: number;

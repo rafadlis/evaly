@@ -11,7 +11,7 @@ import { DropdownMenu } from "@/components/ui/dropdown-menu";
 import { useRouter } from "@/i18n/navigation";
 import { trpc } from "@/trpc/trpc.client";
 import { Building2, Home, LogOut, Settings, User } from "lucide-react";
-import Image from "next/image";
+import { Image } from "@/components/ui/image";
 
 const AdminAccount = () => {
   const { data } =  trpc.organization.profile.useQuery()

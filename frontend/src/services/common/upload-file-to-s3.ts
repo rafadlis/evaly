@@ -3,11 +3,16 @@ import { env } from "@/lib/env";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 
 export async function uploadFileToS3(file: File, key: string) {
+  // Convert File to Uint8Array to avoid "Unable to calculate hash for flowing readable stream" error
+  const arrayBuffer = await file.arrayBuffer();
+  const uint8Array = new Uint8Array(arrayBuffer);
+  
   const res = await S3.send(
     new PutObjectCommand({
       Bucket: env.CLOUDFLARE_BUCKET_NAME,
       Key: key,
-      Body: file,
+      Body: uint8Array,
+      ContentType: file.type, // Preserve the file's content type
     })
   );
 

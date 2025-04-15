@@ -42,9 +42,10 @@ const ListSession = () => {
       testId: id as string,
     });
 
-  const { refetch: refetchSectionById } = trpc.organization.testSection.getById.useQuery({
-    id: selectedSection as string,
-  });
+  const { refetch: refetchSectionById } =
+    trpc.organization.testSection.getById.useQuery({
+      id: selectedSection as string,
+    });
 
   const [orderedData, setOrderedData] = useState<typeof data>([]);
 
@@ -61,20 +62,11 @@ const ListSession = () => {
   }, [data, selectedSection, setSelectedSection]);
 
   const { mutateAsync: updateOrder, isPending: isPendingUpdateOrder } =
-    useMutation({
-      mutationKey: ["update-section-order"],
-      mutationFn: async (sectionIds: string[]) => {
-        const response = await $api.organization.test.section.order.put({
-          testId: id as string,
-          order: sectionIds,
-        });
-        return response.data;
-      },
-    });
+    trpc.organization.testSection.updateOrder.useMutation();
 
   const onChangeOrder = async () => {
     const sectionIds = orderedData?.map((e) => e.id) || [];
-    await updateOrder(sectionIds);
+    await updateOrder({ testId: id as string, order: sectionIds });
     await refetch();
     await refetchSectionById();
   };
@@ -82,10 +74,10 @@ const ListSession = () => {
   if (isPending) {
     return (
       <div className="flex flex-col gap-2">
-        <Skeleton className="w-full h-20 rounded-lg" />
-        <Skeleton className="w-full h-20 rounded-lg" />
-        <Skeleton className="w-full h-20 rounded-lg" />
-        <Skeleton className="w-full h-20 rounded-lg" />
+        <Skeleton className="w-full h-20" />
+        <Skeleton className="w-full h-20" />
+        <Skeleton className="w-full h-20" />
+        <Skeleton className="w-full h-20" />
       </div>
     );
   }
@@ -150,15 +142,8 @@ const AddSession = () => {
     isRefetching: isRefetchingSection,
   } = trpc.organization.testSection.getAll.useQuery({ testId: id as string });
 
-  const { mutateAsync, isPending } = useMutation({
-    mutationKey: ["create-section"],
-    mutationFn: async () => {
-      const response = await $api.organization.test.section.create.post({
-        testId: id as string,
-      });
-      return response.data?.sections;
-    },
-  });
+  const { mutateAsync, isPending } =
+    trpc.organization.testSection.create.useMutation();
 
   const { mutateAsync: tranferQuestion, isPending: isPendingTransferQuestion } =
     useMutation({
@@ -181,13 +166,13 @@ const AddSession = () => {
 
   async function onUseTemplate() {
     if (!selectedId) return;
-    const createdSection = await mutateAsync();
-    if (!createdSection?.length) {
+    const createdSection = await mutateAsync({ testId: id as string });
+    if (!createdSection?.sections?.length) {
       toast.error("Something went wrong!");
       return;
     }
     const order = 1;
-    const toReferenceId = createdSection?.[0].id;
+    const toReferenceId = createdSection?.sections[0]?.id;
     const fromReferenceId = selectedId;
 
     const transferredQuestion = await tranferQuestion({
@@ -197,7 +182,7 @@ const AddSession = () => {
     });
 
     if (transferredQuestion && transferredQuestion.length > 0) {
-      const sectionId = createdSection?.at(0)?.id;
+      const sectionId = createdSection?.sections[0]?.id;
       setIsOpen(false);
       if (sectionId) {
         setSelectedSection(sectionId);
@@ -258,8 +243,8 @@ const AddSession = () => {
                   className="w-max"
                   disabled={isPending || isRefetchingSection}
                   onClick={async () => {
-                    const data = await mutateAsync();
-                    const sectionId = data?.at(0)?.id;
+                    const data = await mutateAsync({ testId: id as string });
+                    const sectionId = data?.sections[0]?.id;
                     setIsOpen(false);
                     if (sectionId) {
                       setSelectedSection(sectionId);

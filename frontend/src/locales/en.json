@@ -214,7 +214,7 @@
     "attachFiles": "Attach files to your question generation",
     "spreadsheet": "Spreadsheet",
     "importDocument": "Import Document",
-    "importImage": "Import Image",
+    "importImage": "import { Image }",
     "youtube": "Youtube",
     "turnIdeasIntoInquiries": "Turn Ideas into Inquiries",
     "letsCraftYourQuestion": "Let&apos;s Craft Your Question",
@@ -263,7 +263,7 @@
     "deleteOptionTooltip": "Delete this option",
     "generateQuestionSpreadsheet": "Spreadsheet",
     "generateQuestionImportDoc": "Import Document",
-    "generateQuestionImportImage": "Import Image",
+    "generateQuestionImportImage": "import { Image }",
     "generateQuestionYoutube": "Youtube",
     "questionTypeLabel": "Question Type"
   },
@@ -360,6 +360,7 @@
     "unknownTestType": "Unknown test type"
   },
   "Common": {
+    "totalDuration": "Total Duration",
     "comingSoon": "Coming Soon",
     "backButton": "Back",
     "titleLabel": "Title",
