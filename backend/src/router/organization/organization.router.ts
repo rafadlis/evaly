@@ -5,15 +5,18 @@ import { questionRouter } from "./question.router";
 import { updateProfile } from "../../services/common/update-profile";
 import { uploadFileToS3 } from "../../services/common/upload-file-to-s3";
 import { getFileExtension } from "../../lib/utils";
-
+import { swagger } from "@elysiajs/swagger";
 import { deleteFileFromS3 } from "../../services/common/delete-file-from-s3";
 
 export const organizationRouter = new Elysia().group("/organization", (app) => {
   return (
     app
       .derive(organizationMiddleware)
+      .use(swagger())
       .get("/", () => {
         return "Hello World";
+      }, {
+        tags: ["Organization"]
       })
 
       // Get organizer profile
@@ -23,6 +26,8 @@ export const organizationRouter = new Elysia().group("/organization", (app) => {
           user,
           session,
         };
+      }, {
+        tags: ["Organization"]
       })
 
       // Update organizer profile
@@ -62,6 +67,7 @@ export const organizationRouter = new Elysia().group("/organization", (app) => {
               t.File({ format: "image/*", maxSize: 1024 * 1024 * 5 }) // 5MB
             ),
           }),
+          tags: ["Organization"]
         }
       )
       .use(testRouter)

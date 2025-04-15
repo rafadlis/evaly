@@ -7,10 +7,12 @@ import { deleteQuestionTemplate } from "../../services/organization/question/del
 import { updateQuestionTemplate } from "../../services/organization/question/update-question-template";
 import { createUpdateSchema } from "drizzle-typebox";
 import { questionTemplate } from "../../lib/db/schema";
+import { swagger } from "@elysiajs/swagger";
 
 export const questionTemplateRouter = new Elysia().group("/template", (app) =>
   app
     .derive(organizationMiddleware)
+    .use(swagger())
 
     // Create new question template
     .post(
@@ -32,22 +34,35 @@ export const questionTemplateRouter = new Elysia().group("/template", (app) =>
           }),
           title: t.Optional(t.String()),
         }),
+        tags: ["Question Template"],
       }
     )
 
     // Get all question template
     .get("/all", async ({ organizer: { organizationId } }) => {
       return await getAllQuestionTemplate(organizationId);
+    }, {
+      tags: ["Question Template"],
     })
 
     // Get question template by id
     .get("/:id", async ({ params, organizer: { organizationId } }) => {
       return await getQuestionTemplateById(params.id, organizationId);
+    }, {
+      params: t.Object({
+        id: t.String(),
+      }),
+      tags: ["Question Template"],
     })
 
     // Delete question template
     .delete("/:id", async ({ params, organizer: { organizationId } }) => {
       return await deleteQuestionTemplate(params.id, organizationId);
+    }, {
+      params: t.Object({
+        id: t.String(),
+      }),
+      tags: ["Question Template"],
     })
 
     // Update question template
@@ -57,7 +72,11 @@ export const questionTemplateRouter = new Elysia().group("/template", (app) =>
         return await updateQuestionTemplate(params.id, organizationId, body);
       },
       {
+        params: t.Object({
+          id: t.String(),
+        }),
         body: createUpdateSchema(questionTemplate, { aiContents: t.Any() }),
+        tags: ["Question Template"],
       }
     )
 );

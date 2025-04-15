@@ -12,10 +12,12 @@ import db from "../../lib/db";
 import { question } from "../../lib/db/schema";
 import { buildConflictUpdateColumns } from "../../lib/build-conflict-update-columns";
 import { QuestionGenerated } from "../../types/question.generated";
+import { swagger } from "@elysiajs/swagger";
 
 export const llmRouter = new Elysia().group("/llm", (app) => {
   return app
     .derive(organizationMiddleware)
+    .use(swagger())
     .post(
       "/validate",
       async ({ body, organizer }) => {
@@ -145,6 +147,7 @@ export const llmRouter = new Elysia().group("/llm", (app) => {
             t.Enum({ educational: "educational", hr: "hr", quiz: "quiz" })
           ),
         }),
+        tags: ["LLM"],
       }
     )
     .post(
@@ -276,6 +279,7 @@ Please generate questions according to the specified schema structure.`,
             t.Enum({ educational: "educational", hr: "hr", quiz: "quiz" })
           ),
         }),
+        tags: ["LLM"],
       }
     )
     .post(
@@ -313,6 +317,7 @@ Please generate questions according to the specified schema structure.`,
         body: t.Object({
           prompt: t.String(),
         }),
+        tags: ["LLM"],
       }
     );
 });

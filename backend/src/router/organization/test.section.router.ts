@@ -8,11 +8,12 @@ import { createSection } from "../../services/organization/test-section/create-s
 import { deleteSectionById } from "../../services/organization/test-section/delete-section-by-id";
 import { getSectionById } from "../../services/organization/test-section/get-section-by-id";
 import { updateOrderSection } from "../../services/organization/test-section/update-order-section";
-
+import { swagger } from "@elysiajs/swagger";
 export const testSectionRouter = new Elysia().group("/section", (app) => {
   return (
     app
       .derive(organizationMiddleware)
+      .use(swagger())
 
       // Get All Sections by Test Id
       .get(
@@ -24,12 +25,14 @@ export const testSectionRouter = new Elysia().group("/section", (app) => {
               description: "Test ID is required",
             }),
           }),
+          tags: ["Test Section"],
         }
       )
 
       // Create New Section
       .post("/create", async ({ body }) => await createSection(body.testId), {
         body: t.Pick(createInsertSchema(testSection, {}), ["testId"]),
+        tags: ["Test Section"],
       })
 
       // Delete Section
@@ -42,6 +45,7 @@ export const testSectionRouter = new Elysia().group("/section", (app) => {
               description: "Section ID is required",
             }),
           }),
+          tags: ["Test Section"],
         }
       )
 
@@ -55,6 +59,7 @@ export const testSectionRouter = new Elysia().group("/section", (app) => {
               description: "Section ID is required",
             }),
           }),
+          tags: ["Test Section"],
         }
       )
 
@@ -65,6 +70,7 @@ export const testSectionRouter = new Elysia().group("/section", (app) => {
         {
           params: t.Object({ id: t.String() }),
           body: createUpdateSchema(testSection, {}),
+          tags: ["Test Section"],
         }
       )
 
@@ -81,6 +87,7 @@ export const testSectionRouter = new Elysia().group("/section", (app) => {
               description: "Section ID is required",
             })),
           }),
+          tags: ["Test Section"],
         }
       )
   );

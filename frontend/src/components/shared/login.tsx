@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
-import { useOrganizerProfile } from "@/query/organization/profile/use-organizer-profile";
 import LoadingScreen from "./loading/loading-screen";
 import {
   Dialog,
@@ -20,12 +19,13 @@ import {
 import { Link } from "./progress-bar";
 import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
+import { trpc } from "@/trpc/trpc.client";
 
 const LogIn = () => {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const { data, isPending, refetch } = useOrganizerProfile();
+  const { data, isPending, refetch } = trpc.organization.profile.useQuery()
   const t = useTranslations("Auth");
   const tCommon = useTranslations("Common");
 
@@ -33,7 +33,7 @@ const LogIn = () => {
   const callbackURL = searchParams.get("callbackURL")
 
   useEffect(() => {
-    if (data?.data?.user) {
+    if (data?.user) {
       window.location.href = callbackURL || "/dashboard";
     }
   }, [data, callbackURL]);

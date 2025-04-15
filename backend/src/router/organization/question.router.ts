@@ -13,11 +13,13 @@ import {
 import { questionTemplateRouter } from "./question.template.router";
 import { llmRouter } from "./llm.router";
 import { createBulkFromTemplate } from "../../services/organization/question/create-bulk-from-template";
+import swagger from "@elysiajs/swagger";
 
 export const questionRouter = new Elysia().group("/question", (app) => {
   return (
     app
       .derive(organizationMiddleware)
+      .use(swagger())
 
       // Create Question
       .post(
@@ -38,6 +40,7 @@ export const questionRouter = new Elysia().group("/question", (app) => {
         },
         {
           body: t.Array(ValidatedInsertQuestion),
+          tags: ["Question"],
         }
       )
 
@@ -49,6 +52,7 @@ export const questionRouter = new Elysia().group("/question", (app) => {
         },
         {
           query: t.Object({ referenceId: t.String() }),
+          tags: ["Question"],
         }
       )
 
@@ -61,6 +65,7 @@ export const questionRouter = new Elysia().group("/question", (app) => {
         {
           body: ValidatedUpdateQuestion,
           params: t.Object({ id: t.String() }),
+          tags: ["Question"],
         }
       )
 
@@ -73,6 +78,7 @@ export const questionRouter = new Elysia().group("/question", (app) => {
         },
         {
           params: t.Object({ id: t.String() }),
+          tags: ["Question"],
         }
       )
 
@@ -100,6 +106,7 @@ export const questionRouter = new Elysia().group("/question", (app) => {
               order: t.Number(),
             })
           ),
+          tags: ["Question"],
         }
       )
 
@@ -126,6 +133,7 @@ export const questionRouter = new Elysia().group("/question", (app) => {
            toReferenceId: t.String(),
             order: t.Number(), // Need to insert in the middle
           }),
+          tags: ["Question"],
         }
       )
 

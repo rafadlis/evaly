@@ -20,7 +20,7 @@ export const auth = betterAuth({
             address: "noreply@evaly.io",
           },
           to: email,
-          subject: "Evaly Login Verification",
+          subject: `Your OTP for Evaly is ${otp}`,
           html: emailHtml,
         });
       },

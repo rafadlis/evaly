@@ -9,17 +9,17 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { DropdownMenu } from "@/components/ui/dropdown-menu";
 import { useRouter } from "@/i18n/navigation";
-import { useOrganizerProfile } from "@/query/organization/profile/use-organizer-profile";
+import { trpc } from "@/trpc/trpc.client";
 import { Building2, Home, LogOut, Settings, User } from "lucide-react";
 import Image from "next/image";
 
 const AdminAccount = () => {
-  const { data } = useOrganizerProfile();
+  const { data } =  trpc.organization.profile.useQuery()
   const router = useRouter();
 
-  const name = data?.data?.user?.name;
-  const email = data?.data?.user?.email;
-  const image = data?.data?.user?.image;
+  const name = data?.user?.name;
+  const email = data?.user?.email;
+  const image = data?.user?.image;
 
   return (
     <DropdownMenu>

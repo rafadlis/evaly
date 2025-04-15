@@ -17,11 +17,13 @@ import { testSectionRouter } from "./test.section.router";
 import { reopenTest } from "../../services/organization/test/re-open-test";
 import { getTestSubmissions } from "../../services/organization/test/get-test-submissions";
 import { getSubmissionDetailsByEmail } from "../../services/organization/test/get-submission-details-by-email";
+import swagger from "@elysiajs/swagger";
 
 export const testRouter = new Elysia().group("/test", (app) => {
   return (
     app
       .derive(organizationMiddleware)
+      .use(swagger())
 
       // Get All Tests
       .get(
@@ -39,6 +41,7 @@ export const testRouter = new Elysia().group("/test", (app) => {
             page: t.Number({ default: 1 }),
             limit: t.Number({ default: 20 }),
           }),
+          tags: ["Test"],
         }
       )
 
@@ -59,6 +62,7 @@ export const testRouter = new Elysia().group("/test", (app) => {
           body: t.Object({
             type: t.UnionEnum(["live", "self-paced"]),
           }),
+          tags: ["Test"],
         }
       )
 
@@ -83,6 +87,7 @@ export const testRouter = new Elysia().group("/test", (app) => {
           params: t.Object({
             id: t.String(),
           }),
+          tags: ["Test"],
         }
       )
 
@@ -92,7 +97,7 @@ export const testRouter = new Elysia().group("/test", (app) => {
         async ({ params, body, organizer }) => {
           const organizationId = organizer.organizationId;
           const testId = params.id;
-          
+
           return await updateTest({
             organizationId,
             id: testId,
@@ -104,6 +109,7 @@ export const testRouter = new Elysia().group("/test", (app) => {
             id: t.String(),
           }),
           body: createUpdateSchema(test, {}),
+          tags: ["Test"],
         }
       )
 
@@ -127,6 +133,7 @@ export const testRouter = new Elysia().group("/test", (app) => {
               minItems: 1,
             }),
           }),
+          tags: ["Test"],
         }
       )
 
@@ -147,6 +154,7 @@ export const testRouter = new Elysia().group("/test", (app) => {
           params: t.Object({
             id: t.String(),
           }),
+          tags: ["Test"],
         }
       )
 
@@ -167,6 +175,7 @@ export const testRouter = new Elysia().group("/test", (app) => {
             id: t.String(),
             email: t.String({ format: "email" }),
           }),
+          tags: ["Test"],
         }
       )
 
@@ -185,6 +194,7 @@ export const testRouter = new Elysia().group("/test", (app) => {
           params: t.Object({
             id: t.String(),
           }),
+          tags: ["Test"],
         }
       )
 
@@ -212,6 +222,7 @@ export const testRouter = new Elysia().group("/test", (app) => {
           params: t.Object({
             id: t.String(),
           }),
+          tags: ["Test"],
         }
       )
 
@@ -230,6 +241,7 @@ export const testRouter = new Elysia().group("/test", (app) => {
           params: t.Object({
             id: t.String(),
           }),
+          tags: ["Test"],
         }
       )
       .use(testSectionRouter)
@@ -249,6 +261,7 @@ export const testRouter = new Elysia().group("/test", (app) => {
           params: t.Object({
             id: t.String(),
           }),
+          tags: ["Test"],
         }
       )
 
@@ -268,6 +281,7 @@ export const testRouter = new Elysia().group("/test", (app) => {
           params: t.Object({
             id: t.String(),
           }),
+          tags: ["Test"],
         }
       )
 
@@ -280,27 +294,37 @@ export const testRouter = new Elysia().group("/test", (app) => {
         const res = await getTestSubmissions(testId);
 
         return res;
+      },{
+        params: t.Object({
+          id: t.String(),
+        }),
+        tags: ["Test"],
       })
 
       // Get Submission Details by Email
-      .get("/:id/submissions/:email", async ({ params, organizer, error }) => {
-        const organizationId = organizer.organizationId;
-        const testId = params.id;
-        const email = params.email;
+      .get(
+        "/:id/submissions/:email",
+        async ({ params, organizer, error }) => {
+          const organizationId = organizer.organizationId;
+          const testId = params.id;
+          const email = params.email;
 
-        await checkTestOwner(testId, organizationId);
-        const res = await getSubmissionDetailsByEmail(testId, email);
-        
-        if (!res) {
-          return error("Not Found", "Submission not found");
+          await checkTestOwner(testId, organizationId);
+          const res = await getSubmissionDetailsByEmail(testId, email);
+
+          if (!res) {
+            return error("Not Found", "Submission not found");
+          }
+
+          return res;
+        },
+        {
+          params: t.Object({
+            id: t.String(),
+            email: t.String(),
+          }),
+          tags: ["Test"],
         }
-
-        return res;
-      }, {
-        params: t.Object({
-          id: t.String(),
-          email: t.String()
-        })
-      })
+      )
   );
 });

@@ -12,10 +12,10 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
   const { locale } = useParams();
   const router = useRouter();
 
-  const { isPending, data } = trpc.organization.profile.useQuery()
+  const { data } = trpc.organization.profile.useQuery()
 
   useEffect(() => {
-    if (data?.organizer === null && pathName) {
+    if (!data?.organizer && pathName) {
       startRedirecting(() => {
         router.replace(
           `/${locale}/login?callbackURL=${encodeURIComponent(`${pathName}`)}`
@@ -24,7 +24,7 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [data?.organizer, pathName, locale, router]);
 
-  if (isPending || !pathName || isRedirecting) return <LoadingScreen />;
+  if (!pathName || isRedirecting) return <LoadingScreen />;
 
   return <>{children}</>;
 };
