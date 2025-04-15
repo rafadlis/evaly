@@ -8,7 +8,7 @@ import { opentelemetry } from "./lib/opentelemetery";
 
 export const app = new Elysia()
   .use(cors())
-  .use(swagger())
+  .use(swagger({}))
   .use(opentelemetry())
   // .get("/", async function*() {
   //   const task = await tasks.trigger("hello-world", {},{})

@@ -17,14 +17,13 @@ import { Controller, useForm } from "react-hook-form";
 import { UpdateTestSection } from "@evaly/backend/types/test";
 import { useMutation } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
-import { useTestSectionByIdQuery } from "@/query/organization/test-section/use-test-section-by-id";
-import { useTestSectionByTestIdQuery } from "@/query/organization/test-section/use-test-section-by-test-id";
 import { toast } from "sonner";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { trpc } from "@/trpc/trpc.client";
 
 const DialogEditSection = ({ sectionId }: { sectionId: string }) => {
   const [open, setOpen] = useState(false);
@@ -40,9 +39,11 @@ const DialogEditSection = ({ sectionId }: { sectionId: string }) => {
     data: dataSection,
     refetch: refetchSection,
     isRefetching: isRefetchingSection,
-  } = useTestSectionByIdQuery({ id: sectionId });
+  } = trpc.organization.testSection.getById.useQuery({
+    id: sectionId,
+  });
 
-  const { refetch: refetchSections } = useTestSectionByTestIdQuery({
+  const { refetch: refetchSections } = trpc.organization.testSection.getAll.useQuery({
     testId: dataSection?.testId as string,
   });
 

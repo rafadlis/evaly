@@ -12,11 +12,12 @@ import { Separator } from "@/components/ui/separator";
 import LoadingTest from "@/components/shared/loading/loading-test";
 import { FileSpreadsheet } from "lucide-react";
 import DialogCreateTest from "@/components/shared/dialog/dialog-create-test";
-import { useTestQuery } from "@/query/organization/test/use-test.query";
 import CardTest from "@/components/shared/card/card-test";
 import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "motion/react";
 import { useTranslations } from "next-intl";
+import { trpc } from "@/trpc/trpc.client";
+import { getQueryKey } from "@trpc/react-query";
 
 const DashboardPageClient = () => {
   const [queryStates, setQueryStates] = useQueryStates({
@@ -25,9 +26,16 @@ const DashboardPageClient = () => {
   });
   const t = useTranslations("DashboardTest");
 
-  const { data, isPending } = useTestQuery(queryStates);
+  const { data, isPending } = trpc.organization.test.getAll.useQuery({
+    page: queryStates.page,
+    limit: queryStates.limit,
+  });
   const queryClient = useQueryClient();
-
+  const queryKey = getQueryKey(trpc.organization.test.getAll, {
+    page: queryStates.page,
+    limit: queryStates.limit,
+  }, "query");
+  
   const tests = data?.data;
   const pagination = data?.pagination;
 
@@ -81,12 +89,9 @@ const DashboardPageClient = () => {
                 key={e.id}
                 onDelete={() => {
                   const newData = tests.filter((test) => test.id !== e.id);
-                  console.log(newData);
-                  queryClient.setQueryData(
-                    ["tests", queryStates.limit, queryStates.page],
-                    {
-                      data: newData,
-                      pagination: {
+                  queryClient.setQueryData(queryKey, {
+                    data: newData,
+                    pagination: {
                         ...pagination,
                         totalPages: newData.length,
                       },

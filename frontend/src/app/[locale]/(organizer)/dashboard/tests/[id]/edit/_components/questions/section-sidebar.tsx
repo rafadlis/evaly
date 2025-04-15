@@ -10,8 +10,6 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Reorder } from "motion/react";
 import { useMutation } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
-import { useTestSectionByTestIdQuery } from "@/query/organization/test-section/use-test-section-by-test-id";
-import { useTestSectionByIdQuery } from "@/query/organization/test-section/use-test-section-by-id";
 import {
   Dialog,
   DialogClose,
@@ -24,6 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import { QuestionTemplateSection } from "./question-template-section";
 import { toast } from "sonner";
+import { trpc } from "@/trpc/trpc.client";
 
 const SectionSidebar = ({ className }: { className?: string }) => {
   return (
@@ -39,11 +38,11 @@ const ListSession = () => {
   const [selectedSection, setSelectedSection] = useSelectedSection();
 
   const { data, isPending, isRefetching, refetch } =
-    useTestSectionByTestIdQuery({
+    trpc.organization.testSection.getAll.useQuery({
       testId: id as string,
     });
 
-  const { refetch: refetchSectionById } = useTestSectionByIdQuery({
+  const { refetch: refetchSectionById } = trpc.organization.testSection.getById.useQuery({
     id: selectedSection as string,
   });
 
@@ -149,7 +148,7 @@ const AddSession = () => {
     refetch,
     isPending: isPendingSession,
     isRefetching: isRefetchingSection,
-  } = useTestSectionByTestIdQuery({ testId: id as string });
+  } = trpc.organization.testSection.getAll.useQuery({ testId: id as string });
 
   const { mutateAsync, isPending } = useMutation({
     mutationKey: ["create-section"],

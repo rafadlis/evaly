@@ -12,17 +12,17 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
   const { locale } = useParams();
   const router = useRouter();
 
-  const { data } = trpc.organization.profile.useQuery()
+  const { isPending, error } = trpc.organization.profile.useQuery();
 
   useEffect(() => {
-    if (!data?.organizer && pathName) {
+    if (error?.message === "UNAUTHORIZED" && pathName && !isPending) {
       startRedirecting(() => {
         router.replace(
           `/${locale}/login?callbackURL=${encodeURIComponent(`${pathName}`)}`
         );
       });
     }
-  }, [data?.organizer, pathName, locale, router]);
+  }, [pathName, locale, router, isPending, error]);
 
   if (!pathName || isRedirecting) return <LoadingScreen />;
 

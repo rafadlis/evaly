@@ -1,6 +1,6 @@
 import {
-    defaultShouldDehydrateQuery,
-    QueryClient,
+  defaultShouldDehydrateQuery,
+  QueryClient,
 } from "@tanstack/react-query";
 import superjson from "superjson";
   
@@ -10,7 +10,17 @@ import superjson from "superjson";
         queries: {
           refetchOnWindowFocus: false,
           retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // 1s, 2s, 4s, 8s, 16s, 30s
-          retry: 5,
+          retry: (failureCount, error) => {
+            if (error?.message === "UNAUTHORIZED") {
+              return false;
+            }
+            
+            if (failureCount >= 3) {
+              return false;
+            }
+           
+            return true;
+          },
           /* this configuration was refer to this: https://tanstack.com/query/v4/docs/framework/react/guides/query-invalidation
            * The time in milliseconds after data is considered stale.
            * If set to `Infinity`, the data will never be considered stale.

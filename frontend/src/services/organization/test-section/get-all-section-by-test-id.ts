@@ -26,7 +26,5 @@ export async function getAllSectionByTestId(testId: string) {
       numOfQuestions: item.numOfQuestions,
     };
   });
-  return {
-    sections: finalData,
-  };
+  return finalData
 }

@@ -17,8 +17,8 @@ const AdminAccount = () => {
   const { data } =  trpc.organization.profile.useQuery()
   const router = useRouter();
 
-  const name = data?.user?.name;
   const email = data?.user?.email;
+  const name = data?.user?.name || email?.split("@")[0];
   const image = data?.user?.image;
 
   return (

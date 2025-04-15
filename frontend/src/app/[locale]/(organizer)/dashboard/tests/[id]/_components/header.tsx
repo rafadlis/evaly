@@ -9,7 +9,6 @@ import {
   TimerOff
 } from "lucide-react";
 import { redirect, useParams } from "next/navigation";
-import { useTestByIdQuery } from "@/query/organization/test/use-test-by-id.query";
 import { Link } from "@/components/shared/progress-bar";
 import { toast } from "sonner";
 import { env } from "@/lib/env.client";
@@ -28,6 +27,7 @@ import {
 } from "@/components/ui/dialog";
 import { useRouter } from "@/i18n/navigation";
 import { useTransition } from "react";
+import { trpc } from "@/trpc/trpc.client";
 
 const Header = () => {
   const { id } = useParams();
@@ -39,7 +39,7 @@ const Header = () => {
     isPending: isPendingTest,
     isRefetching: isRefetchingTest,
     refetch: refetchTest,
-  } = useTestByIdQuery({
+  } = trpc.organization.test.getById.useQuery({
     id: id?.toString() || "",
   });
 

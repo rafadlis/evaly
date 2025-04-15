@@ -15,9 +15,9 @@ import { useState, useTransition } from "react";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { useMutation } from "@tanstack/react-query";
-import { $api } from "@/lib/api";
 import { useTranslations } from "next-intl";
+import { trpc } from "@/trpc/trpc.client";
+import { toast } from "sonner";
 
 const DialogCreateTest = () => {
   const [open, setOpen] = useState(false);
@@ -26,19 +26,11 @@ const DialogCreateTest = () => {
   const t = useTranslations("TestDialogs");
   const tCommon = useTranslations("Common");
 
-  const { mutate, isPending: isPendingCreate } = useMutation({
-    mutationKey: ["create-test"],
-    mutationFn: async ({ type }: { type: "self-paced" | "live" }) => {
-      const res = await $api.organization.test.create.post({type})
-      if (res.error?.value){
-        throw new Error(res.error.value as unknown as string)
-      }
-
-      return res.data
-    },
+  const { mutate, isPending: isPendingCreate } = trpc.organization.test.create.useMutation({
     onSuccess(data) {
       if (!data) {
-        throw new Error("Failed to create test. Please try again later.");
+        toast.error(tCommon("genericError"))
+        return
       }
 
       startTransition(() => {

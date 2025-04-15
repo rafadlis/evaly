@@ -8,7 +8,6 @@ import React, { useEffect, useTransition } from "react";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import { useParams, useSearchParams } from "next/navigation";
 import LoadingScreen from "@/components/shared/loading/loading-screen";
-import { useAllQuestionByReferenceIdQuery } from "@/query/organization/question/use-all-question-by-reference-id.query";
 import { useQuestionTemplateById } from "@/query/organization/question/use-question-template-by-id";
 import { cn } from "@/lib/utils";
 import { TextShimmer } from "@/components/ui/text-shimmer";
@@ -18,6 +17,7 @@ import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
 import { Loader2 } from "lucide-react";
+import { trpc } from "@/trpc/trpc.client";
 
 const Page = () => {
   const { templateId } = useParams();
@@ -27,7 +27,9 @@ const Page = () => {
   const { data: dataTemplate, isPending: isPendingTemplate } =
     useQuestionTemplateById(templateId as string);
   const { data: dataQuestions, isPending: isPendingQuestions } =
-    useAllQuestionByReferenceIdQuery({ referenceId: templateId as string });
+    trpc.organization.question.getAll.useQuery({
+      referenceId: templateId as string,
+    });
 
   const { isLoading, object, submit } = useObject({
     api: "/organization/question/llm/completition",

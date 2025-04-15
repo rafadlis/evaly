@@ -8,8 +8,7 @@ import {
 } from "@/components/ui/popover";
 import { $api } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import { useTestSectionByIdQuery } from "@/query/organization/test-section/use-test-section-by-id";
-import { useTestSectionByTestIdQuery } from "@/query/organization/test-section/use-test-section-by-test-id";
+import { trpc } from "@/trpc/trpc.client";
 import { UpdateTestSection } from "@evaly/backend/types/test";
 import { useMutation } from "@tanstack/react-query";
 import { CircleHelpIcon, ClockIcon, Loader2 } from "lucide-react";
@@ -33,9 +32,11 @@ const DialogEditSectionDuration = ({
     data: dataSection,
     isRefetching: isRefetchingSection,
     refetch: refetchSection,
-  } = useTestSectionByIdQuery({ id: sectionId as string });
+  } = trpc.organization.testSection.getById.useQuery({
+    id: sectionId as string,
+  });
 
-  const { refetch: refetchSections } = useTestSectionByTestIdQuery({
+  const { refetch: refetchSections } = trpc.organization.testSection.getAll.useQuery({
     testId: dataSection?.testId as string,
   });
 

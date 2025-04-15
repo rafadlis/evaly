@@ -8,7 +8,6 @@ import { useForm } from "react-hook-form";
 import { UpdateTest } from "@evaly/backend/types/test";
 import { useMutation } from "@tanstack/react-query";
 import { $api } from "@/lib/api";
-import { useTestByIdQuery } from "@/query/organization/test/use-test-by-id.query";
 import DialogPublishTest from "@/components/shared/dialog/dialog-publish-test";
 import {
   Popover,
@@ -17,8 +16,8 @@ import {
 } from "@/components/ui/popover";
 import { useProgressRouter } from "@/components/shared/progress-bar";
 import BackButton from "@/components/shared/back-button";
-import { useTestSectionByTestIdQuery } from "@/query/organization/test-section/use-test-section-by-test-id";
 import { useTranslations } from "next-intl";
+import { trpc } from "@/trpc/trpc.client";
 
 const Header = () => {
   const { id } = useParams();
@@ -26,7 +25,7 @@ const Header = () => {
   const router = useProgressRouter();
   const tCommon = useTranslations("Common");
   const t = useTranslations("TestDetail");
-  const { data: dataTest, isPending: isPendingTest } = useTestByIdQuery({
+  const { data: dataTest, isPending: isPendingTest } = trpc.organization.test.getById.useQuery({
     id: id?.toString() || "",
   });
 
@@ -63,9 +62,9 @@ const Header = () => {
     }
   }, [dataTest, reset]);
 
-  const { data: dataSections } = useTestSectionByTestIdQuery({
+  const { data: dataSections } = trpc.organization.testSection.getAll.useQuery({
     testId: id?.toString() || "",
-  });
+  })
 
   const { hours, minutes, totalDuration } = useMemo(() => {
     if (!dataSections?.length) return { hours: 0, minutes: 0 };

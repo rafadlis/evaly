@@ -9,6 +9,7 @@ export async function deleteTest(testId: string) {
       deletedAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     })
-    .where(eq(test.id, testId));
-  return response;
+    .where(eq(test.id, testId))
+    .returning();
+  return response[0];
 }

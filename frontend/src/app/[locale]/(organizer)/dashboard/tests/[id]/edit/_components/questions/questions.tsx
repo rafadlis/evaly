@@ -17,13 +17,11 @@ import {
 import { Reorder } from "motion/react";
 import DialogAddQuestion from "@/components/shared/dialog/dialog-add-question";
 import { Question } from "@evaly/backend/types/question";
-import { useAllQuestionByReferenceIdQuery } from "@/query/organization/question/use-all-question-by-reference-id.query";
-import { useTestSectionByTestIdQuery } from "@/query/organization/test-section/use-test-section-by-test-id";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useTestSectionByIdQuery } from "@/query/organization/test-section/use-test-section-by-id";
 import { toast } from "sonner";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { trpc } from "@/trpc/trpc.client";
 
 const Questions = () => {
   const [selectedSection, setSelectedSection] = useSelectedSection();
@@ -38,22 +36,24 @@ const Questions = () => {
     isRefetching: isRefetchingSection,
     isPending: isPendingSection,
     refetch: refetchSection,
-  } = useTestSectionByIdQuery({ id: selectedSection as string });
+  } = trpc.organization.testSection.getById.useQuery({
+    id: selectedSection as string,
+  });
 
   const {
     refetch: refetchSections,
     data: dataSections,
     isRefetching: isRefetchingSections,
     isPending: isPendingSections,
-  } = useTestSectionByTestIdQuery({
-    testId: dataSection?.testId as string,
+  } = trpc.organization.testSection.getAll.useQuery({
+    testId: testId as string,
   });
 
   const {
     data: dataQuestions,
     isRefetching: isRefetchingQuestions,
     isPending: isPendingQuestions,
-  } = useAllQuestionByReferenceIdQuery({
+  } = trpc.organization.question.getAll.useQuery({
     referenceId: selectedSection as string,
   });
 

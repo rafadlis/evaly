@@ -6,7 +6,6 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { $api } from "@/lib/api";
-import { useTestByIdQuery } from "@/query/organization/test/use-test-by-id.query";
 import { useMutation } from "@tanstack/react-query";
 import { UpdateTest } from "@evaly/backend/types/test";
 import { CheckCircle2, Clock, LockIcon, Timer, ShieldOff } from "lucide-react";
@@ -24,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { TooltipInfo } from "@/components/ui/tooltip";
 import { useTranslations } from "next-intl";
+import { trpc } from "@/trpc/trpc.client";
 
 type SettingSectionProps = {
   title: string;
@@ -51,10 +51,9 @@ const Setting = () => {
   const t = useTranslations("TestDetail");
   const tCommon = useTranslations("Common");
   const { id: testId } = useParams();
-  const { isPending, data } = useTestByIdQuery({
+  const { isPending, data } = trpc.organization.test.getById.useQuery({
     id: testId?.toString() || "",
   });
-
   const {
     reset,
     control,

@@ -10,5 +10,5 @@ export async function getAllQuestionByReferenceId(referenceId: string) {
     },
   });
   
-  return { questions };
+  return questions
 }

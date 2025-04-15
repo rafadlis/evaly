@@ -22,7 +22,6 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { env } from "@/lib/env.client";
-import { useTestByIdQuery } from "@/query/organization/test/use-test-by-id.query";
 import { useTestSubmissionsById } from "@/query/organization/test/use-test-submissions-byid";
 import { useTabsState } from "../edit/_hooks/use-tabs-state";
 import { useTestInvitationByTestId } from "@/query/organization/test/use-test-invitation-by-test-id";
@@ -58,6 +57,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { trpc } from "@/trpc/trpc.client";
 
 // Define types for invited participants
 interface InvitedParticipant {
@@ -80,8 +80,8 @@ const Share = () => {
   const [logoSize, setLogoSize] = useState(40); // Size of the logo in the QR code
   const [isLogoUpdating, setIsLogoUpdating] = useState(false);
 
-  const { data: test } = useTestByIdQuery({
-    id: testId,
+  const { data: test } = trpc.organization.test.getById.useQuery({
+    id: id?.toString() || "",
   });
 
   const { data: submissionsData } = useTestSubmissionsById(testId);
