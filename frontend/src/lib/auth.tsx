@@ -5,7 +5,7 @@ import db from "@/lib/db";
 import { env } from "@/lib/env";
 import { emailOTP } from "better-auth/plugins";
 import EmailLoginOTPEmail from "@/lib/emails/email-login-otp";
-import { render } from '@react-email/components';
+import { render } from "@react-email/components";
 import { sendEmail } from "./email";
 
 export const auth = betterAuth({
@@ -26,11 +26,11 @@ export const auth = betterAuth({
       },
     }),
   ],
-  session:{
+  session: {
     cookieCache: {
       enabled: true,
       maxAge: 5 * 60, // 5 minutes
-    }
+    },
   },
   database: drizzleAdapter(db, {
     // We're using Drizzle as our database
@@ -64,7 +64,10 @@ export const auth = betterAuth({
             : "https://evaly.io/api/auth/callback/google",
     },
   },
-
+  logger: {
+    disabled: false,
+    level: "debug",
+  },
   advanced:
     env.ENVIRONMENT === "development"
       ? undefined
