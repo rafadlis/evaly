@@ -4,9 +4,9 @@ import { account, session, user, verification } from "@/lib/db/schema";
 import db from "@/lib/db";
 import { env } from "@/lib/env";
 import { emailOTP } from "better-auth/plugins";
-import { mailTransporter } from "@/lib/mail-transporter";
 import EmailLoginOTPEmail from "@/lib/emails/email-login-otp";
 import { render } from '@react-email/components';
+import { sendEmail } from "./email";
 
 export const auth = betterAuth({
   secret: env.BETTER_AUTH_SECRET!,
@@ -14,7 +14,7 @@ export const auth = betterAuth({
     emailOTP({
       async sendVerificationOTP({ email, otp }) {
         const emailHtml = await render(<EmailLoginOTPEmail otp={otp} />);
-        await mailTransporter.sendMail({
+        await sendEmail({
           from: {
             name: "Evaly",
             address: "noreply@evaly.io",
