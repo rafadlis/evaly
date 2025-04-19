@@ -19,8 +19,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Evaly: Innovative assessment solution | Design customized evaluations, knowledge checks, and certification tests",
-  description: "Evaly is an innovative assessment solution that allows you to design customized evaluations, knowledge checks, and certification tests.",
+  title:
+    "Evaly: Innovative assessment solution | Design customized evaluations, knowledge checks, and certification tests",
+  description:
+    "Evaly is an innovative assessment solution that allows you to design customized evaluations, knowledge checks, and certification tests.",
 };
 
 // Generate static params for all locales and for all pages
@@ -48,15 +50,19 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} suppressHydrationWarning className={`${geist.variable} ${geistMono.variable}`}>
-     {/* <ReactScan /> */}
-      <body
-        className={`antialiased min-h-svh flex flex-col`}
-      >
-        <NextIntlClientProvider messages={messages}>
-          <Provider>{children}</Provider>
-          <Toaster />
-        </NextIntlClientProvider>
+    <html
+      lang={locale}
+      suppressHydrationWarning
+      className={`${geist.variable} ${geistMono.variable}`}
+    >
+      {/* <ReactScan /> */}
+      <body className={`antialiased min-h-svh flex flex-col`}>
+        <Provider>
+          <NextIntlClientProvider messages={messages}>
+            {children}
+            <Toaster />
+          </NextIntlClientProvider>
+        </Provider>
       </body>
     </html>
   );
