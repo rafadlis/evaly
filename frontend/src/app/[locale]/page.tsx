@@ -13,6 +13,8 @@ import { Link } from "@/components/shared/progress-bar";
 import { useTranslations } from "next-intl";
 import DialogSelectLanguage from "@/components/shared/dialog/dialog-select-language";
 
+export const dynamic = "force-static"
+
 export default function HomePage() {
   const t = useTranslations('HomePage');
   
