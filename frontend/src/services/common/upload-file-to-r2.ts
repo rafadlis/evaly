@@ -111,13 +111,13 @@ export async function uploadFileToR2(file: File, key: string) {
       },
       body: file,
     });
-    console.log("request", await request.text());
+    console.log("Create new request");
 
     const signedRequest = await client.sign(request);
-    console.log("signedRequest", await signedRequest.text());
+    console.log("Signed request");
 
     const response = await fetch(signedRequest);
-    console.log("response", await response.text());
+    console.log("Response", response);
 
     if (!response.ok) {
       throw new Error(`Failed to upload file: ${response.statusText}`);
