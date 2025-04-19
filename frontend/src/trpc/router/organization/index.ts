@@ -5,7 +5,7 @@ import { questionRouter } from "./question.router";
 import { questionTemplateRouter } from "./question.template.router";
 import { z } from "zod";
 import { uploadFileToR2 } from "@/services/common/upload-file-to-r2";
-import { deleteFileFromS3 } from "@/services/common/delete-file-from-s3";
+import { deleteFileFromR2 } from "@/services/common/delete-file-from-r2";
 import { updateProfile } from "@/services/common/update-profile";
 import { ulid } from "ulidx";
 
@@ -32,14 +32,21 @@ export const organizationRouter = router({
           );
 
           if (imageUrl && user.image) {
-            await deleteFileFromS3(user.image, true);
+            await deleteFileFromR2(user.image, true);
             newImageUrl = imageUrl;
           }
+
         } catch (e) {
           console.error(e);
           throw new Error("Failed to upload image");
         }
       }
+      
+      console.log("Update profile", {
+        id: user.id,
+        name: fullName,
+        image: newImageUrl,
+      });
 
       return updateProfile({
         id: user.id,
