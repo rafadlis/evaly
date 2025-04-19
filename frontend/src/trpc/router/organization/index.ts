@@ -31,22 +31,27 @@ export const organizationRouter = router({
             `user/${user.id}/profile-${ulid()}.${extension}`
           );
 
-          if (imageUrl && user.image) {
+          if (user.image) {
             await deleteFileFromR2(user.image, true);
-            newImageUrl = imageUrl;
           }
 
+          if (imageUrl) {
+            newImageUrl = imageUrl;
+          }
         } catch (e) {
           console.error(e);
           throw new Error("Failed to upload image");
         }
       }
-      
-      console.log("Update profile", JSON.stringify({
-        id: user.id,
-        name: fullName,
-        image: newImageUrl,
-      }));
+
+      console.log(
+        "Update profile",
+        JSON.stringify({
+          id: user.id,
+          name: fullName,
+          image: newImageUrl,
+        })
+      );
 
       return updateProfile({
         id: user.id,
