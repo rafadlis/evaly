@@ -26,12 +26,6 @@ export const auth = betterAuth({
       },
     }),
   ],
-  session:{
-    cookieCache: {
-      enabled: true,
-      maxAge: 5 * 60, // 5 minutes
-    }
-  },
   database: drizzleAdapter(db, {
     // We're using Drizzle as our database
     provider: "pg",

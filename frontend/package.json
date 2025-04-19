@@ -111,7 +111,7 @@
     "@types/file-saver": "^2.0.7",
     "@types/node": "^20",
     "@types/react": "^19",
-    "react-email": "^3.0.7",
+    "react-email": "4.0.7",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.2.4",

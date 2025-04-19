@@ -8,18 +8,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useQueryState } from "nuqs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useOrganizerProfile } from "@/query/organization/profile/use-organizer-profile";
-import {
-  Loader2,
-  Save,
-  Info,
-  PencilLine,
-  UserIcon,
-  Building2Icon,
-} from "lucide-react";
+import { Loader2, Save, Info, PencilLine } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -31,14 +23,11 @@ import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { OrganizerUserUpdate } from "@evaly/backend/types/user";
-import { useTheme } from "next-themes";
-import { Switch } from "@/components/ui/switch";
-import { useLocalStorage } from "usehooks-ts";
 import { Image } from "@/components/ui/image";
 import { trpc } from "@/trpc/trpc.client";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Settings = () => {
-  const [tab, setTab] = useQueryState("tab", { defaultValue: "profile" });
   return (
     <div className="container dashboard-margin">
       <div className="flex flex-col">
@@ -47,92 +36,63 @@ const Settings = () => {
           Manage your account settings and preferences.
         </p>
       </div>
-      <div className="flex flex-row gap-4 mt-10">
-        <div className="w-[240px] flex flex-col gap-2 sticky top-24 h-max">
-          {/* <Button
-            variant={tab === "general" ? "secondary" : "ghost"}
-            className="w-full justify-start"
-            onClick={() => setTab("general")}
-          >
-            <SettingsIcon className="text-muted-foreground" />
-            General
-          </Button> */}
-          <Button
-            variant={tab === "profile" ? "secondary" : "ghost"}
-            className="w-full justify-start"
-            onClick={() => setTab("profile")}
-          >
-            <UserIcon className="text-muted-foreground" />
-            Profile
-          </Button>
-          <Button
-            variant={tab === "organization" ? "secondary" : "ghost"}
-            className="w-full justify-start"
-            onClick={() => setTab("organization")}
-          >
-            <Building2Icon className="text-muted-foreground" />
-            Organization
-          </Button>
-        </div>
-        <div className="flex-1">
-          {tab === "general" && <General />}
-          {tab === "profile" && <Profile />}
-          {tab === "organization" && <Organization />}
-        </div>
+      <div className="flex flex-col gap-4 mt-10">
+        <Profile />
+        <Organization />
       </div>
     </div>
   );
 };
 
-const General = () => {
-  const { theme, setTheme } = useTheme();
-  const [fontMono, setFontMono] = useLocalStorage("font-mono", true);
+// const General = () => {
+//   const { theme, setTheme } = useTheme();
+//   const [fontMono, setFontMono] = useLocalStorage("font-mono", true);
 
-  return (
-    <Card>
-      <CardHeader className="border-b border-dashed">
-        <CardTitle className="font-medium">General</CardTitle>
-        <CardDescription>
-          Manage your general account settings and preferences. You can update
-          your appearance settings and customize your experience.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="pt-6">
-        <div>
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <Label className="text-sm font-medium text-foreground">
-                Dark Mode
-              </Label>
-              <Switch
-                checked={theme === "dark"}
-                onCheckedChange={() =>
-                  setTheme(theme === "dark" ? "light" : "dark")
-                }
-                aria-label="Toggle dark mode"
-              />
-            </div>
+//   return (
+//     <Card>
+//       <CardHeader className="border-b border-dashed">
+//         <CardTitle className="font-medium">General</CardTitle>
+//         <CardDescription>
+//           Manage your general account settings and preferences. You can update
+//           your appearance settings and customize your experience.
+//         </CardDescription>
+//       </CardHeader>
+//       <CardContent className="pt-6">
+//         <div>
+//           <div className="space-y-6">
+//             <div className="flex items-center justify-between">
+//               <Label className="text-sm font-medium text-foreground">
+//                 Dark Mode
+//               </Label>
+//               <Switch
+//                 checked={theme === "dark"}
+//                 onCheckedChange={() =>
+//                   setTheme(theme === "dark" ? "light" : "dark")
+//                 }
+//                 aria-label="Toggle dark mode"
+//               />
+//             </div>
 
-            {/* Font Style */}
-            <div className="flex items-center justify-between">
-              <Label className="text-sm font-medium text-foreground">
-                Classic Font
-              </Label>
-              <Switch
-                checked={fontMono}
-                onCheckedChange={setFontMono}
-                aria-label="Toggle monospace font"
-              />
-            </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
+//             {/* Font Style */}
+//             <div className="flex items-center justify-between">
+//               <Label className="text-sm font-medium text-foreground">
+//                 Classic Font
+//               </Label>
+//               <Switch
+//                 checked={fontMono}
+//                 onCheckedChange={setFontMono}
+//                 aria-label="Toggle monospace font"
+//               />
+//             </div>
+//           </div>
+//         </div>
+//       </CardContent>
+//     </Card>
+//   );
+// };
 
 const Profile = () => {
-  const { data, refetch } = trpc.organization.profile.useQuery();
+  const { data, refetch, isPending } = trpc.organization.profile.useQuery();
 
   // Define form for profile
   const {
@@ -141,6 +101,7 @@ const Profile = () => {
     formState: { isDirty },
     handleSubmit,
     setValue,
+    watch
   } = useForm<OrganizerUserUpdate & { imageFile?: File }>({
     defaultValues: {
       name: "",
@@ -174,6 +135,12 @@ const Profile = () => {
       },
     });
 
+  if (isPending || !watch("email")) {
+    return (
+      <Skeleton className="w-full h-80" />
+    );
+  }
+
   return (
     <Card>
       <CardHeader className="border-b border-dashed">
@@ -192,18 +159,18 @@ const Profile = () => {
             mutateUpdateProfile(formData);
           })}
         >
-          <div className="flex flex-col">
+          <div className="flex flex-col md:flex-row gap-6">
             <Controller
               control={control}
               name="image"
               render={({ field }) => (
-                <div className="relative w-max">
-                  <Avatar className="size-24">
+                <div className="relative w-max h-max">
+                  <Avatar className="size-32 rounded-none">
                     {previewURL ? (
                       <AvatarImage
                         src={previewURL}
                         alt="Profile"
-                        className="object-cover"
+                        className="object-cover rounded-none"
                       />
                     ) : field.value ? (
                       <AvatarImage
@@ -225,7 +192,7 @@ const Profile = () => {
                       </AvatarFallback>
                     )}
                   </Avatar>
-                  <div className="flex flex-row gap-2 absolute right-0 bottom-0">
+                  <div className="flex flex-row gap-2 absolute right-1 bottom-1">
                     <Button
                       variant="secondary-outline"
                       size="icon"
@@ -257,8 +224,35 @@ const Profile = () => {
                 </div>
               )}
             />
+            <div className="space-y-4 w-full">
+              <Controller
+                control={control}
+                name="email"
+                rules={{ required: "Email is required" }}
+                render={({ field }) => (
+                  <div>
+                    <Label className="flex flex-row gap-2 mb-1">
+                      Email Address
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Email address cannot be changed</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </Label>
+                    <Input
+                      {...field}
+                      placeholder="Your email address"
+                      disabled
+                    />
+                  </div>
+                )}
+              />
 
-            <div className="space-y-6 mt-8">
               <Controller
                 control={control}
                 name="name"
@@ -270,31 +264,6 @@ const Profile = () => {
                   </div>
                 )}
               />
-
-              {data?.user ? (
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Label htmlFor="email">Email Address</Label>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Info className="h-4 w-4 text-muted-foreground cursor-help" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Email address cannot be changed</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                  <Input
-                    id="email"
-                    value={data?.user?.email}
-                    disabled
-                    className="bg-muted"
-                    placeholder="Your email address"
-                  />
-                </div>
-              ) : null}
 
               <div className="flex justify-end gap-2 pt-4">
                 {isDirty ? (
@@ -315,12 +284,11 @@ const Profile = () => {
                 >
                   {isPendingUpdateProfile ? (
                     <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />{" "}
-                      Saving...
+                      <Loader2 className="h-4 w-4 animate-spin" /> Saving...
                     </>
                   ) : (
                     <>
-                      <Save className="h-4 w-4 mr-2" /> Save Changes
+                      <Save className="h-4 w-4" /> Save Changes
                     </>
                   )}
                 </Button>
