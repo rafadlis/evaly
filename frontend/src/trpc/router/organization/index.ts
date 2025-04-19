@@ -4,7 +4,7 @@ import { testSectionRouter } from "./test.section.router";
 import { questionRouter } from "./question.router";
 import { questionTemplateRouter } from "./question.template.router";
 import { z } from "zod";
-import { uploadFileToR2 } from "@/services/common/upload-file-to-s3";
+import { uploadFileToR2 } from "@/services/common/upload-file-to-r2";
 import { deleteFileFromS3 } from "@/services/common/delete-file-from-s3";
 import { updateProfile } from "@/services/common/update-profile";
 import { ulid } from "ulidx";
