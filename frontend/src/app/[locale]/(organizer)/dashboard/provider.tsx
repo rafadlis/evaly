@@ -25,7 +25,7 @@ const Provider = ({ children, className }: { children: React.ReactNode, classNam
     }
   }, [pathName, locale, router, isPending, error]);
 
-  if (!pathName || isRedirecting) return <LoadingScreen />;
+  if (!pathName || isRedirecting || isPending) return <LoadingScreen />;
 
   return <div className={cn(className)}>{children}</div>;
 };

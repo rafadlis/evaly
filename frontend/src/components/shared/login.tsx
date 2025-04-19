@@ -25,7 +25,7 @@ const LogIn = () => {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const { data, isPending, refetch } = trpc.organization.profile.useQuery()
+  const { data, isPending } = trpc.organization.profile.useQuery()
   const t = useTranslations("Auth");
   const tCommon = useTranslations("Common");
 
@@ -132,16 +132,13 @@ const LogIn = () => {
               if (res.error) {
                 setLoading(false);
                 toast.error(res.error?.message || tCommon("genericError"));
+                setOtp("");
                 return;
               }
 
               if (res.data?.user) {
-                await refetch();
-                setLoading(false);
                 window.location.href = callbackURL || "/dashboard";
               }
-
-              console.log(res.data);
             }}
             className="grid gap-4"
           >

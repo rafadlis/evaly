@@ -6,10 +6,10 @@ export const dynamic = "force-static";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <>
+    <Provider>
       <DashboardNavbar />
-      <Provider className="flex-1 flex flex-col">{children}</Provider>
-    </>
+      <main className="flex-1 flex flex-col">{children}</main>
+    </Provider>
   );
 };
 
