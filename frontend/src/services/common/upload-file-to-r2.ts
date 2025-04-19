@@ -117,7 +117,7 @@ export async function uploadFileToR2(file: File, key: string) {
     console.log("Signed request");
 
     const response = await fetch(signedRequest);
-    console.log("Response", response);
+    console.log("Response", JSON.stringify(response));
 
     if (!response.ok) {
       throw new Error(`Failed to upload file: ${response.statusText}`);
@@ -166,6 +166,9 @@ export async function uploadFileToR2(file: File, key: string) {
     }
   }
 
+  const finalUrl = `${env.CLOUDFLARE_CDN_URL}/${key}`;
+  console.log("Final URL", finalUrl);
+  
   // Return the final URL (assuming successful upload)
-  return `${env.CLOUDFLARE_CDN_URL}/${key}`;
+  return finalUrl;
 }
