@@ -42,11 +42,11 @@ export const organizationRouter = router({
         }
       }
       
-      console.log("Update profile", {
+      console.log("Update profile", JSON.stringify({
         id: user.id,
         name: fullName,
         image: newImageUrl,
-      });
+      }));
 
       return updateProfile({
         id: user.id,
