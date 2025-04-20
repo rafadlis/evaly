@@ -1,44 +1,38 @@
 import db from "../../../lib/db";
 import { question } from "@/lib/db/schema";
 import { and, eq, gte, ne, sql } from "drizzle-orm";
-import { InsertQuestion, Question } from "@/types/question";
+import { InsertQuestion } from "@/types/question";
 
-export async function createQuestion(referenceId: string, listQuestion: InsertQuestion[]) {
-  return await db.transaction(async (tx) => {
-    const listQuestionWithOptions: Question[] = [];
-    for (const item of listQuestion) {
-      const insertNewQuestion = await tx
-        .insert(question)
-        .values({
-          ...item,
-          referenceId,
-        })
-        .returning();
-      const insertedQuestion = insertNewQuestion.at(0);
+export async function createQuestion(
+  referenceId: string,
+  listQuestion: InsertQuestion[]
+) {
+  const insertedQuestions = await db
+    .insert(question)
+    .values(
+      listQuestion.map((item) => ({
+        ...item,
+        referenceId,
+      }))
+    )
+    .returning();
 
-      if (!insertedQuestion) {
-        throw new Error("Failed to create question");
-      }
+  const firstOrder = listQuestion.at(0)?.order || 1;
+  const totalInsertedQuestions = insertedQuestions.length;
 
-      const newQuestionId = insertedQuestion.id;
+  // Update order of other questions
+  await db
+    .update(question)
+    .set({
+      order: sql`${question.order}+${totalInsertedQuestions.toString()}`,
+    })
+    .where(
+      and(
+        ...insertedQuestions.map((item) => ne(question.id, item.id)),
+        eq(question.referenceId, referenceId),
+        gte(question.order, firstOrder)
+      )
+    );
 
-      //update order of other question
-      await tx
-        .update(question)
-        .set({
-          order: sql`${question.order}+1`,
-        })
-        .where(
-          and(
-            ne(question.id, newQuestionId),
-            gte(question.order, item.order || 1),
-            eq(question.referenceId, item.referenceId)
-          )
-        );
-
-      listQuestionWithOptions.push(insertedQuestion);
-    }
-
-    return listQuestionWithOptions;
-  });
+  return insertedQuestions;
 }

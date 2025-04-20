@@ -14,7 +14,6 @@ import QuestionTypeSelection from "@/components/shared/question-type-selection";
 import { Editor } from "@/components/shared/editor/editor";
 import { Separator } from "@/components/ui/separator";
 import { Question, UpdateQuestion } from "@evaly/backend/types/question";
-import { useUpdateQuestionMutation } from "@/query/organization/question/use-update-question.mutation";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Reorder, useDragControls } from "motion/react";
@@ -37,6 +36,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useTranslations } from "next-intl";
+import { trpc } from "@/trpc/trpc.client";
+import { toast } from "sonner";
 
 dayjs.extend(relativeTime);
 
@@ -58,7 +59,11 @@ const DialogEditQuestion = ({
   const [questionTextLength, setQuestionTextLength] = useState(0);
 
   const { mutateAsync: updateQuestion, isPending: isPendingUpdateQuestion } =
-    useUpdateQuestionMutation();
+    trpc.organization.question.update.useMutation({
+      onError(error,) {
+        toast.error(error.message);
+      },
+    });
 
   const {
     control,
@@ -178,10 +183,13 @@ const DialogEditQuestion = ({
       }
     }
 
-    const updatedQuestion = await updateQuestion(data);
+    const updatedQuestion = await updateQuestion({
+      id: defaultValue.id,
+      data,
+    });
 
     if (updatedQuestion) {
-      onSuccess?.(updatedQuestion);
+      onSuccess?.(updatedQuestion.updatedQuestion);
     }
 
     if (saveAndClose) {

@@ -2,11 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { questionTypes } from "@/constants/question-type";
-import { $api } from "@/lib/api";
 import { getDefaultOptions } from "@/lib/get-default-options";
-import { InsertQuestion } from "@evaly/backend/types/question";
-import { Question, QuestionType } from "@evaly/backend/types/question";
-import { useMutation } from "@tanstack/react-query";
 import {
   FileTextIcon,
   Loader2,
@@ -31,6 +27,9 @@ import {
 import ImportQuestions from "../import-questions";
 import { useTranslations } from "next-intl";
 import UseTemplate from "../use-template";
+import { trpc } from "@/trpc/trpc.client";
+import { InsertQuestion, Question, QuestionType } from "@/types/question";
+import { toast } from "sonner";
 
 const DialogAddQuestion = ({
   order = 1,
@@ -54,33 +53,7 @@ const DialogAddQuestion = ({
   const [typeSelected, setTypeSelected] = useState<QuestionType>();
 
   const { mutate: mutateCreateQuestion, isPending: isPendingCreateQuestion } =
-    useMutation({
-      mutationKey: ["create-question"],
-      mutationFn: async () => {
-        const question: InsertQuestion = {
-          referenceId,
-          order,
-          type: typeSelected,
-        };
-
-        if (
-          typeSelected === "multiple-choice" ||
-          typeSelected === "yes-or-no"
-        ) {
-          question.options = getDefaultOptions(typeSelected);
-        }
-
-        // Currently we only support single question creation, but its ready for bulk creation
-        const response = await $api.organization.question.create.post([
-          question,
-        ]);
-
-        if (response.status !== 200) {
-          throw new Error(response.error?.value as unknown as string);
-        }
-
-        return response.data?.questions;
-      },
+    trpc.organization.question.create.useMutation({
       onSuccess(data) {
         if (data?.length) {
           onSuccessCreateQuestion?.(data);
@@ -90,12 +63,26 @@ const DialogAddQuestion = ({
         setTypeSelected(undefined);
         setIsOpen(false);
       },
+      onError(error) {
+        toast.error(error.message);
+      },
     });
 
   const handleCreateQuestion = (type: QuestionType) => {
     if (!order) return;
     setTypeSelected(type);
-    mutateCreateQuestion();
+
+    const question: InsertQuestion = {
+      referenceId,
+      order,
+      type,
+    };
+
+    if (type === "multiple-choice" || type === "yes-or-no") {
+      question.options = getDefaultOptions(type);
+    }
+
+    mutateCreateQuestion({ questions: [question], referenceId });
   };
 
   const groupedQuestionTypes = useMemo(() => {
@@ -127,9 +114,7 @@ const DialogAddQuestion = ({
         <div className="container max-w-2xl overflow-y-auto pt-[14vh] pb-20">
           <DrawerHeader className="p-0">
             <DrawerTitle>{t("addQuestionTitle")}</DrawerTitle>
-            <DrawerDescription>
-              {t("addQuestionDescription")}
-            </DrawerDescription>
+            <DrawerDescription>{t("addQuestionDescription")}</DrawerDescription>
           </DrawerHeader>
           <Tabs defaultValue="manual" className="mt-4 space-y-6">
             {showTabsOption ? (
@@ -188,7 +173,7 @@ const DialogAddQuestion = ({
             </TabsContent>
 
             <TabsContent value="import">
-               <ImportQuestions />
+              <ImportQuestions />
             </TabsContent>
 
             <TabsContent value="template">
@@ -207,7 +192,9 @@ const DialogAddQuestion = ({
         <div className="fixed bottom-0 left-0 right-0 border-t border-dashed bg-background">
           <DrawerFooter className="sm:justify-start mt-0 py-4 container max-w-2xl">
             <DrawerClose asChild>
-              <Button variant={"outline"} className="w-max">{tCommon("backButton")}</Button>
+              <Button variant={"outline"} className="w-max">
+                {tCommon("backButton")}
+              </Button>
             </DrawerClose>
           </DrawerFooter>
         </div>
