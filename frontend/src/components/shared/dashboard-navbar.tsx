@@ -79,7 +79,7 @@ export function DashboardNavbar({ className }: { className?: string }) {
   return (
     <nav
       className={cn(
-        "sticky top-0 left-0 w-full z-50 transition-all bg-background border-b border-dashed",
+        "sticky top-0 left-0 w-full z-50 transition-all bg-background border-b",
         className,
       )}
     >

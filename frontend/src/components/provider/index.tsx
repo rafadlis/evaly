@@ -11,6 +11,7 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
         "data-cfasync": "false",
       }}
       attribute="class"
+      defaultTheme="light"
       enableSystem={false}
       disableTransitionOnChange
     >
