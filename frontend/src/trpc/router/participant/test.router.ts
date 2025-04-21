@@ -9,7 +9,7 @@ export const testRouter = router({
   getTestById: participantProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
-      const test = await getTestById({ id: input });
+      const test = await getTestById({ id: input, email: ctx.user?.email });
       const attempt = await getAllAttemptByTestId(input, ctx.user?.email);
 
       return {

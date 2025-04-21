@@ -76,7 +76,7 @@ const CardQuestion = ({
       </div>
       <div className="mt-2">
         <div
-          className="custom-prose max-w-none"
+          className="custom-prose max-w-none lg:prose-lg"
           dangerouslySetInnerHTML={{
             __html: question.question ?? "No question found",
           }}
@@ -89,15 +89,15 @@ const CardQuestion = ({
             control={control}
             name="answerOptions"
             render={({ field }) => (
-              <div className="flex flex-col gap-3 mt-8">
+              <div className="flex flex-col mt-8">
                 {question.options?.map((option, i) => (
                   <div
                     key={option.id}
                     className={cn(
-                      "flex items-start gap-2 md:gap-4 cursor-pointer  border p-0.5 md:p-1.5",
+                      "flex items-start gap-2 md:gap-4 cursor-pointer pt-3 hover:opacity-80 transition-all",
                       field.value?.includes(option.id)
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : "border-border bg-transparent hover:border-primary/50 active:bg-foreground/10"
+                        ? "text-success-foreground"
+                        : ""
                     )}
                     onClick={() => {
                       if (isPendingAnswer) return;
@@ -111,11 +111,10 @@ const CardQuestion = ({
                     <Button
                       variant={
                         field.value?.includes(option.id)
-                          ? "outline"
-                          : "secondary"
+                          ? "default"
+                          : "outline"
                       }
-                      size={"icon-xs"}
-                      className="text-primary"
+                      size={"icon-sm"}
                     >
                       {option.id === targetOptionId && isPendingAnswer ? (
                         <Loader2 className="size-4 animate-spin" />
@@ -123,7 +122,7 @@ const CardQuestion = ({
                         String.fromCharCode(65 + i)
                       )}
                     </Button>
-                    <p className="flex-1 pt-0.5 md:text-base text-sm">
+                    <p className="flex-1 md:text-base pt-0.5 text-sm">
                       {option.text}
                     </p>
                   </div>

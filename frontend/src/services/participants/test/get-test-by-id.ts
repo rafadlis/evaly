@@ -19,17 +19,17 @@ export async function getTestById({
     where: and(eq(test.id, id), isNull(test.deletedAt)),
   });
 
-  if (!checkTestResult?.isPublished) {
-    throw new TRPCError({
-      code: "FORBIDDEN",
-      message: "Test is not published",
-    });
-  }
-
   if (!checkTestResult) {
     throw new TRPCError({
       code: "NOT_FOUND",
       message: "Test not found",
+    });
+  }
+
+  if (!checkTestResult?.isPublished) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Test is not published",
     });
   }
 
