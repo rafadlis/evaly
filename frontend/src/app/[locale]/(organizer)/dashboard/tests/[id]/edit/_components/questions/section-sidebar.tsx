@@ -8,8 +8,6 @@ import { useEffect, useState } from "react";
 import CardSection from "@/components/shared/card/card-section";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Reorder } from "motion/react";
-import { useMutation } from "@tanstack/react-query";
-import { $api } from "@/lib/api";
 import {
   Dialog,
   DialogClose,
@@ -23,6 +21,7 @@ import {
 import { QuestionTemplateSection } from "./question-template-section";
 import { toast } from "sonner";
 import { trpc } from "@/trpc/trpc.client";
+import { useTranslations } from "next-intl";
 
 const SectionSidebar = ({ className }: { className?: string }) => {
   return (
@@ -135,7 +134,7 @@ const AddSession = () => {
   const [, setSelectedSection] = useSelectedSection();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedId, setSelectedId] = useState("");
-
+  const tCommon = useTranslations("Common");
   const {
     refetch,
     isPending: isPendingSession,
@@ -146,21 +145,9 @@ const AddSession = () => {
     trpc.organization.testSection.create.useMutation();
 
   const { mutateAsync: tranferQuestion, isPending: isPendingTransferQuestion } =
-    useMutation({
-      mutationKey: ["add-bulk-to-other-reference"],
-      mutationFn: async (body: {
-        order: number;
-        fromReferenceId: string;
-        toReferenceId: string;
-      }) => {
-        const res =
-          await $api.organization.question["add-from-template"].post(body);
-
-        if (res.error) {
-          toast.error(res.error.value?.toString());
-        }
-
-        return res.data;
+    trpc.organization.question.transferBetweenReference.useMutation({
+      onError(error) {
+        toast.error(error.message || tCommon("genericUpdateError"));
       },
     });
 

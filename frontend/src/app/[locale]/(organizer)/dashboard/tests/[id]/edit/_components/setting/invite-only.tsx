@@ -20,51 +20,36 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { $api } from "@/lib/api";
-import { useTestInvitationByTestId } from "@/query/organization/test/use-test-invitation-by-test-id";
 import { TestInvitation } from "@evaly/backend/types/test";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { useMutation } from "@tanstack/react-query";
 import { ChevronRight, Loader2, XIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
+import { trpc } from "@/trpc/trpc.client";
 
 const InviteOnly = ({ testId }: { testId: string }) => {
   const t = useTranslations("TestDetail");
   const tCommon = useTranslations("Common");
-  const { data, isPending } = useTestInvitationByTestId(testId);
+  const { data, isPending } = trpc.organization.test.getInvites.useQuery({ id: testId });
   const [emailInput, setEmailInput] = useState("");
   const [listInvited, setListInvited] = useState<TestInvitation[]>([]);
 
   useEffect(() => {
-    setListInvited(data?.data?.data || []);
+    setListInvited(data || []);
   }, [data]);
 
   const {
     mutateAsync: addInvitedParticipant,
     isPending: isPendingAddInvitedParticipant,
-  } = useMutation({
-    mutationKey: ["add-invited-participant"],
-    mutationFn: async (emails: string[]) => {
-      const response = await $api.organization
-        .test({ id: testId })
-        .invitation.post({
-          emails,
-        });
-
-      if (response.error?.value.message) {
-        return toast.error(response.error?.value.message);
-      }
-
-      if (response.data && response.data.data.length > 0) {
-        toast.success(`${response.data.data.length} ${t("participantsAdded")}`);
-        setListInvited([...listInvited, ...response.data.data]);
-      }
-
+  } = trpc.organization.test.invite.useMutation({
+    onSuccess(data) {
+      toast.success(`${data.length} ${t("participantsAdded")}`);
+      setListInvited([...listInvited, ...data]);
       setEmailInput("");
-
-      return response.data;
+    },
+    onError(error) {
+      toast.error(error.message || tCommon("genericUpdateError"));
     },
   });
 
@@ -75,24 +60,13 @@ const InviteOnly = ({ testId }: { testId: string }) => {
   const {
     mutateAsync: deleteInvitedParticipant,
     isPending: isPendingDeleteInvitedParticipant,
-  } = useMutation({
-    mutationKey: ["delete-invited-participant"],
-    mutationFn: async (email: string) => {
-      const response = await $api.organization
-        .test({ id: testId })
-        .invitation({ email })
-        .delete();
-
-      if (response.error?.value.message) {
-        return toast.error(response.error?.value.message);
-      }
-
-      if (response.data) {
-        toast.success(t("participantRemoved"));
-        setListInvited(listInvited.filter((item) => item.email !== email));
-      }
-
-      return response.data;
+  } = trpc.organization.test.deleteInvite.useMutation({
+    onSuccess(_, variables) {
+      toast.success(t("participantRemoved"));
+      setListInvited(listInvited.filter((item) => item.email !== variables.email));
+    },
+    onError(error) {
+      toast.error(error.message || tCommon("genericUpdateError"));
     },
   });
 
@@ -121,7 +95,7 @@ const InviteOnly = ({ testId }: { testId: string }) => {
                   .map((email) => email.trim());
 
                 if (listEmails.length > 0) {
-                  addInvitedParticipant(listEmails);
+                  addInvitedParticipant({emails: listEmails, id: testId});
                 }
               }
             }}
@@ -134,7 +108,7 @@ const InviteOnly = ({ testId }: { testId: string }) => {
                 .split(",")
                 .map((email) => email.trim());
               if (listEmails.length > 0) {
-                addInvitedParticipant(listEmails);
+                addInvitedParticipant({emails: listEmails, id: testId});
               }
             }}
             type="button"
@@ -154,15 +128,15 @@ const InviteOnly = ({ testId }: { testId: string }) => {
               key={item.email}
               className="relative group pl-0.5 py-0.5 pr-4 rounded-full flex items-center gap-2 border text-sm"
             >
-              <Avatar>
+              <Avatar className="size-7">
                 {item.image ? (
                   <AvatarImage
                     src={item.image || ""}
                     alt={item.email}
-                    className="size-8 rounded-full"
+                    className=" rounded-full"
                   />
                 ) : (
-                  <AvatarFallback className="size-8 rounded-full font-bold">
+                  <AvatarFallback className="rounded-full font-bold">
                     {item?.email?.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 )}
@@ -170,7 +144,7 @@ const InviteOnly = ({ testId }: { testId: string }) => {
                   variant={"destructive"}
                   rounded
                   size={"icon-sm"}
-                  onClick={() => deleteInvitedParticipant(item.email)}
+                  onClick={() => deleteInvitedParticipant({id: testId, email: item.email})}
                   disabled={isPendingDeleteInvitedParticipant}
                   className="absolute opacity-0 group-hover:opacity-100 transition-all"
                 >
@@ -234,7 +208,7 @@ const InviteOnly = ({ testId }: { testId: string }) => {
                               variant={"ghost"}
                               size={"icon-xs"}
                               onClick={() =>
-                                deleteInvitedParticipant(item.email)
+                                deleteInvitedParticipant({id: testId, email: item.email})
                               }
                             >
                               <XIcon />

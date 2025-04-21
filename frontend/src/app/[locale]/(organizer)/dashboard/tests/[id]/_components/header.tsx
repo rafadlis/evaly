@@ -13,8 +13,6 @@ import { Link } from "@/components/shared/progress-bar";
 import { toast } from "sonner";
 import { env } from "@/lib/env.client";
 import BackButton from "@/components/shared/back-button";
-import { useMutation } from "@tanstack/react-query";
-import { $api } from "@/lib/api";
 import {
   Dialog,
   DialogContent,
@@ -28,11 +26,13 @@ import {
 import { useRouter } from "@/i18n/navigation";
 import { useTransition } from "react";
 import { trpc } from "@/trpc/trpc.client";
+import { useTranslations } from "next-intl";
 
 const Header = () => {
   const { id } = useParams();
   const router = useRouter();
   const [isRedirect, setIsRedirect] = useTransition();
+  const tCommon = useTranslations("Common");
 
   const {
     data: dataTest,
@@ -43,50 +43,35 @@ const Header = () => {
     id: id?.toString() || "",
   });
 
-  const { mutate: mutateUpdateTest, isPending: isUpdatingTest } = useMutation({
-    mutationFn: async () => {
-      const res = await $api.organization
-        .test({ id: id?.toString() || "" })
-        .put({
-          finishedAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        });
-
-      if (res.error?.value) {
-        return toast.error(res.error.value.toString());
-      }
-
-      await refetchTest();
+  const { mutate: mutateUpdateTest, isPending: isUpdatingTest } = trpc.organization.test.update.useMutation({
+    onSuccess() {
       toast.success("Test finished successfully");
+      refetchTest()
     },
   });
 
-  const { mutate: mutateReopenTest, isPending: isReopeningTest } = useMutation({
-    mutationKey: ["reopen-test"],
-    mutationFn: async () => {
-      const res = await $api.organization
-        .test({ id: id?.toString() || "" })
-        .reopen.put();
-
-      if (res.error?.value) {
-        return toast.error(res.error.value.toString());
-      }
-      if (!res.data?.id) {
-        return toast.error("Failed to re-open test, please try again.");
-      }
-
+  const { mutate: mutateReopenTest, isPending: isReopeningTest } = trpc.organization.test.duplicateTest.useMutation({
+    onSuccess(data) {
       setIsRedirect(() => {
-        router.push(`/dashboard/tests/${res.data?.id}/edit`);
+        router.push(`/dashboard/tests/${data.id}/edit`);
       });
     },
+    onError(error) {
+      toast.error(error.message || tCommon("genericUpdateError"));
+    },
+    
   });
 
   const finishTest = () => {
-    mutateUpdateTest();
+    mutateUpdateTest({
+      id: id?.toString() || "",
+    });
   };
 
   const reopenTest = () => {
-    mutateReopenTest();
+    mutateReopenTest({
+      id: id?.toString() || "",
+    });
   };
 
   const copyLinkToShare = () => {

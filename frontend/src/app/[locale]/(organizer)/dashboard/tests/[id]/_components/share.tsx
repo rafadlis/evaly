@@ -126,6 +126,89 @@ const Share = () => {
     }, 2000);
   };
 
+  const copyQRCodeImage = async () => {
+    if (!qrCodeRef.current) return;
+
+    const svg = qrCodeRef.current.querySelector("svg");
+    if (!svg) return;
+
+    // Create a canvas element
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // Set canvas dimensions
+    canvas.width = 500;
+    canvas.height = 500;
+
+    // Create an image from the SVG
+    const img = document.createElement("img");
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const svgBlob = new Blob([svgData], {
+      type: "image/svg+xml;charset=utf-8",
+    });
+    const url = URL.createObjectURL(svgBlob);
+
+    try {
+      // Wait for the image to load
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+        img.src = url;
+      });
+
+      // Fill white background
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw the image
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      // Add logo if it exists in the DOM
+      const logoImg = qrCodeRef.current.querySelector(
+        ".qr-logo"
+      ) as HTMLImageElement;
+      if (logoImg && logoImg.complete) {
+        // Calculate logo position (center)
+        const logoX = (canvas.width - logoSize * 2) / 2;
+        const logoY = (canvas.height - logoSize * 2) / 2;
+
+        // Draw logo
+        ctx.drawImage(logoImg, logoX, logoY, logoSize * 2, logoSize * 2);
+      }
+
+      // Convert to blob and copy to clipboard
+      canvas.toBlob(async (blob) => {
+        if (blob) {
+          try {
+            // Use the clipboard API to copy the image
+            await navigator.clipboard.write([
+              new ClipboardItem({ [blob.type]: blob }),
+            ]);
+            setCopied(true);
+            toast.success("QR Code image copied to clipboard", {
+              position: "top-right",
+            });
+
+            setTimeout(() => {
+              setCopied(false);
+            }, 2000);
+          } catch (err) {
+            toast.error(
+              "Failed to copy image. Your browser may not support this feature."
+            );
+            console.error("Clipboard write failed:", err);
+          }
+        }
+      }, "image/png");
+    } catch (err) {
+      toast.error("Failed to generate QR code image");
+      console.error("Error generating QR code image:", err);
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  };
+
   const downloadQRCode = () => {
     if (!qrCodeRef.current) return;
 
@@ -191,31 +274,17 @@ const Share = () => {
   };
 
   // Mutation for adding new invitations
-  const { mutate: addInvitation, isPending: isAddingInvitation } = useMutation({
-    mutationFn: async (emails: string[]) => {
-      const response = await $api.organization
-        .test({ id: testId })
-        .invitation.post({
-          emails,
-        });
-
-      if (response.error) {
-        throw new Error(
-          response.error.value?.message || "Failed to send invitations"
-        );
-      }
-
-      return response.data;
-    },
-    onSuccess: () => {
-      toast.success("Invitations added successfully");
-      setInviteEmails("");
-      refetchInvitations();
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || "Failed to add invitations");
-    },
-  });
+  const { mutate: addInvitation, isPending: isAddingInvitation } =
+    trpc.organization.test.invite.useMutation({
+      onSuccess() {
+        toast.success("Invitations added successfully");
+        setInviteEmails("");
+        refetchInvitations();
+      },
+      onError(error) {
+        toast.error(error.message || "Failed to add invitations");
+      },
+    });
 
   // Mutation for sending email to a specific participant
   const { mutate: sendInvitationEmail, isPending: isSendingEmail } =
@@ -238,25 +307,7 @@ const Share = () => {
       },
     });
 
-  // Mutation for sending emails to multiple participants
-  const { mutate: sendBulkInvitations, isPending: isSendingBulkInvitations } =
-    useMutation({
-      mutationFn: async (emails: string[]) => {
-        // In a real implementation, you would call an API endpoint to send emails in bulk
-        console.log(`Sending invitations to: ${emails.join(", ")}`);
-
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        return { success: true, count: emails.length };
-      },
-      onSuccess: (result) => {
-        toast.success(`Invitations sent to ${result.count} participants`);
-        refetchInvitations();
-      },
-      onError: () => {
-        toast.error("Failed to send invitations");
-      },
-    });
+  
 
   // Mutation for deleting an invitation
   const { mutate: deleteInvitation, isPending: isDeletingInvitation } =
@@ -294,21 +345,7 @@ const Share = () => {
       return;
     }
 
-    addInvitation(emails);
-  };
-
-  const handleSendAllInvitations = () => {
-    // Get all participants who haven't received an email yet
-    const pendingEmails = invitedParticipants
-      .filter((participant) => !participant.isEmailSent)
-      .map((participant) => participant.email);
-
-    if (pendingEmails.length === 0) {
-      toast.info("All participants have already received invitations");
-      return;
-    }
-
-    sendBulkInvitations(pendingEmails);
+    addInvitation({ id: testId, emails });
   };
 
   // Function to handle logo size change with debounce
@@ -624,30 +661,12 @@ const Share = () => {
                       </ScrollArea>
                     )}
                   </div>
-
-                  <Button
-                    variant="outline"
-                    onClick={handleSendAllInvitations}
-                    disabled={
-                      isSendingBulkInvitations ||
-                      invitedParticipants.filter((p) => !p.isEmailSent)
-                        .length === 0
-                    }
-                    className="gap-2 self-start w-full sm:w-auto"
-                  >
-                    {isSendingBulkInvitations ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Mail className="h-4 w-4" />
-                    )}
-                    Send All Pending Invitations
-                  </Button>
                 </div>
               </TabsContent>
             )}
 
             <TabsContent value="qr" className="space-y-4">
-              <div className="flex flex-col md:flex-row items-start gap-6 p-4 bg-background">
+              <div className="flex flex-col md:flex-row items-start gap-6 bg-background">
                 <div
                   className="relative bg-background p-4 border"
                   ref={qrCodeRef}
@@ -723,14 +742,14 @@ const Share = () => {
                       <Button
                         variant="secondary"
                         className="gap-2"
-                        onClick={copyToClipboard}
+                        onClick={copyQRCodeImage}
                       >
                         {copied ? (
                           <Check className="h-4 w-4" />
                         ) : (
                           <Copy className="h-4 w-4" />
                         )}
-                        {copied ? "Copied!" : "Copy Link"}
+                        {copied ? "Copied!" : "Copy Image"}
                       </Button>
                     </div>
 

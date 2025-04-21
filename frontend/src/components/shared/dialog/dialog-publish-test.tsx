@@ -7,11 +7,9 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Label } from "@/components/ui/label";
-import { $api } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/trpc/trpc.client";
 import { Test } from "@evaly/backend/types/test";
-import { useMutation } from "@tanstack/react-query";
 import {
   CheckIcon,
   CircleAlert,
@@ -43,23 +41,17 @@ const DialogPublishTest = ({
       enabled: isOpen,
     }
   );
-  const { mutate: publishTest, isPending: isPublishing } = useMutation({
-    mutationKey: ["publish-test"],
-    mutationFn: async () => {
-      const res = await $api.organization.test({ id: testId }).publish.put();
-      if (res.error?.value) {
-        return toast.error(res.error.value.toString());
-      }
-
-      if (res.data?.data) {
-        onPublished?.(res.data?.data);
-      }
-
-      toast.success(tCommon("testPublishedSuccessfully"));
-      setIsOpen(false);
-      return res.data;
-    },
-  });
+  const { mutate: publishTest, isPending: isPublishing } =
+    trpc.organization.test.publish.useMutation({
+      onError(error) {
+        toast.error(error.message || tCommon("genericUpdateError"));
+      },
+      onSuccess(data) {
+        setIsOpen(false);
+        onPublished?.(data);
+        toast.success(tCommon("testPublishedSuccessfully"));
+      },
+    });
 
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
@@ -88,7 +80,10 @@ const DialogPublishTest = ({
                     !data?.isPublishable || !data.isPublishable || isPublishing
                   }
                   onClick={() => {
-                    publishTest();
+                    publishTest({
+                      id: testId,
+                      isPublished: true,
+                    });
                   }}
                 >
                   {!data?.isPublishable ? <LockIcon /> : null}

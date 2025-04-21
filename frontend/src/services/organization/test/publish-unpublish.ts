@@ -1,11 +1,16 @@
-import { eq } from "drizzle-orm/sql";
+import { and, eq } from "drizzle-orm/sql";
 import db from "../../../lib/db";
 import { test } from "../../../lib/db/schema";
 
 export async function publishUnpublishTest(
   testId: string,
-  isPublished: boolean
+  isPublished: boolean,
+  organizationId: string
 ) {
-  const updatedTest = await db.update(test).set({ isPublished }).where(eq(test.id, testId)).returning()
-  return updatedTest[0]
+  const updatedTest = await db
+    .update(test)
+    .set({ isPublished })
+    .where(and(eq(test.id, testId), eq(test.organizationId, organizationId)))
+    .returning();
+  return updatedTest[0];
 }

@@ -5,8 +5,6 @@ import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { $api } from "@/lib/api";
-import { useMutation } from "@tanstack/react-query";
 import { UpdateTest } from "@evaly/backend/types/test";
 import { CheckCircle2, Clock, LockIcon, Timer, ShieldOff } from "lucide-react";
 import { useParams } from "next/navigation";
@@ -24,6 +22,7 @@ import {
 import { TooltipInfo } from "@/components/ui/tooltip";
 import { useTranslations } from "next-intl";
 import { trpc } from "@/trpc/trpc.client";
+import { toast } from "sonner";
 
 type SettingSectionProps = {
   title: string;
@@ -61,21 +60,13 @@ const Setting = () => {
     handleSubmit,
   } = useForm<UpdateTest>();
 
-  const { mutate: updateTest, isPending: isPendingUpdateTest } = useMutation({
-    mutationKey: ["update-test"],
-    mutationFn: async (data: UpdateTest) => {
-      const response = await $api.organization
-        .test({ id: testId?.toString() || "" })
-        .put(data);
-
-      return response.data;
-    },
-    onSuccess(data) {
-      if (!data) {
-        throw new Error(tCommon("genericUpdateError"));
-      }
-
+  const { mutate: updateTest, isPending: isPendingUpdateTest } = trpc.organization.test.update.useMutation({
+    onSuccess: (data) => {
+      toast.success(tCommon("savedSuccessfully"));
       reset(data);
+    },
+    onError: (error) => {
+      toast.error(error.message || tCommon("genericUpdateError"));
     },
   });
 
@@ -137,7 +128,7 @@ const Setting = () => {
                 value={field.value || "public"}
                 onValueChange={(value) => {
                   field.onChange(value);
-                  updateTest({ access: value as "public" | "invite-only" });
+                  updateTest({ access: value as "public" | "invite-only", id: testId?.toString() || "" });
                 }}
               >
                 <TabsList className="mb-2">

@@ -35,7 +35,7 @@ const BackButton = ({
     <button
       type="button"
       className={cn(
-        "flex items-center gap-1 cursor-pointer hover:opacity-70 text-sm",
+        "w-max flex items-center gap-1 cursor-pointer hover:opacity-70 text-sm",
         className
       )}
       onClick={onBackClick}

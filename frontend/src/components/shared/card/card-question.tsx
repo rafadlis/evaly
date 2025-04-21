@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { questionTypes } from "@/constants/question-type";
 import { cn } from "@/lib/utils";
-import { useUpdateBetweenQuestionMutation } from "@/query/organization/question/use-update-between-question.mutation";
+import { trpc } from "@/trpc/trpc.client";
 import { Question } from "@evaly/backend/types/question";
 import {
   ArrowDown,
@@ -39,11 +39,20 @@ const CardQuestion = ({
 }) => {
   const t = useTranslations("Questions");
   const tTestDetail = useTranslations("TestDetail");
+  const tCommon = useTranslations("Common");
   const [isMoving, setIsMoving] = useState<"up" | "down">();
+
   const {
     mutateAsync: updateBetweenQuestion,
     isPending: isPendingUpdateBetweenQuestion,
-  } = useUpdateBetweenQuestionMutation();
+  } = trpc.organization.question.updateOrder.useMutation({
+    onSuccess() {
+      toast.success(t("questionOrderUpdated"));
+    },
+    onError(error) {
+      toast.error(error.message || tCommon("genericUpdateError"));
+    },
+  });
 
   const handleMove = async (direction: "up" | "down") => {
     if (!data) return;
@@ -80,9 +89,7 @@ const CardQuestion = ({
     }
 
     // We already checked for undefined IDs above, so we can safely assert these are strings
-    await updateBetweenQuestion({
-      questions,
-    })
+    await updateBetweenQuestion(questions)
       .catch((error: unknown) => {
         toast.error(
           error instanceof Error ? error.message : "An unknown error occurred"
@@ -146,7 +153,7 @@ const CardQuestion = ({
                 disabled={isPendingUpdateBetweenQuestion && isMoving === "up"}
               >
                 {isMoving === "up" ? (
-                  <Loader2 className="text-muted-foreground" />
+                  <Loader2 className="text-muted-foreground animate-spin" />
                 ) : (
                   <ArrowUp className="text-muted-foreground" />
                 )}
@@ -167,7 +174,7 @@ const CardQuestion = ({
                 }
               >
                 {isMoving === "down" ? (
-                  <Loader2 className="text-muted-foreground" />
+                  <Loader2 className="text-muted-foreground animate-spin" />
                 ) : (
                   <ArrowDown className="text-muted-foreground" />
                 )}

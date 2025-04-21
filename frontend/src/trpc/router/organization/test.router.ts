@@ -1,9 +1,14 @@
 import { test } from "@/lib/db/schema";
+import { addInvitationTest } from "@/services/organization/test/add-invitation-test";
 import { checkTestOwner } from "@/services/organization/test/check-test-owner";
 import { createNewTest } from "@/services/organization/test/create-new-test";
+import { deleteInvitationTest } from "@/services/organization/test/delete-invitation-test";
 import { deleteTest } from "@/services/organization/test/delete-test";
 import { getAllTestsByOrganizationId } from "@/services/organization/test/get-all-tests-by-organization-id";
+import { getInvitationListTest } from "@/services/organization/test/get-invitation-list-test";
 import { getTestById } from "@/services/organization/test/get-test-by-id";
+import { publishUnpublishTest } from "@/services/organization/test/publish-unpublish";
+import { duplicateTest } from "@/services/organization/test/re-open-test";
 import { updateTest } from "@/services/organization/test/update-test";
 import { validateTestIsPublishable } from "@/services/organization/test/validate-test-is-publishable";
 import { organizerProcedure, router } from "@/trpc";
@@ -50,31 +55,31 @@ export const testRouter = router({
         id: z.string(),
       })
     )
-    .query(async ({ctx, input}) => {
-        const organizationId = ctx.organizer.organizationId;
-        const testId = input.id;
+    .query(async ({ ctx, input }) => {
+      const organizationId = ctx.organizer.organizationId;
+      const testId = input.id;
 
-        return await getTestById({
-            organizationId,
-            id: testId,
-        });
+      return await getTestById({
+        organizationId,
+        id: testId,
+      });
     }),
 
   update: organizerProcedure
     .input(createUpdateSchema(test))
-    .mutation(async ({ctx, input}) => {
-        const organizationId = ctx.organizer.organizationId;
-        const testId = input.id;
+    .mutation(async ({ ctx, input }) => {
+      const organizationId = ctx.organizer.organizationId;
+      const testId = input.id;
 
-        if (!testId) {
-            throw new Error("Test ID is required");
-        }
-        
-        return await updateTest({
-            organizationId,
-            id: testId,
-            data: input,
-        })
+      if (!testId) {
+        throw new Error("Test ID is required");
+      }
+
+      return await updateTest({
+        organizationId,
+        id: testId,
+        data: input,
+      });
     }),
 
   delete: organizerProcedure
@@ -83,16 +88,16 @@ export const testRouter = router({
         id: z.string(),
       })
     )
-    .mutation(async ({ctx, input}) => {
-        const organizationId = ctx.organizer.organizationId;
-        const testId = input.id;
+    .mutation(async ({ ctx, input }) => {
+      const organizationId = ctx.organizer.organizationId;
+      const testId = input.id;
 
-        if (!testId) {
-            throw new Error("Test ID is required");
-        }
+      if (!testId) {
+        throw new Error("Test ID is required");
+      }
 
-        await checkTestOwner(testId, organizationId);
-        return await deleteTest(testId);
+      await checkTestOwner(testId, organizationId);
+      return await deleteTest(testId);
     }),
 
   invite: organizerProcedure
@@ -102,7 +107,12 @@ export const testRouter = router({
         emails: z.array(z.string().email()),
       })
     )
-    .mutation(async () => {}),
+    .mutation(async ({ input }) => {
+      const testId = input.id;
+      const emails = input.emails;
+
+      return await addInvitationTest(testId, emails);
+    }),
 
   getInvites: organizerProcedure
     .input(
@@ -110,7 +120,11 @@ export const testRouter = router({
         id: z.string(),
       })
     )
-    .query(async () => {}),
+    .query(async ({ input }) => {
+      const testId = input.id;
+
+      return await getInvitationListTest(testId);
+    }),
 
   deleteInvite: organizerProcedure
     .input(
@@ -119,7 +133,12 @@ export const testRouter = router({
         email: z.string().email(),
       })
     )
-    .mutation(async () => {}),
+    .mutation(async ({input }) => {
+      const testId = input.id;
+      const email = input.email;
+
+      return await deleteInvitationTest(testId, email);
+    }),
 
   isPublishable: organizerProcedure
     .input(
@@ -127,20 +146,26 @@ export const testRouter = router({
         id: z.string(),
       })
     )
-    .query(async ({ctx, input}) => {
-        const organizationId = ctx.organizer.organizationId;
-        const testId = input.id;
+    .query(async ({ ctx, input }) => {
+      const organizationId = ctx.organizer.organizationId;
+      const testId = input.id;
 
-        return await validateTestIsPublishable(testId, organizationId);
+      return await validateTestIsPublishable(testId, organizationId);
     }),
 
   publish: organizerProcedure
     .input(
       z.object({
         id: z.string(),
+        isPublished: z.boolean(),
       })
     )
-    .mutation(async () => {}),
+    .mutation(async ({ ctx, input }) => {
+      const organizationId = ctx.organizer.organizationId;
+      const testId = input.id;
+      const isPublished = input.isPublished;
+      return await publishUnpublishTest(testId, isPublished, organizationId);
+    }),
 
   unpublish: organizerProcedure
     .input(
@@ -156,7 +181,12 @@ export const testRouter = router({
         id: z.string(),
       })
     )
-    .mutation(async () => {}),
+    .mutation(async ({ ctx, input }) => {
+      const organizationId = ctx.organizer.organizationId;
+      const testId = input.id;
+
+      return await duplicateTest(testId, organizationId);
+    }),
 
   getTestResults: organizerProcedure
     .input(

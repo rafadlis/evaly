@@ -2,7 +2,7 @@ import db from "@/lib/db";
 import { question, test, testSection } from "@/lib/db/schema";
 import { InsertQuestion } from "@/types/question";
 
-export async function reopenTest(testId: string) {
+export async function duplicateTest(testId: string, organizationId: string) {
   // Duplicate everything from the original test
   const currentTest = await db.query.test.findFirst({
     where(fields, operators) {
@@ -30,7 +30,7 @@ export async function reopenTest(testId: string) {
     .values({
       ...currentTest,
       id: undefined, // Let the database generate the id
-      organizationId: currentTest?.organizationId || "",
+      organizationId: organizationId,
       createdByOrganizerId: currentTest?.createdByOrganizerId || "",
       isPublished: false,
       finishedAt: null,
