@@ -1,10 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { $api } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import { Question } from "@evaly/backend/types/question";
-import { UpdateTestAttemptAnswer } from "@evaly/backend/types/test.attempt";
-import { useMutation } from "@tanstack/react-query";
+import { trpc } from "@/trpc/trpc.client";
+import { Question } from "@/types/question";
+import { UpdateTestAttemptAnswer } from "@/types/test.attempt";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -42,37 +41,24 @@ const CardQuestion = ({
     }
   }, [defaultAnswer, reset]);
 
-  const { mutate: postAnswer, isPending: isPendingAnswer } = useMutation({
-    mutationKey: ["post-answer", question.id],
-    mutationFn: async (body: UpdateTestAttemptAnswer) => {
-      const res = await $api.participant.test
-        .attempt({ id: attemptId })
-        .answer.post(body);
-
-      const data = res.data;
-      setTargetOptionId(null);
-
-      if (res.status !== 200) {
-        toast.error(res.error?.value.toString() ?? "Failed to save answer");
-        return;
-      }
-
-      if (!data) {
-        toast.error("Failed to save answer");
-        return;
-      }
-
-      reset(data);
-
-      return data;
-    },
-  });
+  const { mutate: postAnswer, isPending: isPendingAnswer } =
+    trpc.participant.attempt.submitAnswer.useMutation({
+      onError(error) {
+        toast.error(error.message);
+      },
+      onSuccess(data) {
+        reset(data);
+      },
+    });
 
   // Handle option select for option based question
   const handleSubmitAnswer = (data: UpdateTestAttemptAnswer) => {
     postAnswer({
-      ...data,
-      questionId: question.id,
+      data: {
+        ...data,
+        questionId: question.id,
+      },
+      attemptId,
     });
   };
 
@@ -137,7 +123,9 @@ const CardQuestion = ({
                         String.fromCharCode(65 + i)
                       )}
                     </Button>
-                    <p className="flex-1 pt-0.5 md:text-base text-sm">{option.text}</p>
+                    <p className="flex-1 pt-0.5 md:text-base text-sm">
+                      {option.text}
+                    </p>
                   </div>
                 ))}
               </div>

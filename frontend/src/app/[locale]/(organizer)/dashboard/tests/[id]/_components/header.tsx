@@ -159,7 +159,7 @@ const Header = () => {
             </Button>
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant={"outline-solid"}>
+                <Button variant={"outline"}>
                   <RotateCcw />
                   Re-open test
                 </Button>

@@ -8,9 +8,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { $api } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import { useMutation } from "@tanstack/react-query";
+import { trpc } from "@/trpc/trpc.client";
 import { Trash2Icon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -27,17 +26,7 @@ const DialogDeleteQuestionTemplate = ({
 }) => {
   const [open, setOpen] = useState(false);
 
-  const { mutate: deleteQuestion, isPending } = useMutation({
-    mutationKey: ["delete-question"],
-    mutationFn: async () => {
-      if (!templateId) return;
-
-      const response = await $api.organization.question.template({id: templateId as string}).delete()
-
-      if (response.status !== 200) {
-        throw new Error(response.error?.value as unknown as string);
-      }
-    },
+  const { mutate: deleteQuestion, isPending } = trpc.organization.questionTemplate.delete.useMutation({
     onSuccess: () => {
       onSuccess();
       setOpen(false);
@@ -75,7 +64,7 @@ const DialogDeleteQuestionTemplate = ({
             disabled={isPending}
             onClick={(e) => {
               e.stopPropagation();
-              deleteQuestion();
+              deleteQuestion({ id: templateId });
             }}
           >
             {isPending ? "Deleting..." : "Delete"}

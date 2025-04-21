@@ -22,9 +22,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { env } from "@/lib/env.client";
-import { useTestSubmissionsById } from "@/query/organization/test/use-test-submissions-byid";
 import { useTabsState } from "../edit/_hooks/use-tabs-state";
-import { useTestInvitationByTestId } from "@/query/organization/test/use-test-invitation-by-test-id";
 import { useMutation } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
@@ -46,7 +44,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { $api } from "@/lib/api";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Slider } from "@/components/ui/slider";
 import {
@@ -84,7 +81,9 @@ const Share = () => {
     id: id?.toString() || "",
   });
 
-  const { data: submissionsData } = useTestSubmissionsById(testId);
+  const { data: submissionsData } = trpc.organization.test.getTestResults.useQuery({
+    id: testId,
+  });
 
   const participantCount = submissionsData?.submissions?.length || 0;
 
@@ -99,14 +98,16 @@ const Share = () => {
     data: invitationData,
     refetch: refetchInvitations,
     isLoading: isLoadingInvitations,
-  } = useTestInvitationByTestId(testId);
+  } = trpc.organization.test.getInvites.useQuery({
+    id: testId,
+  });
 
   // Get list of invited participants
   const invitedParticipants = useMemo<InvitedParticipant[]>(() => {
-    if (!isInviteOnly || !invitationData?.data?.data) return [];
+    if (!isInviteOnly || !invitationData) return [];
 
     // Return the data directly from the API response
-    return invitationData.data.data;
+    return invitationData;
   }, [isInviteOnly, invitationData]);
 
   // Get list of participants who have started or completed the test
@@ -311,27 +312,13 @@ const Share = () => {
 
   // Mutation for deleting an invitation
   const { mutate: deleteInvitation, isPending: isDeletingInvitation } =
-    useMutation({
-      mutationFn: async (email: string) => {
-        const response = await $api.organization
-          .test({ id: testId })
-          .invitation({ email })
-          .delete();
-
-        if (response.error) {
-          throw new Error(
-            response.error.value?.message || "Failed to delete invitation"
-          );
-        }
-
-        return response.data;
+    trpc.organization.test.deleteInvite.useMutation({
+      onError(error) {
+        toast.error(error.message || "Failed to delete invitation");
       },
-      onSuccess: () => {
+      onSuccess() {
         toast.success("Invitation deleted successfully");
         refetchInvitations();
-      },
-      onError: (error: Error) => {
-        toast.error(error.message || "Failed to delete invitation");
       },
     });
 
@@ -637,7 +624,10 @@ const Share = () => {
                                           variant="ghost"
                                           size="icon"
                                           onClick={() =>
-                                            deleteInvitation(participant.email)
+                                            deleteInvitation({
+                                              email: participant.email,
+                                              id: testId,
+                                            })
                                           }
                                           disabled={isDeletingInvitation}
                                         >

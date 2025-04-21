@@ -226,7 +226,7 @@ const AddSession = () => {
 
               <div className="flex gap-2">
                 <Button
-                  variant={"outline-solid"}
+                  variant={"outline"}
                   className="w-max"
                   disabled={isPending || isRefetchingSection}
                   onClick={async () => {

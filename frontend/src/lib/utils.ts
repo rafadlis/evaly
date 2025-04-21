@@ -1,4 +1,4 @@
-import { Question } from "@evaly/backend/types/question";
+import { Question } from "@/types/question";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 

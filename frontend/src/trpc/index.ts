@@ -18,7 +18,7 @@ export const createContext = async ({ req }: FetchCreateContextFnOptions) => {
   const session: Session | undefined = sessionRes?.session;
   const user: User | undefined = sessionRes?.user;
 
-  return { session, user };
+  return { session, user, };
 };
 
 export type Context = Awaited<ReturnType<typeof createContext>>;

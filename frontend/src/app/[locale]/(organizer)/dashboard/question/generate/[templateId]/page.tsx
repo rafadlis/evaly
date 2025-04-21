@@ -1,38 +1,37 @@
 "use client";
 
 import CardQuestion from "@/components/shared/card/card-question";
-import { Question } from "@evaly/backend/types/question";
-import { QuestionGenerated } from "@evaly/backend/types/question.generated";
+import { Question } from "@/types/question";
+import { QuestionGenerated } from "@/types/question.generated";
 import { motion } from "motion/react";
 import React, { useEffect, useTransition } from "react";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import { useParams, useSearchParams } from "next/navigation";
 import LoadingScreen from "@/components/shared/loading/loading-screen";
-import { useQuestionTemplateById } from "@/query/organization/question/use-question-template-by-id";
 import { cn } from "@/lib/utils";
 import { TextShimmer } from "@/components/ui/text-shimmer";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "@/i18n/navigation";
 import { toast } from "sonner";
-import { useMutation } from "@tanstack/react-query";
-import { $api } from "@/lib/api";
 import { Loader2 } from "lucide-react";
 import { trpc } from "@/trpc/trpc.client";
 
 const Page = () => {
   const { templateId } = useParams();
   const [isRedirecting, setIsRedirecting] = useTransition();
-  const searchParams = useSearchParams()
+  const searchParams = useSearchParams();
   const router = useRouter();
   const { data: dataTemplate, isPending: isPendingTemplate } =
-    useQuestionTemplateById(templateId as string);
+    trpc.organization.questionTemplate.getById.useQuery({
+      id: templateId as string,
+    });
   const { data: dataQuestions, isPending: isPendingQuestions } =
     trpc.organization.question.getAll.useQuery({
       referenceId: templateId as string,
     });
 
   const { isLoading, object, submit } = useObject({
-    api: "/organization/question/llm/completition",
+    api: "/api/ai/generate-question",
     credentials: "include",
     schema: QuestionGenerated,
     onFinish({}) {
@@ -41,31 +40,22 @@ const Page = () => {
   });
 
   const { mutateAsync: tranferQuestion, isPending: isPendingTransferQuestion } =
-    useMutation({
-      mutationKey: ["add-bulk-to-other-reference"],
-      mutationFn: async (body: {
-        order: number;
-        fromReferenceId: string;
-        toReferenceId: string;
-      }) => {
-        const res =
-          await $api.organization.question["add-from-template"].post(body);
-
-        if (res.error) {
-          toast.error(res.error.value?.toString());
-        }
-
-        return res.data;
+    trpc.organization.question.transferBetweenReference.useMutation({
+      onError(error) {
+        toast.error(error.message || "Failed to transfer question");
+      },
+      onSuccess() {
+        toast.success("Question transferred successfully");
       },
     });
 
   async function onSave() {
-    const order = searchParams.get("order")
-    const toReferenceId = searchParams.get("referenceid")
-    const testid= searchParams.get("testid")
-  
+    const order = searchParams.get("order");
+    const toReferenceId = searchParams.get("referenceid");
+    const testid = searchParams.get("testid");
+
     const fromReferenceId = dataTemplate?.id;
-  
+
     if (order !== undefined && testid && toReferenceId && fromReferenceId) {
       const transferredQuestion = await tranferQuestion({
         order: Number(order),
@@ -92,7 +82,7 @@ const Page = () => {
 
   useEffect(() => {
     if (dataTemplate?.aiContents?.length === 1 && !isPendingTemplate) {
-      submit({ prompt: dataTemplate?.aiContents?.at(0)?.prompt, templateId });
+      submit({ prompt: dataTemplate?.aiContents?.at(0)?.prompt, templateId: templateId as string, context: "educational" });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataTemplate, isPendingTemplate]);

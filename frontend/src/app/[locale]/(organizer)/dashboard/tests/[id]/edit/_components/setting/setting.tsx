@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { UpdateTest } from "@evaly/backend/types/test";
+import { UpdateTest } from "@/types/test";
 import { CheckCircle2, Clock, LockIcon, Timer, ShieldOff } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect, ReactNode } from "react";
@@ -261,7 +261,7 @@ const Setting = () => {
           <Button
             disabled={!isDirty}
             type="submit"
-            variant={isDirty ? "default" : "outline-solid"}
+            variant={isDirty ? "default" : "outline"}
           >
             {isPendingUpdateTest ? tCommon("savingStatus") : tCommon("saveChanges")}
           </Button>

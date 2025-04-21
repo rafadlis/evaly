@@ -1,4 +1,4 @@
-import { Test } from "@evaly/backend/types/test";
+import { Test } from "@/types/test";
 import { Link } from "../progress-bar";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -32,7 +32,7 @@ const CardTest = ({
     <Link href={redirectLink}>
       <div
         key={data.id}
-        className="border transition-all duration-100 bg-background w-full hover:border-primary/30 active:opacity-80"
+        className="border rounded-md transition-all duration-100 bg-background w-full hover:border-primary/30 active:opacity-80"
       >
         <div className="flex justify-between items-start p-4">
           <div>

@@ -14,7 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { CircleHelpIcon, Loader2, PencilLine } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { UpdateTestSection } from "@evaly/backend/types/test";
+import { UpdateTestSection } from "@/types/test";
 import { toast } from "sonner";
 import {
   Popover,

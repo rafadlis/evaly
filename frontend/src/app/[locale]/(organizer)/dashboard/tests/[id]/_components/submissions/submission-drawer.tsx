@@ -2,51 +2,51 @@ import { useState, useMemo } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import {
-    XCircle,
-    HelpCircle,
-    Loader2,
-    Clock,
-    BarChart3,
-    Calendar,
-    Mail,
-    Timer,
-    AlertCircle,
-    CheckCircle2,
-    XIcon,
-    AlertTriangle,
+  XCircle,
+  HelpCircle,
+  Loader2,
+  Clock,
+  BarChart3,
+  Calendar,
+  Mail,
+  Timer,
+  AlertCircle,
+  CheckCircle2,
+  XIcon,
+  AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
-    Drawer,
-    DrawerClose,
-    DrawerContent,
-    DrawerDescription,
-    DrawerFooter,
-    DrawerHeader,
-    DrawerNavbar,
-    DrawerTitle,
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerNavbar,
+  DrawerTitle,
 } from "@/components/ui/drawer";
 import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 import { Submission, Section } from "./types";
-import { useSubmissionDetails } from "@/query/organization/test/use-submission-details";
 import { ExportDialogDetails } from "./export-dialog-details";
+import { trpc } from "@/trpc/trpc.client";
 
 dayjs.extend(relativeTime);
 
@@ -68,10 +68,10 @@ export const SubmissionDrawer = ({
   const [activeTab, setActiveTab] = useState<string>("overview");
 
   // Fetch detailed submission data when drawer is open
-  const { data: submissionDetails, isLoading } = useSubmissionDetails(
-    open ? testId : "", // Only fetch when drawer is open
-    open && submission ? submission.email : ""
-  );
+  const { data: submissionDetails, isLoading } = trpc.organization.test.getTestResultsByParticipant.useQuery({
+    id: testId,
+    email: submission?.email || "",
+  });
 
   // Use the detailed questions from the API response
   const questions = useMemo(() => {

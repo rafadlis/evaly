@@ -20,6 +20,8 @@ const envSchema = z.object({
   AWS_ACCESS_KEY_ID: z.string(),
   AWS_SECRET_ACCESS_KEY: z.string(),
   AWS_REGION: z.string(),
+  OPENAI_API_KEY: z.string(),
+  GOOGLE_GENERATIVE_AI_API_KEY: z.string(),
 });
 
 // Parse the environment variables

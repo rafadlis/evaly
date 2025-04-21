@@ -17,10 +17,10 @@
     "db:migrate": "bun db:generate && bun ./src/lib/db/migrate.ts"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^1.2.7",
-    "@ai-sdk/react": "^1.2.0",
+    "@ai-sdk/google": "1.2.12",
+    "@ai-sdk/openai": "1.3.16",
+    "@ai-sdk/react": "1.2.9",
     "@elysiajs/eden": "^1.2.0",
-    "@evaly/backend": "workspace:*",
     "@libsql/client": "^0.14.0",
     "@neondatabase/serverless": "^1.0.0",
     "@opennextjs/cloudflare": "^1.0.0-beta.2",
@@ -58,7 +58,7 @@
     "@trpc/client": "^11.1.0",
     "@trpc/react-query": "^11.1.0",
     "@trpc/server": "^11.0.0-rc.768",
-    "ai": "^4.2.0",
+    "ai": "4.3.9",
     "aws4fetch": "^1.0.20",
     "babel-plugin-react-compiler": "^19.0.0-beta-3229e95-20250315",
     "better-auth": "1.2.4",

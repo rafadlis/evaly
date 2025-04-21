@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { questionTypes } from "@/constants/question-type";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/trpc/trpc.client";
-import { Question } from "@evaly/backend/types/question";
+import { Question } from "@/types/question";
 import {
   ArrowDown,
   ArrowUp,

@@ -10,10 +10,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link, useRouter } from "@/i18n/navigation";
-import { $api } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import { useAllQuestionTemplate } from "@/query/organization/question/use-all-question-template";
-import { useMutation } from "@tanstack/react-query";
+import { trpc } from "@/trpc/trpc.client";
 import dayjs from "dayjs";
 import {
   FileText,
@@ -44,7 +42,7 @@ export const QuestionTemplateSection = ({
   );
   const [tab, setTab] = useQueryState("tab", parseAsString.withDefault("all"));
 
-  const { data: dataQuestionTemplate } = useAllQuestionTemplate();
+  const { data: dataQuestionTemplate } = trpc.organization.questionTemplate.getAll.useQuery();
 
   const filteredDataQuestionTemplate = useMemo(() => {
     if (!dataQuestionTemplate) return [];
@@ -256,28 +254,22 @@ const CreateQuestionTemplateButton = () => {
   const router = useRouter();
   const [transitionReady, startTransition] = useTransition();
 
-  const { mutate: createQuestionTemplate, isPending: isLoading } = useMutation({
-    mutationKey: ["create-question-template"],
-    mutationFn: async () => {
-      const res = await $api.organization.question.template.create.post({
-        withInitialQuestion: true,
-      });
-
-      if (!res.data) {
-        toast.error("Failed to create question template");
-        return;
-      }
-
+  const { mutate: createQuestionTemplate, isPending: isLoading } = trpc.organization.questionTemplate.create.useMutation({
+    onError(error) {
+      toast.error(error.message || "Failed to create question template");
+    },
+    onSuccess(data) {
+      toast.success("Question template created successfully");
       startTransition(() => {
-        router.push(`/dashboard/question/${res.data.id}`);
+        router.push(`/dashboard/question/${data.id}`);
       });
     },
   });
 
   return (
     <Button
-      variant={"outline-solid"}
-      onClick={() => createQuestionTemplate()}
+      variant={"outline"}
+      onClick={() => createQuestionTemplate({ title: "" })}
       disabled={transitionReady || isLoading}
     >
       {isLoading ? (

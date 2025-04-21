@@ -9,7 +9,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/trpc/trpc.client";
-import { Test } from "@evaly/backend/types/test";
+import { Test } from "@/types/test";
 import {
   CheckIcon,
   CircleAlert,

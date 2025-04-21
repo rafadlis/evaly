@@ -11,16 +11,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Controller, useForm } from "react-hook-form";
-import { $api } from "@/lib/api";
-import { OrganizerUserUpdate } from "@evaly/backend/types/user";
-import { useMutation } from "@tanstack/react-query";
+import { OrganizerUserUpdate } from "@/types/user";
 import { PencilLine, Info, Loader2, Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useParticipantProfile } from "@/query/participants/profile/use-participant-profile";
+import { trpc } from "@/trpc/trpc.client";
 
 export const ProfilePage = () => {
-  const { data, refetch } = useParticipantProfile();
+  const { data, refetch } = trpc.participant.profile.useQuery();
   const [imageFilePreview, setImageFilePreview] = useState<string | null>(null);
 
   // Define form for profile
@@ -49,16 +47,7 @@ export const ProfilePage = () => {
   }, [data, reset]);
 
   const { mutate: mutateUpdateProfile, isPending: isPendingUpdateProfile } =
-    useMutation({
-      mutationKey: ["update-participant-profile"],
-      mutationFn: async (data: { fullName: string; imageFile?: File }) => {
-        const response = await $api.participant.profile.put(data);
-        if (response.error?.value) {
-          toast.error(response.error.value.message);
-          return;
-        }
-        return response.data;
-      },
+    trpc.participant.updateProfile.useMutation({
       onSuccess(data) {
         if (data) {
           toast.success("Profile updated successfully");
@@ -66,16 +55,19 @@ export const ProfilePage = () => {
           refetch();
         }
       },
+      onError(error) {
+        toast.error(error.message);
+      },
     });
 
   return (
             <form
               className="space-y-6"
               onSubmit={handleSubmit((data) => {
-                mutateUpdateProfile({
-                  fullName: data.name ?? "",
-                  imageFile: data.imageFile,
-                });
+                const formData = new FormData();  
+                formData.append("fullName", data.name ?? "");
+                formData.append("imageFile", data.imageFile ?? "");
+                mutateUpdateProfile(formData);
               })}
             >
               <div className="flex flex-col">

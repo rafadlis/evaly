@@ -1,37 +1,31 @@
 import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
-import { $api } from "@/lib/api";
-import { Test } from "@evaly/backend/types/test";
-import { useMutation } from "@tanstack/react-query";
+import { trpc } from "@/trpc/trpc.client";
+import { Test } from "@/types/test";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 const DialogUnpublishTest = ({ testId, isUnpublished }: { testId: string, isUnpublished?: (newTest: Test)=> void }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { mutate: unpublishTest, isPending: isUnpublishing } = useMutation({
-    mutationFn: async () => {
-      const res = await $api.organization.test({ id: testId }).unpublish.put();
-      if (res.error?.value) {
-        return toast.error(res.error.value.toString());
+  const { mutate: unpublishTest, isPending: isUnpublishing } = trpc.organization.test.publish.useMutation({
+    onError: (error) => {
+      toast.error(error.message);
+    },
+    onSuccess: (data) => {
+      if (data) {
+        isUnpublished?.(data);
       }
-
-      if (res.data?.data) {
-        isUnpublished?.(res.data?.data);
-      }
-
       toast.success("Test unpublished successfully");
       setIsOpen(false);
-      
-      return res.data;
     },
   });
   return (
@@ -57,7 +51,7 @@ const DialogUnpublishTest = ({ testId, isUnpublished }: { testId: string, isUnpu
           <Button
             variant={"destructive"}
             onClick={() => {
-              unpublishTest();
+              unpublishTest({ id: testId, isPublished: false });
             }}
             disabled={isUnpublishing}
           >

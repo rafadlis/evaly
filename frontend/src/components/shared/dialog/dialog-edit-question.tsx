@@ -13,7 +13,7 @@ import { DialogFooter } from "@/components/ui/dialog";
 import QuestionTypeSelection from "@/components/shared/question-type-selection";
 import { Editor } from "@/components/shared/editor/editor";
 import { Separator } from "@/components/ui/separator";
-import { Question, UpdateQuestion } from "@evaly/backend/types/question";
+import { Question, UpdateQuestion } from "@/types/question";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Reorder, useDragControls } from "motion/react";

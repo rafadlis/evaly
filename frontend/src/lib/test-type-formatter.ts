@@ -1,4 +1,4 @@
-import { TestType } from "@evaly/backend/types/test";
+import { TestType } from "@/types/test";
 
 // For backwards compatibility, provide the original non-translated version
 export const testTypeFormatter = (type?: TestType, t?: (key: string) => string) => {

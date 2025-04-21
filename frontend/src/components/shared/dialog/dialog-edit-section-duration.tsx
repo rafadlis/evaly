@@ -6,11 +6,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { $api } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/trpc/trpc.client";
-import { UpdateTestSection } from "@evaly/backend/types/test";
-import { useMutation } from "@tanstack/react-query";
 import { CircleHelpIcon, ClockIcon, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -41,17 +38,7 @@ const DialogEditSectionDuration = ({
   });
 
   const { mutate: updateSection, isPending: isPendingUpdateSection } =
-    useMutation({
-      mutationKey: ["update-section"],
-      mutationFn: async (data: UpdateTestSection) => {
-        const response = await $api.organization.test
-          .section({ id: sectionId as string })
-          .put(data);
-        if (response.status !== 200) {
-          throw new Error(response.error?.value as unknown as string);
-        }
-        return response.data;
-      },
+    trpc.organization.testSection.update.useMutation({
       onSuccess: async () => {
         await refetchSection();
         await refetchSections();
@@ -84,7 +71,10 @@ const DialogEditSectionDuration = ({
     const newTotalMinutes = hours * 60 + minutes;
 
     updateSection({
-      duration: newTotalMinutes,
+      id: sectionId as string,
+      data: {
+        duration: newTotalMinutes,
+      },
     });
   };
 return null

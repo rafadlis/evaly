@@ -1,13 +1,12 @@
 "use client";
 
-import { useAttemptById } from "@/query/participants/attempt/use-attempt-by-id";
 import { Loader2 } from "lucide-react";
 import { useParams } from "next/navigation";
 import Navbar from "./_components/navbar";
 import CardQuestion from "./_components/card-question";
-import { useAttemptAnswerByAttemptId } from "@/query/participants/attempt/use-attempt-answer-by-attempt-id";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
+import { trpc } from "@/trpc/trpc.client";
 
 const Page = () => {
   const { attemptId, testId } = useParams();
@@ -17,9 +16,12 @@ const Page = () => {
     data: attempt,
     isPending: isPendingAttempt,
     error: errorAttempt,
-  } = useAttemptById(attemptId as string);
+  } = trpc.participant.attempt.getAttemptById.useQuery(attemptId as string);
+
   const { data: attemptAnswers, isPending: isPendingAttemptAnswers } =
-    useAttemptAnswerByAttemptId(attemptId as string);
+    trpc.participant.attempt.getAttemptAnswers.useQuery({
+      attemptId: attemptId as string,
+    });
 
   if (isPendingAttempt || isPendingAttemptAnswers) {
     return (
@@ -33,12 +35,12 @@ const Page = () => {
     return (
       <div className="flex-1 flex flex-col gap-2 items-center justify-center text-2xl font-medium text-center">
         <h1>{errorAttempt.message}</h1>
-        {errorAttempt.cause === 401 && (
+        {errorAttempt.data?.code === "UNAUTHORIZED" && (
           <Button onClick={() => router.push(`/login?callbackURL=${pathName}`)}>
             Login
           </Button>
         )}
-        {errorAttempt.cause === 403 && (
+        {errorAttempt.data?.code === "FORBIDDEN" && (
           <Button onClick={() => router.push(`/s/${testId}`)}>
             Go to Home
           </Button>

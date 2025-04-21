@@ -18,15 +18,6 @@ export async function startAttempt({
     email: email,
   });
 
-  if (test.error) {
-    return {
-      error: {
-        code: test.error.status,
-        message: test.error.message,
-      },
-    };
-  }
-
   // Get the list of test section
   if (!test.testSections) {
     return {

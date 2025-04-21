@@ -25,13 +25,12 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "@/components/shared/progress-bar";
-import { useMutation } from "@tanstack/react-query";
-import { $api } from "@/lib/api";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/navigation";
-import { useAllQuestionTemplate } from "@/query/organization/question/use-all-question-template";
 import dayjs from "dayjs";
 import { parseAsString, useQueryState } from "nuqs";
+import { trpc } from "@/trpc/trpc.client";
+import LoadingScreen from "@/components/shared/loading/loading-screen";
 
 const Page = () => {
   return (
@@ -61,28 +60,23 @@ const CreateQuestionTemplateButton = () => {
   const router = useRouter();
   const [transitionReady, startTransition] = useTransition();
 
-  const { mutate: createQuestionTemplate, isPending: isLoading } = useMutation({
-    mutationKey: ["create-question-template"],
-    mutationFn: async () => {
-      const res = await $api.organization.question.template.create.post({
-        withInitialQuestion: true,
-      });
-
-      if (!res.data) {
-        toast.error("Failed to create question template");
-        return;
-      }
-
-      startTransition(() => {
-        router.push(`/dashboard/question/${res.data.id}`);
-      });
-    },
-  });
+  const { mutate: createQuestionTemplate, isPending: isLoading } =
+    trpc.organization.questionTemplate.create.useMutation({
+      onError(error) {
+        toast.error(error.message || "Failed to create question template");
+      },
+      onSuccess(data) {
+        toast.success("Question template created successfully");
+        startTransition(() => {
+          router.push(`/dashboard/question/${data.id}`);
+        });
+      },
+    });
 
   return (
     <Button
-      variant={"outline-solid"}
-      onClick={() => createQuestionTemplate()}
+      variant={"outline"}
+      onClick={() => createQuestionTemplate({ title: "" })}
       disabled={transitionReady || isLoading}
     >
       {isLoading ? (
@@ -106,10 +100,10 @@ const CreateQuestionTemplateButton = () => {
 
 const QuestionTemplateSection = ({
   className,
-  gridClassName
+  gridClassName,
 }: {
   className?: string;
-  gridClassName?: string
+  gridClassName?: string;
 }) => {
   const [searchQuery, setSearchQuery] = useQueryState(
     "search",
@@ -117,7 +111,7 @@ const QuestionTemplateSection = ({
   );
   const [tab, setTab] = useQueryState("tab", parseAsString.withDefault("all"));
 
-  const { data: dataQuestionTemplate } = useAllQuestionTemplate();
+  const { data: dataQuestionTemplate, isPending: isPendingQuestionTemplate } = trpc.organization.questionTemplate.getAll.useQuery();
 
   const filteredDataQuestionTemplate = useMemo(() => {
     if (!dataQuestionTemplate) return [];
@@ -145,6 +139,8 @@ const QuestionTemplateSection = ({
       );
     });
   }, [dataQuestionTemplate, searchQuery, tab]);
+
+  if (isPendingQuestionTemplate) return <LoadingScreen />
 
   return (
     <div className={cn("space-y-6", className)}>
@@ -178,7 +174,12 @@ const QuestionTemplateSection = ({
         {/* Owned Templates Tab */}
         {filteredDataQuestionTemplate &&
         filteredDataQuestionTemplate?.length > 0 ? (
-          <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6", gridClassName)}>
+          <div
+            className={cn(
+              "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
+              gridClassName
+            )}
+          >
             {filteredDataQuestionTemplate?.map((template) => (
               <CardQuestionTemplate key={template.id} template={template} />
             ))}

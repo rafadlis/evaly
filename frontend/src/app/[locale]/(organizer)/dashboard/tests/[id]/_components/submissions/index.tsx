@@ -25,12 +25,9 @@ import { Submission, Section } from "./types";
 import { SubmissionDrawer } from "./submission-drawer";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
-import {
-  useTestSubmissionsById,
-  TestSubmission,
-} from "@/query/organization/test/use-test-submissions-byid";
 import { ExportDialog } from "./export-dialog";
 import { Label } from "@/components/ui/label";
+import { trpc } from "@/trpc/trpc.client";
 
 dayjs.extend(relativeTime);
 
@@ -99,13 +96,21 @@ const Submissions = () => {
 
   // Fetch submissions data using the provided query hook
   const { data, isLoading, error, refetch, isFetching, dataUpdatedAt } =
-    useTestSubmissionsById(testId, refetchInterval);
+    trpc.organization.test.getTestResults.useQuery(
+      {
+        id: testId,
+      },
+      {
+        enabled: !!testId,
+        refetchInterval: refetchInterval,
+      }
+    );
 
   // Extract submissions and sections from the response
   const submissions: Submission[] = useMemo(() => {
     if (!data?.submissions) return [];
 
-    return data.submissions.map((submission: TestSubmission) => {
+    return data.submissions.map((submission) => {
       // Use the original string ID but remove the prefix for display
       const numericId = parseInt(submission.id.replace(/^ta-/, ""), 36) || 0;
 
@@ -136,7 +141,7 @@ const Submissions = () => {
         sectionWrong: submission.sectionWrong || {},
         status: submission.status,
       };
-    });
+    }) as Submission[];
   }, [data?.submissions]);
 
   const sections: Section[] = useMemo(() => {

@@ -21,13 +21,12 @@ import { Textarea } from "../ui/textarea";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { ScrollArea } from "../ui/scroll-area";
-import { useRouter } from "@/i18n/navigation";
 import { KeyboardEvent, useState, useTransition } from "react";
-import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { $api } from "@/lib/api";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { useTranslations } from "next-intl";
+import { trpc } from "@/trpc/trpc.client";
+import { useProgressRouter } from "./progress-bar";
 interface Props {
   className?: string;
   order?: number;
@@ -42,7 +41,7 @@ const GenerateQuestionInputPrompt = ({
   testId,
 }: Props) => {
   const autoComplete: string[] = [];
-  const router = useRouter();
+  const router = useProgressRouter();
   const [isPending, startTransition] = useTransition();
   const [inputValue, setInputValue] = useState("");
   const t = useTranslations("Questions");
@@ -51,77 +50,62 @@ const GenerateQuestionInputPrompt = ({
   // const referenceId = searchParams.get("templateId");
   // const showImportSection = searchParams.get("showImportSection");
 
-  const { mutate: startGeneration, isPending: isGenerating } = useMutation({
-    mutationKey: ["start-question-generation"],
-    mutationFn: async (prompt: string) => {
-      if (prompt.length <= 0) {
-        toast.error(t("promptRequired"), { position: "top-center" });
-        return;
-      }
-
-      const res = await $api.organization.question.llm.validate.post({
-        prompt,
-      });
-
-      const data = res.data;
-
-      if (!data) {
-        toast.error(t("failedToGenerateQuestions"), {
-          position: "top-center",
-        });
-        return;
-      }
-
-      if (!data.object.isValid) {
-        toast(data.object.suggestion, { position: "top-center" });
-        return;
-      }
-
-      if (!data.templateCreated) {
-        toast.error(t("failedToCreateTemplate"), {
-          position: "top-center",
-        });
-        return;
-      }
-
-      startTransition(() => {
-        if (testId) {
-          router.push(
-            `/dashboard/question/generate/${data.templateCreated?.id}?order=${order}&referenceid=${referenceId}&testid=${testId}`,
-            { scroll: true }
-          );
-        } else {
-          router.push(
-            `/dashboard/question/generate/${data.templateCreated?.id}`,
-            { scroll: true }
-          );
+  const { mutate: startGeneration, isPending: isGenerating } =
+    trpc.organization.question.llmValidate.useMutation({
+      onSuccess: (data) => {
+        if (!data) {
+          toast.error(t("failedToGenerateQuestions"), {
+            position: "top-center",
+          });
+          return;
         }
-      });
 
-      // return res.data;
-    },
-  });
+        if (!data.isValid) {
+          toast.error(data.suggestion, {
+            position: "top-center",
+          });
+          return;
+        }
+
+        if (!data.templateCreated) {
+          toast.error(t("failedToCreateTemplate"), {
+            position: "top-center",
+          });
+          return;
+        }
+
+        startTransition(() => {
+          if (testId) {
+            router.push(
+              `/dashboard/question/generate/${data.templateCreated?.id}?order=${order}&referenceid=${referenceId}&testid=${testId}`,
+              { scroll: true }
+            );
+          } else {
+            router.push(
+              `/dashboard/question/generate/${data.templateCreated?.id}`,
+              { scroll: true }
+            );
+          }
+        });
+      },
+      onError: (error) => {
+        console.error(error);
+      },
+    });
 
   const { mutate: improvePrompt, isPending: isPendingImprovePrompt } =
-    useMutation({
-      mutationKey: ["improve-prompt"],
-      mutationFn: async (originalPrompt: string) => {
-        const res = await $api.organization.question.llm["improve-prompt"].post(
-          {
-            prompt: originalPrompt,
-          }
-        );
-
-        const newPrompt = res.data;
-        if (newPrompt) {
-          setInputValue(newPrompt);
-        }
+    trpc.organization.question.improvePrompt.useMutation({
+      onSuccess: (data) => {
+        setInputValue(data);
+      },
+      onError: (error) => {
+        toast.error(error.message);
       },
     });
 
   const handleSubmit = () => {
     if (!inputValue.trim()) return;
-    startGeneration(inputValue);
+    startGeneration({ prompt: inputValue });
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -169,22 +153,26 @@ const GenerateQuestionInputPrompt = ({
         className="relative text-primary font-mono mb-4 w-full max-w-2xl text-sm"
       >
         <span>
-          <WandSparkles className="size-3 inline" /> {t("letsCraftYourQuestion")}
+          <WandSparkles className="size-3 inline" />{" "}
+          {t("letsCraftYourQuestion")}
         </span>
         <span>
           <Lightbulb className="size-3 inline" /> {t("turnIdeasIntoInquiries")}
         </span>
         <span>
-          <Brain className="size-3 inline" /> {t("designThoughtProvokingQuestions")}
+          <Brain className="size-3 inline" />{" "}
+          {t("designThoughtProvokingQuestions")}
         </span>
         <span>
           <Rocket className="size-3 inline" /> {t("createEngagingChallenges")}
         </span>
         <span>
-          <Search className="size-3 inline" /> {t("sparkCuriosityWithQuestions")}
+          <Search className="size-3 inline" />{" "}
+          {t("sparkCuriosityWithQuestions")}
         </span>
         <span>
-          <RefreshCw className="size-3 inline" /> {t("transformConceptsIntoQueries")}
+          <RefreshCw className="size-3 inline" />{" "}
+          {t("transformConceptsIntoQueries")}
         </span>
       </TextLoop>
       <div className="max-w-2xl w-full">
@@ -217,9 +205,7 @@ const GenerateQuestionInputPrompt = ({
                     <Wand2Icon />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>
-                  {t("improvePrompt")}
-                </TooltipContent>
+                <TooltipContent>{t("improvePrompt")}</TooltipContent>
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -227,9 +213,7 @@ const GenerateQuestionInputPrompt = ({
                     <Paperclip />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>
-                  {t("attachFiles")}
-                </TooltipContent>
+                <TooltipContent>{t("attachFiles")}</TooltipContent>
               </Tooltip>
             </div>
             <div className="flex flex-row items-center justify-center gap-1">

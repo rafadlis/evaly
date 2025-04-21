@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { CheckIcon, CircleHelp, ClockIcon, Trash2Icon } from "lucide-react";
 import DialogDeleteSection from "../dialog/dialog-delete-section";
 import { Button } from "@/components/ui/button";
-import { TestSection } from "@evaly/backend/types/test";
+import { TestSection } from "@/types/test";
 
 const CardSection = ({
   data,

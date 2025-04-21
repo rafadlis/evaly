@@ -1,4 +1,4 @@
-import { QuestionType } from "@evaly/backend/types/question-types";
+import { QuestionType } from "@/types/question-types";
 import { nanoid } from "nanoid";
 
 export const getDefaultOptions = (type: QuestionType) => {

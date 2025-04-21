@@ -16,7 +16,7 @@ import {
 } from "@/lib/utils";
 import { Reorder } from "motion/react";
 import DialogAddQuestion from "@/components/shared/dialog/dialog-add-question";
-import { Question } from "@evaly/backend/types/question";
+import { Question } from "@/types/question";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { useParams } from "next/navigation";

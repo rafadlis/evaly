@@ -20,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { TestInvitation } from "@evaly/backend/types/test";
+import { TestInvitation } from "@/types/test";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { ChevronRight, Loader2, XIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -112,7 +112,7 @@ const InviteOnly = ({ testId }: { testId: string }) => {
               }
             }}
             type="button"
-            variant="outline-solid"
+            variant="outline"
             disabled={isPendingAddInvitedParticipant}
           >
             {isPendingAddInvitedParticipant ? (

@@ -6,7 +6,9 @@ import { deleteInvitationTest } from "@/services/organization/test/delete-invita
 import { deleteTest } from "@/services/organization/test/delete-test";
 import { getAllTestsByOrganizationId } from "@/services/organization/test/get-all-tests-by-organization-id";
 import { getInvitationListTest } from "@/services/organization/test/get-invitation-list-test";
+import { getSubmissionDetailsByEmail } from "@/services/organization/test/get-submission-details-by-email";
 import { getTestById } from "@/services/organization/test/get-test-by-id";
+import { getTestSubmissions } from "@/services/organization/test/get-test-submissions";
 import { publishUnpublishTest } from "@/services/organization/test/publish-unpublish";
 import { duplicateTest } from "@/services/organization/test/re-open-test";
 import { updateTest } from "@/services/organization/test/update-test";
@@ -167,15 +169,7 @@ export const testRouter = router({
       return await publishUnpublishTest(testId, isPublished, organizationId);
     }),
 
-  unpublish: organizerProcedure
-    .input(
-      z.object({
-        id: z.string(),
-      })
-    )
-    .mutation(async () => {}),
-
-  duplicateTest: organizerProcedure // aka re-open test
+    duplicateTest: organizerProcedure // aka re-open test
     .input(
       z.object({
         id: z.string(),
@@ -194,7 +188,11 @@ export const testRouter = router({
         id: z.string(),
       })
     )
-    .query(async () => {}),
+    .query(async ({ input }) => {
+      const testId = input.id;
+
+      return await getTestSubmissions(testId);
+    }),
 
   getTestResultsByParticipant: organizerProcedure
     .input(
@@ -203,5 +201,10 @@ export const testRouter = router({
         email: z.string().email(),
       })
     )
-    .query(async () => {}),
+    .query(async ({ input }) => {
+      const testId = input.id;
+      const email = input.email;
+
+      return await getSubmissionDetailsByEmail(testId, email);
+    }),
 });

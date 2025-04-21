@@ -6,9 +6,8 @@ import { useState } from "react";
 import {
   TestAttempt,
   TestAttemptWithSection,
-} from "@evaly/backend/types/test.attempt";
-import { useMutation, useMutationState } from "@tanstack/react-query";
-import { $api } from "@/lib/api";
+} from "@/types/test.attempt";
+import { useMutationState } from "@tanstack/react-query";
 import { useTransition } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { CheckIcon, ChevronLeft } from "lucide-react";
@@ -29,6 +28,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import ParticipantAccount from "@/components/shared/account/participant-account";
+import { trpc } from "@/trpc/trpc.client";
+import { toast } from "sonner";
 
 const Navbar = ({ attempt }: { attempt: TestAttemptWithSection }) => {
   return (
@@ -90,24 +91,12 @@ const DialogSubmitAttempt = ({ attemptId }: { attemptId: string }) => {
     isError,
     error,
     reset: resetMutation,
-  } = useMutation({
-    mutationKey: ["submit-attempt"],
-    mutationFn: async () => {
-      const res = await $api.participant.test
-        .attempt({ id: attemptId })
-        .submit.post();
-
-      if (res.status !== 200) {
-        throw new Error(res.error?.value.toString());
-      }
-
-      const data = res.data;
-
-      if (!data) {
-        throw new Error("Something went wrong, please try again later");
-      }
-
-      return res.data;
+  } = trpc.participant.attempt.submitAttempt.useMutation({
+    onSuccess() {
+      toast.success("Attempt submitted successfully");
+    },
+    onError(error) {
+      toast.error(error.message);
     },
   });
 
@@ -144,7 +133,7 @@ const DialogSubmitAttempt = ({ attemptId }: { attemptId: string }) => {
         {isError ? (
           <DialogHeader>
             <DialogTitle>Oops, something went wrong!</DialogTitle>
-            <DialogDescription>{(error as Error).message}</DialogDescription>
+            <DialogDescription>{error.message}</DialogDescription>
             <DialogFooter>
               <DialogClose asChild>
                 <Button variant="outline">
@@ -167,7 +156,7 @@ const DialogSubmitAttempt = ({ attemptId }: { attemptId: string }) => {
               </DialogClose>
               <Button
                 variant="default"
-                onClick={() => submitAttempt()}
+                onClick={() => submitAttempt({ attemptId })}
                 disabled={isSubmitting || isRedirecting}
               >
                 {isSubmitting

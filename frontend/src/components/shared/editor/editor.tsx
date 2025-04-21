@@ -39,7 +39,7 @@ export const Editor = ({
     editorProps: {
       attributes: {
         class: cn(
-          "custom-prose focus:outline-none outline-none border px-8 py-6  relative w-full min-h-[140px]  border-t-0 min-w-full",
+          "custom-prose focus:outline-none outline-none rounded-b-md border px-8 py-6  relative w-full min-h-[140px]  border-t-0 min-w-full",
           editorClassName
         ),
       },
@@ -77,7 +77,7 @@ export const Editor = ({
     <div>
       <EditorContext.Provider value={{ editor }}>
         {editor && (
-          <EditorToolbar editor={editor} className={cn(toolbarClassName)}  />
+          <EditorToolbar editor={editor} className={cn("rounded-t-md",toolbarClassName)}  />
         )}
         <EditorContent
           editor={editor}

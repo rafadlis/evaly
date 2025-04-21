@@ -10,9 +10,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useRouter } from "@/i18n/navigation";
-import { $api } from "@/lib/api";
-import { InsertQuestion, Question } from "@evaly/backend/types/question";
-import { useMutation } from "@tanstack/react-query";
+import { trpc } from "@/trpc/trpc.client";
+import { Question } from "@/types/question";
 import { VariantProps } from "class-variance-authority";
 import { SaveIcon } from "lucide-react";
 import { toast } from "sonner";
@@ -29,53 +28,48 @@ const DialogSaveQuestionsFromLLM = ({
   const {
     mutateAsync: createQuestionTemplate,
     isPending: isPendingCreateQuestionTemplate,
-  } = useMutation({
-    mutationFn: async () => {
-      const res = await $api.organization.question.template.create.post({
-        withInitialQuestion: false,
-        title,
-      });
-
-      const { data } = res;
-      if (!data) {
-        toast.error("Failed to create question template");
-        return;
-      }
-
-      return data;
+  } = trpc.organization.questionTemplate.create.useMutation({
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
 
   const router = useRouter();
 
   const { mutateAsync: createQuestions, isPending: isPendingCreateQuestions } =
-    useMutation({
-      mutationFn: async (questions: InsertQuestion[]) => {
-        if (questions.length === 0) {
-          return toast.error("No questions to save");
+    trpc.organization.question.create.useMutation({
+      onError: (error) => {
+        toast.error(error.message);
+      },
+      onSuccess: (data) => {
+        if (!data.length) {
+          toast.error("Failed to create questions");
+          return;
         }
 
-        const res = await $api.organization.question.create.post(questions);
-        return res;
+        toast.success("Questions saved successfully");
       },
     });
 
   const handleSaveQuestions = async () => {
-    const res = await createQuestionTemplate();
+    const res = await createQuestionTemplate({
+      title,
+    });
     if (!res) {
       return toast.error("Failed to create question template");
     }
 
     const { id } = res;
 
-    const createQuestionsRes = await createQuestions(
-      questions.map((question, index) => ({
+    const createQuestionsRes = await createQuestions({
+      questions: questions.map((question, index) => ({
         ...question,
         id: undefined,
         referenceId: id,
         order: index + 1,
-      }))
-    );
+      })),
+      referenceId: id,
+    });
 
     if (!createQuestionsRes) {
       return toast.error("Failed to create questions");

@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { useTestById } from "@/query/participants/test/use-test-by-id";
 import { notFound, useParams } from "next/navigation";
 import dayjs from "dayjs";
 import { testTypeFormatter } from "@/lib/test-type-formatter";
@@ -20,9 +19,10 @@ import { useMemo, useTransition } from "react";
 import LoadingScreen from "@/components/shared/loading/loading-screen";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useAttemptStartMutation } from "@/query/participants/attempt/use-attempt-start.mutation";
-import { TestSection } from "@evaly/backend/types/test";
+import { TestSection } from "@/types/test";
 import { Link } from "@/components/shared/progress-bar";
+import { trpc } from "@/trpc/trpc.client";
+import { toast } from "sonner";
 
 const Page = () => {
   const router = useRouter();
@@ -32,7 +32,7 @@ const Page = () => {
     data: testData,
     isPending: isPendingTestData,
     error,
-  } = useTestById(testId as string);
+  } = trpc.participant.test.getTestById.useQuery(testId as string);
 
   const completedAttempts =
     testData?.attempt.filter((attempt) => attempt.completedAt).length || 0;
@@ -67,12 +67,12 @@ const Page = () => {
     return (
       <div className="flex-1 flex flex-col gap-2 items-center justify-center text-2xl font-medium text-center">
         <h1>{error.message}</h1>
-        {error.cause === 401 && (
+        {error.data?.code === "UNAUTHORIZED" && (
           <Button onClick={() => router.push(`/login?callbackURL=${pathName}`)}>
             Login
           </Button>
         )}
-        {error.cause === 403 && (
+        {error.data?.code === "FORBIDDEN" && (
           <Button onClick={() => router.push(`/`)}>Go to Home</Button>
         )}
       </div>
@@ -169,13 +169,18 @@ const StartContinueButton = ({
 }) => {
   const router = useRouter();
   const [isRedirecting, startTransitionRedirect] = useTransition();
-  const { data: testData } = useTestById(testId);
+  const { data: testData } = trpc.participant.test.getTestById.useQuery(testId);
 
   const { mutate: mutateStartTest, isPending: isPendingStartTest } =
-    useAttemptStartMutation((data) => {
-      startTransitionRedirect(() => {
-        router.push(`/s/${testId}/${data.id}`);
-      });
+    trpc.participant.attempt.startAttempt.useMutation({
+      onSuccess: (data) => {
+        startTransitionRedirect(() => {
+          router.push(`/s/${testId}/${data.id}`);
+        });
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
     });
 
   // Don't show button if all sections are completed or test is finished
@@ -242,14 +247,19 @@ const SectionList = ({
   totalAttempts: number;
 }) => {
   const [isRedirecting, startTransitionRedirect] = useTransition();
-  const { data: testData } = useTestById(testId);
+  const { data: testData } = trpc.participant.test.getTestById.useQuery(testId);
   const router = useRouter();
 
   const { mutate: mutateStartTest, isPending: isPendingStartTest } =
-    useAttemptStartMutation((data) => {
-      startTransitionRedirect(() => {
-        router.push(`/s/${testId}/${data.id}`);
-      });
+    trpc.participant.attempt.startAttempt.useMutation({
+      onSuccess: (data) => {
+        startTransitionRedirect(() => {
+          router.push(`/s/${testId}/${data.id}`);
+        });
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
     });
 
   const attempt = testData?.attempt;
@@ -339,7 +349,7 @@ const SectionList = ({
 };
 
 const ParticipantList = ({ testId }: { testId: string }) => {
-  const { data: testData } = useTestById(testId);
+  const { data: testData } = trpc.participant.test.getTestById.useQuery(testId);
   if (!testData) {
     return null;
   }
@@ -383,7 +393,7 @@ const Description = ({ description }: { description?: string | null }) => {
 };
 
 const CreatedByOrganizer = ({ testId }: { testId: string }) => {
-  const { data: testData } = useTestById(testId);
+  const { data: testData } = trpc.participant.test.getTestById.useQuery(testId);
 
   if (!testData) {
     return null;
@@ -419,7 +429,7 @@ const CreatedByOrganizer = ({ testId }: { testId: string }) => {
 };
 
 const Result = ({ testId }: { testId: string }) => {
-  const { data: testData } = useTestById(testId);
+  const { data: testData } = trpc.participant.test.getTestById.useQuery(testId);
 
   if (!testData) {
     return null;

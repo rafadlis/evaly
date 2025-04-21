@@ -9,11 +9,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useParticipantProfile } from "@/query/participants/profile/use-participant-profile";
 import { Image } from "@/components/ui/image";
+import { trpc } from "@/trpc/trpc.client";
 
 const ParticipantAccount = () => {
-  const { data } = useParticipantProfile();
+  const { data } = trpc.participant.profile.useQuery();
 
   const name = data?.user?.name;
   const email = data?.user?.email;

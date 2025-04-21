@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useOrganizerProfile } from "@/query/organization/profile/use-organizer-profile";
 import { Loader2, Save, Info, PencilLine } from "lucide-react";
 import {
   Tooltip,
@@ -22,7 +21,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
-import { OrganizerUserUpdate } from "@evaly/backend/types/user";
+import { OrganizerUserUpdate } from "@/types/user";
 import { Image } from "@/components/ui/image";
 import { trpc } from "@/trpc/trpc.client";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -302,7 +301,7 @@ const Profile = () => {
 };
 
 const Organization = () => {
-  const { data: organizationData } = useOrganizerProfile();
+  const { data: organizationData } = trpc.organization.profile.useQuery();
 
   return (
     <Card>
@@ -313,7 +312,7 @@ const Organization = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="pt-6">
-        {organizationData?.data?.organizer?.organization ? (
+        {organizationData?.organizer?.organization ? (
           <div className="text-muted-foreground">
             Organization settings coming soon...
           </div>

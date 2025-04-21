@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import db from "../../../lib/db";
 import {
   question,
@@ -19,40 +20,32 @@ export async function getTestById({
   });
 
   if (!checkTestResult?.isPublished) {
-    return {
-      error: {
-        message: "Test not found",
-        status: 404,
-      },
-    };
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Test is not published",
+    });
   }
 
   if (!checkTestResult) {
-    return {
-      error: {
-        message: "Test not found",
-        status: 404,
-      },
-    };
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "Test not found",
+    });
   }
 
   if (checkTestResult.requiresLogin && !email) {
-    return {
-      error: {
-        message: "Test requires login",
-        status: 401,
-      },
-    };
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "Test requires login",
+    });
   }
 
   if (checkTestResult.access === "invite-only") {
     if (!email) {
-      return {
-        error: {
-          message: "Test requires login",
-          status: 401,
-        },
-    };
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Test requires login",
+      });
     }
     const invitationResult = await db.query.testInvitation.findFirst({
       where: and(
@@ -62,12 +55,10 @@ export async function getTestById({
     });
 
     if (!invitationResult) {
-      return {
-        error: {
-          message: "You are not allowed to access this test",
-          status: 403,
-        },
-      };
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "You are not allowed to access this test",
+      });
     }
   }
 

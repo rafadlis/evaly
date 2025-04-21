@@ -1,9 +1,6 @@
 import BackButton from "@/components/shared/back-button";
 import { Button } from "@/components/ui/button";
-import { $api } from "@/lib/api";
-import { useQuestionTemplateById } from "@/query/organization/question/use-question-template-by-id";
-import { QuestionTemplate } from "@evaly/backend/types/question";
-import { useMutation } from "@tanstack/react-query";
+import { QuestionTemplate } from "@/types/question";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -19,27 +16,26 @@ import DialogDeleteQuestionTemplate from "@/components/shared/dialog/dialog-dele
 import { useRouter } from "@/i18n/navigation";
 import { InfoIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { trpc } from "@/trpc/trpc.client";
 
 const Header = ({ templateId }: { templateId: string }) => {
   const { data: questionTemplate, isLoading: isLoadingQuestionTemplate } =
-    useQuestionTemplateById(templateId);
+    trpc.organization.questionTemplate.getById.useQuery({
+      id: templateId as string,
+    });
 
   const router = useRouter();
 
   const {
     mutate: updateQuestionTemplate,
     isPending: isUpdatingQuestionTemplate,
-  } = useMutation({
-    mutationKey: ["update-question-template"],
-    mutationFn: async (data: QuestionTemplate) => {
-      const res = await $api.organization.question
-        .template({ id: templateId })
-        .put(data);
-      if (!res.data) {
-        toast.error("Failed to update question template");
-        return;
-      }
-      reset(res.data);
+  } = trpc.organization.questionTemplate.update.useMutation({
+    onError(error) {
+      toast.error(error.message || "Failed to update question template");
+    },
+    onSuccess(data) {
+      toast.success("Question template updated successfully");
+      reset(data);
     },
   });
 
@@ -57,7 +53,7 @@ const Header = ({ templateId }: { templateId: string }) => {
   }, [questionTemplate, reset]);
 
   const onSubmit = (data: QuestionTemplate) => {
-    updateQuestionTemplate(data);
+    updateQuestionTemplate({ id: templateId, data });
   };
 
   return (

@@ -4,10 +4,9 @@ import { Button } from "@/components/ui/button";
 import CardQuestion from "@/components/shared/card/card-question";
 import { EyeIcon, EyeOffIcon, PlusIcon } from "lucide-react";
 import DialogEditQuestion from "@/components/shared/dialog/dialog-edit-question";
-import { Question } from "@evaly/backend/types/question";
+import { Question } from "@/types/question";
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
-import { useQuestionTemplateById } from "@/query/organization/question/use-question-template-by-id";
 import {
   cn,
   insertQuestionsAtCorrectPosition,
@@ -18,12 +17,15 @@ import { Badge } from "@/components/ui/badge";
 import { Reorder } from "motion/react";
 import DialogAddQuestion from "@/components/shared/dialog/dialog-add-question";
 import LoadingScreen from "@/components/shared/loading/loading-screen";
+import { trpc } from "@/trpc/trpc.client";
 
 const Page = () => {
   const { templateId } = useParams<{ templateId: string }>();
   const [selectedEditQuestion, setSelectedEditQuestion] = useState<Question>();
   const { data: questionTemplate, isLoading: isLoadingQuestionTemplate } =
-    useQuestionTemplateById(templateId);
+    trpc.organization.questionTemplate.getById.useQuery({
+      id: templateId as string,
+    });
   const [localQuestions, setLocalQuestions] = useState<Question[]>([]);
   const [hideOptions, setHideOptions] = useState(false);
 

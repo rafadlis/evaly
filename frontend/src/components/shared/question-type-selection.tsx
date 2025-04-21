@@ -2,7 +2,7 @@ import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Label } from "../ui/label";
 import { questionTypes } from "@/constants/question-type";
-import { QuestionType } from "@evaly/backend/types/question";
+import { QuestionType } from "@/types/question";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 

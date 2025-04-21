@@ -8,10 +8,6 @@ export const testRouter = new Elysia().group("/test", (app) => {
   return (
     app
       .derive(participantMiddleware)
-      .get("/", () => {
-        return "Hello World";
-      })
-
       // Get Test By Id
       .get(
         "/:id",
