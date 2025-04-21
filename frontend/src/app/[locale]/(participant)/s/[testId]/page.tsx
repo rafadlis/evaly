@@ -175,7 +175,7 @@ const StartContinueButton = ({
     trpc.participant.attempt.startAttempt.useMutation({
       onSuccess: (data) => {
         startTransitionRedirect(() => {
-          router.push(`/s/${testId}/${data.id}`);
+          router.replace(`/s/${testId}/${data.id}`);
         });
       },
       onError: (error) => {
@@ -254,7 +254,7 @@ const SectionList = ({
     trpc.participant.attempt.startAttempt.useMutation({
       onSuccess: (data) => {
         startTransitionRedirect(() => {
-          router.push(`/s/${testId}/${data.id}`);
+          router.replace(`/s/${testId}/${data.id}`);
         });
       },
       onError: (error) => {

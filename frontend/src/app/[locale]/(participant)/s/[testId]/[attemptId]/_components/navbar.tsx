@@ -117,7 +117,7 @@ const DialogSubmitAttempt = ({ attemptId }: { attemptId: string }) => {
 
   const onGoToLobby = (data: TestAttempt) => {
     setIsRedirecting(() => {
-      router.push(`/s/${data.testId}`);
+      router.replace(`/s/${data.testId}`);
     });
   };
 
