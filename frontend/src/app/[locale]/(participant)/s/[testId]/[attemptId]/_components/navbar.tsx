@@ -3,10 +3,7 @@ import ThemeToggle from "@/components/shared/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import {
-  TestAttempt,
-  TestAttemptWithSection,
-} from "@/types/test.attempt";
+import { TestAttempt, TestAttemptWithSection } from "@/types/test.attempt";
 import { useMutationState } from "@tanstack/react-query";
 import { useTransition } from "react";
 import { useRouter } from "@/i18n/navigation";
@@ -32,7 +29,6 @@ import { trpc } from "@/trpc/trpc.client";
 import { toast } from "sonner";
 
 const Navbar = ({ attempt }: { attempt: TestAttemptWithSection }) => {
-
   return (
     <div
       className={cn(
@@ -67,19 +63,24 @@ const Navbar = ({ attempt }: { attempt: TestAttemptWithSection }) => {
 
 const DialogSubmitAttempt = ({ attemptId }: { attemptId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const {
-    data: attempt,
-    isPending: isPendingAttempt,
-  } = trpc.participant.attempt.getAttemptById.useQuery(attemptId as string);
+  const { data: attempt, isPending: isPendingAttempt } =
+    trpc.participant.attempt.getAttemptById.useQuery(attemptId as string);
 
   const { data: attemptAnswers, isPending: isPendingAttemptAnswers } =
-    trpc.participant.attempt.getAttemptAnswers.useQuery({
-      attemptId: attemptId as string,
-    });
+    trpc.participant.attempt.getAttemptAnswers.useQuery(
+      {
+        attemptId: attemptId as string,
+      },
+      {
+        enabled: !!attempt && isOpen,
+      }
+    );
 
   const totalQuestions = attempt?.testSection?.question?.length;
   const answeredQuestions = attemptAnswers?.length ?? 0;
-  const remainingQuestions = totalQuestions ? totalQuestions - answeredQuestions : 0;
+  const remainingQuestions = totalQuestions
+    ? totalQuestions - answeredQuestions
+    : 0;
 
   // detect if user still updating the answer from card-question
   const listUpdatingAnswer = useMutationState({
@@ -150,9 +151,7 @@ const DialogSubmitAttempt = ({ attemptId }: { attemptId: string }) => {
             <DialogDescription>{error.message}</DialogDescription>
             <DialogFooter>
               <DialogClose asChild>
-                <Button variant="outline">
-                  Close
-                </Button>
+                <Button variant="outline">Close</Button>
               </DialogClose>
             </DialogFooter>
           </DialogHeader>
@@ -162,21 +161,27 @@ const DialogSubmitAttempt = ({ attemptId }: { attemptId: string }) => {
               Are you sure you want to submit this section?
             </DialogTitle>
             <DialogDescription>This action cannot be undone.</DialogDescription>
-            <ul className="list-disc">
-              <li>
-                You have {remainingQuestions} questions left to answer.
-              </li>
+            <ul>
+              {remainingQuestions > 0 && (
+                <li className="text-red-500">
+                  You have {remainingQuestions} questions left to answer.
+                </li>
+              )}
             </ul>
             <DialogFooter>
               <DialogClose asChild>
-                <Button variant="outline">
-                  Cancel
-                </Button>
+                <Button variant="outline">Cancel</Button>
               </DialogClose>
-              <Button 
+              <Button
                 variant="default"
                 onClick={() => submitAttempt({ attemptId })}
-                disabled={isSubmitting || isRedirecting || isStillUpdatingAnswer || isPendingAttempt || isPendingAttemptAnswers}
+                disabled={
+                  isSubmitting ||
+                  isRedirecting ||
+                  isStillUpdatingAnswer ||
+                  isPendingAttempt ||
+                  isPendingAttemptAnswers
+                }
               >
                 {isSubmitting
                   ? "Submitting..."
@@ -201,7 +206,9 @@ const DialogSubmitAttempt = ({ attemptId }: { attemptId: string }) => {
               <DialogClose asChild>
                 <Button
                   variant="outline"
-                  onClick={() => dataUpdatedAttempt && onGoToLobby(dataUpdatedAttempt)}
+                  onClick={() =>
+                    dataUpdatedAttempt && onGoToLobby(dataUpdatedAttempt)
+                  }
                 >
                   Go to lobby
                 </Button>
