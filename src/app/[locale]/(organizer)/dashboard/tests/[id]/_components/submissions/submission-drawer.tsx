@@ -71,6 +71,8 @@ export const SubmissionDrawer = ({
   const { data: submissionDetails, isLoading } = trpc.organization.test.getTestResultsByParticipant.useQuery({
     id: testId,
     email: submission?.email || "",
+  },{
+    enabled: !!submission?.email,
   });
 
   // Use the detailed questions from the API response

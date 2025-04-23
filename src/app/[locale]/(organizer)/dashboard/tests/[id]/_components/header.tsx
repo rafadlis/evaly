@@ -1,15 +1,8 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Check,
-  LinkIcon,
-  Loader2, PencilLineIcon,
-  RotateCcw,
-  TimerOff
-} from "lucide-react";
+import { Check, LinkIcon, Loader2, RotateCcw, TimerOff } from "lucide-react";
 import { redirect, useParams } from "next/navigation";
-import { Link } from "@/components/shared/progress-bar";
 import { toast } from "sonner";
 import { env } from "@/lib/env.client";
 import BackButton from "@/components/shared/back-button";
@@ -33,45 +26,41 @@ const Header = () => {
   const router = useRouter();
   const [isRedirect, setIsRedirect] = useTransition();
   const tCommon = useTranslations("Common");
+  const tOrganizer = useTranslations("Organizer");
 
   const {
     data: dataTest,
     isPending: isPendingTest,
     isRefetching: isRefetchingTest,
     refetch: refetchTest,
-  } = trpc.organization.test.getById.useQuery({
-    id: id?.toString() || "",
-  });
+  } = trpc.organization.test.getById.useQuery({ id: id?.toString() || "" });
 
-  const { mutate: mutateUpdateTest, isPending: isUpdatingTest } = trpc.organization.test.update.useMutation({
-    onSuccess() {
-      toast.success("Test finished successfully");
-      refetchTest()
-    },
-  });
+  const { mutate: mutateUpdateTest, isPending: isUpdatingTest } =
+    trpc.organization.test.update.useMutation({
+      onSuccess() {
+        toast.success("Test finished successfully");
+        refetchTest();
+      },
+    });
 
-  const { mutate: mutateReopenTest, isPending: isReopeningTest } = trpc.organization.test.duplicateTest.useMutation({
-    onSuccess(data) {
-      setIsRedirect(() => {
-        router.push(`/dashboard/tests/${data.id}/edit`);
-      });
-    },
-    onError(error) {
-      toast.error(error.message || tCommon("genericUpdateError"));
-    },
-    
-  });
+  const { mutate: mutateReopenTest, isPending: isReopeningTest } =
+    trpc.organization.test.duplicateTest.useMutation({
+      onSuccess(data) {
+        setIsRedirect(() => {
+          router.push(`/dashboard/tests/${data.id}/edit`);
+        });
+      },
+      onError(error) {
+        toast.error(error.message || tCommon("genericUpdateError"));
+      },
+    });
 
   const finishTest = () => {
-    mutateUpdateTest({
-      id: id?.toString() || "",
-    });
+    mutateUpdateTest({ id: id?.toString() || "" });
   };
 
   const reopenTest = () => {
-    mutateReopenTest({
-      id: id?.toString() || "",
-    });
+    mutateReopenTest({ id: id?.toString() || "" });
   };
 
   const copyLinkToShare = () => {
@@ -80,7 +69,7 @@ const Header = () => {
   };
 
   if (!isPendingTest && !dataTest) {
-    return null
+    return null;
   }
 
   if (!dataTest?.isPublished && !isPendingTest && !isRefetchingTest) {
@@ -108,11 +97,6 @@ const Header = () => {
             <Button variant={"ghost"} size={"icon"} onClick={copyLinkToShare}>
               <LinkIcon />
             </Button>
-            <Link href={`/dashboard/tests/${id}/edit`}>
-              <Button variant={"outline"}>
-                <PencilLineIcon /> Edit
-              </Button>
-            </Link>
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant={"default"} disabled={isUpdatingTest}>
@@ -135,18 +119,35 @@ const Header = () => {
                   </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant={"outline"}>Cancel</Button>
-                  </DialogClose>
-                  <Button
-                    variant={"destructive"}
-                    onClick={finishTest}
-                    disabled={isUpdatingTest || isRedirect}
-                  >
-                    {isUpdatingTest || isRedirect ? (
-                      <Loader2 className="animate-spin" />
-                    ) : "Yes, end test"}
-                  </Button>
+                  <div className="flex flex-row gap-2 justify-between w-full">
+                    <DialogClose asChild>
+                      <Button variant={"outline"}>Cancel</Button>
+                    </DialogClose>
+                    <div className="flex flex-row gap-2">
+                      {/* <Button
+                        variant={"outline"}
+                        onClick={finishTest}
+                        disabled={isUpdatingTest || isRedirect}
+                      >
+                        {isUpdatingTest || isRedirect ? (
+                          <Loader2 className="animate-spin" />
+                        ) : (
+                          "End later"
+                        )}
+                      </Button> */}
+                      <Button
+                        variant={"destructive"}
+                        onClick={finishTest}
+                        disabled={isUpdatingTest || isRedirect}
+                      >
+                        {isUpdatingTest || isRedirect ? (
+                          <Loader2 className="animate-spin" />
+                        ) : (
+                          "End now"
+                        )}
+                      </Button>
+                    </div>
+                  </div>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
@@ -198,9 +199,16 @@ const Header = () => {
       <div className="mb-6 mt-2 flex flex-row justify-between items-center">
         <TabsList>
           {/* <TabsTrigger value="summary">Summary</TabsTrigger> */}
-          <TabsTrigger value="submissions">Submissions</TabsTrigger>
-          <TabsTrigger value="share">Share</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
+          <TabsTrigger value="submissions">
+            {tOrganizer("submissionsTab")}
+          </TabsTrigger>
+          <TabsTrigger value="share">{tOrganizer("shareTab")}</TabsTrigger>
+          <TabsTrigger value="questions">
+            {tOrganizer("questionsTab")}
+          </TabsTrigger>
+          <TabsTrigger value="settings">
+            {tOrganizer("settingsTab")}
+          </TabsTrigger>
         </TabsList>
       </div>
     </>

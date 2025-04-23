@@ -437,9 +437,9 @@ const Submissions = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Sections</SelectItem>
-                {sections.map((section) => (
+                {sections.map((section, index) => (
                   <SelectItem key={section.id} value={section.id}>
-                    {section.name}
+                    {section.name || `Section ${index + 1}`}
                   </SelectItem>
                 ))}
               </SelectContent>

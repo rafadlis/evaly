@@ -201,7 +201,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4 mt-4">
-      <div className="relative border border-dashed">
+      <div className="relative border border-dashed rounded-md">
         <ScrollArea className="w-full whitespace-nowrap rounded-md">
           <Table>
             <TableHeader className="bg-secondary">
