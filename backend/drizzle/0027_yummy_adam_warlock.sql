@@ -1,1 +1,0 @@
-ALTER TABLE "question_template" ALTER COLUMN "title" DROP NOT NULL;

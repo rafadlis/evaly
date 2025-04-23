@@ -1,1 +1,0 @@
-ALTER TABLE "question" ADD COLUMN "point_value" smallint;

@@ -1,1 +1,0 @@
-ALTER TABLE "question_template" ADD COLUMN "ai_contents" jsonb DEFAULT '[]'::jsonb;

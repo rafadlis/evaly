@@ -1,1 +1,0 @@
-ALTER TABLE "question_template" ADD COLUMN "latest_run_id" varchar(255);

@@ -1,1 +1,0 @@
-ALTER TABLE "llm_message" ADD COLUMN "messages" jsonb;

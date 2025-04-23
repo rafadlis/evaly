@@ -1,1 +1,0 @@
-ALTER TABLE "test" ALTER COLUMN "access" SET DEFAULT 'public';

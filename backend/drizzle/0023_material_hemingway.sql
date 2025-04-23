@@ -1,1 +1,0 @@
-ALTER TABLE "test_attempt_answer" ADD COLUMN "is_correct" boolean DEFAULT false NOT NULL;

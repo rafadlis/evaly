@@ -1,1 +1,0 @@
-ALTER TABLE "question_template" ADD COLUMN "is_generating" boolean DEFAULT false NOT NULL;

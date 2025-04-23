@@ -1,1 +1,0 @@
-ALTER TABLE "media_config" DROP COLUMN "allowed_formats";

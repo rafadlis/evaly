@@ -1,1 +1,0 @@
-ALTER TABLE "test" ADD COLUMN "result_visibility" varchar(20) DEFAULT 'admin_controlled';

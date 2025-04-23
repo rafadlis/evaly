@@ -1,5 +1,5 @@
 import { organizationRouter } from "./router/organization";
-import { publicProcedure, router } from "./";
+import { publicProcedure, router } from ".";
 import { participantRouter } from "./router/participant";
 
 export const appRouter = router({
