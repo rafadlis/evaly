@@ -118,8 +118,8 @@ const Submissions = () => {
       const sectionIds = Object.entries(submission.sectionAnswers || {})
         .filter(([, count]) => count > 0)
         .map(([sectionId]) => sectionId);
-      console.log(submission.image)
-      return {
+
+        return {
         id: numericId,
         name: submission.name,
         email: submission.email,
@@ -140,6 +140,7 @@ const Submissions = () => {
         sectionCorrect: submission.sectionCorrect || {},
         sectionWrong: submission.sectionWrong || {},
         status: submission.status,
+        sectionSubmitted: submission.sectionSubmitted || {},
       };
     }) as Submission[];
   }, [data?.submissions]);
@@ -190,6 +191,7 @@ const Submissions = () => {
           const sectionWrong = submission.sectionWrong?.[selectedSection] || 0;
           const sectionQuestionsCount =
             sections.find((s) => s.id === selectedSection)?.questionsCount || 0;
+          const sectionSubmitted = submission.sectionSubmitted?.[selectedSection] || null;
 
           // Calculate derived values
           const sectionUnanswered = sectionQuestionsCount - sectionAnswers;
@@ -206,8 +208,10 @@ const Submissions = () => {
             unanswered: sectionUnanswered,
             score: sectionScore,
             totalQuestions: sectionQuestionsCount,
+            submittedAt: sectionSubmitted,
           };
         });
+        console.log(filtered)
     }
 
     // Filter by search query

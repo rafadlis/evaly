@@ -16,6 +16,7 @@ export interface Submission {
     sectionAnswers: Record<string, number>;
     sectionCorrect: Record<string, number>;
     sectionWrong: Record<string, number>;
+    sectionSubmitted: Record<string, string | null>;
     status: 'completed' | 'in-progress' | 'not-started' | 'test-ended';
 }
 

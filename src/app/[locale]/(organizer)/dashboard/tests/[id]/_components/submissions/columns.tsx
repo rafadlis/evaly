@@ -134,7 +134,7 @@ export const columns: ColumnDef<Submission>[] = [
       const startedAt = row.original.startedAt as string | null;
       const status = row.original.status;
 
-      if (status === "in-progress") {
+      if (status === "in-progress" && !submittedAt) {
         return (
           <div className="flex flex-col">
             <p className="text-amber-500 animate-pulse font-medium text-xs">

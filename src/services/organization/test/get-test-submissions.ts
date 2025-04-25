@@ -24,6 +24,11 @@ type TestQuestion = {
     sectionId: string;
     question: string | null;
     type: string | null;
+    options?: Array<{
+        id: string;
+        text: string;
+        isCorrect: boolean;
+    }> | null;
 };
 
 type TestAttempt = {
@@ -75,6 +80,7 @@ export const getTestSubmissions = async (testId: string) => {
         sectionId: question.referenceId,
         question: question.question,
         type: question.type,
+        options: question.options,
     })
     .from(question)
     .where(
@@ -158,16 +164,47 @@ export const getTestSubmissions = async (testId: string) => {
         )
     );
 
+    // Create a map of questionId to question details for quick lookup
+    const questionMap = new Map(questionsRaw.map(q => [q.id, q]));
+
     // Filter out any null attemptIds or questionIds
     const validAnswers: TestAnswer[] = answersRaw
         .filter(a => a.attemptId && a.questionId)
-        .map(a => ({
-            attemptId: a.attemptId!,
-            questionId: a.questionId!,
-            answerText: a.answerText,
-            answerOptions: a.answerOptions,
-            isCorrect: a.isCorrect
-        }));
+        .map(a => {
+            const questionDetails = questionMap.get(a.questionId!);
+            let isCorrect = a.isCorrect;
+
+            // For choice-type questions, determine correctness at runtime based on current question configuration
+            if (questionDetails?.type === 'multiple-choice' || 
+                questionDetails?.type === 'yes-or-no' || 
+                questionDetails?.type === 'dropdown') {
+                
+                // Only process if we have both answer options and question options
+                if (a.answerOptions?.length && questionDetails.options?.length) {
+                    if (questionDetails.type === 'multiple-choice' || 
+                        questionDetails.type === 'yes-or-no' || 
+                        questionDetails.type === 'dropdown') {
+                        // For single-select questions: the selected option must be correct
+                        const selectedOption = a.answerOptions[0];
+                        const correctOption = questionDetails.options.find(opt => 
+                            opt.id === selectedOption && opt.isCorrect
+                        );
+                        isCorrect = !!correctOption;
+                    }
+                } else {
+                    // If no options selected or no options defined, it can't be correct
+                    isCorrect = false;
+                }
+            }
+
+            return {
+                attemptId: a.attemptId!,
+                questionId: a.questionId!,
+                answerText: a.answerText,
+                answerOptions: a.answerOptions,
+                isCorrect: isCorrect
+            };
+        });
 
     // Create a map of questionId to sectionId for quick lookup
     const questionSectionMap = new Map(questionsRaw.map(q => [q.id, q.sectionId]));
@@ -206,11 +243,13 @@ export const getTestSubmissions = async (testId: string) => {
         const sectionAnswers: Record<string, number> = {};
         const sectionCorrect: Record<string, number> = {};
         const sectionWrong: Record<string, number> = {};
+        const sectionSubmitted: Record<string, string | null> = {};
         
         sections.forEach(section => {
             sectionAnswers[section.id] = 0;
             sectionCorrect[section.id] = 0;
             sectionWrong[section.id] = 0;
+            sectionSubmitted[section.id] = null;
         });
 
         // Track all answered question IDs to avoid double counting
@@ -224,8 +263,36 @@ export const getTestSubmissions = async (testId: string) => {
         let latestStartedAt: string | null = null;
         let isInProgress = false;
 
+        // Track section completion status
+        const sectionCompletionStatus: Record<string, {
+            completedAt: string | null;
+            startedAt: string | null;
+        }> = {};
+        
+        sections.forEach(section => {
+            sectionCompletionStatus[section.id] = {
+                completedAt: null,
+                startedAt: null
+            };
+        });
+
         // Process each attempt by this participant
         for (const attempt of participantAttempts) {
+            // Check if this attempt belongs to a specific section
+            if (attempt.testSectionId) {
+                // Track section start and completion times
+                if (attempt.startedAt && (!sectionCompletionStatus[attempt.testSectionId]?.startedAt || 
+                    attempt.startedAt > sectionCompletionStatus[attempt.testSectionId].startedAt!)) {
+                    sectionCompletionStatus[attempt.testSectionId].startedAt = attempt.startedAt;
+                }
+                
+                if (attempt.completedAt && (!sectionCompletionStatus[attempt.testSectionId]?.completedAt || 
+                    attempt.completedAt > sectionCompletionStatus[attempt.testSectionId].completedAt!)) {
+                    sectionCompletionStatus[attempt.testSectionId].completedAt = attempt.completedAt;
+                    sectionSubmitted[attempt.testSectionId] = attempt.completedAt;
+                }
+            }
+            
             // Track if any attempt is in progress (started but not completed)
             if (attempt.startedAt && !attempt.completedAt) {
                 isInProgress = true;
@@ -236,7 +303,7 @@ export const getTestSubmissions = async (testId: string) => {
                 }
             }
             
-            // Track the latest completion time for completed attempts
+            // Track the latest completion time for completed attempts (used when checking if all sections are complete)
             if (attempt.completedAt && (!latestCompletedAt || attempt.completedAt > latestCompletedAt)) {
                 latestCompletedAt = attempt.completedAt;
             }
@@ -277,6 +344,12 @@ export const getTestSubmissions = async (testId: string) => {
             }
         }
 
+        // Check if all sections are submitted
+        const allSectionsSubmitted = sections.every(section => sectionSubmitted[section.id] !== null);
+        
+        // Only set submittedAt if all sections are submitted
+        const finalSubmittedAt = allSectionsSubmitted ? latestCompletedAt : null;
+        
         const score = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
 
         // Create a submission for this participant
@@ -290,14 +363,15 @@ export const getTestSubmissions = async (testId: string) => {
             correct: totalCorrect,
             wrong: totalWrong,
             unanswered: totalQuestions - totalAnswered,
-            submittedAt: latestCompletedAt || null,
+            submittedAt: finalSubmittedAt,
             startedAt: latestStartedAt || null,
             score,
             rank: 0, // Will be calculated after sorting
             sectionAnswers,
             sectionCorrect,
             sectionWrong,
-            status: latestCompletedAt ? 'completed' : (isInProgress ? (isTestEnded ? 'test-ended' : 'in-progress') : 'not-started')
+            sectionSubmitted,
+            status: finalSubmittedAt ? 'completed' : (isInProgress ? (isTestEnded ? 'test-ended' : 'in-progress') : 'not-started')
         });
     }
 
@@ -366,6 +440,9 @@ export type Submission = {
     };
     sectionWrong: {
         [key: string]: number; // sectionId: number of wrong answers
+    };
+    sectionSubmitted: {
+        [key: string]: string | null; // sectionId: timestamp when section was submitted (null if not submitted)
     };
     status?: 'completed' | 'in-progress' | 'not-started' | 'test-ended';
 }

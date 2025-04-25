@@ -94,9 +94,9 @@ const CardQuestion = ({
                   <div
                     key={option.id}
                     className={cn(
-                      "flex items-start gap-2 md:gap-4 cursor-pointer pt-3 hover:opacity-80 transition-all",
+                      "flex items-start gap-2 md:gap-4 cursor-pointer pt-3 hover:opacity-70",
                       field.value?.includes(option.id)
-                        ? "text-success-foreground"
+                        ? "underline underline-offset-4"
                         : ""
                     )}
                     onClick={() => {
