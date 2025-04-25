@@ -148,11 +148,19 @@ export const getSubmissionDetailsByEmail = async (testId: string, email: string)
     const sectionAnswers: Record<string, number> = {};
     const sectionCorrect: Record<string, number> = {};
     const sectionWrong: Record<string, number> = {};
+    const sectionSubmitted: Record<string, string | null> = {};
     
     sections.forEach(section => {
         sectionAnswers[section.id] = 0;
         sectionCorrect[section.id] = 0;
         sectionWrong[section.id] = 0;
+        sectionSubmitted[section.id] = null;
+    });
+
+    // Track section completion status
+    const sectionCompletionStatus: Record<string, string | null> = {};
+    sections.forEach(section => {
+        sectionCompletionStatus[section.id] = null;
     });
 
     // Count answers, correct, and wrong by section across all attempts
@@ -166,6 +174,15 @@ export const getSubmissionDetailsByEmail = async (testId: string, email: string)
         // Track the latest completion time
         if (attempt.completedAt && (!latestCompletedAt || attempt.completedAt > latestCompletedAt)) {
             latestCompletedAt = attempt.completedAt;
+        }
+
+        // Track section completion if this attempt belongs to a specific section
+        if (attempt.testSectionId && attempt.completedAt) {
+            if (!sectionCompletionStatus[attempt.testSectionId] || 
+                attempt.completedAt > sectionCompletionStatus[attempt.testSectionId]!) {
+                sectionCompletionStatus[attempt.testSectionId] = attempt.completedAt;
+                sectionSubmitted[attempt.testSectionId] = attempt.completedAt;
+            }
         }
 
         // Get answers for this attempt
@@ -273,6 +290,8 @@ export const getSubmissionDetailsByEmail = async (testId: string, email: string)
         sectionAnswers,
         sectionCorrect,
         sectionWrong,
+        sectionSubmitted,
+        status: 'completed' // Since we're only fetching completed attempts
     };
 
     // Add unanswered questions to the detailed questions list
