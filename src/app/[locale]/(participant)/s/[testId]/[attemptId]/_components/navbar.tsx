@@ -1,5 +1,4 @@
 "use client";
-import ThemeToggle from "@/components/shared/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -53,7 +52,6 @@ const Navbar = ({ attempt }: { attempt: TestAttemptWithSection }) => {
         </h1>
       </div>
       <div className="flex flex-row items-center gap-2">
-        <ThemeToggle />
         <DialogSubmitAttempt attemptId={attempt.id} />
         <ParticipantAccount />
       </div>

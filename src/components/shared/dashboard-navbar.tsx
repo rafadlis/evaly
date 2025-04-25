@@ -3,57 +3,53 @@
 import { useState, useEffect, useMemo } from "react";
 import {
   Menu,
-  X,
-  Moon,
-  Sun,
-  Home,
+  X, Home,
   BookOpen,
   UserCircle,
-  Cog,
+  Cog
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 import { Link } from "./progress-bar";
-import { useTheme } from "next-themes";
 import { LogoType } from "./logo";
-import ThemeToggle from "./theme-toggle";
 import { usePathname } from "@/i18n/navigation";
 import AdminAccount from "./account/admin-account";
 import DialogSelectLanguage from "./dialog/dialog-select-language";
 import { useTranslations } from "next-intl";
-
-
+import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 
 export function DashboardNavbar({ className }: { className?: string }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const [activeItem, setActiveItem] = useState("/dashboard");
-  const { setTheme, theme } = useTheme();
   const t = useTranslations("Navbar");
 
-  const navItems = useMemo(() =>[
-    {
-      name: t("dashboard"),
-      href: "/dashboard",
-      icon: <Home className="size-3.5 mr-1.5" />,
-    },
-    {
-      name: t("question"),
-      href: "/dashboard/question",
-      icon: <BookOpen className="size-3.5 mr-1.5" />,
-    },
-    {
-      name: t("participant"),
-      href: "/dashboard/participant",
-      icon: <UserCircle className="size-3.5 mr-1.5" />,
-    },
-    {
-      name: t("settings"),
-      href: "/dashboard/settings",
-      icon: <Cog className="size-3.5 mr-1.5" />,
-    },
-  ], [t]);
+  const navItems = useMemo(
+    () => [
+      {
+        name: t("dashboard"),
+        href: "/dashboard",
+        icon: <Home className="size-3.5 mr-1.5" />,
+      },
+      {
+        name: t("question"),
+        href: "/dashboard/question",
+        icon: <BookOpen className="size-3.5 mr-1.5" />,
+      },
+      {
+        name: t("participant"),
+        href: "/dashboard/participant",
+        icon: <UserCircle className="size-3.5 mr-1.5" />,
+      },
+      {
+        name: t("settings"),
+        href: "/dashboard/settings",
+        icon: <Cog className="size-3.5 mr-1.5" />,
+      },
+    ],
+    [t]
+  );
 
   useEffect(() => {
     // Set active item based on pathname or keep it as state for demo
@@ -61,13 +57,16 @@ export function DashboardNavbar({ className }: { className?: string }) {
       // Special case for /dashboard - only active for /dashboard or /dashboard/test/*
       if (pathname === "/dashboard" || pathname.startsWith("/dashboard/test")) {
         setActiveItem("/dashboard");
-      } 
+      }
       // For other routes, find matching nav items
       else {
         const matchingItem = navItems
-          .filter(item => item.href !== "/dashboard" && pathname.startsWith(item.href))
+          .filter(
+            (item) =>
+              item.href !== "/dashboard" && pathname.startsWith(item.href)
+          )
           .sort((a, b) => b.href.length - a.href.length)[0];
-        
+
         if (matchingItem) {
           setActiveItem(matchingItem.href);
         }
@@ -75,12 +74,11 @@ export function DashboardNavbar({ className }: { className?: string }) {
     }
   }, [pathname, navItems]);
 
-
   return (
     <nav
       className={cn(
         "sticky top-0 left-0 w-full z-50 transition-all bg-background border-b",
-        className,
+        className
       )}
     >
       <div className="mx-auto px-3 md:px-6 h-14">
@@ -90,24 +88,22 @@ export function DashboardNavbar({ className }: { className?: string }) {
             <LogoType href="/dashboard" />
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center ml-20 gap-6">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "text-muted-foreground transition-colors hover:text-primary font-medium text-sm flex items-center",
-                    // Special case for dashboard
-                    item.href === "/dashboard" 
-                      ? (pathname === "/dashboard" || pathname.startsWith("/dashboard/test")) && "text-primary"
-                      : pathname.startsWith(item.href) && "text-primary"
-                  )}
-                >
-                  {/* {item.icon} */}
-                  {item.name}
-                </Link>
-              ))}
-            </div>
+            <Tabs
+              defaultValue={navItems[0].href}
+              value={activeItem}
+              className="hidden md:flex items-center ml-6 gap-6"
+            >
+              <TabsList>
+                {navItems.map((item) => (
+                  <TabsTrigger value={item.href} key={item.href}>
+                    <Link href={item.href}>
+                      {/* {item.icon} */}
+                      {item.name}
+                    </Link>
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
           </div>
 
           {/* Search, Notifications, Profile */}
@@ -117,8 +113,6 @@ export function DashboardNavbar({ className }: { className?: string }) {
               <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500"></span>
             </Button> */}
             <DialogSelectLanguage />
-            <ThemeToggle />
-
             <AdminAccount />
 
             <Button
@@ -147,7 +141,8 @@ export function DashboardNavbar({ className }: { className?: string }) {
                   "py-2 px-3 font-medium transition-colors relative  flex items-center",
                   // Special case for dashboard
                   item.href === "/dashboard"
-                    ? (pathname === "/dashboard" || pathname.startsWith("/dashboard/test"))
+                    ? pathname === "/dashboard" ||
+                      pathname.startsWith("/dashboard/test")
                       ? "text-primary"
                       : "hover:text-primary/80"
                     : pathname.startsWith(item.href)
@@ -169,21 +164,6 @@ export function DashboardNavbar({ className }: { className?: string }) {
                 )}
               </Link>
             ))}
-            <div className="pt-2 flex items-center">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="flex items-center"
-              >
-                {theme === "light" ? (
-                  <Sun className="h-4 w-4 mr-2" />
-                ) : (
-                  <Moon className="h-4 w-4 mr-2" />
-                )}
-                {theme === "light" ? "Light Mode" : "Dark Mode"}
-              </Button>
-            </div>
           </div>
         )}
       </div>

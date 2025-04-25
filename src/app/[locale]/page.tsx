@@ -8,7 +8,6 @@ import { BenefitsSection } from "@/components/landing/BenefitsSection";
 import { CTASection } from "@/components/landing/CTASection";
 import { Footer } from "@/components/landing/Footer";
 import { LogoType } from "@/components/shared/logo";
-import ThemeToggle from "@/components/shared/theme-toggle";
 import { Link } from "@/components/shared/progress-bar";
 import { useTranslations } from "next-intl";
 import DialogSelectLanguage from "@/components/shared/dialog/dialog-select-language";
@@ -26,7 +25,6 @@ export default function HomePage() {
           <LogoType href="/" />
           <div className="flex items-center gap-4">
             <DialogSelectLanguage />
-            <ThemeToggle />
             <Link href="/dashboard">
               <Button size="sm" variant="default">
                 {t('dashboard')}

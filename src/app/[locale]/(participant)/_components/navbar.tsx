@@ -1,7 +1,6 @@
 "use client";
 import ParticipantAccount from "@/components/shared/account/participant-account";
 import { LogoType } from "@/components/shared/logo";
-import ThemeToggle from "@/components/shared/theme-toggle";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -27,7 +26,6 @@ const Navbar = () => {
     >
       <LogoType href="/" />
       <div className="flex flex-row items-center gap-2">
-        <ThemeToggle />
         <ParticipantAccount />
       </div>
     </div>
