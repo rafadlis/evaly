@@ -17,14 +17,6 @@ export async function postAttemptAnswer(data: UpdateTestAttemptAnswer) {
     if (!findQuestion || !findQuestion.options) {
       throw new Error("Question not found");
     }
-
-    // Set isCorrect based on whether all selected answers are correct and all correct answers are selected
-    const selectedOptionIds = new Set(data.answerOptions || []);
-    const correctOptionIds = findQuestion.options
-      .filter((o) => o.isCorrect)
-      .map((o) => o.id);
-
-    data.isCorrect = correctOptionIds.some((id) => selectedOptionIds.has(id));
   }
 
   const upsertAnswer = await db
@@ -41,9 +33,6 @@ export async function postAttemptAnswer(data: UpdateTestAttemptAnswer) {
     .returning();
 
   const returnData = upsertAnswer[0];
-
-  // Removing isCorrect from the response
-  returnData.isCorrect = null;
 
   return returnData;
 }

@@ -56,7 +56,7 @@ const Header = () => {
     });
 
   const finishTest = () => {
-    mutateUpdateTest({ id: id?.toString() || "" });
+    mutateUpdateTest({ id: id?.toString() || "", finishedAt: new Date().toISOString(), });
   };
 
   const reopenTest = () => {
@@ -87,7 +87,7 @@ const Header = () => {
         ) : (
           <h1 className="text-xl font-medium">{dataTest?.title}</h1>
         )}
-        {isPendingTest ? (
+        {isPendingTest || isRefetchingTest ? (
           <Button variant={"ghost"}>
             <Loader2 className="animate-spin" />
             Loading...
