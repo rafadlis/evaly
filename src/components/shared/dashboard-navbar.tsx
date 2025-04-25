@@ -1,13 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import {
-  Menu,
-  X, Home,
-  BookOpen,
-  UserCircle,
-  Cog
-} from "lucide-react";
+import { Menu, X, Home, BookOpen, UserCircle, Cog } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
@@ -17,7 +11,6 @@ import { usePathname } from "@/i18n/navigation";
 import AdminAccount from "./account/admin-account";
 import DialogSelectLanguage from "./dialog/dialog-select-language";
 import { useTranslations } from "next-intl";
-import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 
 export function DashboardNavbar({ className }: { className?: string }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -30,22 +23,22 @@ export function DashboardNavbar({ className }: { className?: string }) {
       {
         name: t("dashboard"),
         href: "/dashboard",
-        icon: <Home className="size-3.5 mr-1.5" />,
+        icon: <Home className="size-4 mr-1.5" />,
       },
       {
         name: t("question"),
         href: "/dashboard/question",
-        icon: <BookOpen className="size-3.5 mr-1.5" />,
+        icon: <BookOpen className="size-4 mr-1.5" />,
       },
       {
         name: t("participant"),
         href: "/dashboard/participant",
-        icon: <UserCircle className="size-3.5 mr-1.5" />,
+        icon: <UserCircle className="size-4 mr-1.5" />,
       },
       {
         name: t("settings"),
         href: "/dashboard/settings",
-        icon: <Cog className="size-3.5 mr-1.5" />,
+        icon: <Cog className="size-4 mr-1.5" />,
       },
     ],
     [t]
@@ -77,7 +70,7 @@ export function DashboardNavbar({ className }: { className?: string }) {
   return (
     <nav
       className={cn(
-        "sticky top-0 left-0 w-full z-50 transition-all bg-background border-b",
+        "sticky top-0 left-0 w-full z-50 transition-all bg-card",
         className
       )}
     >
@@ -88,22 +81,23 @@ export function DashboardNavbar({ className }: { className?: string }) {
             <LogoType href="/dashboard" />
 
             {/* Desktop Navigation */}
-            <Tabs
-              defaultValue={navItems[0].href}
-              value={activeItem}
-              className="hidden md:flex items-center ml-6 gap-6"
-            >
-              <TabsList>
-                {navItems.map((item) => (
-                  <TabsTrigger value={item.href} key={item.href}>
-                    <Link href={item.href}>
-                      {/* {item.icon} */}
-                      {item.name}
-                    </Link>
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </Tabs>
+            <div className="hidden md:flex items-center ml-14 gap-6 text-sm font-medium">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "flex items-center",
+                    activeItem === item.href
+                      ? "text-primary underline underline-offset-4"
+                      : "text-primary/80"
+                  )}
+                >
+                  {item.icon}
+                  {item.name}
+                </Link>
+              ))}
+            </div>
           </div>
 
           {/* Search, Notifications, Profile */}
