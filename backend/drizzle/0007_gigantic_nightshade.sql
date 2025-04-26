@@ -1,1 +1,0 @@
-ALTER TABLE "question" ALTER COLUMN "options" SET DEFAULT '[]'::jsonb;
