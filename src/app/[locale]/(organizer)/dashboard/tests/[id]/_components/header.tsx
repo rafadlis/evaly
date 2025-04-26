@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Check, LinkIcon, Loader2, RotateCcw, TimerOff } from "lucide-react";
+import { Check, ChevronDown, LinkIcon, Loader2, RotateCcw, TimerOff } from "lucide-react";
 import { redirect, useParams } from "next/navigation";
 import { toast } from "sonner";
 import { env } from "@/lib/env.client";
@@ -20,6 +20,7 @@ import { useRouter } from "@/i18n/navigation";
 import { useTransition } from "react";
 import { trpc } from "@/trpc/trpc.client";
 import { useTranslations } from "next-intl";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const Header = () => {
   const { id } = useParams();
@@ -56,7 +57,10 @@ const Header = () => {
     });
 
   const finishTest = () => {
-    mutateUpdateTest({ id: id?.toString() || "", finishedAt: new Date().toISOString(), });
+    mutateUpdateTest({
+      id: id?.toString() || "",
+      finishedAt: new Date().toISOString(),
+    });
   };
 
   const reopenTest = () => {
@@ -124,26 +128,34 @@ const Header = () => {
                       <Button variant={"outline"}>Cancel</Button>
                     </DialogClose>
                     <div className="flex flex-row gap-2">
-                      {/* <Button
-                        variant={"outline"}
-                        onClick={finishTest}
-                        disabled={isUpdatingTest || isRedirect}
-                      >
-                        {isUpdatingTest || isRedirect ? (
-                          <Loader2 className="animate-spin" />
-                        ) : (
-                          "End later"
-                        )}
-                      </Button> */}
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant={"outline"}
+                            disabled={isUpdatingTest || isRedirect}
+                          >
+                            {isUpdatingTest || isRedirect ? (
+                              <Loader2 className="animate-spin" />
+                            ) : (
+                              <>End later <ChevronDown /></>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent>
+                          <div className="flex flex-row flex-wrap gap-2">
+                             
+                          </div>
+                        </PopoverContent>
+                      </Popover>
                       <Button
-                        variant={"destructive"}
+                        variant={"default"}
                         onClick={finishTest}
                         disabled={isUpdatingTest || isRedirect}
                       >
                         {isUpdatingTest || isRedirect ? (
                           <Loader2 className="animate-spin" />
                         ) : (
-                          "End now"
+                          <>End now</>
                         )}
                       </Button>
                     </div>

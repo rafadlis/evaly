@@ -56,7 +56,7 @@ export default async function RootLayout({
       className={`${geist.variable} ${geistMono.variable}`}
     >
       {/* <ReactScan /> */}
-      <body className={`antialiased min-h-svh flex flex-col dark`}>
+      <body className={`antialiased min-h-svh flex flex-col`}>
         <Provider>
           <NextIntlClientProvider messages={messages}>
             {children}
