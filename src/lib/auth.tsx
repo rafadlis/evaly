@@ -65,7 +65,7 @@ export const auth = betterAuth({
           useSecureCookies: true,
           crossSubDomainCookies: {
             enabled: true,
-            domain: "evaly.io",
+            domain: env.ENVIRONMENT === "production" ? "evaly.io" : env.ENVIRONMENT === "staging" ? "staging.evaly.io" : "localhost",
           },
           defaultCookieAttributes: {
             secure: true,
