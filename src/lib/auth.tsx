@@ -3,6 +3,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { account, session, user, verification } from "@/lib/db/schema";
 import db from "@/lib/db";
 import { env } from "@/lib/env";
+import { env as envClient } from "@/lib/env.client";
 import { emailOTP } from "better-auth/plugins";
 import EmailLoginOTPEmail from "@/lib/emails/email-login-otp";
 import { render } from '@react-email/components';
@@ -50,28 +51,7 @@ export const auth = betterAuth({
     google: {
       clientId: env.GOOGLE_CLIENT_ID!,
       clientSecret: env.GOOGLE_CLIENT_SECRET!,
-      redirectURI:
-        env.ENVIRONMENT === "development"
-          ? "http://localhost:3000/api/auth/callback/google"
-          : env.ENVIRONMENT === "staging"
-            ? "https://staging.evaly.io/api/auth/callback/google"
-            : "https://evaly.io/api/auth/callback/google",
+      redirectURI: `${envClient.NEXT_PUBLIC_URL}/api/auth/callback/google`
     },
   },
-  advanced:
-    env.ENVIRONMENT === "development"
-      ? undefined
-      : {
-          useSecureCookies: true,
-          crossSubDomainCookies: {
-            enabled: true,
-            domain: env.ENVIRONMENT === "production" ? "evaly.io" : env.ENVIRONMENT === "staging" ? "staging.evaly.io" : "localhost",
-          },
-          defaultCookieAttributes: {
-            secure: true,
-            httpOnly: true,
-            sameSite: "none",
-            partitioned: true,
-          },
-        },
 });
