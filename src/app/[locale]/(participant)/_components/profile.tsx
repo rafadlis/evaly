@@ -51,7 +51,11 @@ export const ProfilePage = () => {
       onSuccess(data) {
         if (data) {
           toast.success("Profile updated successfully");
-          reset(data);
+          reset({
+            ...data,
+            createdAt: new Date(data.createdAt),
+            updatedAt: new Date(data.updatedAt),
+          });
           refetch();
         }
       },

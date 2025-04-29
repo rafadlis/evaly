@@ -1,0 +1,1 @@
+ALTER TABLE "verification" ALTER COLUMN "created_at" DROP DEFAULT;

@@ -26,7 +26,7 @@ export default function HomePage() {
           <div className="flex items-center gap-4">
             <DialogSelectLanguage />
             <Link href="/dashboard">
-              <Button size="sm" variant="default">
+              <Button variant="default">
                 {t('dashboard')}
               </Button>
             </Link>

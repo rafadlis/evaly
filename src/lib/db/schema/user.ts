@@ -19,18 +19,18 @@ export const user = pgTable(
     image: varchar("image", { length: 255 }),
     selectedOrganizerId: varchar("selected_organizer_id", { length: 255 }),
     createdAt: timestamp("created_at", {
-      mode: "string",
+      mode: "date",
       withTimezone: true,
     })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
     updatedAt: timestamp("updated_at", {
-      mode: "string",
+      mode: "date",
       withTimezone: true,
     })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`)
-      .$onUpdate(() => new Date().toISOString()),
+      .$onUpdate(() => new Date()),
   },
   (table) => ({
     emailIdx: index("email_idx").on(table.email),
@@ -54,24 +54,24 @@ export const session = pgTable(
     userId: varchar("user_id", { length: 255 }).notNull(),
     token: varchar("token", { length: 255 }).notNull(),
     expiresAt: timestamp("expires_at", {
-      mode: "string",
+      mode: "date",
       withTimezone: true,
     }).notNull(),
     ipAddress: varchar("ip_address", { length: 255 }),
     userAgent: varchar("user_agent", { length: 255 }),
     createdAt: timestamp("created_at", {
-      mode: "string",
+      mode: "date",
       withTimezone: true,
     })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
     updatedAt: timestamp("updated_at", {
-      mode: "string",
+      mode: "date",
       withTimezone: true,
     })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`)
-      .$onUpdate(() => new Date().toISOString()),
+      .$onUpdate(() => new Date()),
   },
   (table) => ({
     userIdIdx: index("user_id_idx").on(table.userId),
@@ -95,29 +95,29 @@ export const account = pgTable(
     accessToken: text("access_token"),
     refreshToken: text("refresh_token"),
     accessTokenExpiresAt: timestamp("access_token_expires_at", {
-      mode: "string",
+      mode: "date",
       withTimezone: true,
     }),
     refreshTokenExpiresAt: timestamp("refresh_token_expires_at", {
-      mode: "string",
+      mode: "date",
       withTimezone: true,
     }),
     scope: varchar("scope", { length: 255 }),
     idToken: text("id_token"),
     password: varchar("password", { length: 255 }),
     createdAt: timestamp("created_at", {
-      mode: "string",
+      mode: "date",
       withTimezone: true,
     })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
     updatedAt: timestamp("updated_at", {
-      mode: "string",
+      mode: "date",
       withTimezone: true,
     })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`)
-      .$onUpdate(() => new Date().toISOString()),
+      .$onUpdate(() => new Date()),
   },
   (table) => ({
     userIdIdx: index("user_account_id_idx").on(table.userId),
@@ -139,22 +139,22 @@ export const verification = pgTable(
     identifier: varchar("identifier", { length: 255 }).notNull(),
     value: text("value").notNull(),
     expiresAt: timestamp("expires_at", {
-      mode: "string",
+      mode: "date",
       withTimezone: true,
     }).notNull(),
     createdAt: timestamp("created_at", {
-      mode: "string",
+      mode: "date",
       withTimezone: true,
     })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
     updatedAt: timestamp("updated_at", {
-      mode: "string",
+      mode: "date",
       withTimezone: true,
     })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`)
-      .$onUpdate(() => new Date().toISOString()),
+      .$onUpdate(() => new Date()),
   },
   (table) => ({
     identifierIdx: index("identifier_idx").on(table.identifier),

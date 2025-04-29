@@ -5,7 +5,7 @@ import db from "@/lib/db";
 import { env } from "@/lib/env";
 import { emailOTP } from "better-auth/plugins";
 import EmailLoginOTPEmail from "@/lib/emails/email-login-otp";
-import { render } from '@react-email/components';
+import { render } from "@react-email/components";
 import { sendEmail } from "./email";
 
 export const auth = betterAuth({
@@ -49,7 +49,7 @@ export const auth = betterAuth({
      */
     google: {
       clientId: env.GOOGLE_CLIENT_ID!,
-      clientSecret: env.GOOGLE_CLIENT_SECRET!
+      clientSecret: env.GOOGLE_CLIENT_SECRET!,
     },
   },
 });

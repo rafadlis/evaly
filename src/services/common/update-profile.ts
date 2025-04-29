@@ -11,7 +11,7 @@ export async function updateProfile(
 
   const updatedUser = await db
     .update(user)
-    .set({ ...data, updatedAt: new Date().toISOString() })
+    .set({ ...data, updatedAt: new Date() })
     .where(eq(user.id, data.id))
     .returning();
 
