@@ -16,15 +16,13 @@ Online examination platform that makes creating, distributing, and analyzing tes
 
 ## 🚀 Tech Stack
 
-- **Framework**: Next.js 15 with React 19
-- **Database**: PostgreSQL with Drizzle ORM
+- **Framework**: Next.js 15 with tRPC
+- **Database**: PostgreSQL (Supabase) with Drizzle ORM
+- **Storage**: R2
 - **Styling**: Tailwind CSS with Radix UI
-- **State Management**: Zustand, React Query, tRPC
-- **Deployment**: Vercel with Supabase
-- **Runtime**: Bun
-- **UI**: Radix UI primitives, TipTap editor
-- **Auth**: Secure authentication with better-auth
-- **AI**: OpenAI and Google AI integration
+- **Deployment**: Vercel
+- **Auth**: Better Auth
+- **AI**: Gemini, OpenAI
 
 ## 🛠️ Development
 
