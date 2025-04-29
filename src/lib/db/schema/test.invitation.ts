@@ -32,7 +32,7 @@ export const testInvitation = pgTable(
       emailTestIdUnique: uniqueIndex("email_test_id_unique").on(table.email, table.testId),
     };
   }
-);
+).enableRLS()
 
 export const testInvitationRelations = relations(testInvitation, ({ one }) => ({
   test: one(test, {

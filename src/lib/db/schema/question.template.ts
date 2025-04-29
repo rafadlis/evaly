@@ -76,7 +76,7 @@ export const questionTemplate = pgTable(
       t.organizerId
     ),
   })
-);
+).enableRLS()
 
 export const questionTemplateRelations = relations(
   questionTemplate,

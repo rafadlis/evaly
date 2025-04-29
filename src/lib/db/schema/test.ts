@@ -65,7 +65,7 @@ export const test = pgTable("test", {
     mode: "string",
     withTimezone: true,
   }),
-});
+}).enableRLS()
 
 export const testRelations = relations(test, ({ many, one }) => ({
   invitations: many(testInvitation),
@@ -78,4 +78,4 @@ export const testRelations = relations(test, ({ many, one }) => ({
     fields: [test.organizationId],
     references: [organization.id],
   }),
-}));
+}))

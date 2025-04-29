@@ -15,16 +15,16 @@ export const routing = defineRouting({
   // A list of all locales that are supported
   locales: [
     "en", // English
-    "id", // Indonesian
-    "jp", // Japanese
-    "zh", // Chinese
-    "de", // German
-    "es", // Spanish
-    "ar", // Arabic
-    "fr", // French
-    "hi", // Hindi
-    "pt", // Portuguese
-    "ru", // Russian
+    // "id", // Indonesian
+    // "jp", // Japanese
+    // "zh", // Chinese
+    // "de", // German
+    // "es", // Spanish
+    // "ar", // Arabic
+    // "fr", // French
+    // "hi", // Hindi
+    // "pt", // Portuguese
+    // "ru", // Russian
   ],
 
   // Used when no locale matches

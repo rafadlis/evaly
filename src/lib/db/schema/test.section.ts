@@ -32,7 +32,7 @@ export const testSection = pgTable("test_section", {
     mode: "string",
     withTimezone: true,
   }),
-});
+}).enableRLS()
 
 //Relations
 export const testSectionRelation = relations(testSection, ({ many, one }) => ({

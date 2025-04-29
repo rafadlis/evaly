@@ -15,6 +15,13 @@
       "when": 1745943836477,
       "tag": "0001_fluffy_zaladane",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1745953796823,
+      "tag": "0002_overconfident_wendell_vaughn",
+      "breakpoints": true
     }
   ]
 }

@@ -66,7 +66,7 @@ export const question = pgTable(
   (table) => ({
     referenceIdIndex: index("reference_idx").on(table.referenceId),
   })
-);
+).enableRLS()
 
 // Text field configuration (for text-field type questions)
 export const textFieldConfig = pgTable(
@@ -100,7 +100,7 @@ export const textFieldConfig = pgTable(
     questionIdIndex: index("textfield_question_idx").on(table.questionId),
     uniqueQuestion: unique().on(table.questionId), // One config per question
   })
-);
+).enableRLS()
 
 // Fill-the-blank segments (for fill-the-blank questions)
 export const fillBlankSegment = pgTable(
@@ -137,7 +137,7 @@ export const fillBlankSegment = pgTable(
       table.segmentOrder
     ),
   })
-);
+).enableRLS()
 
 // Media response configuration (for audio/video/file upload questions)
 export const mediaConfig = pgTable(
@@ -174,7 +174,7 @@ export const mediaConfig = pgTable(
     questionIdIndex: index("media_question_idx").on(table.questionId),
     uniqueQuestion: unique().on(table.questionId), // One media config per question
   })
-);
+).enableRLS()
 
 // Slider configuration (for slider-scale questions)
 export const sliderConfig = pgTable(
@@ -210,7 +210,7 @@ export const sliderConfig = pgTable(
     questionIdIndex: index("slider_question_idx").on(table.questionId),
     uniqueQuestion: unique().on(table.questionId), // One slider config per question
   })
-);
+).enableRLS()
 
 // Matching pairs (for matching-pairs questions)
 export const matchingPair = pgTable(
@@ -242,7 +242,7 @@ export const matchingPair = pgTable(
   (table) => ({
     questionIdIndex: index("matching_question_idx").on(table.questionId),
   })
-);
+).enableRLS()
 
 // Matrix configuration (for matrix questions)
 export const matrixConfig = pgTable(
@@ -275,7 +275,7 @@ export const matrixConfig = pgTable(
     questionIdIndex: index("matrix_question_idx").on(table.questionId),
     uniqueQuestion: unique().on(table.questionId), // One matrix config per question
   })
-);
+).enableRLS()
 
 // Hotspot configuration (for hotspot questions)
 export const hotspotConfig = pgTable(
@@ -307,7 +307,7 @@ export const hotspotConfig = pgTable(
     questionIdIndex: index("hotspot_question_idx").on(table.questionId),
     uniqueQuestion: unique().on(table.questionId), // One hotspot config per question
   })
-);
+).enableRLS()
 
 // Code editor configuration (for code-editor questions)
 export const codeEditorConfig = pgTable(
@@ -341,7 +341,7 @@ export const codeEditorConfig = pgTable(
     questionIdIndex: index("code_question_idx").on(table.questionId),
     uniqueQuestion: unique().on(table.questionId), // One code config per question
   })
-);
+).enableRLS()
 
 // Date-time picker configuration (for date-picker and time-picker questions)
 export const dateTimeConfig = pgTable(
@@ -379,7 +379,7 @@ export const dateTimeConfig = pgTable(
     questionIdIndex: index("date_question_idx").on(table.questionId),
     uniqueQuestion: unique().on(table.questionId), // One date/time config per question
   })
-);
+).enableRLS()
 
 // Formula configuration (for formula-input questions)
 export const formulaConfig = pgTable(
@@ -414,7 +414,7 @@ export const formulaConfig = pgTable(
     questionIdIndex: index("formula_question_idx").on(table.questionId),
     uniqueQuestion: unique().on(table.questionId), // One formula config per question
   })
-);
+).enableRLS()
 
 //Relations
 export const questionRelation = relations(question, ({ one, many }) => ({

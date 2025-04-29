@@ -44,7 +44,7 @@ export const organization = pgTable(
   (table) => ({
     organizationId: index("organization_id_idx").on(table.id),
   })
-);
+).enableRLS()
 
 // Organizer
 export const organizer = pgTable(
@@ -91,7 +91,7 @@ export const organizer = pgTable(
       name: "organizer_organization_fk",
     }).onDelete("cascade"),
   })
-);
+).enableRLS()
 
 // Relations
 export const organizationRelations = relations(organization, ({ many }) => ({

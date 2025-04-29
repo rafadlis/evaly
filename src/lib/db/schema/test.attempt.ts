@@ -53,7 +53,7 @@ export const testAttempt = pgTable(
       t.participantEmail
     ),
   })
-);
+).enableRLS()
 
 export const testAttemptRelations = relations(testAttempt, ({ one }) => ({
   testSection: one(testSection, {

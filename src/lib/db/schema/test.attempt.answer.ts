@@ -60,7 +60,7 @@ export const testAttemptAnswer = pgTable("test_attempt_answer", {
   testAttemptAnswerQuestionIdIndex: index("test_attempt_answer_question_id_index").on(
     t.questionId
   ),
-}));
+})).enableRLS()
 
 export const testAttemptAnswerRelations = relations(
   testAttemptAnswer,

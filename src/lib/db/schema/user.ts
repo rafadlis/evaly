@@ -35,7 +35,7 @@ export const user = pgTable(
   (table) => ({
     emailIdx: index("email_idx").on(table.email),
   })
-);
+).enableRLS()
 
 export const userRelations = relations(user, ({ many, one }) => ({
   sessions: many(session),
@@ -45,7 +45,7 @@ export const userRelations = relations(user, ({ many, one }) => ({
     fields: [user.selectedOrganizerId],
     references: [organizer.id],
   }),
-}));
+}))
 
 export const session = pgTable(
   "session",
@@ -76,7 +76,7 @@ export const session = pgTable(
   (table) => ({
     userIdIdx: index("user_id_idx").on(table.userId),
   })
-);
+).enableRLS()
 
 export const sessionRelations = relations(session, ({ one }) => ({
   user: one(user, {
@@ -123,7 +123,7 @@ export const account = pgTable(
     userIdIdx: index("user_account_id_idx").on(table.userId),
     providerIdx: index("provider_idx").on(table.providerId),
   })
-);
+).enableRLS()
 
 export const accountRelations = relations(account, ({ one }) => ({
   user: one(user, {
@@ -159,4 +159,4 @@ export const verification = pgTable(
   (table) => ({
     identifierIdx: index("identifier_idx").on(table.identifier),
   })
-);
+).enableRLS()
