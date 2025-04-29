@@ -17,34 +17,34 @@ export const user = pgTable(
     email: varchar("email", { length: 255 }).notNull(),
     emailVerified: boolean("email_verified").notNull().default(false),
     image: varchar("image", { length: 255 }),
-    selectedOrganizerId: varchar("selected_organizer_id", {length: 255}),
+    selectedOrganizerId: varchar("selected_organizer_id", { length: 255 }),
     createdAt: timestamp("created_at", {
-      mode:"string",
-      withTimezone: true
+      mode: "string",
+      withTimezone: true,
     })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
     updatedAt: timestamp("updated_at", {
-      mode:"string",
-      withTimezone: true
+      mode: "string",
+      withTimezone: true,
     })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`)
-     .$onUpdate(() => new Date().toISOString()),
+      .$onUpdate(() => new Date().toISOString()),
   },
   (table) => ({
     emailIdx: index("email_idx").on(table.email),
   })
 );
 
-export const userRelations = relations(user, ({ many,one }) => ({
+export const userRelations = relations(user, ({ many, one }) => ({
   sessions: many(session),
   accounts: many(account),
   organizer: many(organizer),
   selectedOrganizer: one(organizer, {
     fields: [user.selectedOrganizerId],
-    references: [organizer.id]
-  })
+    references: [organizer.id],
+  }),
 }));
 
 export const session = pgTable(
@@ -53,22 +53,25 @@ export const session = pgTable(
     id: varchar("id", { length: 255 }).primaryKey(),
     userId: varchar("user_id", { length: 255 }).notNull(),
     token: varchar("token", { length: 255 }).notNull(),
-    expiresAt: timestamp("expires_at").notNull(),
+    expiresAt: timestamp("expires_at", {
+      mode: "string",
+      withTimezone: true,
+    }).notNull(),
     ipAddress: varchar("ip_address", { length: 255 }),
     userAgent: varchar("user_agent", { length: 255 }),
     createdAt: timestamp("created_at", {
-      mode:"string",
-      withTimezone: true
+      mode: "string",
+      withTimezone: true,
     })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
     updatedAt: timestamp("updated_at", {
-      mode:"string",
-      withTimezone: true
+      mode: "string",
+      withTimezone: true,
     })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`)
-     .$onUpdate(() => new Date().toISOString()),
+      .$onUpdate(() => new Date().toISOString()),
   },
   (table) => ({
     userIdIdx: index("user_id_idx").on(table.userId),
@@ -91,24 +94,30 @@ export const account = pgTable(
     providerId: varchar("provider_id", { length: 255 }).notNull(),
     accessToken: text("access_token"),
     refreshToken: text("refresh_token"),
-    accessTokenExpiresAt: timestamp("access_token_expires_at"),
-    refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+    accessTokenExpiresAt: timestamp("access_token_expires_at", {
+      mode: "string",
+      withTimezone: true,
+    }),
+    refreshTokenExpiresAt: timestamp("refresh_token_expires_at", {
+      mode: "string",
+      withTimezone: true,
+    }),
     scope: varchar("scope", { length: 255 }),
     idToken: text("id_token"),
     password: varchar("password", { length: 255 }),
     createdAt: timestamp("created_at", {
-      mode:"string",
-      withTimezone: true
+      mode: "string",
+      withTimezone: true,
     })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
     updatedAt: timestamp("updated_at", {
-      mode:"string",
-      withTimezone: true
+      mode: "string",
+      withTimezone: true,
     })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`)
-     .$onUpdate(() => new Date().toISOString()),
+      .$onUpdate(() => new Date().toISOString()),
   },
   (table) => ({
     userIdIdx: index("user_account_id_idx").on(table.userId),
@@ -129,20 +138,23 @@ export const verification = pgTable(
     id: varchar("id", { length: 255 }).primaryKey(),
     identifier: varchar("identifier", { length: 255 }).notNull(),
     value: text("value").notNull(),
-    expiresAt: timestamp("expires_at").notNull(),
+    expiresAt: timestamp("expires_at", {
+      mode: "string",
+      withTimezone: true,
+    }).notNull(),
     createdAt: timestamp("created_at", {
-      mode:"string",
-      withTimezone: true
+      mode: "string",
+      withTimezone: true,
     })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
     updatedAt: timestamp("updated_at", {
-      mode:"string",
-      withTimezone: true
+      mode: "string",
+      withTimezone: true,
     })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`)
-     .$onUpdate(() => new Date().toISOString()),
+      .$onUpdate(() => new Date().toISOString()),
   },
   (table) => ({
     identifierIdx: index("identifier_idx").on(table.identifier),

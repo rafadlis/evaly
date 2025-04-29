@@ -7,7 +7,7 @@ const connectionString =
   env.NEXTJS_ENV === "production" && process.env.NODE_ENV === "production"
     ? getCloudflareContext().env.PRODUCTION_DB.connectionString
     : env.DATABASE_URL;
-
+    
 const db = drizzle(connectionString, { schema });
 
 export default db;
