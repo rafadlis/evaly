@@ -5,6 +5,6 @@ export const GET = async (request: Request) => {
   // show all env variables
   return NextResponse.json({
     env,
-    headers: Object.fromEntries(request.headers.entries()),
+    cf: request.cf,
   });
 };
