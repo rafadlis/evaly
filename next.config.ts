@@ -8,8 +8,6 @@ const nextConfig: NextConfig = {
     reactCompiler: true,
   },
   images: {
-    loader: "custom",
-    loaderFile: "./src/services/common/image-loader.ts",
     remotePatterns: [
       {
         protocol: "https",
