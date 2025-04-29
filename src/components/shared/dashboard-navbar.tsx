@@ -23,22 +23,22 @@ export function DashboardNavbar({ className }: { className?: string }) {
       {
         name: t("dashboard"),
         href: "/dashboard",
-        icon: <Home className="size-4 mr-1.5" />,
+        icon: <Home className="size-4" />,
       },
       {
         name: t("question"),
         href: "/dashboard/question",
-        icon: <BookOpen className="size-4 mr-1.5" />,
+        icon: <BookOpen className="size-4" />,
       },
       {
         name: t("participant"),
         href: "/dashboard/participant",
-        icon: <UserCircle className="size-4 mr-1.5" />,
+        icon: <UserCircle className="size-4" />,
       },
       {
         name: t("settings"),
         href: "/dashboard/settings",
-        icon: <Cog className="size-4 mr-1.5" />,
+        icon: <Cog className="size-4" />,
       },
     ],
     [t]
@@ -81,20 +81,17 @@ export function DashboardNavbar({ className }: { className?: string }) {
             <LogoType href="/dashboard" />
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center ml-14 gap-6 text-sm font-medium">
+            <div className="hidden md:flex items-center ml-14 gap-3 text-sm font-medium">
               {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "flex items-center",
-                    activeItem === item.href
-                      ? "text-primary underline underline-offset-4"
-                      : "text-primary/80"
-                  )}
-                >
-                  {item.icon}
-                  {item.name}
+                <Link key={item.href} href={item.href}>
+                  <Button
+                    size={"sm"}
+                    variant={activeItem === item.href ? "default" : "ghost"}
+                    className={activeItem === item.href ? "" : "text-muted-foreground"}
+                  >
+                    {item.icon}
+                    {item.name}
+                  </Button>
                 </Link>
               ))}
             </div>

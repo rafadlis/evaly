@@ -37,7 +37,7 @@ const AdminAccount = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel>Hi {name}</DropdownMenuLabel>
+      <DropdownMenuLabel>Hi {name}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => router.push("/dashboard/settings?tab=profile")}

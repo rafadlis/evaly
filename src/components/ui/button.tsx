@@ -10,9 +10,9 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground hover:bg-primary/90",
+          "bg-primary text-primary-foreground hover:bg-primary/95",
         destructive:
-          "bg-destructive text-destructive-foreground  hover:bg-destructive/90",
+          "bg-destructive text-destructive-foreground  hover:bg-destructive/95",
         outline:
           "border border-border bg-background hover:bg-secondary",
         secondary:
@@ -25,8 +25,8 @@ const buttonVariants = cva(
         accent: "bg-accent text-accent-foreground hover:bg-accent/90",
       },
       size: {
-        default: "h-8 px-3 gap-2 rounded-md",
-        sm: "h-7 px-3  gap-1.5 text-sm rounded-md",
+        default: "h-8 px-2.5 gap-2 rounded-md",
+        sm: "h-7 px-2  gap-1.5 text-sm rounded-md",
         xs: "h-6 px-3 text-xs gap-1 text-xs rounded-md",
         xxs: "h-5 px-2 text-xs gap-1 text-xs rounded-md",
         lg: "h-9 px-4 gap-3 text-base [&_svg:not([class*='size-'])]:size-4 rounded-lg",
