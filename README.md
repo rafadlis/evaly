@@ -1,5 +1,6 @@
-# Evaly
+![Evaly_ Innovative assessment solution _ Design customized evaluations_ knowledge](https://github.com/user-attachments/assets/f127277c-4de6-4df9-a775-ec13941b5e50)
 
+# Evaly
 Online examination platform that makes creating, distributing, and analyzing tests easy and secure.
 
 ## ✨ Features
