@@ -3,17 +3,19 @@
     "title": "Hello World!",
     "about": "Go to about page",
     "dashboard": "Dashboard",
+    "openSource": "Open Source",
     "hero": {
-      "badge": "AI-Powered",
+      "badge": "Star on GitHub",
+      "openSource": "Our code is open source - explore, review, or contribute to make Evaly even better.",
       "title": "Making Online Exams Easy, Secure, and Smart",
       "heading": "Comprehensive Online Examination Platform",
       "subtitle": "Create, distribute, and analyze tests with ease. Perfect for educational institutions and businesses.",
       "getStarted": "Get Started",
       "watchDemo": "Watch Demo",
-      "trustText": "Schools and companies trust Evaly"
+      "trustText": "institutions like schools and companies already trust Evaly"
     },
     "logos": {
-      "title": "Trusted by leading organizations",
+      "title": "Trusted by 20+ leading organizations",
       "logo1": "Top Universities",
       "logo2": "K-12 Schools",
       "logo3": "Training Centers",
@@ -155,15 +157,16 @@
     },
     "cta": {
       "title": "Ready to transform your testing experience?",
-      "subtitle": "Join schools, universities, and companies that have made online exams easy, secure, and smart with Evaly's comprehensive platform.",
-      "button": "Start Free Trial",
-      "scheduleDemo": "Schedule Demo"
+      "subtitle": "Join 20+ schools, universities, and companies that have made online exams easy, secure, and smart with Evaly's comprehensive platform.",
+      "button": "Start for free",
+      "twitter": "Follow us on Twitter"
     },
     "footer": {
       "product": "Product",
       "company": "Company",
       "legal": "Legal",
-      "copyright": "© 2023 Evaly. All rights reserved."
+      "copyright": "© 2023 Evaly. All rights reserved.",
+      "openSource": "Open Source"
     }
   },
   "Auth": {

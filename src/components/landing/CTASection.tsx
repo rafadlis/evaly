@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, TwitterIcon } from "lucide-react";
 import { motion } from "motion/react";
 import { useTranslations } from 'next-intl';
 
@@ -27,14 +27,15 @@ export const CTASection = () => {
               {t('subtitle')}
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Link href="/auth/register">
+              <Link href="https://evaly.io/dashboard">
                 <Button variant="default" size="lg" >
-                  {t('button')} <ArrowRight className="ml-2 h-4 w-4" />
+                  {t('button')} <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
-              <Link href="#">
+              <Link href="https://x.com/evalyio">
                 <Button variant="outline" size="lg">
-                  {t('scheduleDemo')}
+                  <TwitterIcon />
+                  {t('twitter')}
                 </Button>
               </Link>
             </div>

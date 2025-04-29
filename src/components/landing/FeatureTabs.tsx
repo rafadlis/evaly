@@ -149,7 +149,7 @@ export const FeatureTabs = () => {
   const tabsData = getTabsData(t);
 
   return (
-    <section className="py-20 relative">
+    <section className="pb-20 relative">
       <div className="absolute inset-0 bg-grid-pattern opacity-[0.015] pointer-events-none"></div>
       <div className="container">
         <div className="text-center mb-12">

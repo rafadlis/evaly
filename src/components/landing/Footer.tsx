@@ -1,5 +1,6 @@
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from 'next-intl';
+import { Github } from "lucide-react";
 
 export const Footer = () => {
   const t = useTranslations('HomePage.footer');
@@ -20,10 +21,18 @@ export const Footer = () => {
               <Link href="#" className="text-xs text-muted-foreground hover:text-foreground transition-colors">{landing('forSchools')}</Link>
               <Link href="#" className="text-xs text-muted-foreground hover:text-foreground transition-colors">{landing('forCompanies')}</Link>
               <Link href="#" className="text-xs text-muted-foreground hover:text-foreground transition-colors">{landing('pricing')}</Link>
-              <Link href="#" className="text-xs text-muted-foreground hover:text-foreground transition-colors">{landing('security')}</Link>
+              <a 
+                href="https://github.com/fahreziadh/evaly" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+              >
+                <Github className="h-3 w-3" />
+                {t('openSource')}
+              </a>
             </div>
             <div className="text-xs text-muted-foreground">
-              {t('copyright')}
+              {t('copyright').replace('2023', '2024')}
             </div>
           </div>
         </div>

@@ -10,10 +10,11 @@ export const LogosSection = () => {
   const logoKeys = ['logo1', 'logo2', 'logo3', 'logo4', 'logo5'];
   
   return (
-    <section className="py-8 border-y border-border/40">
       <div className="container">
-        <div className="text-center text-sm text-muted-foreground mb-6">
-          {t('logos.title')}
+        <div className="text-center mb-6">
+          <span className="text-sm text-muted-foreground">
+            {t('logos.title')} 
+          </span>
         </div>
         <div className="flex flex-wrap justify-between items-center gap-4">
           {logoKeys.map((key, i) => (
@@ -26,6 +27,5 @@ export const LogosSection = () => {
           ))}
         </div>
       </div>
-    </section>
   );
 }; 
