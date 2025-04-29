@@ -1,6 +1,7 @@
-import { trpc } from "@/trpc/trpc.server";
 import { NextResponse } from "next/server";
 
 export const GET = async () => {
-  return NextResponse.json(await trpc.organization.profile());
+  const env = process.env;
+  // show all env variables
+  return NextResponse.json(env);
 };
