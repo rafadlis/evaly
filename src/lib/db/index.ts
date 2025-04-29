@@ -1,11 +1,13 @@
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { env } from "../env";
 import * as schema from "./schema";
-import { neon, neonConfig } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
-import ws from "ws";
+import { drizzle } from 'drizzle-orm/node-postgres';
 
-neonConfig.webSocketConstructor = ws;
-neonConfig.poolQueryViaFetch = true
+const connectionString =
+  env.NEXTJS_ENV === "production" && process.env.NODE_ENV === "production"
+    ? getCloudflareContext().env.PRODUCTION_DB.connectionString
+    : env.DATABASE_URL;
 
-const db = drizzle(neon(env.DATABASE_URL), { schema });
+const db = drizzle(connectionString, { schema });
+
 export default db;

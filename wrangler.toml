@@ -9,3 +9,8 @@
 
   [observability.logs]
   enabled = true
+
+  [[hyperdrive]]
+  binding = "PRODUCTION_DB"
+  id = "f2abc6319fe54207be93ad5b4e1ca1d5"
+  localConnectionString = "postgresql://postgres:postgres@127.0.0.1:5432/postgres"

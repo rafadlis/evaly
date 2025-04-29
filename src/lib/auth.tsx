@@ -3,7 +3,6 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { account, session, user, verification } from "@/lib/db/schema";
 import db from "@/lib/db";
 import { env } from "@/lib/env";
-import { env as envClient } from "@/lib/env.client";
 import { emailOTP } from "better-auth/plugins";
 import EmailLoginOTPEmail from "@/lib/emails/email-login-otp";
 import { render } from '@react-email/components';
@@ -50,8 +49,7 @@ export const auth = betterAuth({
      */
     google: {
       clientId: env.GOOGLE_CLIENT_ID!,
-      clientSecret: env.GOOGLE_CLIENT_SECRET!,
-      redirectURI: `${envClient.NEXT_PUBLIC_URL}/api/auth/callback/google`
+      clientSecret: env.GOOGLE_CLIENT_SECRET!
     },
   },
 });
