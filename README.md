@@ -1,4 +1,4 @@
-![Evaly_ Innovative assessment solution _ Design customized evaluations_ knowledge](https://github.com/user-attachments/assets/f127277c-4de6-4df9-a775-ec13941b5e50)
+![Evaly_ Innovative assessment solution _ Design customized evaluations_ knowledge · 5 08am · 04-30](https://github.com/user-attachments/assets/fe1c8704-6db6-42bd-ae78-5f39beee9fe3)
 
 # Evaly
 Online examination platform that makes creating, distributing, and analyzing tests easy and secure.
