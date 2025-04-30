@@ -245,7 +245,7 @@
     "dragToReorderOptions": "ドラッグして選択肢を並べ替え",
     "deleteOption": "この選択肢を削除"
   },
-    "TestEditor": {
+  "TestEditor": {
     "dialogEditSectionTitle": "セクション詳細の編集",
     "dialogAddQuestionTitle": "問題を追加",
     "importQuestionsLabel": "問題をインポート",
@@ -514,5 +514,9 @@
     "participantRemoved": "参加者を削除しました",
     "resultVisibility": "結果の表示設定",
     "resultVisibilityDescription": "参加者がテスト結果をいつ見れるかを管理します。"
+  },
+  "ComingSoonPage": {
+    "title": "近日公開！",
+    "backToHome": "ホームに戻る"
   }
 }

@@ -514,5 +514,9 @@
     "participantRemoved": "Teilnehmer entfernt",
     "resultVisibility": "Ergebnissichtbarkeit",
     "resultVisibilityDescription": "Steuern Sie, wann Teilnehmer ihre Testergebnisse sehen können."
+  },
+  "ComingSoonPage": {
+    "title": "Demnächst Verfügbar!",
+    "backToHome": "Zurück zur Startseite"
   }
 }

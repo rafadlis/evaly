@@ -514,5 +514,9 @@
     "participantRemoved": "प्रतिभागी हटाया गया",
     "resultVisibility": "परिणाम दृश्यता",
     "resultVisibilityDescription": "नियंत्रित करें कि प्रतिभागी कब अपने परीक्षा परिणाम देख सकते हैं।"
+  },
+  "ComingSoonPage": {
+    "title": "जल्द आ रहा है!",
+    "backToHome": "होम पर वापस जाएं"
   }
-} 
+}

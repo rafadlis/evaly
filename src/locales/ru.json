@@ -245,7 +245,7 @@
     "dragToReorderOptions": "Перетащите, чтобы изменить порядок вариантов",
     "deleteOption": "Удалить этот вариант"
   },
-    "TestEditor": {
+  "TestEditor": {
     "dialogEditSectionTitle": "Редактировать детали раздела",
     "dialogAddQuestionTitle": "Добавить вопрос",
     "importQuestionsLabel": "Импорт вопросов",
@@ -514,5 +514,9 @@
     "participantRemoved": "Участник удален",
     "resultVisibility": "Видимость результатов",
     "resultVisibilityDescription": "Управляйте тем, когда участники могут видеть результаты своих тестов."
+  },
+  "ComingSoonPage": {
+    "title": "Скоро!",
+    "backToHome": "Вернуться на Главную"
   }
 }

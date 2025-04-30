@@ -514,5 +514,9 @@
     "participantRemoved": "تم حذف المشارك",
     "resultVisibility": "رؤية النتائج",
     "resultVisibilityDescription": "تحكم في وقت رؤية المشاركين لنتائج اختباراتهم."
+  },
+  "ComingSoonPage": {
+    "title": "قريباً!",
+    "backToHome": "العودة إلى الصفحة الرئيسية"
   }
 }
