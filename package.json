@@ -80,6 +80,7 @@
     "nuqs": "^2.4.0",
     "postcss": "^8.5.2",
     "postgres": "^3.4.5",
+    "posthog-js": "^1.237.0",
     "qrcode.react": "^4.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
