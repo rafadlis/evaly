@@ -16,13 +16,13 @@ export const Hero = () => {
     <section className=" flex flex-col items-center justify-center container max-w-3xl relative overflow-hidden h-[calc(100vh-56px)]">
       <MotionDiv>
         <Link href="https://github.com/fahreziadh/evaly" target="_blank">
-          <Button variant={"outline"} className="p-1 pr-3  h-max mb-2">
+          <Button variant={"secondary"} className="p-1 h-max mb-2">
             <Badge>
               {t("hero.badge")}
               <Github />
             </Badge>
-            <div className="h-1 w-1 bg-border"></div>
-            <div className="text-muted-foreground">
+            <div className="h-1 w-1 bg-border hidden sm:block"></div>
+            <div className="text-muted-foreground sm:block hidden mr-3">
               {t("hero.openSource")}
             </div>
           </Button>
