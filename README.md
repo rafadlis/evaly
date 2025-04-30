@@ -66,10 +66,6 @@ Online examination platform that makes creating, distributing, and analyzing tes
 
 Contributions welcome! Fork the repo, create a feature branch, and submit a PR.
 
-## 📝 License
-
-MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## 🙏 Acknowledgements
 
 - All the amazing open-source libraries and tools that make this project possible
