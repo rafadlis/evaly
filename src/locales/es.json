@@ -514,5 +514,9 @@
     "participantRemoved": "Participante eliminado",
     "resultVisibility": "Visibilidad de resultados",
     "resultVisibilityDescription": "Controla cuándo pueden ver los participantes los resultados de sus exámenes."
+  },
+  "ComingSoonPage": {
+    "title": "¡Próximamente!",
+    "backToHome": "Volver al Inicio"
   }
 }

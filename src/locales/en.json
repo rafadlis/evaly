@@ -519,5 +519,9 @@
     "participantRemoved": "Participant removed",
     "resultVisibility": "Result Visibility",
     "resultVisibilityDescription": "Control when participants can see their test results."
+  },
+  "ComingSoonPage": {
+    "title": "Coming Soon!",
+    "backToHome": "Back to Home"
   }
 }

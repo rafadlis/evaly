@@ -45,7 +45,7 @@
         },
         "flexibleScheduling": {
           "title": "灵活安排",
-          "description": "设置具有同步时间的“实时测试”，或具有灵活时间限制的“自定进度测试”。",
+          "description": "设置具有同步时间的\"实时测试\"，或具有灵活时间限制的\"自定进度测试\"。",
           "tags": ["延时", "重考策略"]
         },
         "aiPoweredAnalytics": {
@@ -180,7 +180,7 @@
     "signInWithGoogle": "使用 Google 登录",
     "verifyEmailDescription": "请输入发送到您电子邮件的一次性密码。",
     "termsOfUse": "使用条款",
-    "termsOfUseDescription": "点击“使用 Google 登录”或“继续使用电子邮件”即表示您同意我们的使用条款和隐私政策。",
+    "termsOfUseDescription": "点击\"使用 Google 登录\"或\"继续使用电子邮件\"即表示您同意我们的使用条款和隐私政策。",
     "and": "和",
     "privacyPolicy": "隐私政策",
     "didNotReceiveOTP": "没有收到 OTP？",
@@ -514,5 +514,9 @@
     "participantRemoved": "参与者已移除",
     "resultVisibility": "结果可见性",
     "resultVisibilityDescription": "控制参与者何时可以看到他们的测试结果。"
+  },
+  "ComingSoonPage": {
+    "title": "即将推出！",
+    "backToHome": "返回首页"
   }
 }
