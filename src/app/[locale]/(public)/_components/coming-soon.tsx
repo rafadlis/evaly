@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Footer } from "@/components/landing/Footer";
 import { useTranslations } from "next-intl";
 import { Link } from "@/components/shared/progress-bar";
-import { PublicHeader } from "../_components/PublicHeader";
+import { PublicHeader } from "./public-header";
 import { Badge } from "@/components/ui/badge";
 import { Github } from "lucide-react";
 
