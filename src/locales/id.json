@@ -514,5 +514,9 @@
     "participantRemoved": "Peserta dihapus",
     "resultVisibility": "Kapan Hasil Tampil",
     "resultVisibilityDescription": "Atur kapan hasil tes peserta bisa dilihat."
+  },
+  "ComingSoonPage": {
+    "title": "Segera Hadir!",
+    "backToHome": "Kembali ke Beranda"
   }
 }
