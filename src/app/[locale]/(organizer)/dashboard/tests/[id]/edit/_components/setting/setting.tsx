@@ -86,7 +86,7 @@ const Setting = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex flex-col divide-y divide-dashed">
+      <div className="flex flex-col divide-y divide-dashed mb-10">
         <SettingSection
           title={t("type")}
           description={t("typeDescription")}
