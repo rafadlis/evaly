@@ -83,10 +83,8 @@ export function useProgressRouter() {
 }
 
 export function ProgressBar({
-  className,
   children,
 }: {
-  className?: string;
   children: ReactNode;
 }) {
   const progress = useProgress();
@@ -99,7 +97,7 @@ export function ProgressBar({
           <motion.div
             style={{ width }}
             exit={{ opacity: 0 }}
-            className={className}
+            className={"bg-foreground fixed top-0 z-[100] h-1"}
           />
         )}
       </AnimatePresence>

@@ -8,7 +8,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <Provider>
       <DashboardNavbar />
-      <main className="flex-1 flex flex-col">{children}</main>
+      <main className="flex flex-col flex-1">{children}</main>
     </Provider>
   );
 };
