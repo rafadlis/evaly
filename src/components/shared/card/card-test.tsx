@@ -26,8 +26,8 @@ const CardTest = ({
 }) => {
   const t = useTranslations("DashboardTest");
   const redirectLink = data.isPublished
-    ? `/dashboard/tests/${data.id}`
-    : `/dashboard/tests/${data.id}/edit`;
+    ? `/dashboard/tests/${data.id}?tabs=submissions`
+    : `/dashboard/tests/${data.id}?tabs=questions`;
   return (
     <Link href={redirectLink}>
       <div

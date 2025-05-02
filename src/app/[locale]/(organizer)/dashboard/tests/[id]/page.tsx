@@ -2,19 +2,19 @@
 
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import Header from "./_components/header";
-import { useTabsState } from "./edit/_hooks/use-tabs-state";
+import { useTabsState } from "./_hooks/use-tabs-state";
 import Submissions from "./_components/submissions";
 import Share from "./_components/share";
-import Setting from "./edit/_components/setting/setting";
-import Questions from "./edit/_components/questions/questions";
+import Setting from "./_components/setting/setting";
+import Questions from "./_components/questions/questions";
 
 const Page = () => {
-  const [tab, setTab] = useTabsState("submissions");
+  const [tab, setTab] = useTabsState("settings");
 
   return (
     <Tabs
       className="container min-h-dvh pb-10 dashboard-margin"
-      defaultValue="submissions"
+      defaultValue="settings"
       value={tab}
       onValueChange={setTab}
     >
