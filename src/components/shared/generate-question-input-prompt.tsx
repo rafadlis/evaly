@@ -115,6 +115,7 @@ const GenerateQuestionInputPrompt = ({
       handleSubmit();
     }
   };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
