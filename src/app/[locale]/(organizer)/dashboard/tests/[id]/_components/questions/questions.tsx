@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ListTreeIcon, ListXIcon, PlusIcon } from "lucide-react";
-import CardQuestion from "../../../../../../../../../components/shared/card/card-question";
+import CardQuestion from "@/components/shared/card/card-question";
 import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import SectionSidebar from "./section-sidebar";
 import { useEffect, useState } from "react";

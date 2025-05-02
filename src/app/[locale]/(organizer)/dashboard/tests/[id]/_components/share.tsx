@@ -3,42 +3,42 @@ import { useParams } from "next/navigation";
 import { QRCodeSVG } from "qrcode.react";
 import { Image } from "@/components/ui/image";
 import {
-  Copy,
-  Link2,
-  Mail,
-  Share2,
-  Check,
-  QrCode,
-  Users,
-  Info,
-  Download,
-  Settings,
-  UserPlus,
-  CheckCircle2,
-  XIcon,
-  Loader2,
-  SendIcon,
-  Upload,
+    Copy,
+    Link2,
+    Mail,
+    Share2,
+    Check,
+    QrCode,
+    Users,
+    Info,
+    Download,
+    Settings,
+    UserPlus,
+    CheckCircle2,
+    XIcon,
+    Loader2,
+    SendIcon,
+    Upload,
 } from "lucide-react";
 import { toast } from "sonner";
 import { env } from "@/lib/env.client";
-import { useTabsState } from "../edit/_hooks/use-tabs-state";
+import { useTabsState } from "../_hooks/use-tabs-state";
 import { useMutation } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
@@ -47,12 +47,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Slider } from "@/components/ui/slider";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from "@/components/ui/table";
 import { trpc } from "@/trpc/trpc.client";
 

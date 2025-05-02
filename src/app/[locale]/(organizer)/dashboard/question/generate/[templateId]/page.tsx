@@ -65,7 +65,7 @@ const Page = () => {
       if (transferredQuestion && transferredQuestion.length > 0) {
         setIsRedirecting(() => {
           router.replace(
-            `/dashboard/tests/${testid}/edit?selected-section=${toReferenceId}`
+            `/dashboard/tests/${testid}?tabs=questions&selected-section=${toReferenceId}`
           );
           toast.success("Questions added successfully to your test!");
         });

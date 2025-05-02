@@ -1,7 +1,8 @@
-import { Badge, Github } from "lucide-react";
+import { Github } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "../ui/button";
 import { Link } from "./progress-bar";
+import { Badge } from "../ui/badge";
 
 const ComingSoon = () => {
   const t = useTranslations("ComingSoonPage");
