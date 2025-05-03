@@ -34,7 +34,7 @@ const DialogCreateTest = () => {
       }
 
       startTransition(() => {
-        router.push(`/dashboard/tests/${data?.id}/edit`);
+        router.push(`/dashboard/tests/${data?.id}?tabs=questions`);
       });
     },
   })

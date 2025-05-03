@@ -23,7 +23,7 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
       <SpeedInsights />
       <TanstackQueryProvider>
         <NuqsProvider>
-          <ProgressBar className="bg-foreground fixed top-0 z-[100] h-1">
+          <ProgressBar>
             <SuspendedPostHogPageView />
             {children}
           </ProgressBar>

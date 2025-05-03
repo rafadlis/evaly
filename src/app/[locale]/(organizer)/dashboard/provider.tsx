@@ -2,12 +2,11 @@
 
 import LoadingScreen from "@/components/shared/loading/loading-screen";
 import { usePathname } from "@/i18n/navigation";
-import { cn } from "@/lib/utils";
 import { trpc } from "@/trpc/trpc.client";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useTransition } from "react";
 
-const Provider = ({ children, className }: { children: React.ReactNode, className?: string }) => {
+const Provider = ({ children }: { children: React.ReactNode }) => {
   const pathName = usePathname();
   const [isRedirecting, startRedirecting] = useTransition();
   const { locale } = useParams();
@@ -27,7 +26,7 @@ const Provider = ({ children, className }: { children: React.ReactNode, classNam
 
   if (!pathName || isRedirecting || isPending) return <LoadingScreen />;
 
-  return <div className={cn(className)}>{children}</div>;
+  return <>{children}</>;
 };
 
 export default Provider;
