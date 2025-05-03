@@ -7,6 +7,7 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
+import { ThemeProvider } from "@/components/shared/theme-provider";
 
 const geist = Geist({
   variable: "--font-geist-sans",
@@ -59,8 +60,15 @@ export default async function RootLayout({
       <body className={`antialiased min-h-svh flex flex-col`}>
         <Provider>
           <NextIntlClientProvider messages={messages}>
-            {children}
-            <Toaster />
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              {children}
+              <Toaster />
+            </ThemeProvider>
           </NextIntlClientProvider>
         </Provider>
       </body>
