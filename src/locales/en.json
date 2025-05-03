@@ -523,5 +523,29 @@
   "ComingSoonPage": {
     "title": "Coming Soon!",
     "backToHome": "Back to Home"
+  },
+  "Account": {
+    "profile": "Profile",
+    "organization": "Organization",
+    "settings": "Settings",
+    "changeTheme": "Change Theme",
+    "dark": "Dark",
+    "light": "Light",
+    "system": "System",
+    "logout": "Logout"
+  },
+  "Department": {
+    "departments": "Departments",
+    "addDepartment": "Add department",
+    "name": {
+      "Admin": "Admin",
+      "TeacherOrganizer": "Teacher/Organizer",
+      "Monitor": "Monitor"
+    },
+    "description": {
+      "Admin": "Manage quizzes and users",
+      "TeacherOrganizer": "Create and organize tests",
+      "Monitor": "View results and analytics"
+    }
   }
 }
