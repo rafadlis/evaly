@@ -9,6 +9,7 @@ import {
   ReceiptText,
 } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 import {
   DropdownMenu,
@@ -63,6 +64,7 @@ export function DepartmentSwitcher({
   const [activeDepartment, setActiveDepartment] = React.useState(
     departments[0]
   );
+  const t = useTranslations("Department");
 
   const handleDepartmentChange = (department: (typeof departments)[0]) => {
     setActiveDepartment(department);
@@ -98,7 +100,7 @@ export function DepartmentSwitcher({
             sideOffset={4}
           >
             <DropdownMenuLabel className="text-muted-foreground text-xs">
-              Departments
+              {t("departments", { defaultValue: "Departments" })}
             </DropdownMenuLabel>
             {departments.map((department, index) => (
               <DropdownMenuItem
@@ -115,7 +117,9 @@ export function DepartmentSwitcher({
                   <div className="flex size-6 items-center justify-center rounded-xs border">
                     <department.logo className="size-4 shrink-0" />
                   </div>
-                  {department.name}
+                  {t(`name.${department.name.replace(/\W/g, "")}`, {
+                    defaultValue: department.name,
+                  })}
                   <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
                 </Link>
               </DropdownMenuItem>
@@ -126,7 +130,7 @@ export function DepartmentSwitcher({
                 <Plus className="size-4" />
               </div>
               <div className="text-muted-foreground font-medium">
-                Add department
+                {t("addDepartment", { defaultValue: "Add department" })}
               </div>
             </DropdownMenuItem>
           </DropdownMenuContent>

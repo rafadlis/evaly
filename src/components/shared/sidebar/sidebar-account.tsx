@@ -35,10 +35,13 @@ import { useRouter } from "next/navigation";
 
 import { trpc } from "@/trpc/trpc.client";
 
+import { useTranslations } from "next-intl";
+
 export function NavUser() {
   const { isMobile } = useSidebar();
   const { setTheme } = useTheme();
   const router = useRouter();
+  const t = useTranslations("Account");
 
   const { data } = trpc.organization.profile.useQuery();
 
@@ -100,7 +103,7 @@ export function NavUser() {
                 onClick={() => router.push("/dashboard/settings?tab=profile")}
               >
                 <User className="size-3.5 mr-1" />
-                Profile
+                {t("profile", { defaultValue: "Profile" })}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() =>
@@ -108,20 +111,20 @@ export function NavUser() {
                 }
               >
                 <Building2 className="size-3.5 mr-1" />
-                Organization
+                {t("organization", { defaultValue: "Organization" })}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => router.push("/dashboard/settings?tab=general")}
               >
                 <Settings className="size-3.5 mr-1" />
-                Settings
+                {t("settings", { defaultValue: "Settings" })}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenu>
                 <DropdownMenuItem asChild>
                   <DropdownMenuTrigger className="cursor-pointer w-full">
                     <Lamp />
-                    Ganti Tema
+                    {t("changeTheme", { defaultValue: "Change Theme" })}
                   </DropdownMenuTrigger>
                 </DropdownMenuItem>
                 <DropdownMenuContent>
@@ -130,21 +133,21 @@ export function NavUser() {
                     onClick={() => setTheme("dark")}
                   >
                     <Moon />
-                    Gelap
+                    {t("dark", { defaultValue: "Dark" })}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="cursor-pointer"
                     onClick={() => setTheme("light")}
                   >
                     <Sun />
-                    Terang
+                    {t("light", { defaultValue: "Light" })}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="cursor-pointer"
                     onClick={() => setTheme("system")}
                   >
                     <Monitor />
-                    Sistem
+                    {t("system", { defaultValue: "System" })}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -155,7 +158,7 @@ export function NavUser() {
               className="cursor-pointer"
             >
               <SignOut />
-              Keluar
+              {t("logout", { defaultValue: "Logout" })}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
