@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Check,
-  ChevronDown,
   LinkIcon,
   Loader2,
   RotateCcw,
@@ -25,18 +24,16 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { useRouter } from "@/i18n/navigation";
-import { useEffect, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { trpc } from "@/trpc/trpc.client";
 import { useTranslations } from "next-intl";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { useForm } from "react-hook-form";
 import { UpdateTest } from "@/types/test";
 import DialogPublishTest from "@/components/shared/dialog/dialog-publish-test";
 import { useTabsState } from "../_hooks/use-tabs-state";
+import supabase from "@/lib/supabase";
+import { cn } from "@/lib/utils";
+import NumberFlow from "@number-flow/react";
 
 const Header = () => {
   const [, setTabs] = useTabsState("settings");
@@ -45,6 +42,7 @@ const Header = () => {
   const [isRedirect, setIsRedirect] = useTransition();
   const tCommon = useTranslations("Common");
   const tOrganizer = useTranslations("Organizer");
+  const [participantOnline, setParticipantOnline] = useState<string[]>([]);
 
   const {
     register,
@@ -69,6 +67,28 @@ const Header = () => {
     }
   }, [dataTest, reset]);
 
+  useEffect(() => {
+    if (!id) return;
+    const channel = supabase.channel(id?.toString() || "");
+
+    channel
+      .on("presence", { event: "sync" }, () => {
+        const users = Object.keys(channel.presenceState());
+        setParticipantOnline([...new Set(users)]);
+      })
+      .on("presence", { event: "join" }, ({ key, newPresences }) => {
+        console.log("Join", key, newPresences);
+      })
+      .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
+        console.log("Leave", key, leftPresences);
+      });
+    channel.subscribe(() => {});
+
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [id]);
+
   const { mutate: mutateUpdateTest, isPending: isUpdatingTest } =
     trpc.organization.test.update.useMutation({
       onSuccess() {
@@ -81,6 +101,7 @@ const Header = () => {
     trpc.organization.test.duplicateTest.useMutation({
       onSuccess(data) {
         setIsRedirect(() => {
+          router.push(`/dashboard/tests/${data.id}`);
           router.push(`/dashboard/tests/${data.id}`);
         });
       },
@@ -105,6 +126,7 @@ const Header = () => {
   return (
     <>
       <BackButton className="mb-2" href={`/dashboard/tests`} />
+      <div className="flex flex-row justify-between items-start">
       <div className="flex flex-row justify-between items-start">
         {isPendingTest ? (
           <h1 className="animate-pulse text-muted-foreground text-xl font-medium">
@@ -170,6 +192,21 @@ const Header = () => {
                 }}
               />
             ) : null}
+            {isPublished ? (
+              <EndTestButton
+                refetchTest={refetchTest}
+                id={id?.toString() || ""}
+              />
+            ) : null}
+            {!isPublished ? (
+              <DialogPublishTest
+                testId={id?.toString() || ""}
+                onPublished={(newTest) => {
+                  reset(newTest);
+                  setTabs("submissions");
+                }}
+              />
+            ) : null}
           </div>
         ) : (
           <div className="flex flex-row items-center gap-2">
@@ -215,9 +252,17 @@ const Header = () => {
         )}
       </div>
 
-      <div className="mb-6 mt-2 flex flex-row justify-between items-center">
+      <div className="mb-6 mt-2 flex flex-row items-center">
         <TabsList>
           {/* <TabsTrigger value="summary">Summary</TabsTrigger> */}
+          {isPublished ? (
+            <TabsTrigger value="submissions">
+              {tOrganizer("submissionsTab")}
+            </TabsTrigger>
+          ) : null}
+          {isPublished ? (
+            <TabsTrigger value="share">{tOrganizer("shareTab")}</TabsTrigger>
+          ) : null}
           {isPublished ? (
             <TabsTrigger value="submissions">
               {tOrganizer("submissionsTab")}
@@ -233,6 +278,18 @@ const Header = () => {
             {tOrganizer("settingsTab")}
           </TabsTrigger>
         </TabsList>
+        {isPublished ? (
+          <Button variant={"ghost"} className="ml-4">
+            <div
+              className={cn(
+                "size-2.5 bg-emerald-500 rounded-full transition-all",
+                participantOnline.length === 0 ? "bg-foreground/15" : ""
+              )}
+            />
+            <NumberFlow value={participantOnline.length} suffix=" Online" />
+          </Button>
+        ) : null}
+      </div>
       </div>
     </>
   );
@@ -285,22 +342,6 @@ const EndTestButton = ({
               <Button variant={"outline"}>Cancel</Button>
             </DialogClose>
             <div className="flex flex-row gap-2">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant={"outline"} disabled={isUpdatingTest}>
-                    {isUpdatingTest ? (
-                      <Loader2 className="animate-spin" />
-                    ) : (
-                      <>
-                        End later <ChevronDown />
-                      </>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent>
-                  <div className="flex flex-row flex-wrap gap-2"></div>
-                </PopoverContent>
-              </Popover>
               <Button
                 variant={"default"}
                 onClick={finishTest}

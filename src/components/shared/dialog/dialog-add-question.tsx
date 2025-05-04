@@ -4,13 +4,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { questionTypes } from "@/constants/question-type";
 import { getDefaultOptions } from "@/lib/get-default-options";
 import {
-  FileTextIcon,
   Loader2,
   LockIcon,
   PencilIcon,
   Plus,
-  SparklesIcon,
-  UploadIcon,
+  SparklesIcon
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import GenerateQuestionInputPrompt from "../generate-question-input-prompt";
@@ -122,12 +120,12 @@ const DialogAddQuestion = ({
                 <TabsTrigger value="manual">
                   <PencilIcon className="size-4" /> {t("manual")}
                 </TabsTrigger>
-                <TabsTrigger value="import">
+                {/* <TabsTrigger value="import">
                   <UploadIcon className="size-4" /> {t("import")}
                 </TabsTrigger>
                 <TabsTrigger value="template">
                   <FileTextIcon className="size-4" /> {t("template")}
-                </TabsTrigger>
+                </TabsTrigger> */}
                 <TabsTrigger value="ai">
                   <SparklesIcon className="size-4" /> {t("ai")}
                 </TabsTrigger>
