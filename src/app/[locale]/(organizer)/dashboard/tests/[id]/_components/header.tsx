@@ -37,6 +37,7 @@ import NumberFlow from "@number-flow/react";
 
 const Header = () => {
   const [, setTabs] = useTabsState("settings");
+  const [, setTabs] = useTabsState("settings");
   const { id } = useParams();
   const router = useRouter();
   const [isRedirect, setIsRedirect] = useTransition();
@@ -102,6 +103,7 @@ const Header = () => {
       onSuccess(data) {
         setIsRedirect(() => {
           router.push(`/dashboard/tests/${data.id}`);
+          router.push(`/dashboard/tests/${data.id}`);
         });
       },
       onError(error) {
@@ -126,11 +128,45 @@ const Header = () => {
     <>
       <BackButton className="mb-2" href={`/dashboard/tests`} />
       <div className="flex flex-row justify-between items-start">
+      <div className="flex flex-row justify-between items-start">
         {isPendingTest ? (
           <h1 className="animate-pulse text-muted-foreground text-xl font-medium">
             Loading...
           </h1>
         ) : (
+          <div className="flex flex-col">
+            <input
+              type="text"
+              {...register("title")}
+              className="outline-none text-xl font-medium"
+              placeholder={isPendingTest ? "Loading..." : "Test title"}
+              disabled={isPendingTest || isUpdatingTest}
+            />
+
+            {isDirty && isPendingTest === false ? (
+              <div className="w-max mt-2">
+                <Button
+                  variant={"default"}
+                  disabled={isUpdatingTest}
+                  className="w-max"
+                  size={"sm"}
+                  onClick={() =>
+                    mutateUpdateTest({
+                      id: id?.toString() || "",
+                      title: getValues("title"),
+                    })
+                  }
+                >
+                  {isUpdatingTest ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    <Save className="size-3.5" />
+                  )}
+                  {tCommon("saveButton")}
+                </Button>
+              </div>
+            ) : null}
+          </div>
           <div className="flex flex-col">
             <input
               type="text"
@@ -175,6 +211,21 @@ const Header = () => {
             <Button variant={"ghost"} size={"icon"} onClick={copyLinkToShare}>
               <LinkIcon />
             </Button>
+            {isPublished ? (
+              <EndTestButton
+                refetchTest={refetchTest}
+                id={id?.toString() || ""}
+              />
+            ) : null}
+            {!isPublished ? (
+              <DialogPublishTest
+                testId={id?.toString() || ""}
+                onPublished={(newTest) => {
+                  reset(newTest);
+                  setTabs("submissions");
+                }}
+              />
+            ) : null}
             {isPublished ? (
               <EndTestButton
                 refetchTest={refetchTest}
@@ -238,6 +289,14 @@ const Header = () => {
       <div className="mb-6 mt-2 flex flex-row items-center">
         <TabsList>
           {/* <TabsTrigger value="summary">Summary</TabsTrigger> */}
+          {isPublished ? (
+            <TabsTrigger value="submissions">
+              {tOrganizer("submissionsTab")}
+            </TabsTrigger>
+          ) : null}
+          {isPublished ? (
+            <TabsTrigger value="share">{tOrganizer("shareTab")}</TabsTrigger>
+          ) : null}
           {isPublished ? (
             <TabsTrigger value="submissions">
               {tOrganizer("submissionsTab")}
