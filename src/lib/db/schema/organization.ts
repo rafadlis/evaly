@@ -79,6 +79,7 @@ export const organizer = pgTable(
   },
   (table) => ({
     organizerIdIdx: index("organizer_id_idx").on(table.id),
+    organizationIdOrganizationIdIdx: index("organization_organizer_id_idx").on(table.organizationId),
     userFk: foreignKey({
       columns: [table.userId],
       foreignColumns: [user.id],

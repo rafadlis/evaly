@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Check,
-  ChevronDown,
   LinkIcon,
   Loader2,
   RotateCcw,
@@ -25,18 +24,15 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { useRouter } from "@/i18n/navigation";
-import { useEffect, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { trpc } from "@/trpc/trpc.client";
 import { useTranslations } from "next-intl";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { useForm } from "react-hook-form";
 import { UpdateTest } from "@/types/test";
 import DialogPublishTest from "@/components/shared/dialog/dialog-publish-test";
 import { useTabsState } from "../_hooks/use-tabs-state";
+import supabase from "@/lib/supabase";
+import { cn } from "@/lib/utils";
 
 const Header = () => {
   const [, setTabs] = useTabsState("settings");
@@ -45,6 +41,7 @@ const Header = () => {
   const [isRedirect, setIsRedirect] = useTransition();
   const tCommon = useTranslations("Common");
   const tOrganizer = useTranslations("Organizer");
+  const [participantOnline, setParticipantOnline] = useState<string[]>([]);
 
   const {
     register,
@@ -68,6 +65,28 @@ const Header = () => {
       reset(dataTest);
     }
   }, [dataTest, reset]);
+
+  useEffect(() => {
+    if (!id) return;
+    const channel = supabase.channel(id?.toString() || "");
+
+    channel
+      .on("presence", { event: "sync" }, () => {
+        const users = Object.keys(channel.presenceState());
+        setParticipantOnline([...new Set(users)]);
+      })
+      .on("presence", { event: "join" }, ({ key, newPresences }) => {
+        console.log("Join", key, newPresences);
+      })
+      .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
+        console.log("Leave", key, leftPresences);
+      });
+    channel.subscribe(() => {});
+
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [id]);
 
   const { mutate: mutateUpdateTest, isPending: isUpdatingTest } =
     trpc.organization.test.update.useMutation({
@@ -215,7 +234,7 @@ const Header = () => {
         )}
       </div>
 
-      <div className="mb-6 mt-2 flex flex-row justify-between items-center">
+      <div className="mb-6 mt-2 flex flex-row items-center">
         <TabsList>
           {/* <TabsTrigger value="summary">Summary</TabsTrigger> */}
           {isPublished ? (
@@ -233,6 +252,17 @@ const Header = () => {
             {tOrganizer("settingsTab")}
           </TabsTrigger>
         </TabsList>
+        {isPublished ? (
+          <div className="flex flex-row items-center gap-2 ml-4 text-sm">
+            <div
+              className={cn(
+                "size-2.5 bg-emerald-500 rounded-full",
+                participantOnline.length === 0 ? "bg-foreground/15" : ""
+              )}
+            />
+            <p>{participantOnline.length} Online</p>
+          </div>
+        ) : null}
       </div>
     </>
   );
@@ -285,22 +315,6 @@ const EndTestButton = ({
               <Button variant={"outline"}>Cancel</Button>
             </DialogClose>
             <div className="flex flex-row gap-2">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant={"outline"} disabled={isUpdatingTest}>
-                    {isUpdatingTest ? (
-                      <Loader2 className="animate-spin" />
-                    ) : (
-                      <>
-                        End later <ChevronDown />
-                      </>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent>
-                  <div className="flex flex-row flex-wrap gap-2"></div>
-                </PopoverContent>
-              </Popover>
               <Button
                 variant={"default"}
                 onClick={finishTest}
