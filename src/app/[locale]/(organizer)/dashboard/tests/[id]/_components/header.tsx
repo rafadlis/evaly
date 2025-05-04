@@ -254,7 +254,7 @@ const Header = () => {
           </TabsTrigger>
         </TabsList>
         {isPublished ? (
-          <div className="flex flex-row items-center gap-2 ml-4 text-sm">
+          <Button variant={"ghost"} className="ml-4">
             <div
               className={cn(
                 "size-2.5 bg-emerald-500 rounded-full transition-all",
@@ -262,7 +262,7 @@ const Header = () => {
               )}
             />
             <NumberFlow value={participantOnline.length} suffix=" Online" />
-          </div>
+          </Button>
         ) : null}
       </div>
     </>
