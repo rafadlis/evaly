@@ -16,8 +16,8 @@ const envSchema = z.object({
   CLOUDFLARE_SECRET_ACCESS_KEY: z.string(),
   CLOUDFLARE_CDN_URL: z.string(),
   CLOUDFLARE_BUCKET_NAME: z.string(),
-  AWS_ACCESS_KEY_ID: z.string(),
-  AWS_SECRET_ACCESS_KEY: z.string(),
+  EVALY_AWS_ACCESS_KEY_ID: z.string(),
+  EVALY_AWS_SECRET_ACCESS_KEY: z.string(),
   OPENAI_API_KEY: z.string(),
   GOOGLE_GENERATIVE_AI_API_KEY: z.string(),
 });
