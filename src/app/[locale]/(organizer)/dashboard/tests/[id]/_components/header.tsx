@@ -33,6 +33,7 @@ import DialogPublishTest from "@/components/shared/dialog/dialog-publish-test";
 import { useTabsState } from "../_hooks/use-tabs-state";
 import supabase from "@/lib/supabase";
 import { cn } from "@/lib/utils";
+import NumberFlow from "@number-flow/react";
 
 const Header = () => {
   const [, setTabs] = useTabsState("settings");
@@ -256,11 +257,11 @@ const Header = () => {
           <div className="flex flex-row items-center gap-2 ml-4 text-sm">
             <div
               className={cn(
-                "size-2.5 bg-emerald-500 rounded-full",
+                "size-2.5 bg-emerald-500 rounded-full transition-all",
                 participantOnline.length === 0 ? "bg-foreground/15" : ""
               )}
             />
-            <p>{participantOnline.length} Online</p>
+            <NumberFlow value={participantOnline.length} suffix=" Online" />
           </div>
         ) : null}
       </div>
