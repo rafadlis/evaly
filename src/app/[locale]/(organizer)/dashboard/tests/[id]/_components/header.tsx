@@ -127,7 +127,6 @@ const Header = () => {
     <>
       <BackButton className="mb-2" href={`/dashboard/tests`} />
       <div className="flex flex-row justify-between items-start">
-      <div className="flex flex-row justify-between items-start">
         {isPendingTest ? (
           <h1 className="animate-pulse text-muted-foreground text-xl font-medium">
             Loading...
@@ -177,21 +176,6 @@ const Header = () => {
             <Button variant={"ghost"} size={"icon"} onClick={copyLinkToShare}>
               <LinkIcon />
             </Button>
-            {isPublished ? (
-              <EndTestButton
-                refetchTest={refetchTest}
-                id={id?.toString() || ""}
-              />
-            ) : null}
-            {!isPublished ? (
-              <DialogPublishTest
-                testId={id?.toString() || ""}
-                onPublished={(newTest) => {
-                  reset(newTest);
-                  setTabs("submissions");
-                }}
-              />
-            ) : null}
             {isPublished ? (
               <EndTestButton
                 refetchTest={refetchTest}
@@ -263,14 +247,6 @@ const Header = () => {
           {isPublished ? (
             <TabsTrigger value="share">{tOrganizer("shareTab")}</TabsTrigger>
           ) : null}
-          {isPublished ? (
-            <TabsTrigger value="submissions">
-              {tOrganizer("submissionsTab")}
-            </TabsTrigger>
-          ) : null}
-          {isPublished ? (
-            <TabsTrigger value="share">{tOrganizer("shareTab")}</TabsTrigger>
-          ) : null}
           <TabsTrigger value="questions">
             {tOrganizer("questionsTab")}
           </TabsTrigger>
@@ -289,7 +265,6 @@ const Header = () => {
             <NumberFlow value={participantOnline.length} suffix=" Online" />
           </Button>
         ) : null}
-      </div>
       </div>
     </>
   );
