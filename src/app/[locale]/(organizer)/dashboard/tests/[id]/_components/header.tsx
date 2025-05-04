@@ -254,7 +254,7 @@ const Header = () => {
             {tOrganizer("settingsTab")}
           </TabsTrigger>
         </TabsList>
-        {isPublished ? (
+        {isPublished && !dataTest?.finishedAt ? (
           <Button variant={"ghost"} className="ml-4">
             <div
               className={cn(
