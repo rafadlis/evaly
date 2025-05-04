@@ -12,7 +12,7 @@ export default $config({
   },
   async run() {
     new sst.aws.Nextjs("MainWebsite", {
-      regions: ["us-east-1", "ap-southeast-1"],
+      // regions: ["us-east-1", "ap-southeast-1"],
       domain: {
         name: $app.stage === "production" ? "evaly.io" : "staging.evaly.io",
         dns: sst.cloudflare.dns(),
