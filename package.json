@@ -11,7 +11,9 @@
     "email": "email dev --dir src/lib/emails",
     "db:studio": "drizzle-kit studio",
     "db:generate": "bunx drizzle-kit generate --dialect postgresql --schema ./src/lib/db/schema --out ./drizzle",
-    "db:migrate": "bun db:generate && bun drizzle-kit migrate"
+    "db:migrate": "bun db:generate && bun drizzle-kit migrate",
+    "deploy:staging": "bunx sst deploy --stage staging",
+    "deploy:production": "bunx sst deploy --stage production"
   },
   "dependencies": {
     "@ai-sdk/google": "1.2.13",
@@ -95,6 +97,7 @@
     "react-scan": "^0.2.12",
     "server-only": "^0.0.1",
     "sonner": "^1.7.4",
+    "sst": "^3.14.11",
     "superjson": "^2.2.2",
     "tailwind-merge": "^3.0.1",
     "tailwindcss": "^4.0.6",
