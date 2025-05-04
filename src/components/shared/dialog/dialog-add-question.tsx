@@ -109,7 +109,7 @@ const DialogAddQuestion = ({
         )}
       </DrawerTrigger>
       <DrawerContent className="sm:max-w-none h-dvh flex flex-col p-0">
-        <div className="container max-w-2xl overflow-y-auto pt-[14vh] pb-20">
+        <div className="container max-w-2xl overflow-y-auto pt-[10vh] pb-20">
           <DrawerHeader className="p-0">
             <DrawerTitle>{t("addQuestionTitle")}</DrawerTitle>
             <DrawerDescription>{t("addQuestionDescription")}</DrawerDescription>
@@ -141,8 +141,7 @@ const DialogAddQuestion = ({
                       {types.map((type) => (
                         <Button
                           key={type.value}
-                          variant={"secondary"}
-                          size={"sm"}
+                          variant={"outline"}
                           className="group justify-start"
                           disabled={
                             type.isHidden ||
