@@ -36,6 +36,9 @@ export default $config({
         ).value,
         CLOUDFLARE_CDN_URL: new sst.Secret("CLOUDFLARE_CDN_URL").value,
         CLOUDFLARE_BUCKET_NAME: new sst.Secret("CLOUDFLARE_BUCKET_NAME").value,
+        AWS_ACCESS_KEY_ID: new sst.Secret("EVALY_AWS_ACCESS_KEY_ID").value,
+        AWS_SECRET_ACCESS_KEY: new sst.Secret("EVALY_AWS_SECRET_ACCESS_KEY")
+          .value,
         OPENAI_API_KEY: new sst.Secret("OPENAI_API_KEY").value,
         GOOGLE_GENERATIVE_AI_API_KEY: new sst.Secret(
           "GOOGLE_GENERATIVE_AI_API_KEY"
