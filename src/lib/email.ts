@@ -13,8 +13,8 @@ export interface EmailBody {
 }
 
 const config = {
-  accessKeyId: env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
+  accessKeyId: env.EVALY_AWS_ACCESS_KEY_ID,
+  secretAccessKey: env.EVALY_AWS_SECRET_ACCESS_KEY,
   region: 'ap-southeast-1', // currently we only support this region
 };
 
