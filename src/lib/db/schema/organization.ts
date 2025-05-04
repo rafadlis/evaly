@@ -1,9 +1,8 @@
 import {
   foreignKey,
   index,
-  pgTable,
-  timestamp,
-  varchar,
+  pgTable, timestamp,
+  varchar
 } from "drizzle-orm/pg-core";
 import { user } from "./user";
 import { relations, sql } from "drizzle-orm";
