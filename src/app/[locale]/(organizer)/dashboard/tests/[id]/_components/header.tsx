@@ -37,7 +37,6 @@ import NumberFlow from "@number-flow/react";
 
 const Header = () => {
   const [, setTabs] = useTabsState("settings");
-  const [, setTabs] = useTabsState("settings");
   const { id } = useParams();
   const router = useRouter();
   const [isRedirect, setIsRedirect] = useTransition();
@@ -134,39 +133,6 @@ const Header = () => {
             Loading...
           </h1>
         ) : (
-          <div className="flex flex-col">
-            <input
-              type="text"
-              {...register("title")}
-              className="outline-none text-xl font-medium"
-              placeholder={isPendingTest ? "Loading..." : "Test title"}
-              disabled={isPendingTest || isUpdatingTest}
-            />
-
-            {isDirty && isPendingTest === false ? (
-              <div className="w-max mt-2">
-                <Button
-                  variant={"default"}
-                  disabled={isUpdatingTest}
-                  className="w-max"
-                  size={"sm"}
-                  onClick={() =>
-                    mutateUpdateTest({
-                      id: id?.toString() || "",
-                      title: getValues("title"),
-                    })
-                  }
-                >
-                  {isUpdatingTest ? (
-                    <Loader2 className="animate-spin" />
-                  ) : (
-                    <Save className="size-3.5" />
-                  )}
-                  {tCommon("saveButton")}
-                </Button>
-              </div>
-            ) : null}
-          </div>
           <div className="flex flex-col">
             <input
               type="text"
@@ -323,6 +289,7 @@ const Header = () => {
             <NumberFlow value={participantOnline.length} suffix=" Online" />
           </Button>
         ) : null}
+      </div>
       </div>
     </>
   );
