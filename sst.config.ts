@@ -5,8 +5,8 @@ export default $config({
   app(input) {
     return {
       name: "evaly",
-      removal: input?.stage === "production" ? "retain" : "remove",
-      protect: ["production"].includes(input?.stage),
+      removal: input?.stage === "main" ? "retain" : "remove",
+      protect: ["main"].includes(input?.stage),
       home: "aws",
     };
   },
@@ -14,9 +14,9 @@ export default $config({
     new sst.aws.Nextjs("MainWebsite", {
       regions: ["us-east-1", "ap-southeast-1"],
       domain: {
-        name: $app.stage === "production" ? "evaly.io" : "staging.evaly.io",
+        name: $app.stage === "main" ? "evaly.io" : "staging.evaly.io",
         dns: sst.cloudflare.dns(),
-        redirects: $app.stage === "production" ? ["www.evaly.io"] : undefined,
+        redirects: $app.stage === "main" ? ["www.evaly.io"] : undefined,
       },
       environment: {
         DATABASE_URL: new sst.Secret("DATABASE_URL").value,
