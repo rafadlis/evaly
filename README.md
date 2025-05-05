@@ -20,7 +20,7 @@ Online examination platform that makes creating, distributing, and analyzing tes
 - **Database**: PostgreSQL (Supabase) with Drizzle ORM
 - **Storage**: R2
 - **Styling**: Tailwind CSS with Radix UI
-- **Deployment**: AWS, SST.dev & OpenNext
+- **Deployment**: AWS, SST.dev with OpenNext (Full-stack), Coolify (Supabase)  
 - **Auth**: Better Auth
 - **AI**: Gemini, OpenAI
 
