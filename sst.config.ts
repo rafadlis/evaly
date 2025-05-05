@@ -16,7 +16,7 @@ export default $config({
       domain: {
         name: $app.stage === "main" ? "evaly.io" : "staging.evaly.io",
         dns: sst.cloudflare.dns(),
-        redirects: $app.stage === "main" ? ["www.evaly.io"] : undefined,
+        // redirects: $app.stage === "main" ? ["www.evaly.io"] : undefined,
       },
       environment: {
         DATABASE_URL: new sst.Secret("DATABASE_URL").value,
