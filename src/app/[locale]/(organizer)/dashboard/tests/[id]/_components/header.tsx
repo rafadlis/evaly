@@ -24,7 +24,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { useRouter } from "@/i18n/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { trpc } from "@/trpc/trpc.client";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
@@ -52,7 +52,13 @@ const Header = () => {
     watch,
   } = useForm<UpdateTest>();
 
-  const { isPublished } = watch();
+  const { isPublished, finishedAt } = watch();
+
+  const status = useMemo(() => {
+    if (isPublished && finishedAt) return "finished";
+    if (isPublished && !finishedAt) return "published";
+    return "draft";
+  }, [isPublished, finishedAt]);
 
   const {
     data: dataTest,
@@ -239,12 +245,12 @@ const Header = () => {
       <div className="mb-6 mt-2 flex flex-row items-center">
         <TabsList>
           {/* <TabsTrigger value="summary">Summary</TabsTrigger> */}
-          {isPublished ? (
+          {status === "published" ? (
             <TabsTrigger value="submissions">
               {tOrganizer("submissionsTab")}
             </TabsTrigger>
           ) : null}
-          {isPublished ? (
+          {status === "published" ? (
             <TabsTrigger value="share">{tOrganizer("shareTab")}</TabsTrigger>
           ) : null}
           <TabsTrigger value="questions">
@@ -254,7 +260,7 @@ const Header = () => {
             {tOrganizer("settingsTab")}
           </TabsTrigger>
         </TabsList>
-        {isPublished && !dataTest?.finishedAt ? (
+        {status === "published" ? (
           <Button variant={"ghost"} className="ml-4">
             <div
               className={cn(
