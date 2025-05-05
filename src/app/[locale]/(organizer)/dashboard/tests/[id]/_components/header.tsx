@@ -177,7 +177,7 @@ const Header = () => {
             <Loader2 className="animate-spin" />
             Loading...
           </Button>
-        ) : !dataTest?.finishedAt ? (
+        ) : status === "published" ? (
           <div className="flex flex-row items-center gap-2">
             <Button variant={"ghost"} size={"icon"} onClick={copyLinkToShare}>
               <LinkIcon />
@@ -198,7 +198,7 @@ const Header = () => {
               />
             ) : null}
           </div>
-        ) : (
+        ) : status === "finished" ? (
           <div className="flex flex-row items-center gap-2">
             <Button variant={"success"}>
               <Check />
@@ -239,7 +239,7 @@ const Header = () => {
               </DialogContent>
             </Dialog>
           </div>
-        )}
+        ) : null}
       </div>
 
       <div className="mb-6 mt-2 flex flex-row items-center">
