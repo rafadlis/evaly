@@ -74,7 +74,7 @@ export function DashboardNavbar({ className }: { className?: string }) {
         className
       )}
     >
-      <div className="mx-auto px-3 md:px-6 h-14">
+      <div className="mx-auto px-3 md:px-6 h-12">
         <div className="flex items-center h-full justify-between">
           <div className="flex flex-row items-center">
             {/* Logo */}
