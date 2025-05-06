@@ -6,7 +6,7 @@ import DashboardPageClient from "./page.client";
 const Page = () => {
   return (
     <div className="dashboard-margin">
-      <Suspense>
+      <Suspense fallback={<div>Loading...</div>}>
         <DashboardPageClient />
       </Suspense>
     </div>
