@@ -19,6 +19,8 @@ import DialogAddQuestion from "@/components/shared/dialog/dialog-add-question";
 import LoadingScreen from "@/components/shared/loading/loading-screen";
 import { trpc } from "@/trpc/trpc.client";
 
+export const dynamic = "force-static";
+
 const Page = () => {
   const { templateId } = useParams<{ templateId: string }>();
   const [selectedEditQuestion, setSelectedEditQuestion] = useState<Question>();
