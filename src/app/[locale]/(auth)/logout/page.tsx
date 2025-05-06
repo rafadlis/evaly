@@ -1,11 +1,11 @@
 "use client";
 import { authClient } from "@/lib/auth.client";
 import { useEffect, useTransition } from "react";
-import { useRouter } from "@/i18n/navigation";
+import { useProgressRouter } from "@/components/shared/progress-bar";
 import LoadingScreen from "@/components/shared/loading/loading-screen";
 
 const Page = () => {
-  const router = useRouter();
+  const router = useProgressRouter();
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {

@@ -11,16 +11,15 @@ import LoadingScreen from "@/components/shared/loading/loading-screen";
 import { cn } from "@/lib/utils";
 import { TextShimmer } from "@/components/ui/text-shimmer";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "@/i18n/navigation";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { trpc } from "@/trpc/trpc.client";
-
+import { useProgressRouter } from "@/components/shared/progress-bar";
 const Page = () => {
   const { templateId } = useParams();
   const [isRedirecting, setIsRedirecting] = useTransition();
   const searchParams = useSearchParams();
-  const router = useRouter();
+  const router = useProgressRouter();
   const { data: dataTemplate, isPending: isPendingTemplate } =
     trpc.organization.questionTemplate.getById.useQuery({
       id: templateId as string,

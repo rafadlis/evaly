@@ -13,18 +13,17 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import DialogDeleteQuestionTemplate from "@/components/shared/dialog/dialog-delete-question-template";
-import { useRouter } from "@/i18n/navigation";
 import { InfoIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { trpc } from "@/trpc/trpc.client";
-
+import { useProgressRouter } from "@/components/shared/progress-bar";
 const Header = ({ templateId }: { templateId: string }) => {
   const { data: questionTemplate, isLoading: isLoadingQuestionTemplate } =
     trpc.organization.questionTemplate.getById.useQuery({
       id: templateId as string,
     });
 
-  const router = useRouter();
+  const router = useProgressRouter();
 
   const {
     mutate: updateQuestionTemplate,

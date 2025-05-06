@@ -9,12 +9,12 @@ import Setting from "./_components/setting/setting";
 import Questions from "./_components/questions/questions";
 
 const Page = () => {
-  const [tab, setTab] = useTabsState("settings");
+  const [tab, setTab] = useTabsState("questions");
 
   return (
     <Tabs
       className="container min-h-dvh pb-10 dashboard-margin"
-      defaultValue="settings"
+      defaultValue="questions"
       value={tab}
       onValueChange={setTab}
     >

@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { ChevronLeft } from "lucide-react";
-import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
+import { useProgressRouter } from "./progress-bar";
 
 const BackButton = ({
   className,
@@ -14,7 +14,7 @@ const BackButton = ({
   fallbackUrl?: string;
   href?: string;
 }) => {
-  const router = useRouter();
+  const router = useProgressRouter();
   const t = useTranslations("Common");
 
   const onBackClick = () => {

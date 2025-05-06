@@ -5,7 +5,6 @@ import { useState } from "react";
 import { TestAttempt, TestAttemptWithSection } from "@/types/test.attempt";
 import { useMutationState } from "@tanstack/react-query";
 import { useTransition } from "react";
-import { useRouter } from "@/i18n/navigation";
 import { CheckIcon, ChevronLeft } from "lucide-react";
 import { Link } from "@/components/shared/progress-bar";
 import {
@@ -26,6 +25,7 @@ import {
 import ParticipantAccount from "@/components/shared/account/participant-account";
 import { trpc } from "@/trpc/trpc.client";
 import { toast } from "sonner";
+import { useProgressRouter } from "@/components/shared/progress-bar";
 
 const Navbar = ({ attempt }: { attempt: TestAttemptWithSection }) => {
   return (
@@ -95,7 +95,7 @@ const DialogSubmitAttempt = ({ attemptId }: { attemptId: string }) => {
   const isStillUpdatingAnswer = listUpdatingAnswer.length > 0;
 
   const [isRedirecting, setIsRedirecting] = useTransition();
-  const router = useRouter();
+  const router = useProgressRouter();
 
   const {
     isPending: isSubmitting,
