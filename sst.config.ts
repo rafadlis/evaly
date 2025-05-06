@@ -11,8 +11,6 @@ export default $config({
     };
   },
   async run() {
-    const current = await aws.getRegion({});
-    console.log(current)
     new sst.aws.Nextjs("MainWebsite", {
       warm: $app.stage === "main" ? 1 : undefined, // <= ?????
       regions: ["us-east-1", "ap-southeast-1"],
@@ -22,7 +20,6 @@ export default $config({
         redirects: $app.stage === "main" ? ["www.evaly.io"] : undefined,
       },
       environment: {
-        REGION: current.id,
         DATABASE_URL: new sst.Secret("DATABASE_URL").value,
         SMTP_HOST: new sst.Secret("SMTP_HOST").value,
         SMTP_PORT: new sst.Secret("SMTP_PORT").value,
