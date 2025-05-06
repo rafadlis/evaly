@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect } from "react";
 import TanstackQueryProvider from "./tanstack-query.provider";
 import NuqsProvider from "./nuqs.provider";
