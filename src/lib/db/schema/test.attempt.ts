@@ -52,6 +52,9 @@ export const testAttempt = pgTable(
     testAttemptParticipantEmailIndex: index("test_attempt_participant_email_index").on(
       t.participantEmail
     ),
+    testAttemptTestSectionIdIndex: index("test_attempt_test_section_id_index").on(
+      t.testSectionId
+    ),
   })
 ).enableRLS()
 

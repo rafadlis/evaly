@@ -1,5 +1,5 @@
 import { relations, sql } from "drizzle-orm";
-import { smallint, pgTable, varchar, timestamp } from "drizzle-orm/pg-core";
+import { smallint, pgTable, varchar, timestamp, index } from "drizzle-orm/pg-core";
 
 import { question } from "./question";
 import { test } from "./test";
@@ -32,7 +32,9 @@ export const testSection = pgTable("test_section", {
     mode: "string",
     withTimezone: true,
   }),
-}).enableRLS()
+}, (t) => ({
+  testSectionTestIdIdx: index("test_section_test_id_idx").on(t.testId),
+})).enableRLS()
 
 //Relations
 export const testSectionRelation = relations(testSection, ({ many, one }) => ({

@@ -85,6 +85,7 @@ export const organizer = pgTable(
       foreignColumns: [user.id],
       name: "organizer_user_fk",
     }).onDelete("cascade"),
+    organizerUserIdx: index("organizer_user_idx").on(table.userId),
     organizationFk: foreignKey({
       columns: [table.organizationId],
       foreignColumns: [organization.id],
