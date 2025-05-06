@@ -1,6 +1,5 @@
-import db from "@/lib/db";
+import { NextResponse } from "next/server";
 
 export async function GET() {
-    const testDB = await db.query.user.findMany()
-  return new Response(JSON.stringify({env: process.env, testDB}));
+  return NextResponse.json(process.env);
 }
