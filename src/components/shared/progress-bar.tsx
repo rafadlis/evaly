@@ -1,12 +1,8 @@
 "use client";
-
-import {
-  AnimatePresence,
-  motion,
-  useMotionTemplate,
-  useSpring,
-} from "motion/react";
 import { Link as NextLink, useRouter } from "@/i18n/navigation";
+import { cn } from "@/lib/utils";
+import { Loader2Icon } from "lucide-react";
+import { useSpring } from "motion/react";
 import {
   ComponentProps,
   ReactNode,
@@ -19,7 +15,7 @@ import {
 } from "react";
 
 const ProgressBarContext = createContext<ReturnType<typeof useProgress> | null>(
-  null,
+  null
 );
 
 export function useProgressBar() {
@@ -40,7 +36,7 @@ export function useProgressRouter() {
     ...router,
     push: (href: string, options?: Parameters<typeof router.push>[1]) => {
       progress.start();
-      
+
       startTransition(() => {
         router.push(href, options);
         progress.done();
@@ -48,7 +44,7 @@ export function useProgressRouter() {
     },
     replace: (href: string, options?: Parameters<typeof router.replace>[1]) => {
       progress.start();
-      
+
       startTransition(() => {
         router.replace(href, options);
         progress.done();
@@ -56,7 +52,7 @@ export function useProgressRouter() {
     },
     back: () => {
       progress.start();
-      
+
       startTransition(() => {
         router.back();
         progress.done();
@@ -64,7 +60,7 @@ export function useProgressRouter() {
     },
     forward: () => {
       progress.start();
-      
+
       startTransition(() => {
         router.forward();
         progress.done();
@@ -72,35 +68,30 @@ export function useProgressRouter() {
     },
     refresh: () => {
       progress.start();
-      
+
       startTransition(() => {
         router.refresh();
         progress.done();
       });
     },
-    prefetch: router.prefetch
+    prefetch: router.prefetch,
   };
 }
 
-export function ProgressBar({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export function ProgressBar({ children }: { children: ReactNode }) {
   const progress = useProgress();
-  const width = useMotionTemplate`${progress.value}%`;
 
   return (
     <ProgressBarContext.Provider value={progress}>
-      <AnimatePresence onExitComplete={progress.reset}>
-        {progress.state !== "complete" && (
-          <motion.div
-            style={{ width }}
-            exit={{ opacity: 0 }}
-            className={"bg-foreground fixed top-0 z-[100] h-1"}
-          />
+      <Loader2Icon
+        className={cn(
+          "fixed top-1 right-1 size-5 animate-spin",
+          progress.state !== "complete" && progress.state !== "initial"
+            ? "opacity-100 z-[100] scale-100"
+            : "opacity-0 z-[-1] scale-0"
         )}
-      </AnimatePresence>
+      />
+
       {children}
     </ProgressBarContext.Provider>
   );
@@ -165,7 +156,7 @@ function useProgress() {
 
       value.set(Math.min(current + diff, 99));
     },
-    state === "in-progress" ? 750 : null,
+    state === "in-progress" ? 750 : null
   );
 
   useEffect(() => {
@@ -192,7 +183,7 @@ function useProgress() {
 
   function done() {
     setState((state) =>
-      state === "initial" || state === "in-progress" ? "completing" : state,
+      state === "initial" || state === "in-progress" ? "completing" : state
     );
   }
 

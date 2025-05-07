@@ -16,7 +16,7 @@ import {
   SheetTrigger,
   SheetTitle,
 } from "@/components/ui/sheet";
-import Link from "next/link";
+import { Link } from "@/components/shared/progress-bar";
 
 export const dynamic = "force-static";
 

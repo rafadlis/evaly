@@ -31,8 +31,6 @@ import { parseAsString, useQueryState } from "nuqs";
 import { trpc } from "@/trpc/trpc.client";
 import LoadingScreen from "@/components/shared/loading/loading-screen";
 
-export const dynamic = "force-static";
-
 const Page = () => {
   return (
     <div className="container dashboard-margin">
