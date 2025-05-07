@@ -7,7 +7,6 @@ import { PostHogProvider as PHProvider } from "posthog-js/react";
 import posthog from "posthog-js";
 import { env } from "@/lib/env.client";
 import SuspendedPostHogPageView from "./posthog-page-view";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const Provider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
@@ -20,7 +19,6 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <PHProvider client={posthog}>
-      <SpeedInsights />
       <TanstackQueryProvider>
         <NuqsProvider>
           <ProgressBar>

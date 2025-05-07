@@ -1,9 +1,8 @@
 import {
   foreignKey,
   index,
-  pgTable,
-  timestamp,
-  varchar,
+  pgTable, timestamp,
+  varchar
 } from "drizzle-orm/pg-core";
 import { user } from "./user";
 import { relations, sql } from "drizzle-orm";
@@ -80,11 +79,13 @@ export const organizer = pgTable(
   },
   (table) => ({
     organizerIdIdx: index("organizer_id_idx").on(table.id),
+    organizationIdOrganizationIdIdx: index("organization_organizer_id_idx").on(table.organizationId),
     userFk: foreignKey({
       columns: [table.userId],
       foreignColumns: [user.id],
       name: "organizer_user_fk",
     }).onDelete("cascade"),
+    organizerUserIdx: index("organizer_user_idx").on(table.userId),
     organizationFk: foreignKey({
       columns: [table.organizationId],
       foreignColumns: [organization.id],

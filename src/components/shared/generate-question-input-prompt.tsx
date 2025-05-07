@@ -257,7 +257,7 @@ const GenerateQuestionInputPrompt = ({
             )}
           </AnimatePresence>
         </div>
-        <div className="flex flex-row gap-x-2 gap-y-4 flex-wrap justify-start mt-4">
+        <div className="flex-row gap-x-2 gap-y-4 flex-wrap justify-start mt-4 hidden">
           <Button variant={"outline"} size={"sm"} rounded className="px-4">
             <FileSpreadsheet />
             <span>{t("spreadsheet")}</span>

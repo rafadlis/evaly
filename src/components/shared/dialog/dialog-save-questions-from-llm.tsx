@@ -9,12 +9,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useRouter } from "@/i18n/navigation";
 import { trpc } from "@/trpc/trpc.client";
 import { Question } from "@/types/question";
 import { VariantProps } from "class-variance-authority";
 import { SaveIcon } from "lucide-react";
 import { toast } from "sonner";
+import { useProgressRouter } from "../progress-bar";
 
 const DialogSaveQuestionsFromLLM = ({
   size,
@@ -34,7 +34,7 @@ const DialogSaveQuestionsFromLLM = ({
     },
   });
 
-  const router = useRouter();
+  const router = useProgressRouter();
 
   const { mutateAsync: createQuestions, isPending: isPendingCreateQuestions } =
     trpc.organization.question.create.useMutation({

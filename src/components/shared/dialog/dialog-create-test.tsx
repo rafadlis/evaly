@@ -10,7 +10,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useRouter } from "@/i18n/navigation";
 import { useState, useTransition } from "react";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -18,10 +17,10 @@ import { Badge } from "@/components/ui/badge";
 import { useTranslations } from "next-intl";
 import { trpc } from "@/trpc/trpc.client";
 import { toast } from "sonner";
-
+import { useProgressRouter } from "../progress-bar";
 const DialogCreateTest = () => {
   const [open, setOpen] = useState(false);
-  const router = useRouter();
+  const router = useProgressRouter();
   const [isPendingRoute, startTransition] = useTransition();
   const t = useTranslations("TestDialogs");
   const tCommon = useTranslations("Common");

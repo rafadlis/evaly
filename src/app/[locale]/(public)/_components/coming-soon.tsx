@@ -2,8 +2,6 @@ import { Footer } from "@/components/landing/Footer";
 import { PublicHeader } from "./public-header";
 import ComingSoon from "@/components/shared/coming-soon";
 
-export const dynamic = "force-static";
-
 export default function ComingSoonPage() {
 
   return (

@@ -26,6 +26,9 @@ import { Image } from "@/components/ui/image";
 import { trpc } from "@/trpc/trpc.client";
 import { Skeleton } from "@/components/ui/skeleton";
 
+export const dynamic = "force-static";
+
+
 const Settings = () => {
   return (
     <div className="container dashboard-margin">

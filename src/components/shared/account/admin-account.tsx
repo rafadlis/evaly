@@ -8,14 +8,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DropdownMenu } from "@/components/ui/dropdown-menu";
-import { useRouter } from "@/i18n/navigation";
 import { trpc } from "@/trpc/trpc.client";
 import { Building2, Home, LogOut, Settings, User } from "lucide-react";
 import { Image } from "@/components/ui/image";
-
+import { useProgressRouter } from "../progress-bar";
 const AdminAccount = () => {
   const { data } =  trpc.organization.profile.useQuery()
-  const router = useRouter();
+  const router = useProgressRouter();
 
   const email = data?.user?.email;
   const name = data?.user?.name || email?.split("@")[0];

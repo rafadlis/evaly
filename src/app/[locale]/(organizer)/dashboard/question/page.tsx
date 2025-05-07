@@ -24,13 +24,14 @@ import {
   Smile,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Link } from "@/components/shared/progress-bar";
+import { Link, useProgressRouter } from "@/components/shared/progress-bar";
 import { toast } from "sonner";
-import { useRouter } from "@/i18n/navigation";
 import dayjs from "dayjs";
 import { parseAsString, useQueryState } from "nuqs";
 import { trpc } from "@/trpc/trpc.client";
 import LoadingScreen from "@/components/shared/loading/loading-screen";
+
+export const dynamic = "force-static";
 
 const Page = () => {
   return (
@@ -57,7 +58,7 @@ const Page = () => {
 };
 
 const CreateQuestionTemplateButton = () => {
-  const router = useRouter();
+  const router = useProgressRouter();
   const [transitionReady, startTransition] = useTransition();
 
   const { mutate: createQuestionTemplate, isPending: isLoading } =

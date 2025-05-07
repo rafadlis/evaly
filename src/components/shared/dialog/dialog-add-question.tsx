@@ -4,13 +4,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { questionTypes } from "@/constants/question-type";
 import { getDefaultOptions } from "@/lib/get-default-options";
 import {
-  FileTextIcon,
   Loader2,
   LockIcon,
   PencilIcon,
   Plus,
-  SparklesIcon,
-  UploadIcon,
+  SparklesIcon
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import GenerateQuestionInputPrompt from "../generate-question-input-prompt";
@@ -111,7 +109,7 @@ const DialogAddQuestion = ({
         )}
       </DrawerTrigger>
       <DrawerContent className="sm:max-w-none h-dvh flex flex-col p-0">
-        <div className="container max-w-2xl overflow-y-auto pt-[14vh] pb-20">
+        <div className="container max-w-2xl overflow-y-auto pt-[10vh] pb-20">
           <DrawerHeader className="p-0">
             <DrawerTitle>{t("addQuestionTitle")}</DrawerTitle>
             <DrawerDescription>{t("addQuestionDescription")}</DrawerDescription>
@@ -122,12 +120,12 @@ const DialogAddQuestion = ({
                 <TabsTrigger value="manual">
                   <PencilIcon className="size-4" /> {t("manual")}
                 </TabsTrigger>
-                <TabsTrigger value="import">
+                {/* <TabsTrigger value="import">
                   <UploadIcon className="size-4" /> {t("import")}
                 </TabsTrigger>
                 <TabsTrigger value="template">
                   <FileTextIcon className="size-4" /> {t("template")}
-                </TabsTrigger>
+                </TabsTrigger> */}
                 <TabsTrigger value="ai">
                   <SparklesIcon className="size-4" /> {t("ai")}
                 </TabsTrigger>
@@ -143,8 +141,7 @@ const DialogAddQuestion = ({
                       {types.map((type) => (
                         <Button
                           key={type.value}
-                          variant={"secondary"}
-                          size={"sm"}
+                          variant={"outline"}
                           className="group justify-start"
                           disabled={
                             type.isHidden ||

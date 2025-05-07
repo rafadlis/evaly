@@ -16,8 +16,7 @@ import { Image } from "@/components/ui/image";
 import { Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "@/components/shared/progress-bar";
-import { useRouter } from "@/i18n/navigation";
-
+import { useProgressRouter } from "@/components/shared/progress-bar";
 const SignUp = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -26,7 +25,7 @@ const SignUp = () => {
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const router = useRouter();
+  const router = useProgressRouter();
   async function convertImageToBase64(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();

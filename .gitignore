@@ -45,3 +45,6 @@ bun.lock
 .trigger
 .open-next
 .env*.local
+
+# sst
+.sst
