@@ -5,6 +5,7 @@ import {
   Check,
   LinkIcon,
   Loader2,
+  PencilLine,
   RotateCcw,
   Save,
   TimerOff,
@@ -34,6 +35,15 @@ import supabase from "@/lib/supabase";
 import { cn } from "@/lib/utils";
 import NumberFlow from "@number-flow/react";
 import { useProgressRouter } from "@/components/shared/progress-bar";
+import TestSections from "./questions/test-sections";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
+import { TextShimmer } from "@/components/ui/text-shimmer";
+import { PopoverClose } from "@radix-ui/react-popover";
 
 const Header = () => {
   const [, setTabs] = useTabsState("questions");
@@ -70,6 +80,7 @@ const Header = () => {
   useEffect(() => {
     if (dataTest) {
       reset(dataTest);
+      document.title = dataTest.title || "Untitled";
     }
   }, [dataTest, reset]);
 
@@ -131,31 +142,40 @@ const Header = () => {
 
   return (
     <>
-      <BackButton className="mb-2" href={`/dashboard/tests`} />
       <div className="flex flex-row justify-between items-start">
-        {/* Left side: Title and save button */}
-        <>
-          {isPendingTest ? (
-            <h1 className="animate-pulse text-muted-foreground text-xl font-medium">
-              Loading...
-            </h1>
-          ) : (
-            <div className="flex flex-col">
-              <input
-                type="text"
-                {...register("title")}
-                className="outline-none text-xl font-medium"
-                placeholder={isPendingTest ? "Loading..." : "Test title"}
-                disabled={isPendingTest || isUpdatingTest}
-              />
+        <div className="flex flex-row gap-2 items-center">
+          <BackButton href={`/dashboard/tests`} />
 
-              {isDirty && isPendingTest === false ? (
-                <div className="w-max mt-2">
+          {/* Title and save button */}
+          {isPendingTest ? (
+            <TextShimmer className="animate-pulse  font-medium">
+              Loading...
+            </TextShimmer>
+          ) : (
+            <Popover>
+              <PopoverTrigger className="flex flex-row items-center gap-2 cursor-pointer group">
+                <span className="font-medium text-start w-max max-w-xl truncate">
+                  {getValues("title") || "Untitled"}
+                </span>
+                {isPendingTest || isUpdatingTest ? (
+                  <Loader2 className="animate-spin text-muted-foreground/50" />
+                ) : (
+                  <PencilLine className="size-4 text-muted-foreground/50 group-hover:text-muted-foreground " />
+                )}
+              </PopoverTrigger>
+              <PopoverContent>
+                <Input
+                  type="text"
+                  {...register("title")}
+                  className="outline-none font-medium"
+                  placeholder={isPendingTest ? "Loading..." : "Test title"}
+                  disabled={isPendingTest || isUpdatingTest}
+                />
+                <PopoverClose asChild>
                   <Button
                     variant={"default"}
-                    disabled={isUpdatingTest}
-                    className="w-max"
-                    size={"sm"}
+                    disabled={isUpdatingTest || isPendingTest || !isDirty}
+                    className="w-max mt-2"
                     onClick={() =>
                       mutateUpdateTest({
                         id: id?.toString() || "",
@@ -170,11 +190,11 @@ const Header = () => {
                     )}
                     {tCommon("saveButton")}
                   </Button>
-                </div>
-              ) : null}
-            </div>
+                </PopoverClose>
+              </PopoverContent>
+            </Popover>
           )}
-        </>
+        </div>
 
         {/* Right side: Status and actions */}
         <>
@@ -252,35 +272,40 @@ const Header = () => {
           ) : null}
         </>
       </div>
-      <div className="mb-6 mt-2 flex flex-row items-center">
-        <TabsList>
-          {/* <TabsTrigger value="summary">Summary</TabsTrigger> */}
-          {status === "published" || status === "finished" ? (
-            <TabsTrigger value="submissions">
-              {tOrganizer("submissionsTab")}
+
+      {/* Tabs and Test Sections */}
+      <div className="flex flex-row justify-between items-start mb-4 mt-2">
+        <div className="flex flex-row items-center">
+          <TabsList>
+            {/* <TabsTrigger value="summary">Summary</TabsTrigger> */}
+            {status === "published" || status === "finished" ? (
+              <TabsTrigger value="submissions">
+                {tOrganizer("submissionsTab")}
+              </TabsTrigger>
+            ) : null}
+            {status === "published" ? (
+              <TabsTrigger value="share">{tOrganizer("shareTab")}</TabsTrigger>
+            ) : null}
+            <TabsTrigger value="questions">
+              {tOrganizer("questionsTab")}
             </TabsTrigger>
-          ) : null}
+            <TabsTrigger value="settings">
+              {tOrganizer("settingsTab")}
+            </TabsTrigger>
+          </TabsList>
           {status === "published" ? (
-            <TabsTrigger value="share">{tOrganizer("shareTab")}</TabsTrigger>
+            <Button variant={"ghost"} className="ml-4">
+              <div
+                className={cn(
+                  "size-2.5 bg-emerald-500 rounded-full transition-all",
+                  participantOnline.length === 0 ? "bg-foreground/15" : ""
+                )}
+              />
+              <NumberFlow value={participantOnline.length} suffix=" Online" />
+            </Button>
           ) : null}
-          <TabsTrigger value="questions">
-            {tOrganizer("questionsTab")}
-          </TabsTrigger>
-          <TabsTrigger value="settings">
-            {tOrganizer("settingsTab")}
-          </TabsTrigger>
-        </TabsList>
-        {status === "published" ? (
-          <Button variant={"ghost"} className="ml-4">
-            <div
-              className={cn(
-                "size-2.5 bg-emerald-500 rounded-full transition-all",
-                participantOnline.length === 0 ? "bg-foreground/15" : ""
-              )}
-            />
-            <NumberFlow value={participantOnline.length} suffix=" Online" />
-          </Button>
-        ) : null}
+        </div>
+        <TestSections />
       </div>
     </>
   );

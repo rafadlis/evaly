@@ -61,7 +61,7 @@ const Header = ({ templateId }: { templateId: string }) => {
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="flex flex-col gap-2">
-        <BackButton href={`/dashboard/question`} className="w-max"/>
+        <BackButton href={`/dashboard/question`} />
         <Controller
           control={control}
           name="title"

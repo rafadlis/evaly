@@ -1,8 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { CheckIcon, CircleHelp, ClockIcon, Trash2Icon } from "lucide-react";
-import DialogDeleteSection from "../dialog/dialog-delete-section";
-import { Button } from "@/components/ui/button";
+import { CheckIcon, CircleHelp, ClockIcon } from "lucide-react";
 import { TestSection } from "@/types/test";
 
 const CardSection = ({
@@ -57,25 +55,6 @@ const CardSection = ({
           <CircleHelp size={14} /> {JSON.stringify(data.numOfQuestions)} Questions
         </span>
       </div>
-      <DialogDeleteSection
-        sectionId={data.id}
-        onSuccess={() => {
-          onDeleteSuccess?.();
-        }}
-        isLastSection={isLastSection}
-        dialogTrigger={
-          <Button
-            size={"icon-xxs"}
-            variant={"outline"}
-            className="absolute bottom-2 right-2 opacity-0 group-hover/section:opacity-100 transition-opacity"
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            <Trash2Icon />
-          </Button>
-        }
-      />
     </Card>
   );
 };

@@ -3,7 +3,6 @@
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import Header from "./_components/header";
 import { useTabsState } from "./_hooks/use-tabs-state";
-import Submissions from "./_components/submissions";
 import Share from "./_components/share";
 import Setting from "./_components/setting/setting";
 import Questions from "./_components/questions/questions";
@@ -23,7 +22,7 @@ const PageClient = () => {
         <Setting />
       </TabsContent>
       <TabsContent value="submissions">
-        <Submissions />
+        {/* <Submissions /> */}
       </TabsContent>
       <TabsContent value="questions">
         <Questions />

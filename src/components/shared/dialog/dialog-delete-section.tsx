@@ -8,6 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { TooltipMessage } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/trpc/trpc.client";
 import { Trash2Icon } from "lucide-react";
@@ -18,19 +19,6 @@ import { toast } from "sonner";
 const DialogDeleteSection = ({
   className,
   disabled = false,
-  dialogTrigger = (
-    <Button
-      disabled={disabled}
-      size={"icon-xs"}
-      variant={"ghost"}
-      className={cn(className)}
-      onClick={(e) => {
-        e.stopPropagation();
-      }}
-    >
-      <Trash2Icon />
-    </Button>
-  ),
   sectionId,
   onSuccess,
   isLastSection = false,
@@ -58,7 +46,25 @@ const DialogDeleteSection = ({
     });
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{dialogTrigger}</DialogTrigger>
+      <DialogTrigger asChild>
+        <div>
+          <TooltipMessage message="Delete section">
+            <Button
+              disabled={disabled}
+              size={"icon"}
+              variant={"ghost"}
+              className={cn(className)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpen(true);
+              }}
+            >
+              <Trash2Icon />
+            </Button>
+          </TooltipMessage>
+        </div>
+      </DialogTrigger>
+
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t("deleteSectionTitle")}</DialogTitle>

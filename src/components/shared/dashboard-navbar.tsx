@@ -81,18 +81,18 @@ export function DashboardNavbar({ className }: { className?: string }) {
             <LogoType href="/dashboard" />
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center ml-14 gap-3 text-sm font-medium">
+            <div className="hidden md:flex items-center ml-14 gap-2 text-sm font-medium">
               {navItems.map((item) => (
                 <Link key={item.href} href={item.href}>
                   <Button
                     size={"sm"}
-                    variant={activeItem === item.href ? "outline" : "ghost"}
+                    variant={activeItem === item.href ? "secondary" : "ghost"}
                     className={cn(
-                      "transition-none",
-                      activeItem === item.href ? "border-foreground/20" : "text-muted-foreground"
+                      "transition-none font-semibold text-[15px]",
+                      activeItem === item.href ? "bg-foreground/10" : "text-muted-foreground"
                     )}
                   >
-                    {item.icon}
+                    {/* {item.icon} */}
                     {item.name}
                   </Button>
                 </Link>
