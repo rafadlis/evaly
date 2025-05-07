@@ -17,7 +17,7 @@ const PageClient = () => {
       value={tab}
       onValueChange={setTab}
     >
-      <Header />
+      <Header className="mb-4" />
       <TabsContent value="settings">
         <Setting />
       </TabsContent>

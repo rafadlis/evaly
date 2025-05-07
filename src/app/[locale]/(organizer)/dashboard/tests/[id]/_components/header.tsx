@@ -45,7 +45,7 @@ import { Input } from "@/components/ui/input";
 import { TextShimmer } from "@/components/ui/text-shimmer";
 import { PopoverClose } from "@radix-ui/react-popover";
 
-const Header = () => {
+const Header = ({ className }: { className?: string }) => {
   const [, setTabs] = useTabsState("questions");
   const { id } = useParams();
   const router = useProgressRouter();
@@ -141,7 +141,7 @@ const Header = () => {
   }
 
   return (
-    <>
+    <div className={cn(className)}>
       <div className="flex flex-row justify-between items-start">
         <div className="flex flex-row gap-2 items-center">
           <BackButton href={`/dashboard/tests`} />
@@ -274,7 +274,7 @@ const Header = () => {
       </div>
 
       {/* Tabs and Test Sections */}
-      <div className="flex flex-row justify-between items-start mb-4 mt-2">
+      <div className="flex flex-row justify-between items-start mb-4 mt-4">
         <div className="flex flex-row items-center">
           <TabsList>
             {/* <TabsTrigger value="summary">Summary</TabsTrigger> */}
@@ -307,7 +307,7 @@ const Header = () => {
         </div>
         <TestSections />
       </div>
-    </>
+    </div>
   );
 };
 

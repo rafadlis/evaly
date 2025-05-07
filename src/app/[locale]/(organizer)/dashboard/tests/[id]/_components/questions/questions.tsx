@@ -18,7 +18,7 @@ import { useTranslations } from "next-intl";
 import { trpc } from "@/trpc/trpc.client";
 
 const Questions = () => {
-  const [selectedSection, setSelectedSection] = useSelectedSection();
+  const [selectedSection] = useSelectedSection();
   const [selectedQuestion, setSelectedQuestion] = useState<Question>();
   const { id: testId } = useParams();
 
@@ -26,19 +26,7 @@ const Questions = () => {
   const t = useTranslations("TestDetail");
 
   const {
-    data: dataSection,
-    isRefetching: isRefetchingSection,
-    isPending: isPendingSection,
-    refetch: refetchSection,
-  } = trpc.organization.testSection.getById.useQuery({
-    id: selectedSection as string,
-  });
-
-  const {
     refetch: refetchSections,
-    data: dataSections,
-    isRefetching: isRefetchingSections,
-    isPending: isPendingSections,
   } = trpc.organization.testSection.getAll.useQuery({
     testId: testId as string,
   });
@@ -46,7 +34,6 @@ const Questions = () => {
   const {
     data: dataQuestions,
     isRefetching: isRefetchingQuestions,
-    isPending: isPendingQuestions,
   } = trpc.organization.question.getAll.useQuery({
     referenceId: selectedSection as string,
   });
@@ -58,21 +45,6 @@ const Questions = () => {
       setLocalQuestions(dataQuestions);
     }
   }, [dataQuestions]);
-
-  const [hideOptions, setHideOptions] = useState(false);
-
-  const onSuccessDeleteSection = async () => {
-    const response = await refetchSections();
-    const updatedDataSections = response.data;
-    // Find the next available section to select after deletion
-    if (updatedDataSections && updatedDataSections.length > 0) {
-      // Set the first available section as selected
-      setSelectedSection(updatedDataSections[0].id);
-    } else {
-      // If no sections left, clear the selection
-      setSelectedSection(null);
-    }
-  };
 
   const onHandleChangeOrder = (
     changedQuestionOrders: {
@@ -123,11 +95,10 @@ const Questions = () => {
               >
                 <CardQuestion
                   onChangeOrder={onHandleChangeOrder}
-                  hideOptions={hideOptions}
                   data={data}
                   onClickEdit={() => setSelectedQuestion(data)}
                   className={cn(
-                    index === 0 ? "pt-0" : "",
+                    index === 0 ? "mt-0" : "",
                     isRefetchingQuestions ? "cursor-progress" : ""
                   )}
                   onDeleteSuccess={() => {

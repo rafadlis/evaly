@@ -29,8 +29,14 @@ const BackButton = ({
   };
 
   return (
-    <Button className={cn(className)} variant={"ghost"} size={"icon"} onClick={onBackClick}>
-      <ChevronLeft />
+    <Button
+      className={cn(className)}
+      variant={"ghost"}
+      size={"icon-sm"}
+      type="button"
+      onClick={onBackClick}
+    >
+      <ChevronLeft className="size-5"/>
     </Button>
   );
 };
