@@ -7,7 +7,6 @@ import { BenefitsSection } from "@/components/landing/BenefitsSection";
 import { CTASection } from "@/components/landing/CTASection";
 import { Footer } from "@/components/landing/Footer";
 import { LogoType } from "@/components/shared/logo";
-import { Link } from "@/components/shared/progress-bar";
 import { useTranslations } from "next-intl";
 import DialogSelectLanguage from "@/components/shared/dialog/dialog-select-language";
 import { Github, Menu } from "lucide-react";
@@ -17,6 +16,7 @@ import {
   SheetTrigger,
   SheetTitle,
 } from "@/components/ui/sheet";
+import Link from "next/link";
 
 export const dynamic = "force-static";
 
