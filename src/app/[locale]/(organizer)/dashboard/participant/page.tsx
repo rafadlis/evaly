@@ -1,6 +1,6 @@
-import ComingSoon from "@/components/shared/coming-soon";
+"use client"
 
-export const dynamic = "force-static";
+import ComingSoon from "@/components/shared/coming-soon";
 
 const page = () => {
   return <ComingSoon />;

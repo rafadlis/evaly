@@ -85,7 +85,7 @@ export function ProgressBar({ children }: { children: ReactNode }) {
     <ProgressBarContext.Provider value={progress}>
       <Loader2Icon
         className={cn(
-          "fixed bottom-1 right-1 size-5 animate-spin",
+          "fixed top-1 right-1 size-5 animate-spin",
           progress.state !== "complete" && progress.state !== "initial"
             ? "opacity-100 z-[100] scale-100"
             : "opacity-0 z-[-1] scale-0"

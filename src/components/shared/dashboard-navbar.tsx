@@ -86,8 +86,11 @@ export function DashboardNavbar({ className }: { className?: string }) {
                 <Link key={item.href} href={item.href}>
                   <Button
                     size={"sm"}
-                    variant={activeItem === item.href ? "default" : "ghost"}
-                    className={activeItem === item.href ? "" : "text-muted-foreground"}
+                    variant={activeItem === item.href ? "outline" : "ghost"}
+                    className={cn(
+                      "transition-none",
+                      activeItem === item.href ? "" : "text-muted-foreground"
+                    )}
                   >
                     {item.icon}
                     {item.name}

@@ -8,6 +8,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "preview": "next build --turbopack && next start",
     "email": "email dev --dir src/lib/emails",
     "db:studio": "drizzle-kit studio",
     "db:generate": "bunx drizzle-kit generate --dialect postgresql --schema ./src/lib/db/schema --out ./drizzle",
