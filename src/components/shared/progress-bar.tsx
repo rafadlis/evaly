@@ -117,6 +117,7 @@ export function Link({
           progress.done();
         });
       }}
+      prefetch={true}
       {...rest}
     >
       {children}
