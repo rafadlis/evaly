@@ -89,7 +89,7 @@ export function DashboardNavbar({ className }: { className?: string }) {
                     variant={activeItem === item.href ? "outline" : "ghost"}
                     className={cn(
                       "transition-none",
-                      activeItem === item.href ? "" : "text-muted-foreground"
+                      activeItem === item.href ? "border-foreground/20" : "text-muted-foreground"
                     )}
                   >
                     {item.icon}

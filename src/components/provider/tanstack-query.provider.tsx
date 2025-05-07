@@ -1,14 +1,15 @@
-"use client"
+"use client";
 
-import { QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { getQueryClient, getUrl, trpc } from '@/trpc/trpc.client';
-import { useState } from 'react';
-import { httpBatchLink, httpLink, isNonJsonSerializable, splitLink } from '@trpc/client';
-
+import { QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { getQueryClient, getUrl, trpc } from "@/trpc/trpc.client";
+import { useState } from "react";
+import {
+  httpLink
+} from "@trpc/client";
 
 const TanstackQueryProvider = ({ children }: { children: React.ReactNode }) => {
-   // NOTE: Avoid useState when initializing the query client if you don't
+  // NOTE: Avoid useState when initializing the query client if you don't
   //       have a suspense boundary between this and the code that may
   //       suspend because React will throw away the client on the initial
   //       render if it suspends and there is no boundary
@@ -16,17 +17,20 @@ const TanstackQueryProvider = ({ children }: { children: React.ReactNode }) => {
   const [trpcClient] = useState(() =>
     trpc.createClient({
       links: [
-        splitLink({
-          condition: (op) => isNonJsonSerializable(op.input),
-          true: httpLink({
-            url: getUrl(),
-          }),
-          false: httpBatchLink({
-            url: getUrl(),
-          })
+        httpLink({
+          url: getUrl(),
         }),
+        // splitLink({
+        //   condition: (op) => isNonJsonSerializable(op.input),
+        //   true: httpLink({
+        //     url: getUrl(),
+        //   }),
+        //   false: httpBatchLink({
+        //     url: getUrl(),
+        //   })
+        // }),
       ],
-    }),
+    })
   );
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
@@ -36,6 +40,6 @@ const TanstackQueryProvider = ({ children }: { children: React.ReactNode }) => {
       </QueryClientProvider>
     </trpc.Provider>
   );
-}
+};
 
-export default TanstackQueryProvider
+export default TanstackQueryProvider;
