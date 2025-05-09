@@ -33,8 +33,8 @@ const Settings = () => {
   return (
     <div className="container dashboard-margin">
       <div className="flex flex-col">
-        <h1 className="font-semibold">Settings</h1>
-        <p className="text-muted-foreground">
+        <h1 className="dashboard-title">Settings</h1>
+        <p className="dashboard-description">
           Manage your account settings and preferences.
         </p>
       </div>
@@ -171,12 +171,12 @@ const Profile = () => {
               name="image"
               render={({ field }) => (
                 <div className="relative w-max h-max">
-                  <Avatar className="size-32 rounded-none">
+                  <Avatar className="size-24 rounded-full">
                     {previewURL ? (
                       <AvatarImage
                         src={previewURL}
                         alt="Profile"
-                        className="object-cover rounded-none"
+                        className="object-cover"
                       />
                     ) : field.value ? (
                       <AvatarImage
@@ -188,8 +188,8 @@ const Profile = () => {
                         <Image
                           src={field.value}
                           alt="Profile"
-                          width={96}
-                          height={96}
+                          width={256}
+                          height={256}
                         />
                       </AvatarImage>
                     ) : (
@@ -200,7 +200,7 @@ const Profile = () => {
                   </Avatar>
                   <div className="flex flex-row gap-2 absolute right-1 bottom-1">
                     <Button
-                      variant="secondary-outline"
+                      variant="default"
                       size="icon"
                       type="button"
                       onClick={() => {

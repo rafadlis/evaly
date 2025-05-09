@@ -54,8 +54,28 @@ const TestSections = ({ className }: { className?: string }) => {
     return data.find((e) => e.id === selectedSection);
   }, [selectedSection, data]);
 
+  if (isPending) {
+    return (
+      <div className="flex flex-row gap-2 items-center">
+        <Skeleton className="w-40 h-8 rounded-md" />
+      </div>
+    );
+  }
+
+  if (data?.length === 1) {
+    return (
+      <div className="flex flex-row gap-2 items-center">
+        <AddSession>
+          <Button variant={"outline"}>
+            <PlusIcon /> New section
+          </Button>
+        </AddSession>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-row gap-2 items-center">
+    <div className="flex flex-row-reverse md:flex-row gap-2 items-center">
       <DialogDeleteSection
         disabled={isRefetching || isPending}
         isLastSection={data?.length === 1}
@@ -221,10 +241,6 @@ const ListSession = () => {
               key={e.id}
               isSelected={e.id === selectedSection}
               onClick={() => setSelectedSection(e.id)}
-              onDeleteSuccess={async () => {
-                await refetch();
-              }}
-              isLastSection={data.length === 1}
             />
           </Reorder.Item>
         ))}
@@ -234,7 +250,7 @@ const ListSession = () => {
   );
 };
 
-const AddSession = () => {
+const AddSession = ({ children }: { children?: React.ReactNode }) => {
   const { id } = useParams();
   const [, setSelectedSection] = useSelectedSection();
   const [isOpen, setIsOpen] = useState(false);
@@ -246,7 +262,7 @@ const AddSession = () => {
     isRefetching: isRefetchingSection,
   } = trpc.organization.testSection.getAll.useQuery({ testId: id as string });
 
-  const { mutateAsync, isPending } =
+  const { mutateAsync, isPending: isPendingCreateSection } =
     trpc.organization.testSection.create.useMutation();
 
   const { mutateAsync: tranferQuestion, isPending: isPendingTransferQuestion } =
@@ -293,22 +309,27 @@ const AddSession = () => {
         }}
       >
         <DialogTrigger asChild>
-          <TooltipMessage message="Add new section">
-            <Button
-              onClick={() => {
-                setIsOpen(true);
-              }}
-              variant={"ghost"}
-              size={"icon"}
-              disabled={isPending || isRefetchingSection || isPendingSession}
-            >
-              {isPending ? (
-                <Loader2 className="animate-spin" />
-              ) : (
-                <PlusIcon className="size-4" />
+          <div>
+            <TooltipMessage message="Add new section">
+              {children || (
+                <Button
+                  variant={"ghost"}
+                  size={"icon"}
+                  disabled={
+                    isPendingCreateSection ||
+                    isRefetchingSection ||
+                    isPendingSession
+                  }
+                >
+                  {isPendingCreateSection || isRefetchingSection ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    <PlusIcon className="size-4" />
+                  )}
+                </Button>
               )}
-            </Button>
-          </TooltipMessage>
+            </TooltipMessage>
+          </div>
         </DialogTrigger>
         <DialogContent className="md:max-w-4xl lg:max-w-5xl xl:max-w-6xl">
           <DialogHeader>
@@ -334,7 +355,7 @@ const AddSession = () => {
                 <Button
                   variant={"outline"}
                   className="w-max"
-                  disabled={isPending || isRefetchingSection}
+                  disabled={isPendingCreateSection || isRefetchingSection}
                   onClick={async () => {
                     const data = await mutateAsync({ testId: id as string });
                     const sectionId = data?.sections[0]?.id;
@@ -345,7 +366,7 @@ const AddSession = () => {
                     }
                   }}
                 >
-                  {isPending || isRefetchingSection ? (
+                  {isPendingCreateSection || isRefetchingSection ? (
                     <Loader2 className="animate-spin" />
                   ) : (
                     <PlusIcon />
@@ -356,7 +377,9 @@ const AddSession = () => {
                   onClick={onUseTemplate}
                   variant={"default"}
                   disabled={
-                    !selectedId || isPendingTransferQuestion || isPending
+                    !selectedId ||
+                    isPendingTransferQuestion ||
+                    isPendingCreateSection
                   }
                 >
                   {selectedId ? (
