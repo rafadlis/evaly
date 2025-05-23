@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { CircleHelpIcon, Loader2, PencilLine } from "lucide-react";
+import { CircleHelpIcon, Loader2, PencilIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { UpdateTestSection } from "@/types/test";
@@ -22,6 +22,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { trpc } from "@/trpc/trpc.client";
+import { TooltipMessage } from "@/components/ui/tooltip";
 
 const DialogEditSection = ({ sectionId }: { sectionId: string }) => {
   const [open, setOpen] = useState(false);
@@ -74,9 +75,17 @@ const DialogEditSection = ({ sectionId }: { sectionId: string }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size={"icon-xs"} variant={"ghost"}>
-          <PencilLine />
-        </Button>
+        <TooltipMessage message="Edit section">
+          <Button
+            size={"icon"}
+            variant={"ghost"}
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
+            <PencilIcon />
+          </Button>
+        </TooltipMessage>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

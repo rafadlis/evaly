@@ -17,11 +17,13 @@ const DialogEditSectionDuration = ({
   disabled = false,
   onSuccess,
   sectionId,
+  testId,
 }: {
   className?: string;
   disabled?: boolean;
-  sectionId?: string; // Made optional since it's not used in the component
+  sectionId: string; // Made optional since it's not used in the component
   onSuccess?: () => void;
+  testId: string;
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -33,9 +35,10 @@ const DialogEditSectionDuration = ({
     id: sectionId as string,
   });
 
-  const { refetch: refetchSections } = trpc.organization.testSection.getAll.useQuery({
-    testId: dataSection?.testId as string,
-  });
+  const { refetch: refetchSections } =
+    trpc.organization.testSection.getAll.useQuery({
+      testId: testId as string,
+    });
 
   const { mutate: updateSection, isPending: isPendingUpdateSection } =
     trpc.organization.testSection.update.useMutation({
@@ -77,7 +80,7 @@ const DialogEditSectionDuration = ({
       },
     });
   };
-return null
+  return null;
   return (
     <Popover
       open={open}

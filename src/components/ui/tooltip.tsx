@@ -76,4 +76,19 @@ export function TooltipInfo({
   );
 }
 
+export function TooltipMessage({
+  children,
+  message,
+}: {
+  children: React.ReactNode;
+  message: string;
+}) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipContent>{message}</TooltipContent>
+    </Tooltip>
+  );
+}
+
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };

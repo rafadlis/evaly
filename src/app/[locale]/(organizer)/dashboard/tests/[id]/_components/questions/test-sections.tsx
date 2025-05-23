@@ -1,10 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ArrowRight, Loader2, PlusIcon, PointerIcon } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  ChevronDownIcon,
+  Loader2,
+  PlusIcon,
+  PointerIcon,
+} from "lucide-react";
 import { useSelectedSection } from "../../_hooks/use-selected-section";
 import { useParams } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CardSection from "@/components/shared/card/card-section";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Reorder } from "motion/react";
@@ -22,12 +29,138 @@ import { QuestionTemplateSection } from "./question-template-section";
 import { toast } from "sonner";
 import { trpc } from "@/trpc/trpc.client";
 import { useTranslations } from "next-intl";
+import { Badge } from "@/components/ui/badge";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { TooltipMessage } from "@/components/ui/tooltip";
+import DialogEditSection from "@/components/shared/dialog/dialog-edit-section";
+import DialogDeleteSection from "@/components/shared/dialog/dialog-delete-section";
 
-const SectionSidebar = ({ className }: { className?: string }) => {
+const TestSections = ({ className }: { className?: string }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { id } = useParams();
+  const [selectedSection, setSelectedSection] = useSelectedSection();
+
+  const { data, isPending, isRefetching, refetch } =
+    trpc.organization.testSection.getAll.useQuery({
+      testId: id as string,
+    });
+
+  const selectedSectionData = useMemo(() => {
+    if (!selectedSection || !data) return null;
+    return data.find((e) => e.id === selectedSection);
+  }, [selectedSection, data]);
+
+  if (isPending) {
+    return (
+      <div className="flex flex-row gap-2 items-center">
+        <Skeleton className="w-40 h-8 rounded-md" />
+      </div>
+    );
+  }
+
+  if (data?.length === 1) {
+    return (
+      <div className="flex flex-row gap-2 items-center">
+        <AddSession>
+          <Button variant={"outline"}>
+            <PlusIcon /> New section
+          </Button>
+        </AddSession>
+      </div>
+    );
+  }
+
   return (
-    <div className={cn("w-[300px]  h-max pb-20 sticky top-20", className)}>
-      <ListSession />
+    <div className="flex flex-row-reverse md:flex-row gap-2 items-center">
+      <DialogDeleteSection
+        disabled={isRefetching || isPending}
+        isLastSection={data?.length === 1}
+        sectionId={selectedSection as string}
+        onSuccess={() => {
+          refetch();
+          if (selectedSectionData?.id === selectedSection) {
+            const nearestSection = data?.find(
+              (section) => section.id !== selectedSectionData?.id
+            );
+            if (nearestSection) {
+              setSelectedSection(nearestSection.id);
+            }
+          }
+        }}
+      />
+      <DialogEditSection sectionId={selectedSection as string} />
       <AddSession />
+
+      <div className={cn("flex flex-row", className)}>
+        <Button
+          onClick={() => {
+            const order = selectedSectionData?.order;
+            if (!order) return;
+            if (order === 1) return;
+
+            const previousSection = data?.find((e) => e.order === order - 1);
+            if (previousSection) {
+              setSelectedSection(previousSection.id);
+            }
+          }}
+          disabled={selectedSectionData?.order === 1}
+          variant={"outline"}
+          size={"icon"}
+          className="border-r-0 rounded-r-none"
+        >
+          <ArrowLeft />
+        </Button>
+        <Popover open={isOpen} onOpenChange={setIsOpen}>
+          <PopoverTrigger asChild>
+            <div>
+              <TooltipMessage message="Click to check all sections">
+                <Button
+                  variant={"outline"}
+                  className="rounded-r-none rounded-l-none group"
+                >
+                  <span>
+                    {selectedSectionData?.order || 1}.{" "}
+                    {selectedSectionData?.title || "Untitled"}
+                  </span>
+                  {selectedSectionData?.duration &&
+                  selectedSectionData?.duration > 0 ? (
+                    <Badge variant={"secondary"}>
+                      {selectedSectionData.duration}m
+                    </Badge>
+                  ) : null}
+                  <ChevronDownIcon className={cn(isOpen ? "rotate-180" : "")} />
+                </Button>
+              </TooltipMessage>
+            </div>
+          </PopoverTrigger>
+          <PopoverContent>
+            <ListSession />
+          </PopoverContent>
+        </Popover>
+
+        <Button
+          onClick={() => {
+            const order = selectedSectionData?.order;
+            if (!order) return;
+            if (order === data?.length) return;
+
+            const nextSection = data?.find((e) => e.order === order + 1);
+            if (nextSection) {
+              setSelectedSection(nextSection.id);
+            }
+          }}
+          disabled={selectedSectionData?.order === data?.length}
+          variant={"outline"}
+          size={"icon"}
+          className="rounded-l-none border-l-0"
+        >
+          <ArrowRight />
+        </Button>
+      </div>
     </div>
   );
 };
@@ -108,18 +241,6 @@ const ListSession = () => {
               key={e.id}
               isSelected={e.id === selectedSection}
               onClick={() => setSelectedSection(e.id)}
-              onDeleteSuccess={async () => {
-                await refetch();
-                if (e.id === selectedSection) {
-                  const nearestSection = data.find(
-                    (section) => section.id !== e.id
-                  );
-                  if (nearestSection) {
-                    setSelectedSection(nearestSection.id);
-                  }
-                }
-              }}
-              isLastSection={data.length === 1}
             />
           </Reorder.Item>
         ))}
@@ -129,7 +250,7 @@ const ListSession = () => {
   );
 };
 
-const AddSession = () => {
+const AddSession = ({ children }: { children?: React.ReactNode }) => {
   const { id } = useParams();
   const [, setSelectedSection] = useSelectedSection();
   const [isOpen, setIsOpen] = useState(false);
@@ -141,7 +262,7 @@ const AddSession = () => {
     isRefetching: isRefetchingSection,
   } = trpc.organization.testSection.getAll.useQuery({ testId: id as string });
 
-  const { mutateAsync, isPending } =
+  const { mutateAsync, isPending: isPendingCreateSection } =
     trpc.organization.testSection.create.useMutation();
 
   const { mutateAsync: tranferQuestion, isPending: isPendingTransferQuestion } =
@@ -178,10 +299,8 @@ const AddSession = () => {
     }
   }
 
-  if (isPendingSession) return null;
-
   return (
-    <div className="flex flex-col items-end mt-2">
+    <div className="flex flex-col items-end">
       <Dialog
         open={isOpen}
         onOpenChange={(e) => {
@@ -190,19 +309,27 @@ const AddSession = () => {
         }}
       >
         <DialogTrigger asChild>
-          <Button
-            variant={"outline"}
-            className="w-max border-dashed"
-            size={"sm"}
-            disabled={isPending || isRefetchingSection}
-          >
-            {isPending || isRefetchingSection ? (
-              <Loader2 className="animate-spin" />
-            ) : (
-              <PlusIcon />
-            )}
-            Add Section
-          </Button>
+          <div>
+            <TooltipMessage message="Add new section">
+              {children || (
+                <Button
+                  variant={"ghost"}
+                  size={"icon"}
+                  disabled={
+                    isPendingCreateSection ||
+                    isRefetchingSection ||
+                    isPendingSession
+                  }
+                >
+                  {isPendingCreateSection || isRefetchingSection ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    <PlusIcon className="size-4" />
+                  )}
+                </Button>
+              )}
+            </TooltipMessage>
+          </div>
         </DialogTrigger>
         <DialogContent className="md:max-w-4xl lg:max-w-5xl xl:max-w-6xl">
           <DialogHeader>
@@ -228,7 +355,7 @@ const AddSession = () => {
                 <Button
                   variant={"outline"}
                   className="w-max"
-                  disabled={isPending || isRefetchingSection}
+                  disabled={isPendingCreateSection || isRefetchingSection}
                   onClick={async () => {
                     const data = await mutateAsync({ testId: id as string });
                     const sectionId = data?.sections[0]?.id;
@@ -239,7 +366,7 @@ const AddSession = () => {
                     }
                   }}
                 >
-                  {isPending || isRefetchingSection ? (
+                  {isPendingCreateSection || isRefetchingSection ? (
                     <Loader2 className="animate-spin" />
                   ) : (
                     <PlusIcon />
@@ -250,7 +377,9 @@ const AddSession = () => {
                   onClick={onUseTemplate}
                   variant={"default"}
                   disabled={
-                    !selectedId || isPendingTransferQuestion || isPending
+                    !selectedId ||
+                    isPendingTransferQuestion ||
+                    isPendingCreateSection
                   }
                 >
                   {selectedId ? (
@@ -270,4 +399,4 @@ const AddSession = () => {
   );
 };
 
-export default SectionSidebar;
+export default TestSections;

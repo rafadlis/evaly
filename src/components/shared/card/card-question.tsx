@@ -1,4 +1,5 @@
 import DialogDeleteQuestion from "@/components/shared/dialog/dialog-delete-question";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { questionTypes } from "@/constants/question-type";
@@ -110,7 +111,7 @@ const CardQuestion = ({
   return (
     <Card
       className={cn(
-        "transition-all rounded-none border-transparent cursor-pointer duration-100 group",
+        "transition-all rounded-none border-transparent cursor-pointer duration-100 group bg-transparent",
         data.order === 1 ? "mt-6" : "",
         className
       )}
@@ -118,18 +119,18 @@ const CardQuestion = ({
     >
       <CardHeader className="flex flex-row justify-between items-center p-0">
         <div className="flex flex-row gap-4">
-          <span className="text-xs text-muted-foreground bg-secondary px-2 py-0.5">
+          <Badge variant={"secondary"}>
             {t("questionNumber", { number: data.order })}
-          </span>
+          </Badge>
           {data.pointValue ? (
-            <span className="text-xs text-muted-foreground bg-secondary px-1 py-0.5">
+            <Badge variant={"secondary"}>
               {t("pointValue", { number: data.pointValue })}
-            </span>
+            </Badge>
           ) : null}
-          <span className="text-xs text-muted-foreground px-1 py-0.5 flex flex-row items-center gap-1">
+          <Badge variant={"secondary"}>
             {selectedType.icon && <selectedType.icon size={12} />}
             {tTestDetail(selectedType.value)}
-          </span>
+          </Badge>
         </div>
         {!previewOnly ? (
           <div className="flex-row h-5 justify-end items-center invisible group-hover:visible flex">

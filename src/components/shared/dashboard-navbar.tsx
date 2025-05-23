@@ -74,22 +74,25 @@ export function DashboardNavbar({ className }: { className?: string }) {
         className
       )}
     >
-      <div className="mx-auto px-3 md:px-6 h-14">
+      <div className="mx-auto px-3 md:px-6 h-12">
         <div className="flex items-center h-full justify-between">
           <div className="flex flex-row items-center">
             {/* Logo */}
             <LogoType href="/dashboard" />
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center ml-14 gap-3 text-sm font-medium">
+            <div className="hidden md:flex items-center ml-14 gap-2 text-sm font-medium">
               {navItems.map((item) => (
                 <Link key={item.href} href={item.href}>
                   <Button
                     size={"sm"}
-                    variant={activeItem === item.href ? "default" : "ghost"}
-                    className={activeItem === item.href ? "" : "text-muted-foreground"}
+                    variant={activeItem === item.href ? "secondary" : "ghost"}
+                    className={cn(
+                      "transition-none font-semibold text-[15px]",
+                      activeItem === item.href ? "bg-foreground/10" : "text-muted-foreground"
+                    )}
                   >
-                    {item.icon}
+                    {/* {item.icon} */}
                     {item.name}
                   </Button>
                 </Link>
